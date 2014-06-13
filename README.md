@@ -14,4 +14,6 @@ The original version of Etherpad offered the very useful "private groups" featur
 
 This is the very purpose of this funding campaign, which also wishes to emphasize that free does not mean free of charge and that one can develop free/libre software with crowdfunding.
 
+https://lut.im/R2GtunQd/xvShrHLn.gif
+
 More on http://www.ulule.com/etherpad-framapad/

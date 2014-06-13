@@ -1,6 +1,6 @@
 MyPads
 ============
-**This github repo will host the MyPads plugin for etherpad** *(if founded!)*.
+**This git repo hosts the MyPads plugin for etherpad**.
 
 Almost everyone is using or has already used Etherpad, the famous and free/libre online editor featuring real-time collaborative editing. But there is a missing feature in the new version which is highly desired by the community: a personal account for creating and managing groups and private pads.
 This campaign, initiated and supported by Framasoft, aims to fund the development of a plugin to fulfill these requirements.

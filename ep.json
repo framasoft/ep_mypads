@@ -1,0 +1,9 @@
+{
+  "parts": [
+    {
+      "name": "ep_mypads",
+      "hooks": {},
+      "client_hooks": {}
+    }
+  ]
+}

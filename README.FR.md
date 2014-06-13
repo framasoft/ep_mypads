@@ -1,6 +1,6 @@
 MyPads
 ============
-**Ce dépôt Github hébergera le code source du plugin MyPads pour Etherpad** *(s'il est financé !)*.
+**Ce dépôt git héberge le code source du plugin MyPads pour Etherpad**.
 
 Tout le monde (ou presque) utilise ou a utilisé Etherpad, célèbre et libre éditeur de texte collaboratif en ligne. Mais il est une fonctionnalité qui n'existe pas dans la nouvelle version et qui est fort demandée par la communauté : avoir un compte personnel permettant de créer et administrer des groupes et des pads privés. 
 Cette campagne, portée par Framasoft, se propose de financer le développement d'un plugin répondant à ce besoin.

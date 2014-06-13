@@ -14,6 +14,6 @@ La première version d'Etherpad proposait la création très appréciée de grou
 
 C'est l'objet même de cette campagne, qui souhaite également témoigner que libre ne veut pas dire gratuit et qu'on peut développer du logiciel libre en le finançant collectivement.
 
-https://lut.im/eUCXJB68/YdpwZJ65.gif
+![](https://lut.im/eUCXJB68/YdpwZJ65.gif)
 
 Plus d'info sur http://fr.ulule.com/etherpad-framapad/

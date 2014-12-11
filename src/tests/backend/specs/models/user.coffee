@@ -11,7 +11,7 @@ describe 'user', ->
       assert.throws -> user.create login: 'johnny'
       assert.throws -> user.create password: 'secret'
 
-    it 'should accept any creation if login and password are fixed' ->
+    it 'should accept any creation if login and password are fixed', ->
       assert.doesNotThrow ->
         u = user.create login: 'parker', password: 'lovesKubiak'
       u = user.create login: 'parker', password: 'lovesKubiak'

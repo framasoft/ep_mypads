@@ -23,23 +23,34 @@ under the License.
 
     isObject = require('underscore').isObject
 
-The `configuration` object can be updated by the MyPads administrators, through
-the API. The object if initialized with defaults.
+The `data` is a private holding, at the moment, the configuration. The object
+if initialized with defaults but may and will be populated from database. *TODO*
 
-    conf =
-      passwordLength: min: 8, max: 30
+    data = do -> passwordLength: min: 8, max: 30
       
+`conf` object is a wrapper to interact with the `data` object.
+
+    conf = {}
+
+`get` and `set` are an eponym functions, getting and setting a key of the
+`conf` object. 
+
+    conf.get = (key) -> data[key]
+    conf.set = (key, val) -> data[key] = val
+
 `setPasswordLength` is a function taking only one mandatory argument, an
 object, for fixing this configuration option with either a `min` or `max`
 option. Both `min` and `max` are optional but must be integers if provided.
 
+TODO: remove data sanitization for API usage.
+
     conf.setPasswordLength = (l) ->
       if isObject l
-        for field of conf.passwordLength
+        for field of conf.get 'passwordLength'
           unless l[field] and parseInt(l[field]) is l[field]
-            l[field] = conf.passwordLength[field]
+            l[field] = conf.get('passwordLength')[field]
         [l.min, l.max] = [l.max, l.min] if l.min > l.max
-        conf.passwordLength = min: l.min, max: l.max
+        conf.set 'passwordLength', min: l.min, max: l.max
     
 ## Exports
 

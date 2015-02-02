@@ -2,7 +2,9 @@
   "parts": [
     {
       "name": "ep_mypads",
-      "hooks": {},
+      "hooks": {
+        "init_ep_mypads": "ep_mypads/index.js:init"
+      },
       "client_hooks": {}
     }
   ]

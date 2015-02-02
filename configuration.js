@@ -31,56 +31,98 @@
 
 // Dependencies
 var ld = require('lodash');
+//var db = require('ep_etherpad-lite/node/db/DB').db;
+var db = require('./db.js');
 
 module.exports = (function() {
   'use strict';
 
   /**
-  * The closure contains a private `data` field, holding real configuration.
+  * The closure contains a private `defaults` field, holding defaults settings.
   * Configuration data is taken from the database, applying defaults when
-  * necessary.
-  * TODO: retrieve config from database
+  * necessary, for example at the plugin initialization.
   */
 
-  var _data = ld.defaults({}, { passwordMin: 8, passwordMax: 30 });
+  var defaults = { passwordMin: 8, passwordMax: 30 };
+  var KEY = 'mypads:configuration';
  
   /**
-  * `conf` object is a closure to interact with the whole configuration. It
-  * will be exported.
+  * `configuration` object is a closure to interact with the whole
+  * config. It will be exported.
   */
 
-  var conf = {
-    /** 
-    * `get` is a function taking a mandatory `key` string argument, returning
-    * the config property according to it.
+  var configuration = {
+    /**
+    * `init` is called when mypads plugin is initialized. It fixes the default
+    * data for the configuration into the database.
+    * It takes an optional `callback` function used after db.set abstraction to
+    * return an eventual error.
     */
-    get: function (key) {
+    init: function (callback) {
+      if (callback && !ld.isFunction(callback)) {
+        throw(new TypeError('callback must be a function'));
+      }
+      db.set(KEY, JSON.stringify(defaults), callback);
+    },
+    /** 
+    * `get` is an asynchronous function taking :
+    * - a mandatory `key` string argument,
+    * - a mandatory `callback` function argument returning error if error, null
+    *   otherwise and the result
+    */
+    get: function (key, callback) {
       if (!ld.isString(key)) {
         throw(new TypeError('key must be a string'));
       }
-      return _data[key];
+      if (!ld.isFunction(callback)) {
+        throw(new TypeError('callback must be a function'));
+      }
+      configuration.all(function (err, res) {
+        if (err) { callback(err); }
+        callback(null, res[key])
+      });
     },
     /**
-    * `set` is a function taking two mandatory arguments:
+    * `set` is an asynchronous function taking two mandatory arguments:
     *
     * - `key` string;
     * - `value`.
+    * - `callback` function argument returning error if error, null otherwise
     *
-    * `set` set the value for the config key.
+    * `set` sets the value for the configuration key.
     */
-    set: function (key, value) {
+    set: function (key, value, callback) {
       if (!ld.isString(key)) {
         throw(new TypeError('key must be a string'));
       }
       if (ld.isUndefined(value)) {
         throw(new TypeError('value is mandatory'));
       }
-      _data[key] = value;
+      if (!ld.isFunction(callback)) {
+        throw(new TypeError('callback must be a function'));
+      }
+      configuration.all(function (err, res) {
+        if (err) { callback(err); }
+        res[key] = value;
+        db.set(KEY, JSON.stringify(res), callback);
+      });
     },
-    // `all` is the way to get the private data object, whole configuration
-    all: function() { return _data; }
+    /**
+    * `all` is an asynchronous function that returns the whole configuration,
+    * from database. It needs a `callback` function returning error if error,
+    * null otherwise and the result.
+    */
+    all: function(callback) { 
+      if (!ld.isFunction(callback)) {
+        throw(new TypeError('callback must be a function'));
+      }
+      db.get(KEY, function (err, res) {
+        if (err) { callback(err); }
+        callback(null, JSON.parse(res));
+      });
+    }
   };
-  return conf;
+  return configuration;
 }).call(this);
 
 

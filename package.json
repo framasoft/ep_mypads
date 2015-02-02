@@ -24,7 +24,8 @@
     "lodash": "^3.0.1"
   },
   "devDependencies": {
-    "jshint": "^2.6.0"
+    "jshint": "^2.6.0",
+    "ueberDB": "^0.2.11"
   },
   "scripts": {
     "doc": "docco -o doc ./*.js",

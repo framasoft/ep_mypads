@@ -42,7 +42,7 @@ module.exports = (function () {
 
   /**
   *  The creation sets the defaults and checks if required fields have been
-  *  fixed.  It takes a parameters object and a callback function. This callback
+  *  fixed. It takes a parameters object and a callback function. This callback
   *  function will be called with an Error or null and the newly created user.
   */
 

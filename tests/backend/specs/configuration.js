@@ -20,55 +20,97 @@
 (function () {
 
   var assert = require('assert');
-  var partial = require('lodash').partial;
+  var ld = require('lodash');
   var conf = require('../../../configuration.js');
 
   describe('configuration', function () {
     'use strict';
+    it('comes with defaults', function (done) {
+      conf.get('passwordMax', function (err, res) {
+        assert.equal(res, 30);
+        done();
+      });
+    });
 
-    it('comes with defaults', function () {
-      assert.equal(conf.get('passwordMin'), 8);
-      assert.equal(conf.get('passwordMax'), 30);
+    describe('init', function () {
+      it('takes an optional callback as argument that must be a function',
+        function () {
+          assert.throws(ld.partial(conf.init, 'string'), TypeError);
+          assert.doesNotThrow(conf.init);
+        }
+      );
+        it('will call the callback, with an error or null when succeeded',
+          function (done) {
+            conf.init(function (err) {
+              assert.equal(err, null);
+              done();
+            });
+          }
+        );
     });
 
     describe('get', function () {
-
-      it('throws an error if key isn\'t a string', function () {
-        assert.throws(conf.get, TypeError);
-        assert.throws(partial(conf.get, 12), TypeError);
-        assert.throws(partial(conf.get, {}), TypeError);
+      it('throws an error if key isn\'t a string and callback not a function',
+        function () {
+          assert.throws(conf.get, TypeError);
+          assert.throws(ld.partial(conf.get, 1), TypeError);
+          assert.throws(ld.partial(conf.get, 1, 1), TypeError);
+          assert.throws(ld.partial(conf.get, 1, ld.noop), TypeError);
+          assert.throws(ld.partial(conf.get, 'key'), TypeError);
+          assert.throws(ld.partial(conf.get, 'key', 2), TypeError);
       });
-
-      it('returns the value of the field', function () {
-        assert.equal(conf.get('passwordMin'), 8);
-        assert.equal(conf.get('inexistent'), undefined);
+      it('returns the value of the field', function (done) {
+        conf.get('passwordMin', function (err, res) {
+          assert.equal(res, 8);
+          conf.get('inexistent', function (err, res2) {
+            assert.equal(res2, undefined);
+            done();
+          });
+        });
       });
     });
 
     describe('set', function () {
-
-      it('throws an error if key isn\'t a string and value is undefined',
-        function () {
-          assert.throws(partial(conf.set, 12), TypeError);
-          assert.throws(partial(conf.set, [], 12), TypeError);
-          assert.throws(partial(conf.set, 'key'), TypeError);
+      it('throws an error if key isn\'t a string, value is undefined, '
+        + 'callback is not a function', function (done) {
+          assert.throws(conf.set, TypeError);
+          assert.throws(ld.partial(conf.set, 'key'), TypeError);
+          assert.throws(ld.partial(conf.set, 'key', 'value'), TypeError);
+          assert.throws(ld.partial(conf.set, 12, ld.noop), TypeError);
+          assert.throws(ld.partial(conf.set, [], 12, ld.noop), TypeError);
+          assert.throws(ld.partial(conf.set, 'key', 'notAFn'), TypeError);
+          done();
       });
-
-      it('sets a key for the conf object with the given value', function () {
-        conf.set('key', 'value');
-        conf.set('array', [1, 2, 3]);
-        assert.equal(conf.get('key'), 'value');
-        assert.equal(conf.get('array').length, 3);
+      it('sets a key for the conf with the given value', function (done) {
+        conf.set('key', 'value', function (err) {
+          conf.get('key', function (err, val) {
+            assert.equal(val, 'value');
+            conf.set('array', [1, 2, 3], function (err) {
+              conf.get('array', function (err, val) {
+                assert.equal(val.length, 3);
+                done();
+              });
+            });
+          });
+        });
       });
     });
 
     describe('all', function () {
-
-      it('returns the configuration object', function () {
-        conf.set('key', 10);
-        conf.set('power', 'max');
-        assert.equal(conf.all().key, 10);
-        assert.equal(conf.all().power, 'max');
+      it('requires a mandatory function as callback', function () {
+        assert.throws(conf.all, TypeError);
+        assert.throws(ld.partial(conf.all, 'notAFn'), TypeError);
+      });
+      it('returns the configuration object', function (done) {
+        conf.set('key', 10, function () {
+          conf.set('power', 'max', function () {
+            conf.all(function (err, settings) {
+              assert.equal(settings.key, 10);
+              assert.equal(settings.power, 'max');
+              done();
+            });
+          });
+        });
       });
     });
   });

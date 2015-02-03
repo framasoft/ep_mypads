@@ -21,7 +21,8 @@
   },
   "license": "Apache 2",
   "dependencies": {
-    "lodash": "^3.0.1"
+    "lodash": "^3.0.1",
+    "valentine": "^2.1.3"
   },
   "devDependencies": {
     "docker": "^0.2.14",
@@ -34,7 +35,7 @@
   "scripts": {
     "doc": "./node_modules/docker/docker -I -x node_modules,doc -i . -o doc",
     "lint": "./node_modules/jshint/bin/jshint ./",
-    "test": "mocha --recursive ./tests/backend/specs",
+    "test": "./node_modules/jasmine/bin/jasmine.js",
     "default": "npm run lint && npm run test",
     "all": "npm run doc && npm run lint && npm run test"
   }

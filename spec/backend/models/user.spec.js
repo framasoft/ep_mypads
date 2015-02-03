@@ -18,26 +18,33 @@
 */
 
 (function () {
+  'use strict';
   var partial = require('lodash').partial;
   var user = require('../../../models/user.js');
 
-  xdescribe('user', function () {
-    'use strict';
+  describe('user', function () {
 
     describe('creation', function () {
 
       it('should return a TypeError and a message if either login or password' +
-        'aren\'t given', function () {
-        expect(user.create.bind()).toThrow();
-        expect(partial(user.create, { another: 'object' })).toThrow();
-        expect(partial(user.create, { login: 'Johnny' })).toThrow();
-        expect(partial(user.create, { password: 'secret' })).toThrow();
+        ' aren\'t given; nor callback function', function () {
+        expect(user.add).toThrow();
+        expect(partial(user.add, { another: 'object' })).toThrow();
+        expect(partial(user.add, { login: 'Johnny' })).toThrow();
+        expect(partial(user.add, { password: 'secret' })).toThrow();
+        expect(partial(user.add, { login: 'john', password: 'secret' })).toThrow();
       });
-
+      it('should return an Error to the callback if password size is not' +
+       ' appropriate', function (done) {
+        user.add({ login: 'bob', password: '1'}, function (err, res) {
+          expect(ld.isError(err)).toBeTruthy();
+          done();
+        });
+      }).
       it('should accept any creation if login & password are fixed', function () {
         var u;
         expect(function () {
-          u = user.create({ login: 'parker', password: 'lovesKubiak' });
+          u = user.add({ login: 'parker', password: 'lovesKubiak' });
         }).not.toThrow();
         expect(u.login).toBe('parker');
         expect(u.password).toBeDefined();

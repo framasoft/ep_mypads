@@ -18,6 +18,8 @@
 */ 
 
 (function () {
+  'use strict';
+
   var ld = require('lodash');
   var request = require('request');
   var api = require('../../api.js');

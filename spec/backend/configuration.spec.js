@@ -18,6 +18,7 @@
 */
 
 (function () {
+  'use stric';
 
   var ld = require('lodash');
   var conf = require('../../configuration.js');

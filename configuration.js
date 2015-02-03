@@ -25,13 +25,12 @@
 * This is the module for MyPads configuration.
 */
 
-// Dependencies
-var ld = require('lodash');
-//var db = require('ep_etherpad-lite/node/db/DB').db;
-var db = require('./db.js');
-
 module.exports = (function() {
   'use strict';
+
+  // Dependencies
+  var ld = require('lodash');
+  var db = require('./db.js');
 
   /**
   * The closure contains a private `defaults` field, holding defaults settings.
@@ -48,6 +47,7 @@ module.exports = (function() {
   */
 
   var configuration = {
+    PREFIX: PREFIX,
     /**
     * `init` is called when mypads plugin is initialized. It fixes the default
     * data for the configuration into the database.

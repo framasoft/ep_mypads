@@ -40,7 +40,7 @@ module.exports = (function() {
   */
 
   var defaults = { passwordMin: 8, passwordMax: 30 };
-  var KEY = 'mypads:configuration';
+  var PREFIX = 'mypads:configuration:';
  
   /**
   * `configuration` object is a closure to interact with the whole
@@ -55,10 +55,15 @@ module.exports = (function() {
     * return an eventual error.
     */
     init: function (callback) {
-      if (callback && !ld.isFunction(callback)) {
+      callback = callback || ld.noop;
+      if (!ld.isFunction(callback)) {
         throw(new TypeError('callback must be a function'));
       }
-      db.set(KEY, JSON.stringify(defaults), callback);
+      // Would like to use doBulk but not supported for all *ueberDB* backends
+      var done = ld.after(ld.size(defaults), callback);
+      ld.forIn(defaults, function (value, key) {
+        db.set(PREFIX + key, value, done);
+      });
     },
     /** 
     * `get` is an asynchronous function taking :
@@ -74,9 +79,9 @@ module.exports = (function() {
       if (!ld.isFunction(callback)) {
         throw(new TypeError('callback must be a function'));
       }
-      configuration.all(function (err, res) {
-        if (err) { callback(err); }
-        callback(null, res[key]);
+      db.get(PREFIX + key, function (err, res) {
+        if (err) { return callback(err); }
+        callback(null, res);
       });
     },
     /**
@@ -98,11 +103,7 @@ module.exports = (function() {
       if (!ld.isFunction(callback)) {
         throw(new TypeError('callback must be a function'));
       }
-      configuration.all(function (err, res) {
-        if (err) { callback(err); }
-        res[key] = value;
-        db.set(KEY, JSON.stringify(res), callback);
-      });
+      db.set(PREFIX + key, value, callback);
     },
     /**
     * `remove` is an asynchronous function that removes a configuration option.
@@ -119,30 +120,32 @@ module.exports = (function() {
       if (!ld.isFunction(callback)) {
         throw(new TypeError('callback must be a function'));
       }
-      configuration.all(function (err, res) {
-        if (res) {
-          if (err) { callback(err); }
-          if (res[key]) {
-            delete res[key];
-            db.set(KEY, JSON.stringify(res), callback);
-          } else {
-            callback('missing key');
-          }
-        }
-      });
+      db.remove(PREFIX + key, callback);
     },
     /**
-    * `all` is an asynchronous function that returns the whole configuration,
-    * from database. It needs a `callback` function returning error if error,
-    * null otherwise and the result.
+    * `all` is an asynchronous function that returns the whole configuration
+    * from database. Fields / keys are unprefixed. It needs a `callback`
+    * function returning error if error, null otherwise and the result.
     */
     all: function(callback) { 
       if (!ld.isFunction(callback)) {
         throw(new TypeError('callback must be a function'));
       }
-      db.get(KEY, function (err, res) {
-        if (err) { callback(err); }
-        callback(null, JSON.parse(res));
+      db.findKeys(PREFIX + '*', null, function (err, res) {
+        if (err) { return callback(err); }
+        var config = {};
+        var done = ld.after(ld.size(res), callback);
+        ld.forEach(res, function (key) {
+          db.get(key, function (err, res) {
+            if (err) {
+              done(err);
+            } else {
+              key = key.replace(PREFIX, '');
+              config[key] = res;
+              done(null, config);
+            }
+          });
+        });
       });
     }
   };

@@ -25,12 +25,6 @@
 
   describe('configuration', function () {
     'use strict';
-    it('comes with defaults', function (done) {
-      conf.get('passwordMax', function (err, res) {
-        assert.equal(res, 30);
-        done();
-      });
-    });
 
     describe('init', function () {
       it('takes an optional callback as argument that must be a function',
@@ -39,15 +33,17 @@
           assert.doesNotThrow(conf.init);
         }
       );
-        it('will call the callback, with an error or null when succeeded',
-          function (done) {
-            conf.init(function (err) {
-              assert.equal(err, null);
+      it('will call the callback, with an error or null when succeeded',
+        function (done) {
+          conf.init(function (err) {
+            assert.equal(err, null);
+            conf.get('passwordMax', function (err, res) {
+              assert.equal(res, 30);
               done();
             });
-          }
-        );
-    });
+          });
+        });
+      });
 
     describe('get', function () {
       it('throws an error if key isn\'t a string and callback not a function',

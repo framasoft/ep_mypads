@@ -55,13 +55,16 @@
           assert.throws(ld.partial(conf.get, 'key'), TypeError);
           assert.throws(ld.partial(conf.get, 'key', 2), TypeError);
       });
+      it('returns an Error if the field isn\'t defined', function (done) {
+        conf.get('inexistent', function (err, res) {
+          assert.ok(ld.isError(err));
+          done();
+        });
+      });
       it('returns the value of the field', function (done) {
         conf.get('passwordMin', function (err, res) {
           assert.equal(res, 8);
-          conf.get('inexistent', function (err, res2) {
-            assert.equal(res2, undefined);
-            done();
-          });
+          done();
         });
       });
     });

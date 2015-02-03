@@ -70,7 +70,6 @@ module.exports = (function() {
     * - a mandatory `key` string argument,
     * - a mandatory `callback` function argument returning error if error, null
     *   otherwise and the result
-    *   TODO: handle non existent key better
     */
     get: function (key, callback) {
       if (!ld.isString(key)) {
@@ -81,6 +80,9 @@ module.exports = (function() {
       }
       db.get(PREFIX + key, function (err, res) {
         if (err) { return callback(err); }
+        if (ld.isUndefined(res)) {
+          return callback(new Error('Key doesn\'t exist')); 
+        }
         callback(null, res);
       });
     },
@@ -110,8 +112,6 @@ module.exports = (function() {
     * It takes two mandatory arguments :
     * - a `key` string,
     * - a `callback` function argument returning error if error
-    *
-    *   TODO: handle non existent key better
     */
     remove: function (key, callback) {
       if (!ld.isString(key)) {

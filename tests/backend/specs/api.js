@@ -31,9 +31,9 @@
   var app = express();
   app.use(express.bodyParser());
   api.init(app);
-  app.listen(8042);
+  var server = app.listen(8042);
 
   // End of mocking
-  app.close();
+  server.close();
 
 }).call(this);

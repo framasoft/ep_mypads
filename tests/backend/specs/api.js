@@ -1,8 +1,4 @@
 /**
-*  # Database Module
-* 
-*  ## License
-* 
 *  Licensed to the Apache Software Foundation (ASF) under one
 *  or more contributor license agreements.  See the NOTICE file
 *  distributed with this work for additional information
@@ -19,28 +15,25 @@
 *  KIND, either express or implied.  See the License for the
 *  specific language governing permissions and limitations
 *  under the License.
-*  
-*  ## Description
-*  
-*  This module consists only on a wrapper around etherpad database.
 */ 
 
-module.exports = (function () {
-  'use strict';
-  var db;
-  try {
-    // Normal case : when installed as a plugin
-    db = require('ep_etherpad-lite/node/db/DB').db;
-  }
-  catch (e) {
-    /**
-    * Testing case : we need to mock the database connection, using ueberDB and
-    * coherent default configuration with eptherpad-lite one.
-    */
-    var ueberDB = require('ueberDB');
-    db = new ueberDB.database('dirty', { filename: './test.db' });
-    db.init(function (err) {});
-  }
+(function () {
+  var assert = require('assert');
+  var ld = require('lodash');
+  var request = require('request');
+  var api = require('../../../api.js');
 
-  return db;
+  /**
+  * For standalone backend testing : mocking a fresh Express app and
+  * initializate API routes.
+  */
+  var express = require('express');
+  var app = express();
+  app.use(express.bodyParser());
+  api.init(app);
+  app.listen(8042);
+
+  // End of mocking
+  app.close();
+
 }).call(this);

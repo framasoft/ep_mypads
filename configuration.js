@@ -1,7 +1,3 @@
-// All with closure like object and private data field
-// .all() or .data() for all
-// .get(x) and .set(x, val)
-
 /**
 * # Configuration Module
 * 
@@ -69,6 +65,7 @@ module.exports = (function() {
     * - a mandatory `key` string argument,
     * - a mandatory `callback` function argument returning error if error, null
     *   otherwise and the result
+    *   TODO: handle non existent key better
     */
     get: function (key, callback) {
       if (!ld.isString(key)) {
@@ -79,7 +76,7 @@ module.exports = (function() {
       }
       configuration.all(function (err, res) {
         if (err) { callback(err); }
-        callback(null, res[key])
+        callback(null, res[key]);
       });
     },
     /**
@@ -105,6 +102,33 @@ module.exports = (function() {
         if (err) { callback(err); }
         res[key] = value;
         db.set(KEY, JSON.stringify(res), callback);
+      });
+    },
+    /**
+    * `remove` is an asynchronous function that removes a configuration option.
+    * It takes two mandatory arguments :
+    * - a `key` string,
+    * - a `callback` function argument returning error if error
+    *
+    *   TODO: handle non existent key better
+    */
+    remove: function (key, callback) {
+      if (!ld.isString(key)) {
+        throw(new TypeError('key must be a string'));
+      }
+      if (!ld.isFunction(callback)) {
+        throw(new TypeError('callback must be a function'));
+      }
+      configuration.all(function (err, res) {
+        if (res) {
+          if (err) { callback(err); }
+          if (res[key]) {
+            delete res[key];
+            db.set(KEY, JSON.stringify(res), callback);
+          } else {
+            callback('missing key');
+          }
+        }
       });
     },
     /**

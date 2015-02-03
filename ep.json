@@ -3,7 +3,8 @@
     {
       "name": "ep_mypads",
       "hooks": {
-        "init_ep_mypads": "ep_mypads/index.js:init"
+        "expressCreateServer": "ep_mypads/hooks.js:expressCreateServer",
+        "init_ep_mypads": "ep_mypads/hooks.js:init"
       },
       "client_hooks": {}
     }

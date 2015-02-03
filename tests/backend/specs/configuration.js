@@ -71,8 +71,8 @@
     });
 
     describe('set', function () {
-      it('throws an error if key isn\'t a string, value is undefined, '
-        + 'callback is not a function', function (done) {
+      it('throws an error if key isn\'t a string, value is undefined, ' +
+        'callback is not a function', function (done) {
           assert.throws(conf.set, TypeError);
           assert.throws(ld.partial(conf.set, 'key'), TypeError);
           assert.throws(ld.partial(conf.set, 'key', 'value'), TypeError);
@@ -88,6 +88,32 @@
             conf.set('array', [1, 2, 3], function (err) {
               conf.get('array', function (err, val) {
                 assert.equal(val.length, 3);
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+
+    describe('remove', function () {
+      it('throws an error if key isn\'t a string and callback not a function',
+        function () {
+          assert.throws(conf.remove, TypeError);
+          assert.throws(ld.partial(conf.remove, 1), TypeError);
+          assert.throws(ld.partial(conf.remove, 1, 1), TypeError);
+          assert.throws(ld.partial(conf.remove, 1, ld.noop), TypeError);
+          assert.throws(ld.partial(conf.remove, 'key'), TypeError);
+          assert.throws(ld.partial(conf.remove, 'key', 2), TypeError);
+      });
+      it('removes the item otherwise', function (done) {
+        conf.set('forremove', 10, function (err) {
+          conf.get('forremove', function (err, res) {
+            assert.equal(res, 10);
+            conf.remove('forremove', function (err) {
+              assert.equal(err, null);
+              conf.get('forremove', function (err, res) {
+                assert.equal(res, undefined);
                 done();
               });
             });

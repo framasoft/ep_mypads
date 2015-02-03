@@ -24,7 +24,9 @@
     "lodash": "^3.0.1"
   },
   "devDependencies": {
+    "express": "^3.19.2",
     "jshint": "^2.6.0",
+    "request": "^2.53.0",
     "ueberDB": "^0.2.11"
   },
   "scripts": {

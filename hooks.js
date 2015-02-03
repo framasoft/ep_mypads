@@ -1,5 +1,5 @@
 /**
-*  # Database Module
+*  # Hooks Module
 * 
 *  ## License
 * 
@@ -22,25 +22,36 @@
 *  
 *  ## Description
 *  
-*  This module consists only on a wrapper around etherpad database.
+*  This module contains server-side hooks used by etherpad.
+*
+*  ## Hooks
 */ 
 
 module.exports = (function () {
   'use strict';
-  var db;
-  try {
-    // Normal case : when installed as a plugin
-    db = require('ep_etherpad-lite/node/db/DB').db;
-  }
-  catch (e) {
-    /**
-    * Testing case : we need to mock the database connection, using ueberDB and
-    * coherent default configuration with eptherpad-lite one.
-    */
-    var ueberDB = require('ueberDB');
-    db = new ueberDB.database('dirty', { filename: './test.db' });
-    db.init(function (err) {});
-  }
 
-  return db;
+  var hooks = {};
+  /**
+  * `init` hook is run once after plugin installation. At the moment, it
+  * only populates database.
+  */
+  hooks.init = function (name, args, callback) {
+    var configuration = require('./configuration.js');
+    configuration.init(function (err) {
+      if (!err) {
+        callback();
+      }
+    });
+  };
+  /**
+  * `expressCreateServer` hook profits from the args.app express instance to
+  * initialize all MyPads routes from its own API.
+  */
+  hooks.expressCreateServer = function (name, args, callback) {
+    var api = require('./api.js');
+    api.init(args.app);
+    return callback();
+  };
+  return hooks;
+ 
 }).call(this);

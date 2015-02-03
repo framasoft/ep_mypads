@@ -22,29 +22,108 @@
 *  
 *  ## Description
 *  
-*  This module will hold all public functions, used for the API of mypads.
+*  This module holds all public functions, used for the API of mypads.
+*  Please refer to binded function when no details are given.
 */ 
 
- /**
-*  ## Authentification
-*  
-*  ## Users
-*  
-*  `createUser`
-*  
-*  `updateUser`
-*  
-*  `deleteUser`
-*  
-*  `getUser`
-*  
-*  `setLoginOfUser`
-*  
-*  `passwordRecoveryForUser`
-*  
-*  ## Groups
-*  
-*  ## Pads
-*  
-*  ## Configuration
-*/ 
+var ld = require('lodash');
+var conf = require('./configuration.js');
+
+module.exports = (function () {
+  'use strict';
+
+  var api = {};
+
+  /**
+  * `init` is the first function that takes an Express app as argument.
+  * It initializes all mypads routes.
+  */
+
+  api.init = function (app) {
+    /**
+    *  FIXME: authentification
+    *
+    *  ## Configuration
+    */
+    var initialRoute = '/mypads/api/';
+    var configuration = (function() {
+      var route = initialRoute + 'configuration/';
+      // Get simple key
+      app.get(route + ':key', function (req, res) {
+        conf.get(req.params.key, function (err, value) {
+          if (err) {
+            res.send(500, { error: err });
+          } else if (!value) {
+            res.send(404, { key: req.params.key }); 
+          } else {
+            res.send({ key: req.params.key, value: value });
+          }
+        });
+      });
+      // Set configuration key with POST and PUT
+      var _set = function (req, res) {
+        var key = req.body.key;
+        var value = req.body.value;
+        try {
+          conf.set(key, value, function (err) {
+            if (err) {
+              res.send(500, { error: err });
+            } else {
+              res.send({ success: true, key: key, value: value });
+            }
+          });
+        }
+        catch (e) {
+          res.send(400, { error: e.message });
+        }
+      };
+      app.post(route, _set);
+      app.put(route, _set);
+      // Removal of configuration item with DELETE
+      app.delete(route + ':key', function (req, res) {
+        conf.remove(req.params.key, function (err) {
+          if (err) {
+            res.send(400, { error: err });
+          } else {
+            res.send({ success: true, key: req.params.key });
+          }
+        });
+      });
+      // Get all configuration
+      app.get(route, function (req, res) {
+        conf.all(function (err, value) {
+          if (err) {
+            res.send(400, { error: err });
+          } else {
+            res.send({ value: value });
+          }
+        });
+      });
+    }).call(this);
+  };
+
+  /**
+  *  ## Authentification
+  *  
+  *  ## Users
+  *  
+  *  `createUser`
+  *  
+  *  `updateUser`
+  *  
+  *  `deleteUser`
+  *  
+  *  `getUser`
+  *  
+  *  `setLoginOfUser`
+  *  
+  *  `passwordRecoveryForUser`
+  *  
+  *  ## Groups
+  *  
+  *  ## Pads
+  *  
+  */ 
+  return api;
+
+}).call(this);

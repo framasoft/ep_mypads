@@ -26,6 +26,7 @@
   "devDependencies": {
     "docker": "^0.2.14",
     "express": "^3.19.2",
+    "jasmine": "^2.2.0",
     "jshint": "^2.6.0",
     "request": "^2.53.0",
     "ueberDB": "^0.2.11"

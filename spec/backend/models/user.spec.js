@@ -18,30 +18,29 @@
 */
 
 (function () {
-  var assert = require('assert');
   var partial = require('lodash').partial;
-  var user = require('../../../../models/user.js');
+  var user = require('../../../models/user.js');
 
-  describe('user', function () {
+  xdescribe('user', function () {
     'use strict';
 
     describe('creation', function () {
 
       it('should return a TypeError and a message if either login or password' +
         'aren\'t given', function () {
-        assert.throws(user.create.bind());
-        assert.throws(partial(user.create, { another: 'object' }));
-        assert.throws(partial(user.create, { login: 'Johnny' }));
-        assert.throws(partial(user.create, { password: 'secret' }));
+        expect(user.create.bind()).toThrow();
+        expect(partial(user.create, { another: 'object' })).toThrow();
+        expect(partial(user.create, { login: 'Johnny' })).toThrow();
+        expect(partial(user.create, { password: 'secret' })).toThrow();
       });
 
       it('should accept any creation if login & password are fixed', function () {
         var u;
-        assert.doesNotThrow(function () {
+        expect(function () {
           u = user.create({ login: 'parker', password: 'lovesKubiak' });
-        });
-        assertEqual(u.login, 'parker');
-        assert.ok(u.password);
+        }).not.toThrow();
+        expect(u.login).toBe('parker');
+        expect(u.password).toBeDefined();
       });
     });
   });

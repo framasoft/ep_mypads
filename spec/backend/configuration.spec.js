@@ -19,26 +19,42 @@
 
 (function () {
 
-  var assert = require('assert');
   var ld = require('lodash');
-  var conf = require('../../../configuration.js');
+  var conf = require('../../configuration.js');
+
+  /**
+  * `reInitDatabase` is a private function aims to remove the test database
+  * file and lets it virgin comme previsous testing before and after all module
+  * tests.
+  */
+  _reInitDatabase = function (done) {
+    var unlink = require('fs').unlink;
+    var db = require('../../db.js');
+    db.close(function () {
+      unlink('./test.db', function () {
+        db.init(done);
+      });
+    });
+  };
 
   describe('configuration', function () {
     'use strict';
+    beforeAll(_reInitDatabase);
+    afterAll(_reInitDatabase);
 
     describe('init', function () {
       it('takes an optional callback as argument that must be a function',
         function () {
-          assert.throws(ld.partial(conf.init, 'string'), TypeError);
-          assert.doesNotThrow(conf.init);
+          expect(ld.partial(conf.init, 'string')).toThrow();
+          expect(conf.init).not.toThrow();
         }
       );
       it('will call the callback, with an error or null when succeeded',
         function (done) {
           conf.init(function (err) {
-            assert.equal(err, null);
+            expect(err).toBeUndefined();
             conf.get('passwordMax', function (err, res) {
-              assert.equal(res, 30);
+              expect(res).toBe(30);
               done();
             });
           });
@@ -48,22 +64,22 @@
     describe('get', function () {
       it('throws an error if key isn\'t a string and callback not a function',
         function () {
-          assert.throws(conf.get, TypeError);
-          assert.throws(ld.partial(conf.get, 1), TypeError);
-          assert.throws(ld.partial(conf.get, 1, 1), TypeError);
-          assert.throws(ld.partial(conf.get, 1, ld.noop), TypeError);
-          assert.throws(ld.partial(conf.get, 'key'), TypeError);
-          assert.throws(ld.partial(conf.get, 'key', 2), TypeError);
+          expect(conf.get).toThrow();
+          expect(ld.partial(conf.get, 1)).toThrow();
+          expect(ld.partial(conf.get, 1, 1)).toThrow();
+          expect(ld.partial(conf.get, 1, ld.noop)).toThrow();
+          expect(ld.partial(conf.get, 'key')).toThrow();
+          expect(ld.partial(conf.get, 'key', 2)).toThrow();
       });
       it('returns an Error if the field isn\'t defined', function (done) {
         conf.get('inexistent', function (err, res) {
-          assert.ok(ld.isError(err));
+          expect(ld.isError(err)).toBeTruthy();
           done();
         });
       });
       it('returns the value of the field', function (done) {
         conf.get('passwordMin', function (err, res) {
-          assert.equal(res, 8);
+          expect(res).toBe(8);
           done();
         });
       });
@@ -72,21 +88,21 @@
     describe('set', function () {
       it('throws an error if key isn\'t a string, value is undefined, ' +
         'callback is not a function', function (done) {
-          assert.throws(conf.set, TypeError);
-          assert.throws(ld.partial(conf.set, 'key'), TypeError);
-          assert.throws(ld.partial(conf.set, 'key', 'value'), TypeError);
-          assert.throws(ld.partial(conf.set, 12, ld.noop), TypeError);
-          assert.throws(ld.partial(conf.set, [], 12, ld.noop), TypeError);
-          assert.throws(ld.partial(conf.set, 'key', 'notAFn'), TypeError);
+          expect(conf.set).toThrow();
+          expect(ld.partial(conf.set, 'key')).toThrow();
+          expect(ld.partial(conf.set, 'key', 'value')).toThrow();
+          expect(ld.partial(conf.set, 12, ld.noop)).toThrow();
+          expect(ld.partial(conf.set, [], 12, ld.noop)).toThrow();
+          expect(ld.partial(conf.set, 'key', 'notAFn')).toThrow();
           done();
       });
       it('sets a key for the conf with the given value', function (done) {
         conf.set('key', 'value', function (err) {
           conf.get('key', function (err, val) {
-            assert.equal(val, 'value');
+            expect(val).toBe('value');
             conf.set('array', [1, 2, 3], function (err) {
               conf.get('array', function (err, val) {
-                assert.equal(val.length, 3);
+                expect(val.length).toBe(3);
                 done();
               });
             });
@@ -98,21 +114,21 @@
     describe('remove', function () {
       it('throws an error if key isn\'t a string and callback not a function',
         function () {
-          assert.throws(conf.remove, TypeError);
-          assert.throws(ld.partial(conf.remove, 1), TypeError);
-          assert.throws(ld.partial(conf.remove, 1, 1), TypeError);
-          assert.throws(ld.partial(conf.remove, 1, ld.noop), TypeError);
-          assert.throws(ld.partial(conf.remove, 'key'), TypeError);
-          assert.throws(ld.partial(conf.remove, 'key', 2), TypeError);
+          expect(conf.remove).toThrow();
+          expect(ld.partial(conf.remove, 1)).toThrow();
+          expect(ld.partial(conf.remove, 1, 1)).toThrow();
+          expect(ld.partial(conf.remove, 1, ld.noop)).toThrow();
+          expect(ld.partial(conf.remove, 'key')).toThrow();
+          expect(ld.partial(conf.remove, 'key', 2)).toThrow();
       });
       it('removes the item otherwise', function (done) {
         conf.set('forremove', 10, function (err) {
           conf.get('forremove', function (err, res) {
-            assert.equal(res, 10);
+            expect(res).toBe(10);
             conf.remove('forremove', function (err) {
-              assert.equal(err, null);
+              expect(err).toBeUndefined();
               conf.get('forremove', function (err, res) {
-                assert.equal(res, undefined);
+                expect(res).toBeUndefined();
                 done();
               });
             });
@@ -123,15 +139,15 @@
 
     describe('all', function () {
       it('requires a mandatory function as callback', function () {
-        assert.throws(conf.all, TypeError);
-        assert.throws(ld.partial(conf.all, 'notAFn'), TypeError);
+        expect(conf.all).toThrow();
+        expect(ld.partial(conf.all, 'notAFn')).toThrow();
       });
       it('returns the configuration object', function (done) {
         conf.set('key', 10, function () {
           conf.set('power', 'max', function () {
             conf.all(function (err, settings) {
-              assert.equal(settings.key, 10);
-              assert.equal(settings.power, 'max');
+              expect(settings.key).toBe(10);
+              expect(settings.power).toBe('max');
               done();
             });
           });

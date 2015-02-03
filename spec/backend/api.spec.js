@@ -18,10 +18,9 @@
 */ 
 
 (function () {
-  var assert = require('assert');
   var ld = require('lodash');
   var request = require('request');
-  var api = require('../../../api.js');
+  var api = require('../../api.js');
 
   /**
   * For standalone backend testing : mocking a fresh Express app and

@@ -26,7 +26,7 @@
 *  Please refer to binded function when no details are given.
 */ 
 
-var ld = require('lodash');
+var v = require('valentine');
 var conf = require('./configuration.js');
 
 module.exports = (function () {

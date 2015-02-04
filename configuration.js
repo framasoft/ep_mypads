@@ -29,7 +29,7 @@ module.exports = (function() {
   'use strict';
 
   // Dependencies
-  var ld = require('lodash');
+  var v = require('valentine');
   var db = require('./db.js');
 
   /**
@@ -55,15 +55,16 @@ module.exports = (function() {
     * return an eventual error.
     */
     init: function (callback) {
-      callback = callback || ld.noop;
-      if (!ld.isFunction(callback)) {
+      callback = callback || function () {};
+      if (!v.is.func(callback)) {
         throw(new TypeError('callback must be a function'));
       }
       // Would like to use doBulk but not supported for all *ueberDB* backends
-      var done = ld.after(ld.size(defaults), callback);
-      ld.forIn(defaults, function (value, key) {
-        db.set(PREFIX + key, value, done);
-      });
+      var tasks = v.reduce(v.keys(defaults), function (memo, key) {
+        memo.push(v.bind(db, db.set, PREFIX + key, defaults[key]));
+        return memo;
+      }, []);
+      v.parallel(tasks, callback);
     },
     /** 
     * `get` is an asynchronous function taking :
@@ -72,15 +73,15 @@ module.exports = (function() {
     *   otherwise and the result
     */
     get: function (key, callback) {
-      if (!ld.isString(key)) {
+      if (!v.is.string(key)) {
         throw(new TypeError('key must be a string'));
       }
-      if (!ld.isFunction(callback)) {
+      if (!v.is.func(callback)) {
         throw(new TypeError('callback must be a function'));
       }
       db.get(PREFIX + key, function (err, res) {
         if (err) { return callback(err); }
-        if (ld.isUndefined(res)) {
+        if (v.is.undef(res)) {
           return callback(new Error('Key doesn\'t exist')); 
         }
         callback(null, res);
@@ -96,13 +97,13 @@ module.exports = (function() {
     * `set` sets the value for the configuration key.
     */
     set: function (key, value, callback) {
-      if (!ld.isString(key)) {
+      if (!v.is.string(key)) {
         throw(new TypeError('key must be a string'));
       }
-      if (ld.isUndefined(value)) {
+      if (v.is.undef(value)) {
         throw(new TypeError('value is mandatory'));
       }
-      if (!ld.isFunction(callback)) {
+      if (!v.is.func(callback)) {
         throw(new TypeError('callback must be a function'));
       }
       db.set(PREFIX + key, value, callback);
@@ -114,10 +115,10 @@ module.exports = (function() {
     * - a `callback` function argument returning error if error
     */
     remove: function (key, callback) {
-      if (!ld.isString(key)) {
+      if (!v.is.string(key)) {
         throw(new TypeError('key must be a string'));
       }
-      if (!ld.isFunction(callback)) {
+      if (!v.is.func(callback)) {
         throw(new TypeError('callback must be a function'));
       }
       db.remove(PREFIX + key, callback);
@@ -128,23 +129,24 @@ module.exports = (function() {
     * function returning error if error, null otherwise and the result.
     */
     all: function(callback) { 
-      if (!ld.isFunction(callback)) {
+      if (!v.is.func(callback)) {
         throw(new TypeError('callback must be a function'));
       }
+      var config = {};
       db.findKeys(PREFIX + '*', null, function (err, res) {
         if (err) { return callback(err); }
-        var config = {};
-        var done = ld.after(ld.size(res), callback);
-        ld.forEach(res, function (key) {
-          db.get(key, function (err, res) {
-            if (err) {
-              done(err);
-            } else {
-              key = key.replace(PREFIX, '');
-              config[key] = res;
-              done(null, config);
-            }
-          });
+        var tasks = v.reduce(res, function (memo, key) {
+          memo.push(v.bind(db, db.get, key));
+          return memo;
+        }, []);
+        v.parallel(tasks, function () {
+          var values = v.toArray(arguments);
+          values.shift();
+          var settings = v.reduce(values, function (settings, val, idx) {
+            settings[res[idx].replace(PREFIX, '')] = val;
+            return settings;
+          }, {});
+          callback(null, settings);
         });
       });
     }

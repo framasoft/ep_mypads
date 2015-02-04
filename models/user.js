@@ -25,7 +25,7 @@ module.exports = (function () {
   'use strict';
 
   // Dependencies
-  var ld = require('lodash');
+  var v = require('valentine');
   var db = require('../db.js');
   var conf = require('../configuration.js');
 
@@ -60,19 +60,21 @@ module.exports = (function () {
   */
 
   user.add = function(params, callback) {
-    if (ld.isUndefined(params)) {
+    if (v.is.undef(params)) {
       throw(new TypeError('parameters are mandatory for user creation'));
     }
     var isFullString = function (s) {
-      return (ld.isString(s) && !ld.isEmpty(s));
-    }
+      return (v.is.string(s) && !v.is.empty(s));
+    };
     if (!(isFullString(params.login) && isFullString(params.password))) {
       throw(new TypeError('login and password must be strings'));
     }
-    if (!ld.isFunction(callback)) {
+    if (!v.is.func(callback)) {
       throw(new TypeError('callback must be a function'));
     }
     var pass = params.password;
+    var passwordMin;
+    var passwordMax;
     var checkPass = function (callback) {
       if (pass.length < passwordMin || pass.length > passwordMax) {
       return callback(new TypeError('password length must be between ' +
@@ -80,8 +82,6 @@ module.exports = (function () {
       }
       callback();
     };
-    var passwordMin;
-    var passwordMax;
     db.get(conf.PREFIX + 'passwordMin', function (err, res) {
       if (err) { return callback(err); }
       passwordMin = res;
@@ -99,7 +99,7 @@ module.exports = (function () {
   *  User reading
   */
 
-  user.get = ld.noop;
+  user.get = function () {};
 
   /**
   *  The modification of an user can be done for every field.
@@ -111,7 +111,7 @@ module.exports = (function () {
   * User removal
   */
 
-  user.remove = ld.noop;
+  user.remove = function () {};
 
   /**
   *  ## Helpers

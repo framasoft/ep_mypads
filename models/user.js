@@ -52,11 +52,14 @@ module.exports = (function () {
   *   - organization string
   *
   * - a classic `callback` function returning error if error, null otherwise
-  *   and the user object.
+  *   and the user object;
+  * - a special `edit` boolean, defaults to *false* for reusing the function for
+  *   add, set (edit).
   *
   */
 
-  user.add = function(params, callback) {
+  user.add = function(params, callback, edit) {
+    edit = edit || false;
     if (ld.isUndefined(params)) {
       throw(new TypeError('parameters are mandatory for user creation'));
     }
@@ -70,18 +73,25 @@ module.exports = (function () {
       throw(new TypeError('callback must be a function'));
     }
     user.fn.getPasswordConf(function (err, results) {
+      if (err) { return callback(err); }
       var _params = ld.assign(results, { password: params.password });
       user.fn.checkPassword(_params, function (err) {
         if (err) { return callback(err); }
         var u = user.fn.assignUserProps(params);
         var ukey = user.PREFIX + u.login;
-        user.fn.checkUserExistence(ukey, function (err) {
-          if (err) { return callback(err); }
+        var _final = function () {
           storage.db.set(ukey, u, function (err) {
             if (err) { return callback(err); }
             return callback(null, u);
           });
-        });
+        };
+        if (edit) {
+          _final();
+        } else {
+          user.fn.checkUserExistence(ukey, function (err) {
+            if (err) { return callback(err); } else { _final(); }
+          });
+        }
       });
     });
   };
@@ -94,9 +104,11 @@ module.exports = (function () {
 
   /**
   *  The modification of an user can be done for every field.
+  *  In fact `user.add| with special attribute add to false.
+  *  Please refer to `user.add` for documentation.
   */
 
-  user.set = function(params, callback) {};
+  user.set = ld.partialRight(user.add, true);
 
   /**
   * User removal
@@ -144,8 +156,8 @@ module.exports = (function () {
     var min = params[conf.PREFIX + 'passwordMin'];
     var max = params[conf.PREFIX + 'passwordMax'];
     if (pass.length < min || pass.length > max) {
-      callback(new TypeError('password length must be between ' + min +
-        ' and ' + min + ' characters'));
+      return callback(new TypeError('password length must be between ' + min +
+        ' and ' + max + ' characters'));
     } else {
       callback(null);
     }

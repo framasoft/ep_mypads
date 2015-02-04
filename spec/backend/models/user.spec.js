@@ -70,6 +70,84 @@
           });
         }
       );
+
+      it('should deny usage of an existing login', function (done) {
+        user.add({ login: 'parker', password: 'lovesKubiak' },
+          function (err, u) {
+            expect(ld.isError(err)).toBeTruthy();
+            done();
+          }
+        );
+      });
+    });
+
+    describe('edition', function () {
+      beforeAll(function (done) {
+        conf.init(done);
+      });
+
+      it('should return a TypeError and a message if either login or password' +
+        ' aren\'t given; nor callback function', function () {
+        expect(user.set).toThrow();
+        expect(ld.partial(user.set, { another: 'object' })).toThrow();
+        expect(ld.partial(user.set, { login: 'Johnny' })).toThrow();
+        expect(ld.partial(user.set, { password: 'secret' })).toThrow();
+        expect(ld.partial(user.set, { login: 'john', password: 'secret' }))
+          .toThrow();
+      });
+
+      it('should return an Error to the callback if password size is not' +
+        ' appropriate', function (done) {
+        user.set({ login: 'bob', password: '1'}, function (err, res) {
+          expect(ld.isError(err)).toBeTruthy();
+          done();
+        });
+      });
+
+      it('should accept any creation if login & password are fixed',
+        function (done) {
+          user.set({
+            login: 'mikey',
+            password: 'principalMusso',
+            email: 'mik@randall.com'
+          }, function (err, u) {
+            expect(err).toBeNull();
+            expect(u.login).toBe('mikey');
+            expect(u.password).toBeDefined();
+            expect(u.email).toBe('mik@randall.com');
+            expect(ld.isString(u.firstname)).toBeTruthy();
+            expect(ld.isEmpty(u.firstname)).toBeTruthy();
+            done();
+          });
+        }
+      );
+
+      it('should allow setting of an existing user', function (done) {
+        user.set({
+          login: 'mikey',
+          password: 'principalMusso',
+          firstname: 'Michael',
+          lastname: 'Randall'
+        },
+          function (err, u) {
+            expect(err).toBeNull();
+            expect(u.login).toBe('mikey');
+            expect(ld.isEmpty(u.email)).toBeTruthy();
+            expect(u.firstname).toBe('Michael');
+            expect(u.lastname).toBe('Randall');
+            done();
+          }
+        );
+      });
+
+      it('is an alias to add with last argument to true', function (done) {
+        user.add({ login: 'mikey', password: 'principalMusso' },
+          function (err, u) {
+            expect(err).toBeNull();
+            expect(u.login).toBe('mikey');
+            done();
+        }, true);
+      });
     });
   });
 

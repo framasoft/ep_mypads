@@ -40,7 +40,7 @@
       it('will call the callback, with an error or null when succeeded',
         function (done) {
           conf.init(function (err) {
-            expect(err).toBeUndefined();
+            expect(err).toBeNull();
             conf.get('passwordMax', function (err, res) {
               expect(res).toBe(30);
               done();

@@ -27,6 +27,9 @@
 
 module.exports = (function () {
   'use strict';
+  // Dependencies
+  var ld = require('lodash');
+
   var storage = {};
   try {
     // Normal case : when installed as a plugin
@@ -49,7 +52,7 @@ module.exports = (function () {
   storage.fns = {};
 
   /**
-  * `getKeys` is a function, taking :
+  * `getKeys` is a function for multiple asynchronous gets, taking :
   s
   * - a `keys` array, wich contains a list a keys to retrieve
   * - a `callback` function, called if error or when finished with null and the
@@ -70,6 +73,27 @@ module.exports = (function () {
         get(keys.pop()); 
       } else {
         return callback(null, results);
+      }
+    };
+    done();
+  };
+
+  /**
+  * `setKeys` is a function for multiple asynchronous sets, taking :
+  s
+  * - a `kv` object, wich contains a list a keys and values to set
+  * - a `callback` function, called if error or when finished with null
+  */
+  storage.fns.setKeys = function (kv, callback) {
+    var pairs = ld.pairs(kv);
+    var set = function (k, v) { storage.db.set(k, v, done); };
+    var done = function (err) {
+      if (err) { return callback(err); }
+      if (pairs.length) {
+        var pair = pairs.pop();
+        set(pair[0], pair[1]);
+      } else {
+        return callback(null);
       }
     };
     done();

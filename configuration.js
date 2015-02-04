@@ -30,7 +30,8 @@ module.exports = (function() {
 
   // Dependencies
   var ld = require('lodash');
-  var db = require('./storage.js').db;
+  var storage = require('./storage.js');
+  var db = storage.db;
 
   /**
   * The closure contains a private `defaults` field, holding defaults settings.
@@ -60,10 +61,8 @@ module.exports = (function() {
         throw(new TypeError('callback must be a function'));
       }
       // Would like to use doBulk but not supported for all *ueberDB* backends
-      var done = ld.after(ld.size(defaults), callback);
-      ld.forIn(defaults, function (value, key) {
-        db.set(PREFIX + key, value, done);
-      });
+      storage.fns.setKeys(ld.transform(defaults, function (memo, val, key) {
+        memo[PREFIX + key] = val; }), callback);
     },
     /** 
     * `get` is an asynchronous function taking :
@@ -131,22 +130,15 @@ module.exports = (function() {
       if (!ld.isFunction(callback)) {
         throw(new TypeError('callback must be a function'));
       }
-      var config = {};
-      db.findKeys(PREFIX + '*', null, function (err, res) {
+      db.findKeys(PREFIX + '*', null, function (err, keys) {
         if (err) { return callback(err); }
-
-        var config = {};
-        var done = ld.after(ld.size(res), callback);
-        ld.forEach(res, function (key) {
-          db.get(key, function (err, res) {
-            if (err) {
-              done(err);
-            } else {
-              key = key.replace(PREFIX, '');
-              config[key] = res;
-              done(null, config);
-            }
-          });
+        storage.fns.getKeys(keys, function (err, results) {
+          if (results) {
+            results = ld.transform(results, function (memo, val, key) {
+              memo[key.replace(PREFIX, '')] = val;
+            });
+          }
+          callback(arguments[0], results);
         });
       });
     }

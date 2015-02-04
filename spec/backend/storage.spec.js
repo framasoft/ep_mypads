@@ -50,8 +50,8 @@
 
         it('should return an undefined value for non existent keys',
           function (done) {
-            storage.fns.getKeys(['key1', 'inexistent'], function (err, results) {
-              expect(results.inexistent).toBeUndefined();
+            storage.fns.getKeys(['key1', 'inexistent'], function (err, res) {
+              expect(res.inexistent).toBeUndefined();
               done();
             });
           }
@@ -70,6 +70,31 @@
             });
           });
         });
+      });
+
+      describe('setKeys', function () {
+
+        beforeAll(function (done) {
+          var db = storage.db;
+          db.set('existent', [1, 2, 3], function (err) {
+            done();
+          });
+        });
+
+        it('should put the keys and their values into the database',
+          function (done) {
+            var kv = { 'JS': 'JavaScript', 'PL': 'Perl', 'existent': [2, 4] };
+            storage.fns.setKeys(kv, function (err) {
+              storage.fns.getKeys(ld.keys(kv), function (err, results) {
+                expect(results.JS).toBe('JavaScript');
+                expect(results.PL).toBe('Perl');
+                expect(ld.isArray(results.existent)).toBeTruthy();
+                expect(results.existent[1]).toBe(4);
+                done();
+              });
+            });
+          }
+        );
       });
     });
   });

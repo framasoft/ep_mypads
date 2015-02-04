@@ -115,7 +115,11 @@ module.exports = (function () {
       throw(new TypeError('callback must be a function'));
     }
     var key = user.PREFIX + login;
-    storage.db.get(key, callback);
+    storage.db.get(key, function (err, u) {
+      if (err) { return callback(err); }
+      if (ld.isUndefined(u)) { return callback(new Error('user is not found')); }
+      return callback(null, u);
+    });
   };
 
   /**
@@ -128,9 +132,27 @@ module.exports = (function () {
 
   /**
   * User removal
+  *
+  *  This function takes :
+  *
+  *  - a mandatory login, the unique identifier which will constructs the key
+  *  - a mandatory callback function, that returns an error if there is a
+  *  problem or if the login is not found and null plus the user object in the
+  *  other case.
   */
 
-  user.del = ld.noop;
+  user.del = function (login, callback) {
+    if (!ld.isFunction(callback)) {
+      throw(new TypeError('callback must be a function'));
+    }
+    user.get(login, function (err) {
+      if (err) { return callback(err); }
+      storage.db.remove(user.PREFIX + login, function (err) {
+        if (err) { return callback(err); }
+        callback(null);
+      });
+    });
+  };
 
   /**
   *  ## Internal Functions

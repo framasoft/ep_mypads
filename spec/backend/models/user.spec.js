@@ -175,7 +175,7 @@
 
     it('should return an Error if the user is not found', function (done) {
       user.get('inexistent', function (err, u) {
-        expect(ld.isEmpty(err)).toBeTruthy();
+        expect(ld.isError(err)).toBeTruthy();
         done();
       });
     });
@@ -189,6 +189,46 @@
         expect(u.lastname).toBe('Lewis');
         expect(ld.isString(u.email)).toBeTruthy();
         done();
+      });
+    });
+  });
+
+  describe('user del', function () {
+    beforeAll(function (done) {
+      specCommon._reInitDatabase(function () {
+        user.add({
+          login: 'parker',
+          password: 'lovesKubiak',
+          firstname: 'Parker',
+          lastname: 'Lewis'
+        }, done);
+      });
+    });
+    afterAll(specCommon._reInitDatabase);
+
+    it('should throw errors if arguments are not provided as expected',
+      function () {
+        expect(user.del).toThrow();
+        expect(ld.partial(user.del, 123)).toThrow();
+        expect(ld.partial(user.del, 'key')).toThrow();
+        expect(ld.partial(user.del, 'key', 'notAFunc')).toThrow();
+      }
+    );
+
+    it('should return an Error if the user is not found', function (done) {
+      user.del('inexistent', function (err, u) {
+        expect(ld.isError(err)).toBeTruthy();
+        done();
+      });
+    });
+
+    it('should delete the user otherwise', function (done) {
+      user.del('parker', function (err, u) {
+        expect(err).toBeNull();
+        user.get('parker', function (err, u) {
+          expect(ld.isError(err)).toBeTruthy();
+          done();
+        });
       });
     });
   });

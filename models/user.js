@@ -93,7 +93,7 @@ module.exports = (function () {
   *  User reading
   */
 
-  user.get = ld.noop
+  user.get = ld.noop;
 
   /**
   *  The modification of an user can be done for every field.
@@ -105,7 +105,7 @@ module.exports = (function () {
   * User removal
   */
 
-  user.remove = ld.noop
+  user.remove = ld.noop;
 
   /**
   *  ## Helpers
@@ -157,8 +157,8 @@ module.exports = (function () {
     var min = params[conf.PREFIX + 'passwordMin'];
     var max = params[conf.PREFIX + 'passwordMax'];
     if (pass.length < min || pass.length > max) {
-      callback(new TypeError('password length must be between ' + min + ' and '
-        + min + ' characters'));
+      callback(new TypeError('password length must be between ' + min +
+        ' and ' + min + ' characters'));
     }
     callback(null);
   };
@@ -168,7 +168,7 @@ module.exports = (function () {
   *  in database and verification.
   */
 
-  user.helpers.hashPassword = function() {};
+  user.helpers._hashPassword = function() {};
 
   return user;
 

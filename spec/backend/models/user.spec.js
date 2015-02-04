@@ -21,12 +21,11 @@
   'use strict';
   var ld = require('lodash');
   var user = require('../../../models/user.js');
+  var db = require('../../../db.js');
+  var conf = require('../../../configuration.js');
 
   describe('user', function () {
-    beforeAll(function (done) {
-      var init = require('../../../configuration.js').init;
-      init(done);
-    });
+    beforeAll(function (done) { conf.init(done); });
 
     describe('creation', function () {
 
@@ -38,6 +37,7 @@
         expect(ld.partial(user.add, { password: 'secret' })).toThrow();
         expect(ld.partial(user.add, { login: 'john', password: 'secret' })).toThrow();
       });
+
       it('should return an Error to the callback if password size is not' +
         ' appropriate', function (done) {
         user.add({ login: 'bob', password: '1'}, function (err, res) {
@@ -45,6 +45,7 @@
           done();
         });
       });
+
       it('should accept any creation if login & password are fixed', function () {
         var u;
         expect(function () {
@@ -56,5 +57,61 @@
     });
   });
 
-  describe('helpers', function() {});
+  describe('user helpers', function() {
+
+    describe('_getKeys', function () {
+
+      beforeAll(function (done) {
+        var db = require('../../../db.js');
+        db.set('key1', 'value1', function (err) {
+          db.set('key2', 'value2', function (err) {
+            done();
+          });
+        });
+      });
+
+      it('should returns the result for one key or more', function (done) {
+        user.helpers._getKeys({ keys: ['key1'] }, function (err, params) {
+          expect(err).toBeNull();
+          expect(params.key1).toBe('value1');
+          user.helpers._getKeys({ keys: ['key2', 'key1'] },
+            function (err, params) {
+              expect(err).toBeNull();
+              expect(ld.isArray(params.keys)).toBeTruthy();
+              expect(params.keys.length).toBe(0);
+              expect(params.key1).toBe('value1');
+              expect(params.key2).toBe('value2');
+              done();
+          });
+        });
+      });
+    });
+
+    describe('_checkPassword', function () {
+      var params = {};
+
+      beforeAll(function () {
+        params[conf.PREFIX + 'passwordMin'] = 4;
+        params[conf.PREFIX + 'passwordMax'] = 8;
+      });
+
+      it('should return an Error to the callback if password size is not' +
+        ' appropriate', function (done) {
+          params.password = 'a';
+          user.helpers._checkPassword(params, function (err) {
+            expect(ld.isError(err)).toBeTruthy();
+            done();
+          });
+      });
+
+      it('should return null to the callback if password size is good',
+        function (done) {
+          params.password = '123456';
+          user.helpers._checkPassword(params, function (err) {
+            expect(err).toBeNull();
+            done();
+          });
+      });
+    });
+  });
 }).call(this);

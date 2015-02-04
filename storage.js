@@ -46,10 +46,10 @@ module.exports = (function () {
   }
 
   /**
-  * ## Internal functions `fns`
+  * ## Internal functions `fn`
   */
 
-  storage.fns = {};
+  storage.fn = {};
 
   /**
   * `getKeys` is a function for multiple asynchronous gets, taking :
@@ -59,7 +59,7 @@ module.exports = (function () {
   *   `results` object composed of keys and values
   */
 
-  storage.fns.getKeys = function (keys, callback) {
+  storage.fn.getKeys = function (keys, callback) {
     var results = {};
     var get = function (k) {
       storage.db.get(k, function (err, res) {
@@ -84,7 +84,7 @@ module.exports = (function () {
   * - a `kv` object, wich contains a list a keys and values to set
   * - a `callback` function, called if error or when finished with null
   */
-  storage.fns.setKeys = function (kv, callback) {
+  storage.fn.setKeys = function (kv, callback) {
     var pairs = ld.pairs(kv);
     var set = function (k, v) { storage.db.set(k, v, done); };
     var done = function (err) {

@@ -74,6 +74,22 @@
   });
 
   describe('user functions', function() {
+    beforeAll(specCommon._reInitDatabase);
+    afterAll(specCommon._reInitDatabase);
+
+    describe('getPasswordConf', function () {
+
+      it('should retrieve min and max length for password', function (done) {
+        user.fn.getPasswordConf(function (err, results) {
+          expect(err).toBeNull();
+          var rkeys = ld.keys(results);
+          expect(ld.contains(rkeys, conf.PREFIX + 'passwordMin')).toBeTruthy();
+          expect(ld.contains(rkeys, conf.PREFIX + 'passwordMax')).toBeTruthy();
+          done();
+        });
+      });
+
+    });
 
     describe('checkPassword', function () {
       var params = {};
@@ -86,7 +102,7 @@
       it('should return an Error to the callback if password size is not' +
         ' appropriate', function (done) {
           params.password = 'a';
-          user.fns.checkPassword(params, function (err) {
+          user.fn.checkPassword(params, function (err) {
             expect(ld.isError(err)).toBeTruthy();
             done();
           });
@@ -95,7 +111,7 @@
       it('should return null to the callback if password size is good',
         function (done) {
           params.password = '123456';
-          user.fns.checkPassword(params, function (err) {
+          user.fn.checkPassword(params, function (err) {
             expect(err).toBeNull();
             done();
           });
@@ -109,14 +125,14 @@
       afterAll(function (done) { db.remove(ukey, done); });
 
       it('should return an Error if the user exists', function (done) {
-        user.fns.checkUserExistence(ukey, function (err) {
+        user.fn.checkUserExistence(ukey, function (err) {
           expect(ld.isError(err)).toBeTruthy();
           done();
         });
       });
 
       it('should return null if the user don\'t exist', function (done) {
-        user.fns.checkUserExistence(user.PREFIX + 'bob', function (err) {
+        user.fn.checkUserExistence(user.PREFIX + 'bob', function (err) {
           expect(err).toBeNull();
           done();
         });
@@ -132,19 +148,45 @@
             password: 'secret',
             organization: 'etherInc',
             firstname: true,
-            irrelevant: 123
+            irrelevant: 123,
+            email: 'brian@sample.net'
           };
-          var u = user.fns.assignUserProps(params);
+          var u = user.fn.assignUserProps(params);
           expect(u.login).toBe('brian');
           expect(u.password).toBe('secret');
           expect(u.organization).toBe('etherInc');
+          expect(u.email).toBe('brian@sample.net');
           var uf = u.firstname;
           var ul = u.lastname;
           expect(ld.isString(uf) && ld.isEmpty(uf)).toBeTruthy();
           expect(ld.isString(ul) && ld.isEmpty(ul)).toBeTruthy();
           expect(u.irrelevant).toBeUndefined();
+          params.email = 'notenamail@@@@';
+          u = user.fn.assignUserProps(params);
+          var ue = u.email;
+          expect(ld.isString(ue) && ld.isEmpty(ue)).toBeTruthy();
         }
       );
     });
+  });
+
+  describe('lodash mixins', function () {
+
+    describe('isEmail', function () {
+
+      it ('should returns if the value is an email or not', function () {
+        expect(ld.isEmail(1)).toBeFalsy();
+        expect(ld.isEmail([])).toBeFalsy();
+        expect(ld.isEmail({})).toBeFalsy();
+        expect(ld.isEmail('aaa')).toBeFalsy();
+        expect(ld.isEmail('aaa@')).toBeFalsy();
+        expect(ld.isEmail('aaa@bbb')).toBeFalsy();
+        expect(ld.isEmail('aaabbb.com')).toBeFalsy();
+        expect(ld.isEmail('@example.com')).toBeFalsy();
+        expect(ld.isEmail('john@example.com')).toBeTruthy();
+        expect(ld.isEmail('j@example.newdd')).toBeTruthy();
+      });
+    });
+
   });
 }).call(this);

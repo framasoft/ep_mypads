@@ -45,7 +45,8 @@ module.exports = (function () {
   *
   * - a parameters object, with
   *   - required login string
-  *   - required password string, between config.passwordMin and config.passwordMax
+  *   - required password string, between conf.passwordMin and conf.passwordMax
+  *   - optional email string, used for communicartion
   *   - firstname string
   *   - lastname string
   *   - organization string
@@ -68,38 +69,21 @@ module.exports = (function () {
     if (!ld.isFunction(callback)) {
       throw(new TypeError('callback must be a function'));
     }
-    var _checkPassword = function (cb) {
-      var _keys = [conf.PREFIX + 'passwordMin', conf.PREFIX + 'passwordMax'];
-      storage.fns.getKeys(_keys, function (err, results) {
+    user.fn.getPasswordConf(function (err, results) {
+      var _params = ld.assign(results, { password: params.password });
+      user.fn.checkPassword(_params, function (err) {
         if (err) { return callback(err); }
-        var _params = ld.assign(results, { password: params.password });
-        user.fns.checkPassword(_params, function (err) {
-          if (err) {
-            return callback(err);
-          } else {
-            cb();
-          }
+        var u = user.fn.assignUserProps(params);
+        var ukey = user.PREFIX + u.login;
+        user.fn.checkUserExistence(ukey, function (err) {
+          if (err) { return callback(err); }
+          storage.db.set(ukey, u, function (err) {
+            if (err) { return callback(err); }
+            return callback(null, u);
+          });
         });
       });
-    };
-    var _add = function () {
-      var u = user.fns.assignUserProps(params);
-      var ukey = user.PREFIX + u.login;
-      user.fns.checkUserExistence(ukey, function (err) {
-        if (err) {
-          return callback(err);
-        } else {
-          storage.db.set(ukey, u, function (err) {
-            if (err) {
-              return callback(err);
-            } else {
-              return callback(null, u);
-            }
-          });
-        }
-      });
-    };
-    _checkPassword(_add);
+    });
   };
 
   /**
@@ -124,7 +108,21 @@ module.exports = (function () {
   *  ## Internal Functions
   */
 
-  user.fns = {};
+  user.fn = {};
+
+  /**
+  * `getPasswordConf` is an asynchronous function that get from database values
+  * for minimum and maximum passwords. It takes a `callback` function as unique
+  * argument called with error or null and results.
+  * Internally, it uses `storage.getKeys`.
+  */
+  user.fn.getPasswordConf = function (callback) {
+    var _keys = [conf.PREFIX + 'passwordMin', conf.PREFIX + 'passwordMax'];
+    storage.fn.getKeys(_keys, function (err, results) {
+      if (err) { return callback(err); }
+      return callback(null, results);
+    });
+  };
 
   /**
   *  `checkPassword` is a private helper aiming at respecting the minimum
@@ -141,7 +139,7 @@ module.exports = (function () {
   *  FIXME: not an asynchronous fn, callback not relevant
   */
 
-  user.fns.checkPassword = function (params, callback) {
+  user.fn.checkPassword = function (params, callback) {
     var pass = params.password;
     var min = params[conf.PREFIX + 'passwordMin'];
     var max = params[conf.PREFIX + 'passwordMax'];
@@ -158,19 +156,20 @@ module.exports = (function () {
   *  storing in database and verification.
   */
 
-  user.fns.hashPassword = function() {};
+  user.fn.hashPassword = function() {};
 
   /**
   * `assignUserProps` takes params object and assign defaults if needed.
   * It returns the user object.
   */
 
-  user.fns.assignUserProps = function (params) {
+  user.fn.assignUserProps = function (params) {
     var u = ld.reduce(['firstname', 'lastname', 'organization'],
       function (res, v) {
         res[v] = ld.isString(params[v]) ? params[v] : '';
         return res;
     }, {});
+    u.email = (ld.isEmail(params.email)) ? params.email : '';
     u = ld.assign({ login: params.login, password: params.password }, u);
     return u;
   };
@@ -180,7 +179,7 @@ module.exports = (function () {
   * - the full `key` composed by user.PREFIX and user login
   * - a callback function, returnning an error if the user exists, null if not
   */
-  user.fns.checkUserExistence = function (ukey, callback) {
+  user.fn.checkUserExistence = function (ukey, callback) {
     storage.db.get(ukey, function(err, res) {
       if (err) { return callback(err); }
       if (res) {
@@ -190,6 +189,19 @@ module.exports = (function () {
       return callback(err ? err : null);
     });
   };
+
+  /**
+  * ## lodash mixins
+  *
+  * Here are lodash extensions for MyPads.
+  *
+  * `isEmail` checks if given string is an email or not. It takes a value and
+  * returns a boolean.
+  */
+  ld.mixin({ isEmail: function (val) {
+    var rg = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+    return (ld.isString(val) && rg.test(val)); 
+  }});
 
   return user;
 

@@ -35,7 +35,7 @@
     beforeAll(specCommon._reInitDatabase);
     afterAll(specCommon._reInitDatabase);
 
-    describe('Private functions fns', function () {
+    describe('Private functions fn', function () {
 
       describe('getKeys', function () {
 
@@ -50,7 +50,7 @@
 
         it('should return an undefined value for non existent keys',
           function (done) {
-            storage.fns.getKeys(['key1', 'inexistent'], function (err, res) {
+            storage.fn.getKeys(['key1', 'inexistent'], function (err, res) {
               expect(res.inexistent).toBeUndefined();
               done();
             });
@@ -58,10 +58,10 @@
         );
 
         it('should return the result for one key or more', function (done) {
-          storage.fns.getKeys(['key1'], function (err, results) {
+          storage.fn.getKeys(['key1'], function (err, results) {
             expect(err).toBeNull();
             expect(results.key1).toBe('value1');
-            storage.fns.getKeys(['key2', 'key1'], function (err, results) {
+            storage.fn.getKeys(['key2', 'key1'], function (err, results) {
               expect(err).toBeNull();
               expect(ld.isObject(results)).toBeTruthy();
               expect(results.key1).toBe('value1');
@@ -84,8 +84,8 @@
         it('should put the keys and their values into the database',
           function (done) {
             var kv = { 'JS': 'JavaScript', 'PL': 'Perl', 'existent': [2, 4] };
-            storage.fns.setKeys(kv, function (err) {
-              storage.fns.getKeys(ld.keys(kv), function (err, results) {
+            storage.fn.setKeys(kv, function (err) {
+              storage.fn.getKeys(ld.keys(kv), function (err, results) {
                 expect(results.JS).toBe('JavaScript');
                 expect(results.PL).toBe('Perl');
                 expect(ld.isArray(results.existent)).toBeTruthy();

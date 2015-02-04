@@ -61,7 +61,7 @@ module.exports = (function() {
         throw(new TypeError('callback must be a function'));
       }
       // Would like to use doBulk but not supported for all *ueberDB* backends
-      storage.fns.setKeys(ld.transform(defaults, function (memo, val, key) {
+      storage.fn.setKeys(ld.transform(defaults, function (memo, val, key) {
         memo[PREFIX + key] = val; }), callback);
     },
     /**
@@ -132,7 +132,7 @@ module.exports = (function() {
       }
       db.findKeys(PREFIX + '*', null, function (err, keys) {
         if (err) { return callback(err); }
-        storage.fns.getKeys(keys, function (err, results) {
+        storage.fn.getKeys(keys, function (err, results) {
           if (results) {
             results = ld.transform(results, function (memo, val, key) {
               memo[key.replace(PREFIX, '')] = val;

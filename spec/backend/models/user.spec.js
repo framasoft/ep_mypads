@@ -151,6 +151,48 @@
     });
   });
 
+  describe('user get', function () {
+    beforeAll(function (done) {
+      specCommon._reInitDatabase(function () {
+        user.add({
+          login: 'parker',
+          password: 'lovesKubiak',
+          firstname: 'Parker',
+          lastname: 'Lewis'
+        }, done);
+      });
+    });
+    afterAll(specCommon._reInitDatabase);
+
+    it('should throw errors if arguments are not provided as expected',
+      function () {
+        expect(user.get).toThrow();
+        expect(ld.partial(user.get, 123)).toThrow();
+        expect(ld.partial(user.get, 'key')).toThrow();
+        expect(ld.partial(user.get, 'key', 'notAFunc')).toThrow();
+      }
+    );
+
+    it('should return an Error if the user is not found', function (done) {
+      user.get('inexistent', function (err, u) {
+        expect(ld.isEmpty(err)).toBeTruthy();
+        done();
+      });
+    });
+
+    it('should return the user otherwise', function (done) {
+      user.get('parker', function (err, u) {
+        expect(err).toBeNull();
+        expect(u.login).toBe('parker');
+        expect(u.password).toBeDefined();
+        expect(u.firstname).toBe('Parker');
+        expect(u.lastname).toBe('Lewis');
+        expect(ld.isString(u.email)).toBeTruthy();
+        done();
+      });
+    });
+  });
+
   describe('user functions', function() {
     beforeAll(specCommon._reInitDatabase);
     afterAll(specCommon._reInitDatabase);

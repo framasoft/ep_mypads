@@ -98,9 +98,25 @@ module.exports = (function () {
 
   /**
   *  User reading
+  *
+  *  This function takes :
+  *
+  *  - a mandatory login, the unique identifier which will constructs the key
+  *  - a mandatory callback function, that returns an error if there is a
+  *  problem or if the login is not found and null plus the user object in the
+  *  other case.
   */
 
-  user.get = ld.noop;
+  user.get = function (login, callback) {
+    if (!ld.isString(login)) {
+      throw(new TypeError('login must be a string'));
+    }
+    if (!ld.isFunction(callback)) {
+      throw(new TypeError('callback must be a function'));
+    }
+    var key = user.PREFIX + login;
+    storage.db.get(key, callback);
+  };
 
   /**
   *  The modification of an user can be done for every field.

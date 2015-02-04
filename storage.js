@@ -27,10 +27,10 @@
 
 module.exports = (function () {
   'use strict';
-  var db;
+  var storage = {};
   try {
     // Normal case : when installed as a plugin
-    db = require('ep_etherpad-lite/node/db/DB').db;
+    storage.db = require('ep_etherpad-lite/node/db/DB').db;
   }
   catch (e) {
     /**
@@ -38,9 +38,42 @@ module.exports = (function () {
     * coherent default configuration with eptherpad-lite one.
     */
     var ueberDB = require('ueberDB');
-    db = new ueberDB.database('dirty', { filename: './test.db' });
-    db.init(function (err) {});
+    storage.db = new ueberDB.database('dirty', { filename: './test.db' });
+    storage.db.init(function (err) {});
   }
 
-  return db;
+  /**
+  * ## Internal functions `fns`
+  */
+
+  storage.fns = {};
+
+  /**
+  * `getKeys` is a function, taking :
+  s
+  * - a `keys` array, wich contains a list a keys to retrieve
+  * - a `callback` function, called if error or when finished with null and the
+  *   `results` object composed of keys and values
+  */
+
+  storage.fns.getKeys = function (keys, callback) {
+    var results = {};
+    var get = function (k) {
+      storage.db.get(k, function (err, res) {
+        if (err) { return callback(err); }
+        results[k] = res;
+        done();
+      });
+    };
+    var done = function () {
+      if (keys.length) {
+        get(keys.pop()); 
+      } else {
+        return callback(null, results);
+      }
+    };
+    done();
+  };
+
+  return storage;
 }).call(this);

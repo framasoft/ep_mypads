@@ -26,7 +26,7 @@ module.exports = (function () {
 
   // Dependencies
   var ld = require('lodash');
-  var db = require('../db.js');
+  var storage = require('../storage.js');
   var conf = require('../configuration.js');
 
 /**
@@ -72,16 +72,11 @@ module.exports = (function () {
     if (!ld.isFunction(callback)) {
       throw(new TypeError('callback must be a function'));
     }
-    var _params = {
-      password: params.password,
-      keys: [
-        conf.PREFIX + 'passwordMin',
-        conf.PREFIX + 'passwordMax'
-      ]
-    };
-    user.helpers._getKeys(_params, function (err, params) {
+    var _keys = [conf.PREFIX + 'passwordMin', conf.PREFIX + 'passwordMax'];
+    storage.fns.getKeys(_keys, function (err, results) {
       if (err) { return callback(err); }
-      user.helpers._checkPassword(params, function (err) {
+      var _params = ld.assign(results, { password: params.password });
+      user.helpers._checkPassword(_params, function (err) {
         if (err) { return callback(err); }
       });
     });
@@ -105,38 +100,13 @@ module.exports = (function () {
   * User removal
   */
 
-  user.remove = ld.noop;
+  user.del = ld.noop;
 
   /**
   *  ## Helpers
   */
 
   user.helpers = {};
-
-  /**
-  * `getKeys` is a private function, taking :
-  *
-  * - a `params` JS object, wich serves to attach the result, which contains at
-  *   least a `keys` field, an array of keys aiming at retrieval from database
-  * - a `callback` function, called if error or when finished with null and the
-  *   `params` object
-  */
-
-  user.helpers._getKeys = function (params, callback) {
-    var _get = function () {
-      if (params.keys.length) {
-        var k = params.keys.pop();
-        db.get(k, function (err, res) {
-          if (err) { return callback(err); }
-          params[k] = res;
-          _get();
-        });
-      } else {
-        return callback(null, params);
-      }
-    };
-    _get();
-  };
 
   /**
   *  `checkPassword` is a private helper aiming at respecting the minimum
@@ -159,8 +129,9 @@ module.exports = (function () {
     if (pass.length < min || pass.length > max) {
       callback(new TypeError('password length must be between ' + min +
         ' and ' + min + ' characters'));
+    } else {
+      callback(null);
     }
-    callback(null);
   };
 
   /**

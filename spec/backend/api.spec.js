@@ -28,6 +28,7 @@
   * For standalone backend testing : mocking a fresh Express app and
   * initializate API routes.
   */
+  /*
   var express = require('express');
   var app = express();
   app.use(express.bodyParser());
@@ -36,5 +37,6 @@
 
   // End of mocking
   server.close();
+  */
 
 }).call(this);

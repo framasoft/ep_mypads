@@ -20,14 +20,19 @@
 (function () {
   'use strict';
   var ld = require('lodash');
+  var specCommon = require('../common.js');
   var user = require('../../../models/user.js');
-  var db = require('../../../db.js');
+  var db = require('../../../storage.js').db;
   var conf = require('../../../configuration.js');
 
   describe('user', function () {
-    beforeAll(function (done) { conf.init(done); });
+    beforeAll(specCommon._reInitDatabase);
+    afterAll(specCommon._reInitDatabase);
 
     describe('creation', function () {
+      beforeAll(function (done) {
+        conf.init(done);
+      });
 
       it('should return a TypeError and a message if either login or password' +
         ' aren\'t given; nor callback function', function () {
@@ -58,34 +63,6 @@
   });
 
   describe('user helpers', function() {
-
-    describe('_getKeys', function () {
-
-      beforeAll(function (done) {
-        var db = require('../../../db.js');
-        db.set('key1', 'value1', function (err) {
-          db.set('key2', 'value2', function (err) {
-            done();
-          });
-        });
-      });
-
-      it('should returns the result for one key or more', function (done) {
-        user.helpers._getKeys({ keys: ['key1'] }, function (err, params) {
-          expect(err).toBeNull();
-          expect(params.key1).toBe('value1');
-          user.helpers._getKeys({ keys: ['key2', 'key1'] },
-            function (err, params) {
-              expect(err).toBeNull();
-              expect(ld.isArray(params.keys)).toBeTruthy();
-              expect(params.keys.length).toBe(0);
-              expect(params.key1).toBe('value1');
-              expect(params.key2).toBe('value2');
-              done();
-          });
-        });
-      });
-    });
 
     describe('_checkPassword', function () {
       var params = {};

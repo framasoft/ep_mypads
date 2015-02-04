@@ -30,7 +30,7 @@ module.exports = (function() {
 
   // Dependencies
   var ld = require('lodash');
-  var db = require('./db.js');
+  var db = require('./storage.js').db;
 
   /**
   * The closure contains a private `defaults` field, holding defaults settings.
@@ -108,12 +108,12 @@ module.exports = (function() {
       db.set(PREFIX + key, value, callback);
     },
     /**
-    * `remove` is an asynchronous function that removes a configuration option.
+    * `del` is an asynchronous function that removes a configuration option.
     * It takes two mandatory arguments :
     * - a `key` string,
     * - a `callback` function argument returning error if error
     */
-    remove: function (key, callback) {
+    del: function (key, callback) {
       if (!ld.isString(key)) {
         throw(new TypeError('key must be a string'));
       }

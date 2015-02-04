@@ -74,7 +74,7 @@ module.exports = (function () {
       app.put(route, _set);
       // Removal of configuration item with DELETE
       app.delete(route + ':key', function (req, res) {
-        conf.remove(req.params.key, function (err) {
+        conf.del(req.params.key, function (err) {
           if (err) { return res.send(400, { error: err }); }
           res.send({ success: true, key: req.params.key });
         });

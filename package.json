@@ -21,7 +21,7 @@
   },
   "license": "Apache 2",
   "dependencies": {
-    "valentine": "^2.1.3"
+    "lodash": "^3.1.0"
   },
   "devDependencies": {
     "docker": "^0.2.14",

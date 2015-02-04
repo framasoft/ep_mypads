@@ -20,7 +20,7 @@
 (function () {
   'use strict';
 
-  var v = require('valentine');
+  var ld = require('lodash');
   var request = require('request');
   var api = require('../../api.js');
 

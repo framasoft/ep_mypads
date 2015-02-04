@@ -19,7 +19,7 @@
 
 (function () {
   'use strict';
-  var v = require('valentine');
+  var ld = require('lodash');
   var user = require('../../../models/user.js');
 
   describe('user', function () {
@@ -33,15 +33,15 @@
       it('should return a TypeError and a message if either login or password' +
         ' aren\'t given; nor callback function', function () {
         expect(user.add).toThrow();
-        expect(v.bind(user, user.add, { another: 'object' })).toThrow();
-        expect(v.bind(user, user.add, { login: 'Johnny' })).toThrow();
-        expect(v.bind(user, user.add, { password: 'secret' })).toThrow();
-        expect(v.bind(user, user.add, { login: 'john', password: 'secret' })).toThrow();
+        expect(ld.partial(user.add, { another: 'object' })).toThrow();
+        expect(ld.partial(user.add, { login: 'Johnny' })).toThrow();
+        expect(ld.partial(user.add, { password: 'secret' })).toThrow();
+        expect(ld.partial(user.add, { login: 'john', password: 'secret' })).toThrow();
       });
       it('should return an Error to the callback if password size is not' +
         ' appropriate', function (done) {
         user.add({ login: 'bob', password: '1'}, function (err, res) {
-          expect(err instanceof Error).toBeTruthy();
+          expect(ld.isError(err)).toBeTruthy();
           done();
         });
       });

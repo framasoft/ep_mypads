@@ -25,7 +25,7 @@ module.exports = (function () {
   'use strict';
 
   // Dependencies
-  var v = require('valentine');
+  var ld = require('lodash');
   var db = require('../db.js');
   var conf = require('../configuration.js');
 
@@ -60,35 +60,29 @@ module.exports = (function () {
   */
 
   user.add = function(params, callback) {
-    if (v.is.undef(params)) {
+    if (ld.isUndefined(params)) {
       throw(new TypeError('parameters are mandatory for user creation'));
     }
     var isFullString = function (s) {
-      return (v.is.string(s) && !v.is.empty(s));
+      return (ld.isString(s) && !ld.isEmpty(s));
     };
     if (!(isFullString(params.login) && isFullString(params.password))) {
       throw(new TypeError('login and password must be strings'));
     }
-    if (!v.is.func(callback)) {
+    if (!ld.isFunction(callback)) {
       throw(new TypeError('callback must be a function'));
     }
-    var pass = params.password;
-    var passwordMin;
-    var passwordMax;
-    var checkPass = function (callback) {
-      if (pass.length < passwordMin || pass.length > passwordMax) {
-      return callback(new TypeError('password length must be between ' +
-        passwordMin + ' and ' + passwordMax + ' characters'));
-      }
-      callback();
+    var _params = {
+      password: params.password,
+      keys: [
+        conf.PREFIX + 'passwordMin',
+        conf.PREFIX + 'passwordMax'
+      ]
     };
-    db.get(conf.PREFIX + 'passwordMin', function (err, res) {
+    user.helpers._getKeys(_params, function (err, params) {
       if (err) { return callback(err); }
-      passwordMin = res;
-      db.get(conf.PREFIX + 'passwordMax', function (err, res) {
+      user.helpers._checkPassword(params, function (err) {
         if (err) { return callback(err); }
-        passwordMax = res;
-        checkPass(callback);
       });
     });
     // FIXME
@@ -99,7 +93,7 @@ module.exports = (function () {
   *  User reading
   */
 
-  user.get = function () {};
+  user.get = ld.noop
 
   /**
   *  The modification of an user can be done for every field.
@@ -111,7 +105,7 @@ module.exports = (function () {
   * User removal
   */
 
-  user.remove = function () {};
+  user.remove = ld.noop
 
   /**
   *  ## Helpers
@@ -120,15 +114,54 @@ module.exports = (function () {
   user.helpers = {};
 
   /**
-  *  `checkPassword` is a private helper whose the aims are :
-  *  
-  *  - respecting the minimum length fixed into MyPads configuration
-  *  - allowing only string.
-  *   
-  *  It returns an error message if the verification has failed.
+  * `getKeys` is a private function, taking :
+  *
+  * - a `params` JS object, wich serves to attach the result, which contains at
+  *   least a `keys` field, an array of keys aiming at retrieval from database
+  * - a `callback` function, called if error or when finished with null and the
+  *   `params` object
   */
 
-  user.helpers._checkPassword = function(password) {};
+  user.helpers._getKeys = function (params, callback) {
+    var _get = function () {
+      if (params.keys.length) {
+        var k = params.keys.pop();
+        db.get(k, function (err, res) {
+          if (err) { return callback(err); }
+          params[k] = res;
+          _get();
+        });
+      } else {
+        return callback(null, params);
+      }
+    };
+    _get();
+  };
+
+  /**
+  *  `checkPassword` is a private helper aiming at respecting the minimum
+  *  length fixed into MyPads configuration.
+  *
+  *  It takes a params argument, with fields :
+  *    
+  *    - `passwordMin` size
+  *    - `passwordMax` size
+  *    - `password` string
+  *
+  *  It calls the callback function argument, with an error message if the
+  *  verification has failed, null otherwise.
+  */
+
+  user.helpers._checkPassword = function (params, callback) {
+    var pass = params.password;
+    var min = params[conf.PREFIX + 'passwordMin'];
+    var max = params[conf.PREFIX + 'passwordMax'];
+    if (pass.length < min || pass.length > max) {
+      callback(new TypeError('password length must be between ' + min + ' and '
+        + min + ' characters'));
+    }
+    callback(null);
+  };
 
   /**
   *  `hashPassword` takes the password and returns a hashed password, for storing

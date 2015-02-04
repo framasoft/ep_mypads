@@ -25,7 +25,7 @@
 *  This module contains server-side hooks used by etherpad.
 *
 *  ## Hooks
-*/ 
+*/
 
 module.exports = (function () {
   'use strict';
@@ -53,5 +53,5 @@ module.exports = (function () {
     return callback();
   };
   return hooks;
- 
+
 }).call(this);

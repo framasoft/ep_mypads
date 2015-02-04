@@ -40,7 +40,8 @@
         expect(ld.partial(user.add, { another: 'object' })).toThrow();
         expect(ld.partial(user.add, { login: 'Johnny' })).toThrow();
         expect(ld.partial(user.add, { password: 'secret' })).toThrow();
-        expect(ld.partial(user.add, { login: 'john', password: 'secret' })).toThrow();
+        expect(ld.partial(user.add, { login: 'john', password: 'secret' }))
+          .toThrow();
       });
 
       it('should return an Error to the callback if password size is not' +
@@ -51,20 +52,30 @@
         });
       });
 
-      it('should accept any creation if login & password are fixed', function () {
-        var u;
-        expect(function () {
-          u = user.add({ login: 'parker', password: 'lovesKubiak' });
-        }).not.toThrow();
-        expect(u.login).toBe('parker');
-        expect(u.password).toBeDefined();
-      });
+      it('should accept any creation if login & password are fixed',
+        function (done) {
+          user.add({
+            login: 'parker',
+            password: 'lovesKubiak',
+            firstname: 'Parker',
+            lastname: 'Lewis'
+          }, function (err, u) {
+            expect(err).toBeNull();
+            expect(u.login).toBe('parker');
+            expect(u.password).toBeDefined();
+            expect(u.firstname).toBe('Parker');
+            expect(u.lastname).toBe('Lewis');
+            expect(ld.isString(u.organization)).toBeTruthy();
+            done();
+          });
+        }
+      );
     });
   });
 
-  describe('user helpers', function() {
+  describe('user functions', function() {
 
-    describe('_checkPassword', function () {
+    describe('checkPassword', function () {
       var params = {};
 
       beforeAll(function () {
@@ -75,7 +86,7 @@
       it('should return an Error to the callback if password size is not' +
         ' appropriate', function (done) {
           params.password = 'a';
-          user.helpers._checkPassword(params, function (err) {
+          user.fns.checkPassword(params, function (err) {
             expect(ld.isError(err)).toBeTruthy();
             done();
           });
@@ -84,11 +95,56 @@
       it('should return null to the callback if password size is good',
         function (done) {
           params.password = '123456';
-          user.helpers._checkPassword(params, function (err) {
+          user.fns.checkPassword(params, function (err) {
             expect(err).toBeNull();
             done();
           });
       });
+    });
+
+    describe('checkUserExistence', function () {
+      var ukey = user.PREFIX + 'john';
+
+      beforeAll(function (done) { db.set(ukey, 'exists', done); });
+      afterAll(function (done) { db.remove(ukey, done); });
+
+      it('should return an Error if the user exists', function (done) {
+        user.fns.checkUserExistence(ukey, function (err) {
+          expect(ld.isError(err)).toBeTruthy();
+          done();
+        });
+      });
+
+      it('should return null if the user don\'t exist', function (done) {
+        user.fns.checkUserExistence(user.PREFIX + 'bob', function (err) {
+          expect(err).toBeNull();
+          done();
+        });
+      });
+    });
+
+    describe('assignUserProps', function () {
+
+      it ('should respect given properties if strings and relevant',
+        function () {
+          var params = {
+            login: 'brian',
+            password: 'secret',
+            organization: 'etherInc',
+            firstname: true,
+            irrelevant: 123
+          };
+          var u = user.fns.assignUserProps(params);
+          expect(u.login).toBe('brian');
+          expect(u.password).toBe('secret');
+          expect(u.organization).toBe('etherInc');
+          var uf = u.firstname;
+          var ul = u.lastname;
+          expect(ld.isString(uf) && ld.isEmpty(uf)).toBeTruthy();
+          expect(ld.isString(ul) && ld.isEmpty(ul)).toBeTruthy();
+          expect(u.irrelevant).toBeUndefined();
+        }
+      );
     });
   });
 }).call(this);

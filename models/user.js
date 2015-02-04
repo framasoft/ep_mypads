@@ -32,31 +32,27 @@ module.exports = (function () {
 /**
 *  ## Description
 *  
-*  The `user` is the masterpiece of the MyPads plugin. A user is defined by :
-*  
-*  - required
-*    - login
-*    - password
-*
-*  - optional
-*    - firstname
-*    - lastname
-*    - organization.
+*  The `user` is the masterpiece of the MyPads plugin.
 */
 
   var user = {};
+  // Database key prefix for users
+  user.PREFIX = 'mypads:user:';
 
   /**
   * The creation sets the defaults and checks if required fields have been
   * fixed. It takes :
   *
   * - a parameters object, with
-  *   - login string
-  *   - password string, between config.passwordMin and
-  *   config.passwordMax
+  *   - required login string
+  *   - required password string, between config.passwordMin and config.passwordMax
+  *   - firstname string
+  *   - lastname string
+  *   - organization string
   *
   * - a classic `callback` function returning error if error, null otherwise
-  *   and the result
+  *   and the user object.
+  *
   */
 
   user.add = function(params, callback) {
@@ -72,16 +68,38 @@ module.exports = (function () {
     if (!ld.isFunction(callback)) {
       throw(new TypeError('callback must be a function'));
     }
-    var _keys = [conf.PREFIX + 'passwordMin', conf.PREFIX + 'passwordMax'];
-    storage.fns.getKeys(_keys, function (err, results) {
-      if (err) { return callback(err); }
-      var _params = ld.assign(results, { password: params.password });
-      user.helpers._checkPassword(_params, function (err) {
+    var _checkPassword = function (cb) {
+      var _keys = [conf.PREFIX + 'passwordMin', conf.PREFIX + 'passwordMax'];
+      storage.fns.getKeys(_keys, function (err, results) {
         if (err) { return callback(err); }
+        var _params = ld.assign(results, { password: params.password });
+        user.fns.checkPassword(_params, function (err) {
+          if (err) {
+            return callback(err);
+          } else {
+            cb();
+          }
+        });
       });
-    });
-    // FIXME
-    //return params;
+    };
+    var _add = function () {
+      var u = user.fns.assignUserProps(params);
+      var ukey = user.PREFIX + u.login;
+      user.fns.checkUserExistence(ukey, function (err) {
+        if (err) {
+          return callback(err);
+        } else {
+          storage.db.set(ukey, u, function (err) {
+            if (err) {
+              return callback(err);
+            } else {
+              return callback(null, u);
+            }
+          });
+        }
+      });
+    };
+    _checkPassword(_add);
   };
 
   /**
@@ -103,26 +121,27 @@ module.exports = (function () {
   user.del = ld.noop;
 
   /**
-  *  ## Helpers
+  *  ## Internal Functions
   */
 
-  user.helpers = {};
+  user.fns = {};
 
   /**
   *  `checkPassword` is a private helper aiming at respecting the minimum
   *  length fixed into MyPads configuration.
   *
   *  It takes a params argument, with fields :
-  *    
+  *
   *    - `passwordMin` size
   *    - `passwordMax` size
   *    - `password` string
   *
   *  It calls the callback function argument, with an error message if the
   *  verification has failed, null otherwise.
+  *  FIXME: not an asynchronous fn, callback not relevant
   */
 
-  user.helpers._checkPassword = function (params, callback) {
+  user.fns.checkPassword = function (params, callback) {
     var pass = params.password;
     var min = params[conf.PREFIX + 'passwordMin'];
     var max = params[conf.PREFIX + 'passwordMax'];
@@ -135,11 +154,42 @@ module.exports = (function () {
   };
 
   /**
-  *  `hashPassword` takes the password and returns a hashed password, for storing
-  *  in database and verification.
+  *  `hashPassword` takes the password and returns a hashed password, for
+  *  storing in database and verification.
   */
 
-  user.helpers._hashPassword = function() {};
+  user.fns.hashPassword = function() {};
+
+  /**
+  * `assignUserProps` takes params object and assign defaults if needed.
+  * It returns the user object.
+  */
+
+  user.fns.assignUserProps = function (params) {
+    var u = ld.reduce(['firstname', 'lastname', 'organization'],
+      function (res, v) {
+        res[v] = ld.isString(params[v]) ? params[v] : '';
+        return res;
+    }, {});
+    u = ld.assign({ login: params.login, password: params.password }, u);
+    return u;
+  };
+
+  /**
+  * `checkUserExistence` is an asynchronous function that takes
+  * - the full `key` composed by user.PREFIX and user login
+  * - a callback function, returnning an error if the user exists, null if not
+  */
+  user.fns.checkUserExistence = function (ukey, callback) {
+    storage.db.get(ukey, function(err, res) {
+      if (err) { return callback(err); }
+      if (res) {
+        var e = 'User already exists, please choose another login';
+        return callback(new Error(e));
+      }
+      return callback(err ? err : null);
+    });
+  };
 
   return user;
 

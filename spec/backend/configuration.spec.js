@@ -36,7 +36,7 @@
           expect(conf.init).not.toThrow();
         }
       );
-      
+
       it('will call the callback, with an error or null when succeeded',
         function (done) {
           conf.init(function (err) {

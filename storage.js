@@ -23,7 +23,7 @@
 *  ## Description
 *  
 *  This module consists only on a wrapper around etherpad database.
-*/ 
+*/
 
 module.exports = (function () {
   'use strict';
@@ -70,7 +70,7 @@ module.exports = (function () {
     };
     var done = function () {
       if (keys.length) {
-        get(keys.pop()); 
+        get(keys.pop());
       } else {
         return callback(null, results);
       }

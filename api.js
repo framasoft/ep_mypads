@@ -110,7 +110,7 @@ module.exports = (function () {
   *  
   *  ## Pads
   *  
-  */ 
+  */
   return api;
 
 }).call(this);

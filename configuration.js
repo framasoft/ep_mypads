@@ -41,7 +41,7 @@ module.exports = (function() {
 
   var defaults = { passwordMin: 8, passwordMax: 30 };
   var PREFIX = 'mypads:configuration:';
- 
+
   /**
   * `configuration` object is a closure to interact with the whole
   * config. It will be exported.
@@ -64,7 +64,7 @@ module.exports = (function() {
       storage.fns.setKeys(ld.transform(defaults, function (memo, val, key) {
         memo[PREFIX + key] = val; }), callback);
     },
-    /** 
+    /**
     * `get` is an asynchronous function taking :
     * - a mandatory `key` string argument,
     * - a mandatory `callback` function argument returning error if error, null
@@ -80,7 +80,7 @@ module.exports = (function() {
       db.get(PREFIX + key, function (err, res) {
         if (err) { return callback(err); }
         if (ld.isUndefined(res)) {
-          return callback(new Error('Key doesn\'t exist')); 
+          return callback(new Error('Key doesn\'t exist'));
         }
         callback(null, res);
       });
@@ -126,7 +126,7 @@ module.exports = (function() {
     * from database. Fields / keys are unprefixed. It needs a `callback`
     * function returning error if error, null otherwise and the result.
     */
-    all: function(callback) { 
+    all: function(callback) {
       if (!ld.isFunction(callback)) {
         throw(new TypeError('callback must be a function'));
       }

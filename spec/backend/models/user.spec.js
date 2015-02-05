@@ -259,22 +259,15 @@
         params[conf.PREFIX + 'passwordMax'] = 8;
       });
 
-      it('should return an Error to the callback if password size is not' +
-        ' appropriate', function (done) {
+      it('should return an Error if password size is not appropriate',
+        function () {
           params.password = 'a';
-          user.fn.checkPassword(params, function (err) {
-            expect(ld.isError(err)).toBeTruthy();
-            done();
-          });
+          expect(ld.isError(user.fn.checkPassword(params))).toBeTruthy();
       });
 
-      it('should return null to the callback if password size is good',
-        function (done) {
-          params.password = '123456';
-          user.fn.checkPassword(params, function (err) {
-            expect(err).toBeNull();
-            done();
-          });
+      it('should return nothing if password size is good', function () {
+        params.password = '123456';
+        expect(user.fn.checkPassword(params)).toBeUndefined();
       });
     });
 

@@ -49,10 +49,10 @@ module.exports = (function () {
   *   - required `login` string
   *   - required `password` string, between *conf.passwordMin* and
   *   *conf.passwordMax*
-  *   - optional `email` string, used for communicartion
-  *   - `firstname` string
-  *   - `lastname` string
-  *   - `organization` string
+  *   - optional `email` string, used for communication
+  *   - optional `firstname` string
+  *   - optional `lastname` string
+  *   - optional `organization` string
   *
   * - a classic `callback` function returning error if error, null otherwise
   *   and the user object;
@@ -224,6 +224,7 @@ module.exports = (function () {
   * ### assignUserProps
   *
   * `assignUserProps` takes params object and assign defaults if needed.
+  * It adds a `groups` array field, which will holds groups of pads ids.
   * It returns the user object.
   */
 
@@ -234,6 +235,7 @@ module.exports = (function () {
         return res;
     }, {});
     u.email = (ld.isEmail(params.email)) ? params.email : '';
+    u.groups = [];
     u = ld.assign({ login: params.login, password: params.password }, u);
     return u;
   };

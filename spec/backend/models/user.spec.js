@@ -66,6 +66,7 @@
             expect(u.firstname).toBe('Parker');
             expect(u.lastname).toBe('Lewis');
             expect(ld.isString(u.organization)).toBeTruthy();
+            expect((ld.isArray(u.groups) && ld.isEmpty(u.groups))).toBeTruthy();
             done();
           });
         }
@@ -117,6 +118,7 @@
             expect(u.email).toBe('mik@randall.com');
             expect(ld.isString(u.firstname)).toBeTruthy();
             expect(ld.isEmpty(u.firstname)).toBeTruthy();
+            expect((ld.isArray(u.groups) && ld.isEmpty(u.groups))).toBeTruthy();
             done();
           });
         }
@@ -313,6 +315,8 @@
           var ul = u.lastname;
           expect(ld.isString(uf) && ld.isEmpty(uf)).toBeTruthy();
           expect(ld.isString(ul) && ld.isEmpty(ul)).toBeTruthy();
+          expect(ld.isArray(u.groups)).toBeTruthy();
+          expect(ld.isEmpty(u.groups)).toBeTruthy();
           expect(u.irrelevant).toBeUndefined();
           params.email = 'notenamail@@@@';
           u = user.fn.assignUserProps(params);

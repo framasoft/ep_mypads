@@ -25,7 +25,7 @@ module.exports = (function () {
   * file and lets it virgin comme previsous testing before and after all module
   * tests.
   */
-  common._reInitDatabase = function (done) {
+  common.reInitDatabase = function (done) {
     var unlink = require('fs').unlink;
     var db = require('../../storage.js').db;
     db.close(function () {

@@ -32,8 +32,8 @@
   var conf = require('../../configuration.js');
 
   describe('storage', function () {
-    beforeAll(specCommon._reInitDatabase);
-    afterAll(specCommon._reInitDatabase);
+    beforeAll(specCommon.reInitDatabase);
+    afterAll(specCommon.reInitDatabase);
 
     describe('Private functions fn', function () {
 

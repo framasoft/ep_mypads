@@ -26,8 +26,8 @@
   var conf = require('../../../configuration.js');
 
   describe('user', function () {
-    beforeAll(specCommon._reInitDatabase);
-    afterAll(specCommon._reInitDatabase);
+    beforeAll(specCommon.reInitDatabase);
+    afterAll(specCommon.reInitDatabase);
 
     describe('creation', function () {
       beforeAll(function (done) {
@@ -155,7 +155,7 @@
 
   describe('user get', function () {
     beforeAll(function (done) {
-      specCommon._reInitDatabase(function () {
+      specCommon.reInitDatabase(function () {
         user.add({
           login: 'parker',
           password: 'lovesKubiak',
@@ -164,7 +164,7 @@
         }, done);
       });
     });
-    afterAll(specCommon._reInitDatabase);
+    afterAll(specCommon.reInitDatabase);
 
     it('should throw errors if arguments are not provided as expected',
       function () {
@@ -197,7 +197,7 @@
 
   describe('user del', function () {
     beforeAll(function (done) {
-      specCommon._reInitDatabase(function () {
+      specCommon.reInitDatabase(function () {
         user.add({
           login: 'parker',
           password: 'lovesKubiak',
@@ -206,7 +206,7 @@
         }, done);
       });
     });
-    afterAll(specCommon._reInitDatabase);
+    afterAll(specCommon.reInitDatabase);
 
     it('should throw errors if arguments are not provided as expected',
       function () {
@@ -236,8 +236,6 @@
   });
 
   describe('user functions', function() {
-    beforeAll(specCommon._reInitDatabase);
-    afterAll(specCommon._reInitDatabase);
 
     describe('getPasswordConf', function () {
 

@@ -20,3 +20,26 @@
 *  specific language governing permissions and limitations
 *  under the License.
 */
+
+/**
+* Lien user -> group dans url
+*
+* TODO: mypads:user:login -> groups: [ gid1, gid2 ]
+*
+* mypads:group:$id
+*
+* group = {
+*   properties: {
+*     visibility: public|private|restricted
+*     readonly: false
+*     password: false
+*     users: [ ukey1, ukey2 ]
+*   },
+*   pads: [ padk1, padk2 ],
+*   admins: [ userk1, userk2 ]
+* }
+*
+* mypads:pad:$id
+* pad = { group: $id, properties: false || { visibility: $, readonly: $ } }
+*
+*/

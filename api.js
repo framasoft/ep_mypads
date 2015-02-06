@@ -33,6 +33,7 @@ module.exports = (function () {
   'use strict';
 
   var api = {};
+  api.initialRoute = '/mypads/api/';
 
   /**
   * `init` is the first function that takes an Express app as argument.
@@ -40,53 +41,76 @@ module.exports = (function () {
   */
 
   api.init = function (app) {
+    // FIXME: authentification
+    configuration(app);
+  };
+
+  /**
+  * ## Configuration API
+  */
+  var configuration = function(app) {
+    var confRoute = api.initialRoute + 'configuration';
     /**
-    *  FIXME: authentification
+    * GET method : get all configuration
+    * Sample URL:
     *
-    *  ## Configuration
+    * http://etherpad.ndd/mypads/api/configuration
     */
-    var initialRoute = '/mypads/api/';
-    var configuration = (function() {
-      var route = initialRoute + 'configuration/';
-      // Get simple key
-      app.get(route + ':key', function (req, res) {
-        conf.get(req.params.key, function (err, value) {
-          if (err) { return res.send(500, { error: err }); }
-          if (!value) { return res.send(404, { key: req.params.key }); }
-          res.send({ key: req.params.key, value: value });
-        });
+    app.get(confRoute, function (req, res) {
+      conf.all(function (err, value) {
+        if (err) { return res.send(400, { error: err }); }
+        res.send({ value: value });
       });
-      // Set configuration key with POST and PUT
-      var _set = function (req, res) {
-        var key = req.body.key;
-        var value = req.body.value;
-        try {
-          conf.set(key, value, function (err) {
-            if (err) { return res.send(500, { error: err }); }
-            res.send({ success: true, key: key, value: value });
-          });
+    });
+    /**
+    * GET method : `configuration.get` key
+    * Sample URL:
+    *
+    * http://etherpad.ndd/mypads/api/configuration/something
+    */
+    app.get(confRoute + '/:key', function (req, res) {
+      conf.get(req.params.key, function (err, value) {
+        if (err) {
+          return res.send(404, { error: err.message, key: req.params.key });
         }
-        catch (e) {
-          res.send(400, { error: e.message });
-        }
-      };
-      app.post(route, _set);
-      app.put(route, _set);
-      // Removal of configuration item with DELETE
-      app.delete(route + ':key', function (req, res) {
-        conf.del(req.params.key, function (err) {
-          if (err) { return res.send(400, { error: err }); }
-          res.send({ success: true, key: req.params.key });
-        });
+        res.send({ key: req.params.key, value: value });
       });
-      // Get all configuration
-      app.get(route, function (req, res) {
-        conf.all(function (err, value) {
-          if (err) { return res.send(400, { error: err }); }
-          res.send({ value: value });
+    });
+    /**
+    * POST/PUT methods : `configuration.set` key and value on initial
+    * Sample URL for POST:
+    * http://etherpad.ndd/mypads/api/configuration
+    *
+    * for PUT
+    * http://etherpad.ndd/mypads/api/configuration/something
+    */
+    var _set = function (req, res) {
+      var key = (req.method === 'POST') ? req.body.key : req.params.key;
+      var value = req.body.value;
+      try {
+        conf.set(key, value, function (err) {
+          if (err) { return res.send(500, { error: err.message }); }
+          res.send({ success: true, key: key, value: value });
         });
+      }
+      catch (e) {
+        res.send(400, { error: e.message });
+      }
+    };
+    app.post(confRoute, _set);
+    app.put(confRoute + '/:key', _set);
+    /**
+    * DELETE method : `configuration.del` key
+    * Sample URL:
+    *
+    * http://etherpad.ndd/mypads/api/configuration/something
+    */
+    app.delete(confRoute + '/:key', function (req, res) {
+      conf.del(req.params.key, function (err) {
+        if (err) { return res.send(400, { error: err.message }); }
+        res.send({ success: true, key: req.params.key });
       });
-    }).call(this);
+    });
   };
 
   /**

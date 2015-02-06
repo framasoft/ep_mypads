@@ -25,8 +25,8 @@
   var conf = require('../../configuration.js');
 
   describe('configuration', function () {
-    beforeAll(specCommon._reInitDatabase);
-    afterAll(specCommon._reInitDatabase);
+    beforeAll(specCommon.reInitDatabase);
+    afterAll(specCommon.reInitDatabase);
 
     describe('init', function () {
 
@@ -93,8 +93,8 @@
         conf.set('key', 'value', function (err) {
           conf.get('key', function (err, val) {
             expect(val).toBe('value');
-            conf.set('array', [1, 2, 3], function (err) {
-              conf.get('array', function (err, val) {
+            conf.set('@rray', [1, 2, 3], function (err) {
+              conf.get('@rray', function (err, val) {
                 expect(val.length).toBe(3);
                 done();
               });

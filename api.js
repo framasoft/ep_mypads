@@ -28,6 +28,7 @@
 
 var ld = require('lodash');
 var conf = require('./configuration.js');
+var user = require('./models/user.js');
 
 module.exports = (function () {
   'use strict';
@@ -42,32 +43,79 @@ module.exports = (function () {
 
   api.init = function (app) {
     // FIXME: authentification
-    configuration(app);
+    configurationAPI(app);
+    userAPI(app);
+  };
+
+  /**
+  * ## Internal functions helpers
+  */
+
+  var fn = {};
+
+  /**
+  * `set` internal takes the values of key and val that will be given to the
+  * `setFn` bounded function targetted the original `set` from the module used
+  * in the case of this public API
+  */
+
+  fn.set = function (setFn, key, value, req, res) {
+    try {
+      setFn(function (err) {
+        if (err) { return res.send(400, { error: err.message }); }
+        res.send({ success: true, key: key, value: value });
+      });
+    }
+    catch (e) {
+      res.send(400, { error: e.message });
+    }
+  };
+
+  /**
+  * `del` internal takes four arguments :
+  *
+  * - `delFn` bounded function targetted the original `del` method from the
+  *   module used
+  * - classical `req` and `res` express parameters, with mandatory
+  *   *req.params.key*.
+  */
+
+  fn.del = function (delFn, req, res) {
+    var key = req.params.key;
+    delFn(key, function (err) {
+      if (err) { return res.send(404, { error: err.message }); }
+      res.send({ success: true, key: key });
+    });
   };
 
   /**
   * ## Configuration API
   */
-  var configuration = function(app) {
+
+  var configurationAPI = function (app) {
     var confRoute = api.initialRoute + 'configuration';
+
     /**
     * GET method : get all configuration
     * Sample URL:
     *
     * http://etherpad.ndd/mypads/api/configuration
     */
+
     app.get(confRoute, function (req, res) {
       conf.all(function (err, value) {
         if (err) { return res.send(400, { error: err }); }
         res.send({ value: value });
       });
     });
+
     /**
     * GET method : `configuration.get` key
     * Sample URL:
     *
     * http://etherpad.ndd/mypads/api/configuration/something
     */
+
     app.get(confRoute + '/:key', function (req, res) {
       conf.get(req.params.key, function (err, value) {
         if (err) {
@@ -76,6 +124,7 @@ module.exports = (function () {
         res.send({ key: req.params.key, value: value });
       });
     });
+
     /**
     * POST/PUT methods : `configuration.set` key and value on initial
     * Sample URL for POST:
@@ -84,57 +133,99 @@ module.exports = (function () {
     * for PUT
     * http://etherpad.ndd/mypads/api/configuration/something
     */
+
     var _set = function (req, res) {
       var key = (req.method === 'POST') ? req.body.key : req.params.key;
       var value = req.body.value;
-      try {
-        conf.set(key, value, function (err) {
-          if (err) { return res.send(500, { error: err.message }); }
-          res.send({ success: true, key: key, value: value });
-        });
-      }
-      catch (e) {
-        res.send(400, { error: e.message });
-      }
+      var setFn = ld.partial(conf.set, key, value);
+      fn.set(setFn, key, value, req, res);
     };
+
     app.post(confRoute, _set);
     app.put(confRoute + '/:key', _set);
+
     /**
     * DELETE method : `configuration.del` key
     * Sample URL:
     *
     * http://etherpad.ndd/mypads/api/configuration/something
     */
-    app.delete(confRoute + '/:key', function (req, res) {
-      conf.del(req.params.key, function (err) {
-        if (err) { return res.send(400, { error: err.message }); }
-        res.send({ success: true, key: req.params.key });
-      });
-    });
+
+    app.delete(confRoute + '/:key', ld.partial(fn.del, conf.del));
   };
 
   /**
-  *  ## Authentification
-  *  
-  *  ## Users
-  *  
-  *  `createUser`
-  *  
-  *  `updateUser`
-  *  
-  *  `deleteUser`
-  *  
-  *  `getUser`
-  *  
-  *  `setLoginOfUser`
-  *  
-  *  `passwordRecoveryForUser`
-  *  
-  *  ## Groups
-  *  
-  *  ## Pads
-  *  
+  *  ## User API
   */
+
+  var userAPI = function (app) {
+    var userRoute = api.initialRoute + 'user';
+
+    /**
+    * GET method : `user.get` login (key)
+    * Sample URL:
+    *
+    * http://etherpad.ndd/mypads/api/user/someone
+    */
+
+    app.get(userRoute + '/:key', function (req, res) {
+      try {
+        user.get(req.params.key, function (err, val) {
+          if (err) {
+            return res.send(404, { error: err.message, key: req.params.key });
+          }
+          res.send({ key: req.params.key, value: val });
+        });
+      }
+      catch (e) {
+        res.send(400, { error: e.message });
+      }
+    });
+
+    // _set for POST and  PUT, see below
+    var _set = function (req, res) {
+      var key;
+      var value = req.body;
+      var setFn;
+      if (req.method === 'POST') {
+        key = req.body.login;
+        setFn = ld.partial(user.add, value);
+      } else {
+        key = req.params.key;
+        value.login = key;
+        setFn = ld.partial(user.set, value);
+      }
+      fn.set(setFn, key, value, req, res);
+    };
+
+    /**
+    * POST method : `user.add` with user value for user creation
+    * Sample URL:
+    *
+    * http://etherpad.ndd/mypads/api/user
+    */
+
+    app.post(userRoute, _set);
+
+    /**
+    * PUT method : `user.set` with user key/login plus value for existing user
+    * Sample URL:
+    *
+    * http://etherpad.ndd/mypads/api/user/someone
+    */
+
+    app.put(userRoute + '/:key', _set);
+
+    /**
+    * DELETE method : `user.del` with user key/login
+    * Sample URL:
+    *
+    * http://etherpad.ndd/mypads/api/user/someone
+    */
+
+    app.delete(userRoute + '/:key', ld.partial(fn.del, user.del));
+  };
+
   return api;
 
 }).call(this);

@@ -57,7 +57,7 @@ module.exports = (function () {
   * - a classic `callback` function returning error if error, null otherwise
   *   and the user object;
   * - a special `edit` boolean, defaults to *false* for reusing the function for
-  *   add, set (edit).
+  *   set (edit) an existing user.
   */
 
   user.add = function(params, callback, edit) {

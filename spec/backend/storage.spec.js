@@ -29,7 +29,6 @@
   var ld = require('lodash');
   var storage = require('../../storage.js');
   var specCommon = require('./common.js');
-  var conf = require('../../configuration.js');
 
   describe('storage', function () {
     beforeAll(specCommon.reInitDatabase);
@@ -41,10 +40,8 @@
 
         beforeAll(function (done) {
           var db = storage.db;
-          db.set('key1', 'value1', function (err) {
-            db.set('key2', 'value2', function (err) {
-              done();
-            });
+          db.set('key1', 'value1', function () {
+            db.set('key2', 'value2', function () { done(); });
           });
         });
 
@@ -76,15 +73,13 @@
 
         beforeAll(function (done) {
           var db = storage.db;
-          db.set('existent', [1, 2, 3], function (err) {
-            done();
-          });
+          db.set('existent', [1, 2, 3], function () { done(); });
         });
 
         it('should put the keys and their values into the database',
           function (done) {
             var kv = { 'JS': 'JavaScript', 'PL': 'Perl', 'existent': [2, 4] };
-            storage.fn.setKeys(kv, function (err) {
+            storage.fn.setKeys(kv, function () {
               storage.fn.getKeys(ld.keys(kv), function (err, results) {
                 expect(results.JS).toBe('JavaScript');
                 expect(results.PL).toBe('Perl');

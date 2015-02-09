@@ -46,7 +46,7 @@
 
       it('should return an Error to the callback if password size is not' +
         ' appropriate', function (done) {
-        user.add({ login: 'bob', password: '1'}, function (err, res) {
+        user.add({ login: 'bob', password: '1'}, function (err) {
           expect(ld.isError(err)).toBeTruthy();
           done();
         });
@@ -76,6 +76,7 @@
         user.add({ login: 'parker', password: 'lovesKubiak' },
           function (err, u) {
             expect(ld.isError(err)).toBeTruthy();
+            expect(u).toBeUndefined();
             done();
           }
         );
@@ -101,6 +102,7 @@
         ' appropriate', function (done) {
         user.set({ login: 'bob', password: '1'}, function (err, res) {
           expect(ld.isError(err)).toBeTruthy();
+          expect(res).toBeUndefined();
           done();
         });
       });
@@ -178,6 +180,7 @@
     it('should return an Error if the user is not found', function (done) {
       user.get('inexistent', function (err, u) {
         expect(ld.isError(err)).toBeTruthy();
+        expect(u).toBeUndefined();
         done();
       });
     });
@@ -220,6 +223,7 @@
     it('should return an Error if the user is not found', function (done) {
       user.del('inexistent', function (err, u) {
         expect(ld.isError(err)).toBeTruthy();
+        expect(u).toBeUndefined();
         done();
       });
     });
@@ -227,8 +231,10 @@
     it('should delete the user otherwise', function (done) {
       user.del('parker', function (err, u) {
         expect(err).toBeNull();
+        expect(u).toBeUndefined();
         user.get('parker', function (err, u) {
           expect(ld.isError(err)).toBeTruthy();
+          expect(u).toBeUndefined();
           done();
         });
       });
@@ -243,8 +249,10 @@
         user.fn.getPasswordConf(function (err, results) {
           expect(err).toBeNull();
           var rkeys = ld.keys(results);
-          expect(ld.contains(rkeys, conf.DBPREFIX + 'passwordMin')).toBeTruthy();
-          expect(ld.contains(rkeys, conf.DBPREFIX + 'passwordMax')).toBeTruthy();
+          expect(ld.contains(rkeys, conf.DBPREFIX + 'passwordMin'))
+            .toBeTruthy();
+          expect(ld.contains(rkeys, conf.DBPREFIX + 'passwordMax'))
+            .toBeTruthy();
           done();
         });
       });

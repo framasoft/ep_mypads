@@ -62,7 +62,7 @@ module.exports = (function () {
   *   set (edit) an existing user.
   */
 
-  user.add = function(params, callback, edit) {
+  user.add = function (params, callback, edit) {
     edit = edit || false;
     if (ld.isUndefined(params)) {
       throw(new TypeError('parameters are mandatory for user creation'));
@@ -271,10 +271,16 @@ module.exports = (function () {
   *
   * `isEmail` checks if given string is an email or not. It takes a value and
   * returns a boolean.
+  *
+  * For reference, used regular expression is :
+  * /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
   */
 
   ld.mixin({ isEmail: function (val) {
-    var rg = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+    var rg = new RegExp(['[a-z0-9!#$%&\'*+/=?^_`{|}~-]+',
+      '(?:\\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*@(?:[a-z0-9]',
+      '(?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9]',
+      '(?:[a-z0-9-]*[a-z0-9])?'].join(''));
     return (ld.isString(val) && rg.test(val));
   }});
 

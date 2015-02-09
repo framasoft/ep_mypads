@@ -42,7 +42,7 @@ module.exports = (function () {
     */
     var ueberDB = require('ueberDB');
     storage.db = new ueberDB.database('dirty', { filename: './test.db' });
-    storage.db.init(function (err) {});
+    storage.db.init(function (err) { if (err) { console.log(err); } });
   }
 
   /**

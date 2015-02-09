@@ -210,7 +210,7 @@
     var userRoute = route + 'user';
 
     beforeAll(function (done) {
-      conf.init(function (err) {
+      conf.init(function () {
         var add = require('../../model/user.js').add;
         add({ login: 'guest', password: 'willnotlivelong' }, done);
       });
@@ -278,7 +278,7 @@
         it('should return an error if the login/key already exists',
           function (done) {
             var b = { body: { login: 'mikey', password: 'missMusso', } };
-            rq.post(userRoute, b, function (err, resp, body) {
+            rq.post(userRoute, b, function () {
               rq.post(userRoute, b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
                 expect(body.error).toMatch('user already exists');
@@ -346,7 +346,7 @@
         it('should accept updates on an existing user',
           function (done) {
             var b = { body: { password: 'missMusso', } };
-            rq.put(userRoute + '/mikey', b, function (err, resp, body) {
+            rq.put(userRoute + '/mikey', b, function () {
               b.body.email = 'mikey@randall.com';
               rq.put(userRoute + '/mikey', b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(200);

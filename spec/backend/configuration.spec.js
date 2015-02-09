@@ -64,6 +64,7 @@
       it('returns an Error if the field isn\'t defined', function (done) {
         conf.get('inexistent', function (err, res) {
           expect(ld.isError(err)).toBeTruthy();
+          expect(res).toBeUndefined();
           done();
         });
       });
@@ -90,10 +91,10 @@
       });
 
       it('sets a key for the conf with the given value', function (done) {
-        conf.set('key', 'value', function (err) {
+        conf.set('key', 'value', function () {
           conf.get('key', function (err, val) {
             expect(val).toBe('value');
-            conf.set('@rray', [1, 2, 3], function (err) {
+            conf.set('@rray', [1, 2, 3], function () {
               conf.get('@rray', function (err, val) {
                 expect(val.length).toBe(3);
                 done();
@@ -117,7 +118,7 @@
       });
 
       it('removes the item otherwise', function (done) {
-        conf.set('forremove', 10, function (err) {
+        conf.set('forremove', 10, function () {
           conf.get('forremove', function (err, res) {
             expect(res).toBe(10);
             conf.del('forremove', function (err) {

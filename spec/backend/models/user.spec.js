@@ -243,8 +243,8 @@
         user.fn.getPasswordConf(function (err, results) {
           expect(err).toBeNull();
           var rkeys = ld.keys(results);
-          expect(ld.contains(rkeys, conf.PREFIX + 'passwordMin')).toBeTruthy();
-          expect(ld.contains(rkeys, conf.PREFIX + 'passwordMax')).toBeTruthy();
+          expect(ld.contains(rkeys, conf.DBPREFIX + 'passwordMin')).toBeTruthy();
+          expect(ld.contains(rkeys, conf.DBPREFIX + 'passwordMax')).toBeTruthy();
           done();
         });
       });
@@ -255,8 +255,8 @@
       var params = {};
 
       beforeAll(function () {
-        params[conf.PREFIX + 'passwordMin'] = 4;
-        params[conf.PREFIX + 'passwordMax'] = 8;
+        params[conf.DBPREFIX + 'passwordMin'] = 4;
+        params[conf.DBPREFIX + 'passwordMax'] = 8;
       });
 
       it('should return an Error if password size is not appropriate',
@@ -272,7 +272,7 @@
     });
 
     describe('checkUserExistence', function () {
-      var ukey = user.PREFIX + 'john';
+      var ukey = user.DBPREFIX + 'john';
 
       beforeAll(function (done) { db.set(ukey, 'exists', done); });
       afterAll(function (done) { db.remove(ukey, done); });
@@ -285,7 +285,7 @@
       });
 
       it('should return null if the user don\'t exist', function (done) {
-        user.fn.checkUserExistence(user.PREFIX + 'bob', function (err) {
+        user.fn.checkUserExistence(user.DBPREFIX + 'bob', function (err) {
           expect(err).toBeNull();
           done();
         });

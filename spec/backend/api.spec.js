@@ -58,7 +58,7 @@
         var conf = require('../../configuration.js');
         var kv = { field1: 8, field2: 3, field3: ['a', 'b'] };
         storage.fn.setKeys(ld.transform(kv, function (memo, val, key) {
-          memo[conf.PREFIX + key] = val; }), done);
+          memo[conf.DBPREFIX + key] = val; }), done);
       });
 
       describe('configuration.all GET', function () {

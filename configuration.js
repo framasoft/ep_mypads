@@ -1,8 +1,8 @@
 /**
 * # Configuration Module
-* 
+*
 * ## License
-* 
+*
 * Licensed to the Apache Software Foundation (ASF) under one
 * or more contributor license agreements.  See the NOTICE file
 * distributed with this work for additional information
@@ -10,16 +10,16 @@
 * to you under the Apache License, Version 2.0 (the
 * "License"); you may not use this file except in compliance
 * with the License.  You may obtain a copy of the License at
-* 
+*
 *   http://www.apache.org/licenses/LICENSE-2.0
-* 
+*
 * Unless required by applicable law or agreed to in writing,
 * software distributed under the License is distributed on an
 * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 * KIND, either express or implied.  See the License for the
 * specific language governing permissions and limitations
 * under the License.
-* 
+*
 * ## Description
 *
 * This is the module for MyPads configuration.
@@ -40,7 +40,7 @@ module.exports = (function() {
   */
 
   var defaults = { passwordMin: 8, passwordMax: 30 };
-  var PREFIX = 'mypads:configuration:';
+  var DBPREFIX = 'mypads:configuration:';
 
   /**
   * `configuration` object is a closure to interact with the whole
@@ -48,7 +48,7 @@ module.exports = (function() {
   */
 
   var configuration = {
-    PREFIX: PREFIX,
+    DBPREFIX: DBPREFIX,
     /**
     * `init` is called when mypads plugin is initialized. It fixes the default
     * data for the configuration into the database.
@@ -62,7 +62,7 @@ module.exports = (function() {
       }
       // Would like to use doBulk but not supported for all *ueberDB* backends
       storage.fn.setKeys(ld.transform(defaults, function (memo, val, key) {
-        memo[PREFIX + key] = val; }), callback);
+        memo[DBPREFIX + key] = val; }), callback);
     },
     /**
     * `get` is an asynchronous function taking :
@@ -77,7 +77,7 @@ module.exports = (function() {
       if (!ld.isFunction(callback)) {
         throw(new TypeError('callback must be a function'));
       }
-      db.get(PREFIX + key, function (err, res) {
+      db.get(DBPREFIX + key, function (err, res) {
         if (err) { return callback(err); }
         if (ld.isUndefined(res)) {
           return callback(new Error('Key doesn\'t exist'));
@@ -104,7 +104,7 @@ module.exports = (function() {
       if (!ld.isFunction(callback)) {
         throw(new TypeError('callback must be a function'));
       }
-      db.set(PREFIX + key, value, callback);
+      db.set(DBPREFIX + key, value, callback);
     },
     /**
     * `del` is an asynchronous function that removes a configuration option.
@@ -119,7 +119,7 @@ module.exports = (function() {
       if (!ld.isFunction(callback)) {
         throw(new TypeError('callback must be a function'));
       }
-      db.remove(PREFIX + key, callback);
+      db.remove(DBPREFIX + key, callback);
     },
     /**
     * `all` is an asynchronous function that returns the whole configuration
@@ -130,12 +130,12 @@ module.exports = (function() {
       if (!ld.isFunction(callback)) {
         throw(new TypeError('callback must be a function'));
       }
-      db.findKeys(PREFIX + '*', null, function (err, keys) {
+      db.findKeys(DBPREFIX + '*', null, function (err, keys) {
         if (err) { return callback(err); }
         storage.fn.getKeys(keys, function (err, results) {
           if (results) {
             results = ld.transform(results, function (memo, val, key) {
-              memo[key.replace(PREFIX, '')] = val;
+              memo[key.replace(DBPREFIX, '')] = val;
             });
           }
           callback(arguments[0], results);

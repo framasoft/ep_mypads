@@ -1,8 +1,8 @@
 /**
 *  # User Model
-*  
+*
 *  ## License
-*  
+*
 *  Licensed to the Apache Software Foundation (ASF) under one
 *  or more contributor license agreements.  See the NOTICE file
 *  distributed with this work for additional information
@@ -10,9 +10,9 @@
 *  to you under the Apache License, Version 2.0 (the
 *  "License"); you may not use this file except in compliance
 *  with the License.  You may obtain a copy of the License at
-*  
+*
 *    http://www.apache.org/licenses/LICENSE-2.0
-*  
+*
 *  Unless required by applicable law or agreed to in writing,
 *  software distributed under the License is distributed on an
 *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -31,16 +31,18 @@ module.exports = (function () {
 
 /**
 *  ## Description
-*  
+*
 *  The `user` is the masterpiece of the MyPads plugin.
 */
 
   var user = {};
   // Database key PREFIX for users
-  user.PREFIX = 'mypads:user:';
+  user.DBPREFIX = 'mypads:user:';
 
   /**
-  * ### Add
+  * ## Public Functions
+  *
+  * ### add
   *
   * The creation sets the defaults and checks if required fields have been
   * fixed. It takes :
@@ -80,7 +82,7 @@ module.exports = (function () {
       var e = user.fn.checkPassword(_params);
       if (e) { return callback(e); }
       var u = user.fn.assignUserProps(params);
-      var ukey = user.PREFIX + u.login;
+      var ukey = user.DBPREFIX + u.login;
       var _final = function () {
         storage.db.set(ukey, u, function (err) {
           if (err) { return callback(err); }
@@ -117,7 +119,7 @@ module.exports = (function () {
     if (!ld.isFunction(callback)) {
       throw(new TypeError('callback must be a function'));
     }
-    var key = user.PREFIX + login;
+    var key = user.DBPREFIX + login;
     storage.db.get(key, function (err, u) {
       if (err) { return callback(err); }
       if (ld.isUndefined(u)) {
@@ -156,7 +158,7 @@ module.exports = (function () {
     }
     user.get(login, function (err) {
       if (err) { return callback(err); }
-      storage.db.remove(user.PREFIX + login, function (err) {
+      storage.db.remove(user.DBPREFIX + login, function (err) {
         if (err) { return callback(err); }
         callback(null);
       });
@@ -179,7 +181,7 @@ module.exports = (function () {
   */
 
   user.fn.getPasswordConf = function (callback) {
-    var _keys = [conf.PREFIX + 'passwordMin', conf.PREFIX + 'passwordMax'];
+    var _keys = [conf.DBPREFIX + 'passwordMin', conf.DBPREFIX + 'passwordMax'];
     storage.fn.getKeys(_keys, function (err, results) {
       if (err) { return callback(err); }
       return callback(null, results);
@@ -203,8 +205,8 @@ module.exports = (function () {
 
   user.fn.checkPassword = function (params) {
     var pass = params.password;
-    var min = params[conf.PREFIX + 'passwordMin'];
-    var max = params[conf.PREFIX + 'passwordMax'];
+    var min = params[conf.DBPREFIX + 'passwordMin'];
+    var max = params[conf.DBPREFIX + 'passwordMax'];
     if (pass.length < min || pass.length > max) {
       return new TypeError('password length must be between ' + min + ' and ' +
       max + ' characters');
@@ -224,7 +226,7 @@ module.exports = (function () {
   * ### assignUserProps
   *
   * `assignUserProps` takes params object and assign defaults if needed.
-  * It adds a `groups` array field, which will holds groups of pads ids.
+  * It adds a `groups` array field, which will holds `model.group` of pads ids.
   * It returns the user object.
   */
 
@@ -245,7 +247,7 @@ module.exports = (function () {
   *
   * `checkUserExistence` is an asynchronous function that takes
   *
-  * - the full `key` composed by user.PREFIX and user login
+  * - the full `key` composed by user.DBPREFIX and user login
   * - a callback function, returnning an error if the user exists, null if not
   */
 

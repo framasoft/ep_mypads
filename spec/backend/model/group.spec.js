@@ -299,55 +299,6 @@
 
     });
 
-    describe('group helper functions', function () {
-      var ch = common.helper;
-
-      beforeAll(initOneGroup);
-      afterAll(specCommon.reInitDatabase);
-
-      describe('linkPads', function () {
-
-        it('should throw TypeError if arguments are not correct',
-          function () {
-            expect(ch.linkPads).toThrow();
-            expect(ld.partial(ch.linkPads, 123)).toThrow();
-            expect(ld.partial(ch.linkPads, 'key', false)).toThrow();
-            expect(ld.partial(ch.linkPads, false, 'pad')).toThrow();
-            expect(ld.partial(ch.linkPads, 'key', [])).toThrow();
-          }
-        )
-
-        it('should return an error if the group is not found', function (done) {
-          ch.linkpads('inexistent', 'pad1', function (err) {
-            expect(ld.iserro(err)).tobetruthy();
-            expect(err.message).tomatch('key is not found');
-            done();
-          });
-        });
-
-        it('should return an error if one or morre pads are not found',
-          function (done) {
-            ch.linkpads('college', 'noPad', function (err) {
-              expect(ld.iserro(err)).tobetruthy();
-              expect(err.message).tomatch('key is not found');
-              done();
-            });
-          }
-        );
-
-        xit('should accept updates otherwise', function (done) {
-          // FIXME : when pad module will be done
-          ch.linkpads('college', 'noPad', function (err) {
-            expect(ld.iserro(err)).tobetruthy();
-            expect(err.message).tomatch('key is not found');
-            done();
-          });
-        });
-
-      });
-
-    });
-
   });
 
 }).call(this);

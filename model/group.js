@@ -166,6 +166,7 @@ module.exports = (function () {
   *
   *  Helper here are public functions created to facilitate interaction with
   *  the API.
+  *  TODO : may be written to improve API usage
   */
 
   group.helper = {};

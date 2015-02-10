@@ -22,7 +22,6 @@
   var ld = require('lodash');
   var specCommon = require('../common.js');
   var user = require('../../../model/user.js');
-  var db = require('../../../storage.js').db;
   var conf = require('../../../configuration.js');
 
   describe('user', function () {
@@ -279,28 +278,7 @@
       });
     });
 
-    describe('checkUserExistence', function () {
-      var ukey = user.DBPREFIX + 'john';
-
-      beforeAll(function (done) { db.set(ukey, 'exists', done); });
-      afterAll(function (done) { db.remove(ukey, done); });
-
-      it('should return an Error if the user exists', function (done) {
-        user.fn.checkUserExistence(ukey, function (err) {
-          expect(ld.isError(err)).toBeTruthy();
-          done();
-        });
-      });
-
-      it('should return null if the user don\'t exist', function (done) {
-        user.fn.checkUserExistence(user.DBPREFIX + 'bob', function (err) {
-          expect(err).toBeNull();
-          done();
-        });
-      });
-    });
-
-    describe('assignUserProps', function () {
+    describe('assignProps', function () {
 
       it ('should respect given properties if strings and relevant',
         function () {
@@ -312,7 +290,7 @@
             irrelevant: 123,
             email: 'brian@sample.net'
           };
-          var u = user.fn.assignUserProps(params);
+          var u = user.fn.assignProps(params);
           expect(u.login).toBe('brian');
           expect(u.password).toBe('secret');
           expect(u.organization).toBe('etherInc');
@@ -325,7 +303,7 @@
           expect(ld.isEmpty(u.groups)).toBeTruthy();
           expect(u.irrelevant).toBeUndefined();
           params.email = 'notenamail@@@@';
-          u = user.fn.assignUserProps(params);
+          u = user.fn.assignProps(params);
           var ue = u.email;
           expect(ld.isString(ue) && ld.isEmpty(ue)).toBeTruthy();
         }

@@ -21,6 +21,7 @@
   },
   "license": "Apache 2",
   "dependencies": {
+    "cuid": "^1.2.4",
     "lodash": "^3.1.0"
   },
   "devDependencies": {

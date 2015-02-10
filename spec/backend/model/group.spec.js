@@ -21,6 +21,7 @@
   'use strict';
   var ld = require('lodash');
   var specCommon = require('../common.js');
+  var user = require('../../../model/user.js');
   var group = require('../../../model/group.js');
 
 
@@ -29,6 +30,17 @@
     afterAll(specCommon.reInitDatabase);
 
     describe('add', function () {
+      beforeAll(function (done) {
+        specCommon.reInitDatabase(function () {
+          user.add({
+            login: 'parker',
+            password: 'lovesKubiak',
+            firstname: 'Parker',
+            lastname: 'Lewis'
+          }, done);
+        });
+      });
+      afterAll(specCommon.reInitDatabase);
 
       it('should throws errors if params.name or params.admin, callback or ' +
         'edit aren`t correct', function () {
@@ -43,26 +55,35 @@
           params.name = 'ok';
           params.admin = 'ok';
           expect(ld.partial(group.add, params, false)).toThrow();
-          expect(ld.partial(group.add, params, ld.noop, 'notABool')).toThrow();
         }
       );
 
+      it('should return an error if admin user is not found', function (done) {
+        group.add({ name: 'g', admin: 'inexistent' }, function (err, g) {
+          expect(ld.isError(err)).toBeTruthy();
+          expect(err).toMatch('admin user does not exist');
+          expect(g).toBeUndefined();
+          done();
+        });
+      });
+
       it('should assign defaults if other params are not properly typed nor' +
         'defined', function (done) {
-          var params = { name: 'group', admin: 'login' };
+          var params = { name: 'group', admin: 'parker' };
           group.add(params, function (err, g) {
             expect(err).toBeNull();
             expect(g.name).toBe('group');
             expect(ld.isArray(g.admins)).toBeTruthy();
             expect(ld.isArray(g.users) && ld.isEmpty(g.users)).toBeTruthy();
             expect(ld.isArray(g.pads) && ld.isEmpty(g.pads)).toBeTruthy();
-            expect(ld.first(g.admins)).toBe('login');
+            expect(ld.first(g.admins)).toBe('parker');
             expect(g.visibility).toBe('restricted');
             expect(ld.isString(g.password) && ld.isEmpty(g.password))
               .toBeTruthy();
             expect(ld.readonly).toBeFalsy();
 
             params = {
+              _id: 'will not be given',
               name: 'college',
               admin: 'parker',
               admins: [123],
@@ -74,6 +95,8 @@
             };
             group.add(params, function (err, g) {
               expect(err).toBeNull();
+              expect(ld.isString(g._id)).toBeTruthy();
+              expect(g._id).not.toBe('will not be given');
               expect(g.name).toBe('college');
               expect(ld.isArray(g.admins)).toBeTruthy();
               expect(ld.first(g.admins)).toBe('parker');
@@ -91,7 +114,7 @@
 
       it('should otherwise accept well defined parameters', function (done) {
         var params = {
-          name: 'college',
+          name: 'college2',
           admin: 'parker',
           admins: [ 'mikey', 'jerry' ],
           users: [ 'grace', 'frank', 'shelly' ],
@@ -102,7 +125,8 @@
         };
         group.add(params, function (err, g) {
           expect(err).toBeNull();
-          expect(g.name).toBe('college');
+          expect(ld.isString(g._id)).toBeTruthy();
+          expect(g.name).toBe('college2');
           expect(ld.isArray(g.admins)).toBeTruthy();
           expect(ld.first(g.admins)).toBe('parker');
           expect(ld.includes(g.admins, 'mikey')).toBeTruthy();
@@ -117,6 +141,86 @@
         });
       });
     });
+
+    describe('set', function () {
+      beforeAll(function (done) {
+        specCommon.reInitDatabase(function () {
+          user.add({
+            login: 'parker',
+            password: 'lovesKubiak',
+            firstname: 'Parker',
+            lastname: 'Lewis'
+          }, done);
+        });
+      });
+      afterAll(specCommon.reInitDatabase);
+
+      it('should throws errors if params._id|name|admin, callback or edit ' +
+        'aren`t correct', function () {
+          expect(group.set).toThrow();
+          expect(ld.partial(group.set, [])).toThrow();
+          var params = { name: 123, noadmin: true };
+          expect(ld.partial(group.set, params, ld.noop)).toThrow();
+          params = { name: 'ok', admin: false };
+          expect(ld.partial(group.set, params, ld.noop)).toThrow();
+          params.name = 'ok';
+          params.admin = 'ok';
+          expect(ld.partial(group.set, params, false)).toThrow();
+          expect(ld.partial(group.set, params, ld.noop)).toThrow();
+          params._id = 123;
+          expect(ld.partial(group.set, params, ld.noop)).toThrow();
+        }
+      );
+
+      it('should return an error if admin user is not found', function (done) {
+        group.set({ _id: 'k', name: 'g', admin: 'inexist' }, function (err, g) {
+          expect(ld.isError(err)).toBeTruthy();
+          expect(err).toMatch('admin user does not exist');
+          expect(g).toBeUndefined();
+          done();
+        });
+      });
+
+      it('should return an error if group _id is not found', function (done) {
+        group.set({ _id: 'i', name: 'g', admin: 'parker' }, function (err, g) {
+          expect(ld.isError(err)).toBeTruthy();
+          expect(err).toMatch('group does not exist');
+          expect(g).toBeUndefined();
+          done();
+        });
+      });
+
+      xit('should otherwise accept well defined parameters', function (done) {
+        // TODO: group.get before
+        var params = {
+          name: 'college2',
+          admin: 'parker',
+          admins: [ 'mikey', 'jerry' ],
+          users: [ 'grace', 'frank', 'shelly' ],
+          pads: [ 'watchSync' ],
+          visibility: 'private',
+          password: 'aGoodOne',
+          readonly: true
+        };
+        group.add(params, function (err, g) {
+          expect(err).toBeNull();
+          expect(ld.isString(g._id)).toBeTruthy();
+          expect(g.name).toBe('college2');
+          expect(ld.isArray(g.admins)).toBeTruthy();
+          expect(ld.first(g.admins)).toBe('parker');
+          expect(ld.includes(g.admins, 'mikey')).toBeTruthy();
+          expect(ld.includes(g.admins, 'jerry')).toBeTruthy();
+          expect(ld.isEmpty(ld.xor(g.users, params.users))).toBeTruthy();
+          expect(ld.includes(g.pads, 'watchSync')).toBeTruthy();
+          expect(g.visibility).toBe('private');
+          expect(g.password).toBeDefined();
+          expect(ld.isEmpty(g.password)).toBeFalsy();
+          expect(g.readonly).toBeTruthy();
+          done();
+        });
+      });
+    });
+
   });
 
 }).call(this);

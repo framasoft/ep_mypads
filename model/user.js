@@ -28,6 +28,7 @@ module.exports = (function () {
   var ld = require('lodash');
   var storage = require('../storage.js');
   var conf = require('../configuration.js');
+  var common = require('./common.js');
 
 /**
 *  ## Description
@@ -63,25 +64,18 @@ module.exports = (function () {
   */
 
   user.add = function (params, callback, edit) {
-    edit = edit || false;
-    if (ld.isUndefined(params)) {
-      throw(new TypeError('parameters are mandatory for user creation'));
-    }
-    var isFullString = function (s) {
-      return (ld.isString(s) && !ld.isEmpty(s));
-    };
-    if (!(isFullString(params.login) && isFullString(params.password))) {
+    edit = !!edit;
+    common.addSetInit(params, callback);
+    var isFullStr = function (s) { return (ld.isString(s) && !ld.isEmpty(s)); };
+    if (!(isFullStr(params.login) && isFullStr(params.password))) {
       throw(new TypeError('login and password must be strings'));
-    }
-    if (!ld.isFunction(callback)) {
-      throw(new TypeError('callback must be a function'));
     }
     user.fn.getPasswordConf(function (err, results) {
       if (err) { return callback(err); }
       var _params = ld.assign(results, { password: params.password });
       var e = user.fn.checkPassword(_params);
       if (e) { return callback(e); }
-      var u = user.fn.assignUserProps(params);
+      var u = user.fn.assignProps(params);
       var ukey = user.DBPREFIX + u.login;
       var _final = function () {
         storage.db.set(ukey, u, function (err) {
@@ -92,8 +86,13 @@ module.exports = (function () {
       if (edit) {
         _final();
       } else {
-        user.fn.checkUserExistence(ukey, function (err) {
-          if (err) { return callback(err); } else { _final(); }
+        common.checkExistence(ukey, function (err, res) {
+          if (err) { return callback(err); }
+          if (res) {
+            var e = 'user already exists, please choose another login';
+            return callback(new Error(e));
+          }
+          _final();
         });
       }
     });
@@ -223,14 +222,14 @@ module.exports = (function () {
   user.fn.hashPassword = ld.noop;
 
   /**
-  * ### assignUserProps
+  * ### assignProps
   *
-  * `assignUserProps` takes params object and assign defaults if needed.
-  * It adds a `groups` array field, which will holds `model.group` of pads ids.
-  * It returns the user object.
+  * `assignProps` takes params object and assign defaults if needed.  It adds a
+  * `groups` array field, which will holds `model.group` of pads ids.  It
+  * returns the user object.
   */
 
-  user.fn.assignUserProps = function (params) {
+  user.fn.assignProps = function (params) {
     var u = ld.reduce(['firstname', 'lastname', 'organization'],
       function (res, v) {
         res[v] = ld.isString(params[v]) ? params[v] : '';
@@ -240,26 +239,6 @@ module.exports = (function () {
     u.groups = [];
     u = ld.assign({ login: params.login, password: params.password }, u);
     return u;
-  };
-
-  /**
-  * ### checkUserExistence
-  *
-  * `checkUserExistence` is an asynchronous function that takes
-  *
-  * - the full `key` composed by user.DBPREFIX and user login
-  * - a callback function, returnning an error if the user exists, null if not
-  */
-
-  user.fn.checkUserExistence = function (ukey, callback) {
-    storage.db.get(ukey, function(err, res) {
-      if (err) { return callback(err); }
-      if (res) {
-        var e = 'user already exists, please choose another login';
-        return callback(new Error(e));
-      }
-      return callback(err ? err : null);
-    });
   };
 
   /**

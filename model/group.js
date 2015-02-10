@@ -162,48 +162,62 @@ module.exports = (function () {
   group.del = ld.partial(common.getDel, true, group.DBPREFIX);
 
   /**
-  *  ## Helpers Functions
+  *  ## Helper Functions
   *
-  *  Helpers here are public functions created to facilitate interaction with
+  *  Helper here are public functions created to facilitate interaction with
   *  the API.
   */
 
-  group.helpers = {};
+  group.helper = {};
 
   /**
-  * ### attachPads
-  *  string or array
+  * ### linkPads
+  *
+  *  `linkPads` is a function to attach new pads to an existing group.
+  *  It takes mandatory arguments :
+  *
+  *  - the pad `_id`entifier, a string
+  *  - `add`, a string for only one addition, an array for multiple adds.
   */
 
-  group.helpers.attachPads = ld.noop;
+  group.helper.linkPads = ld.noop;
+
+  group.helper.unlinkPads = ld.noop;
 
   /**
   * ### inviteUsers
   * string or array
   */
 
-  group.helpers.inviteUsers = ld.noop;
+  group.helper.inviteUsers = ld.noop;
 
   /**
   * ### setAdmins
   * string or array
   */
 
-  group.helpers.setAdmins = ld.noop;
+  group.helper.setAdmins = ld.noop;
 
   /**
   * ### setPassword
   * string of false
   */
 
-  group.helpers.setPassword = ld.noop;
+  group.helper.setPassword = ld.noop;
 
   /**
   * ### setPublic
   * boolean
   */
 
-  group.helpers.setPublic = ld.noop;
+  group.helper.setPublic = ld.noop;
+
+  /**
+  * ### archive
+  * boolean
+  */
+
+  group.helper.archive = ld.noop;
 
   /**
   *  ## Internal Functions

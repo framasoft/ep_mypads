@@ -367,7 +367,7 @@
           function (done) {
             rq.get(userRoute + '/inexistent', function (err, resp, body) {
               expect(resp.statusCode).toBe(404);
-              expect(body.error).toMatch('user is not found');
+              expect(body.error).toMatch('key is not found');
               expect(body.key).toBe('inexistent');
               done();
             });
@@ -396,7 +396,7 @@
           function (done) {
             rq.del(userRoute + '/inexistent', function (err, resp, body) {
               expect(resp.statusCode).toBe(404);
-              expect(body.error).toMatch('user is not found');
+              expect(body.error).toMatch('key is not found');
               done();
             });
           }
@@ -410,7 +410,7 @@
               expect(body.key).toBe('guest');
               rq.get(userRoute + '/guest', function (err, resp, body) {
                 expect(resp.statusCode).toBe(404);
-                expect(body.error).toMatch('user is not found');
+                expect(body.error).toMatch('key is not found');
                 done();
               });
             });

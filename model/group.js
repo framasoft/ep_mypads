@@ -108,13 +108,13 @@ module.exports = (function () {
         return callback(new Error(e));
       }
       var _final = function () {
-        storage.db.set(g._id, g, function (err) {
+        storage.db.set(group.DBPREFIX + g._id, g, function (err) {
           if (err) { return callback(err); }
           return callback(null, g);
         });
       };
       if (edit) {
-        g._id = params._id;
+        g._id = group.DBPREFIX + params._id;
         common.checkExistence(g._id, function (err, res) {
           if (err) { return callback(err); }
           if (!res) { return callback(new Error('group does not exist')); }
@@ -129,9 +129,15 @@ module.exports = (function () {
 
   /**
   * ### get
+  *
+  *  Group reading
+  *
+  *  This function uses `common.getDel` with `del` to *false* and DBPREFIX
+  *  fixed.  It will takes mandatory key string and callback function. See
+  *  `common.getDel` for documentation.
   */
 
-  group.get = ld.noop;
+  group.get = ld.partial(common.getDel, false, group.DBPREFIX);
 
   /**
   * ### set
@@ -145,9 +151,15 @@ module.exports = (function () {
 
   /**
   * ### del
+  *
+  * Group removal
+  *
+  *  This function uses `common.getDel` with `del` to *false* and DBPREFIX
+  *  fixed.  It will takes mandatory key string and callback function. See
+  *  `common.getDel` for documentation.
   */
 
-  group.del = ld.noop;
+  group.del = ld.partial(common.getDel, true, group.DBPREFIX);
 
   /**
   *  ## Helpers Functions

@@ -72,5 +72,54 @@
       });
     });
 
+    describe('getDel', function () {
+      var key = 'test:john';
+
+      beforeAll(function (done) { db.set(key, 'exists', done); });
+      afterAll(function (done) { db.remove(key, done); });
+
+      it('throws error if arguments are not given correctly', function () {
+        expect(common.getDel).toThrow();
+        expect(ld.partial(common.getDel, 123)).toThrow();
+        expect(ld.partial(common.getDel, false, 'prefix')).toThrow();
+        expect(ld.partial(common.getDel, false, 'prefix')).toThrow();
+        expect(ld.partial(common.getDel, true, 'prefix', {})).toThrow();
+        expect(ld.partial(common.getDel, true, 'prefix', 'key', {})).toThrow();
+        expect(ld.partial(common.getDel, true, 'prefix', false, ld.noop))
+          .toThrow();
+      });
+
+      it('should return an error through the callback if the key is not found',
+        function (done) {
+          common.getDel(false, 'prefix:', 'key', function (err, res) {
+            expect(ld.isError(err)).toBeTruthy();
+            expect(res).toBeUndefined();
+            done();
+          });
+        }
+      );
+
+      it('should return null and the object otherwise in edit case (not del)',
+        function (done) {
+          common.getDel(false, 'test:', 'john', function (err, res) {
+            expect(err).toBeNull();
+            expect(res).toBe('exists');
+            done();
+          }
+        );
+      });
+
+      it('should return null in successfull del case',
+        function (done) {
+          common.getDel(true, 'test:', 'john', function (err, res) {
+            expect(err).toBeNull();
+            expect(res).toBeUndefined();
+            done();
+          }
+        );
+      });
+
+    });
+
   });
 }).call(this);

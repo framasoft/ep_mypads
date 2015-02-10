@@ -223,4 +223,68 @@
 
   });
 
+  describe('group get', function () {
+
+    var params;
+
+    beforeAll(function (done) {
+      specCommon.reInitDatabase(function () {
+        user.add({ login: 'parker', password: 'lovesKubiak'}, function () {
+          params = {
+            name: 'college',
+            admin: 'parker',
+            admins: [ 'mikey', 'jerry' ],
+            users: [ 'grace', 'frank', 'shelly' ],
+            pads: [ 'watchSync' ],
+            visibility: 'private',
+            password: 'aGoodOne',
+            readonly: true
+          };
+          group.add(params, function (err, res) {
+            if (!err) { params = res; }
+            done();
+          });
+        });
+      });
+    });
+    afterAll(specCommon.reInitDatabase);
+
+    it('should throw errors if arguments are not provided as expected',
+      function () {
+        expect(group.get).toThrow();
+        expect(ld.partial(group.get, 123)).toThrow();
+        expect(ld.partial(group.get, 'key')).toThrow();
+        expect(ld.partial(group.get, 'key', 'notAFunc')).toThrow();
+      }
+    );
+
+    it('should return an Error if the key is not found', function (done) {
+      group.get('inexistent', function (err, g) {
+        expect(ld.isError(err)).toBeTruthy();
+        expect(g).toBeUndefined();
+        done();
+      });
+    });
+
+    it('should return the group otherwise', function (done) {
+      group.get(params._id, function (err, g) {
+        expect(err).toBeNull();
+        expect(ld.isString(g._id)).toBeTruthy();
+        expect(g.name).toBe('college');
+        expect(ld.isArray(g.admins)).toBeTruthy();
+        expect(ld.first(g.admins)).toBe('parker');
+        expect(ld.includes(g.admins, 'mikey')).toBeTruthy();
+        expect(ld.includes(g.admins, 'jerry')).toBeTruthy();
+        expect(ld.isEmpty(ld.xor(g.users, params.users))).toBeTruthy();
+        expect(ld.includes(g.pads, 'watchSync')).toBeTruthy();
+        expect(g.visibility).toBe('private');
+        expect(g.password).toBeDefined();
+        expect(ld.isEmpty(g.password)).toBeFalsy();
+        expect(g.readonly).toBeTruthy();
+        done();
+      });
+    });
+
+  });
+
 }).call(this);

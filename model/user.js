@@ -103,30 +103,12 @@ module.exports = (function () {
   *
   *  User reading
   *
-  *  This function takes
-  *
-  *  - a mandatory `login`, the unique identifier which will constructs the key
-  *  - a mandatory `callback` function, that returns an error if there is a
-  *  problem or if the login is not found and null plus the user object in the
-  *  other case.
+  *  This function uses `common.getDel` with `del` to *false* and DBPREFIX
+  *  fixed.  It will takes mandatory key string and callback function. See
+  *  `common.getDel` for documentation.
   */
 
-  user.get = function (login, callback) {
-    if (!ld.isString(login)) {
-      throw(new TypeError('login must be a string'));
-    }
-    if (!ld.isFunction(callback)) {
-      throw(new TypeError('callback must be a function'));
-    }
-    var key = user.DBPREFIX + login;
-    storage.db.get(key, function (err, u) {
-      if (err) { return callback(err); }
-      if (ld.isUndefined(u)) {
-        return callback(new Error('user is not found'));
-      }
-      return callback(null, u);
-    });
-  };
+  user.get = ld.partial(common.getDel, false, user.DBPREFIX);
 
   /**
   *  ### set
@@ -143,26 +125,12 @@ module.exports = (function () {
   *
   * User removal
   *
-  *  This function takes
-  *
-  *  - a mandatory `login`, the unique identifier which will constructs the key
-  *  - a mandatory `callback` function, that returns an error if there is a
-  *  problem or if the login is not found and null plus the user object in the
-  *  other case.
+  *  This function uses `common.getDel` with `del` to *false* and DBPREFIX
+  *  fixed.  It will takes mandatory key string and callback function. See
+  *  `common.getDel` for documentation.
   */
 
-  user.del = function (login, callback) {
-    if (!ld.isFunction(callback)) {
-      throw(new TypeError('callback must be a function'));
-    }
-    user.get(login, function (err) {
-      if (err) { return callback(err); }
-      storage.db.remove(user.DBPREFIX + login, function (err) {
-        if (err) { return callback(err); }
-        callback(null);
-      });
-    });
-  };
+  user.del = ld.partial(common.getDel, true, user.DBPREFIX);
 
   /**
   *  ## Internal Functions

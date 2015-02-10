@@ -71,6 +71,44 @@ module.exports = (function() {
     });
   };
 
+  /**
+  *  ### getDel
+  *
+  *  Model common reading
+  *
+  *  This function takes mandatory arguments
+  *
+  *  - a `del` boolean, to add a second step, removal, in the case of *true*
+  *  (not tested because of internal use)
+  *  - a `PREFIX`, used to compute real key (idem)
+  *  - a `key`, the unique identifier of the object
+  *  - a `callback` function, that returns an error if there is a problem or if
+  *  the key is not found. In the other case, it returns null if `del` and null
+  *  plus the model object if not `del`.
+  */
+
+  common.getDel = function (del, PREFIX, key, callback) {
+    if (!ld.isString(key)) { throw(new TypeError('key must be a string')); }
+    if (!ld.isFunction(callback)) {
+      throw(new TypeError('callback must be a function'));
+    }
+    key = PREFIX + key;
+    storage.db.get(key, function (err, obj) {
+      if (err) { return callback(err); }
+      if (ld.isUndefined(obj)) {
+        return callback(new Error('key is not found'));
+      }
+      if (!del) {
+        return callback(null, obj);
+      } else {
+        storage.db.remove(key, function (err) {
+          if (err) { return callback(err); }
+          return callback(null);
+        });
+      }
+    });
+  };
+
   return common;
 
 }).call(this);

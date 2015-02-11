@@ -20,72 +20,55 @@
 (function () {
   'use strict';
   var ld = require('lodash');
+  var cuid = require('cuid');
   var specCommon = require('../common.js');
-  var user = require('../../../model/user.js');
+  var storage = require('../../../storage.js');
   var conf = require('../../../configuration.js');
+  var user = require('../../../model/user.js');
+
+  var reInit = function (done) {
+    user.ids = {};
+    specCommon.reInitDatabase(done);
+  };
 
   describe('user', function () {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000;
     beforeAll(specCommon.reInitDatabase);
-    afterAll(specCommon.reInitDatabase);
+    afterAll(reInit);
 
-    describe('creation', function () {
+    describe('init', function () {
+
       beforeAll(function (done) {
-        conf.init(done);
+        specCommon.reInitDatabase(function () {
+          var genId = function () { return user.DBPREFIX + cuid(); };
+          var kv = {};
+          kv[genId()] = { login: 'parker' };
+          kv[genId()] = { login: 'kubiak' };
+          storage.fn.setKeys(kv, done);
+        });
       });
+      afterAll(reInit);
 
-      it('should return a TypeError and a message if either login or password' +
-        ' aren\'t given; nor callback function', function () {
-        expect(user.add).toThrow();
-        expect(ld.partial(user.add, { another: 'object' })).toThrow();
-        expect(ld.partial(user.add, { login: 'Johnny' })).toThrow();
-        expect(ld.partial(user.add, { password: 'secret' })).toThrow();
-        expect(ld.partial(user.add, { login: 'john', password: 'secret' }))
-          .toThrow();
-      });
-
-      it('should return an Error to the callback if password size is not' +
-        ' appropriate', function (done) {
-        user.add({ login: 'bob', password: '1'}, function (err) {
-          expect(ld.isError(err)).toBeTruthy();
+      it('should populate the user.ids field', function (done) {
+        user.init(function (err) {
+          expect(err).toBeNull();
+          expect(ld.isObject(user.ids)).toBeTruthy();
+          expect(ld.size(user.ids)).toBe(2);
+          expect(ld.includes(ld.keys(user.ids), 'parker')).toBeTruthy();
+          expect(ld.includes(ld.keys(user.ids), 'kubiak')).toBeTruthy();
           done();
         });
       });
 
-      it('should accept any creation if login & password are fixed',
-        function (done) {
-          user.add({
-            login: 'parker',
-            password: 'lovesKubiak',
-            firstname: 'Parker',
-            lastname: 'Lewis'
-          }, function (err, u) {
-            expect(err).toBeNull();
-            expect(u.login).toBe('parker');
-            expect(u.password).toBeDefined();
-            expect(u.firstname).toBe('Parker');
-            expect(u.lastname).toBe('Lewis');
-            expect(ld.isString(u.organization)).toBeTruthy();
-            expect((ld.isArray(u.groups) && ld.isEmpty(u.groups))).toBeTruthy();
-            done();
-          });
-        }
-      );
-
-      it('should deny usage of an existing login', function (done) {
-        user.add({ login: 'parker', password: 'lovesKubiak' },
-          function (err, u) {
-            expect(ld.isError(err)).toBeTruthy();
-            expect(u).toBeUndefined();
-            done();
-          }
-        );
-      });
     });
 
-    describe('edition', function () {
+    describe('creation', function () {
       beforeAll(function (done) {
-        conf.init(done);
+        specCommon.reInitDatabase(function () {
+          conf.init(done);
+        });
       });
+      afterAll(reInit);
 
       it('should return a TypeError and a message if either login or password' +
         ' aren\'t given; nor callback function', function () {
@@ -99,9 +82,8 @@
 
       it('should return an Error to the callback if password size is not' +
         ' appropriate', function (done) {
-        user.set({ login: 'bob', password: '1'}, function (err, res) {
+        user.set({ login: 'bob', password: '1'}, function (err) {
           expect(ld.isError(err)).toBeTruthy();
-          expect(res).toBeUndefined();
           done();
         });
       });
@@ -109,55 +91,109 @@
       it('should accept any creation if login & password are fixed',
         function (done) {
           user.set({
-            login: 'mikey',
-            password: 'principalMusso',
-            email: 'mik@randall.com'
+            login: 'parker',
+            password: 'lovesKubiak',
+            firstname: 'Parker',
+            lastname: 'Lewis'
           }, function (err, u) {
             expect(err).toBeNull();
-            expect(u.login).toBe('mikey');
+            expect(u._id).toBeDefined();
+            expect(u.login).toBe('parker');
             expect(u.password).toBeDefined();
-            expect(u.email).toBe('mik@randall.com');
-            expect(ld.isString(u.firstname)).toBeTruthy();
-            expect(ld.isEmpty(u.firstname)).toBeTruthy();
+            expect(u.firstname).toBe('Parker');
+            expect(u.lastname).toBe('Lewis');
+            expect(ld.isString(u.organization)).toBeTruthy();
             expect((ld.isArray(u.groups) && ld.isEmpty(u.groups))).toBeTruthy();
+            expect(ld.includes(ld.values(user.ids), u._id)).toBeTruthy();
+            expect((user.ids[u.login])).toBe(u._id);
             done();
           });
         }
       );
 
+      it('should deny usage of an existing login', function (done) {
+        user.set({ login: 'parker', password: 'lovesKubiak' },
+          function (err, u) {
+            expect(ld.isError(err)).toBeTruthy();
+            expect(u).toBeUndefined();
+            done();
+          }
+        );
+      });
+    });
+
+    describe('edition', function () {
+      var mikey;
+      beforeAll(function (done) {
+        conf.init(function () {
+          user.set({ login: 'mikey', password: 'principalMusso' },
+            function (err, u) {
+              if (err) { console.log(err); }
+              mikey = u;
+              done();
+            }
+          );
+        });
+      });
+
+      it('should return a TypeError and a message if _id is not given, ' +
+       'nor callback function', function () {
+        expect(user.set).toThrow();
+        expect(ld.partial(user.set, { another: 'object' })).toThrow();
+        expect(ld.partial(user.set, { _id: 'Johnny' })).toThrow();
+        expect(ld.partial(user.set, { another: 'object' }, ld.noop)).toThrow();
+      });
+
+      it('should return an Error if the user does not already exist',
+        function (done) {
+          user.set({ _id: 'inexistent', login: 'i', password: 'p' },
+            function (err, u) {
+              expect(ld.isError(err)).toBeTruthy();
+              expect(u).toBeUndefined();
+              done();
+            }
+          );
+        }
+      );
+
+      it('should return an Error to the callback if password size is not' +
+        ' appropriate', function (done) {
+        user.set({ login: 'bob', password: '1'}, function (err, res) {
+          expect(ld.isError(err)).toBeTruthy();
+          expect(res).toBeUndefined();
+          done();
+        });
+      });
+
       it('should allow setting of an existing user', function (done) {
         user.set({
+          _id: mikey._id,
           login: 'mikey',
           password: 'principalMusso',
+          email: 'mik@randall.com',
           firstname: 'Michael',
           lastname: 'Randall'
         },
           function (err, u) {
             expect(err).toBeNull();
             expect(u.login).toBe('mikey');
-            expect(ld.isEmpty(u.email)).toBeTruthy();
+            expect(u.email).toBe('mik@randall.com');
             expect(u.firstname).toBe('Michael');
             expect(u.lastname).toBe('Randall');
+            expect(ld.isArray(u.groups)).toBeTruthy();
+            expect(user.ids.mikey).toBe(u._id);
             done();
           }
         );
       });
 
-      it('is an alias to add with last argument to true', function (done) {
-        user.add({ login: 'mikey', password: 'principalMusso' },
-          function (err, u) {
-            expect(err).toBeNull();
-            expect(u.login).toBe('mikey');
-            done();
-        }, true);
-      });
     });
   });
 
   describe('user get', function () {
     beforeAll(function (done) {
       specCommon.reInitDatabase(function () {
-        user.add({
+        user.set({
           login: 'parker',
           password: 'lovesKubiak',
           firstname: 'Parker',
@@ -165,14 +201,12 @@
         }, done);
       });
     });
-    afterAll(specCommon.reInitDatabase);
+    afterAll(reInit);
 
     it('should throw errors if arguments are not provided as expected',
       function () {
         expect(user.get).toThrow();
         expect(ld.partial(user.get, 123)).toThrow();
-        expect(ld.partial(user.get, 'key')).toThrow();
-        expect(ld.partial(user.get, 'key', 'notAFunc')).toThrow();
       }
     );
 
@@ -187,6 +221,7 @@
     it('should return the user otherwise', function (done) {
       user.get('parker', function (err, u) {
         expect(err).toBeNull();
+        expect(u._id).toBeDefined();
         expect(u.login).toBe('parker');
         expect(u.password).toBeDefined();
         expect(u.firstname).toBe('Parker');
@@ -200,7 +235,7 @@
   describe('user del', function () {
     beforeAll(function (done) {
       specCommon.reInitDatabase(function () {
-        user.add({
+        user.set({
           login: 'parker',
           password: 'lovesKubiak',
           firstname: 'Parker',
@@ -208,7 +243,7 @@
         }, done);
       });
     });
-    afterAll(specCommon.reInitDatabase);
+    afterAll(reInit);
 
     it('should throw errors if arguments are not provided as expected',
       function () {
@@ -231,6 +266,7 @@
       user.del('parker', function (err, u) {
         expect(err).toBeNull();
         expect(u).toBeUndefined();
+        expect(user.ids.parker).toBeUndefined();
         user.get('parker', function (err, u) {
           expect(ld.isError(err)).toBeTruthy();
           expect(u).toBeUndefined();
@@ -268,13 +304,11 @@
 
       it('should return an Error if password size is not appropriate',
         function () {
-          params.password = 'a';
-          expect(ld.isError(user.fn.checkPassword(params))).toBeTruthy();
+          expect(ld.isError(user.fn.checkPassword('a', params))).toBeTruthy();
       });
 
       it('should return nothing if password size is good', function () {
-        params.password = '123456';
-        expect(user.fn.checkPassword(params)).toBeUndefined();
+        expect(user.fn.checkPassword('123456', params)).toBeUndefined();
       });
     });
 
@@ -283,6 +317,7 @@
       it ('should respect given properties if strings and relevant',
         function () {
           var params = {
+            _id: 'aMadeID',
             login: 'brian',
             password: 'secret',
             organization: 'etherInc',
@@ -291,6 +326,7 @@
             email: 'brian@sample.net'
           };
           var u = user.fn.assignProps(params);
+          expect(u._id).toBe('aMadeID');
           expect(u.login).toBe('brian');
           expect(u.password).toBe('secret');
           expect(u.organization).toBe('etherInc');
@@ -309,7 +345,49 @@
         }
       );
     });
+
+    describe('checkLogin', function () {
+      beforeAll(function () {
+        user.ids = {
+          'parker': '087654321',
+          'jerry': 'azertyuiop'
+        };
+      });
+      afterAll(function (done) { user.init(done); });
+
+      it('should return an error if add and existing login or id',
+        function (done) {
+          var u = { login: 'l', _id: '087654321' };
+          user.fn.checkLogin(undefined, u, function (err) {
+            expect(ld.isError(err)).toBeTruthy();
+            expect(err).toMatch('user already exists');
+            u = { login: 'jerry', _id: 'anotherone' };
+            user.fn.checkLogin(undefined, u, function (err) {
+              expect(ld.isError(err)).toBeTruthy();
+              expect(err).toMatch('user already exists');
+              done();
+            });
+          });
+        }
+      );
+
+      it('should pay attention to login when edit, returns null',
+        function (done) {
+          var u = { login: 'parker', _id: '087654321', email: 'p@l.org' };
+          user.fn.checkLogin('087654321', u, function (err) {
+            expect(err).toBeNull();
+            u = { login: 'park', _id: '087654321' };
+            user.fn.checkLogin('087654321', u, function (err) {
+              expect(err).toBeNull();
+              expect(user.ids.parker).toBeUndefined();
+              done();
+            });
+          });
+        }
+      );
+    });
   });
+
 
   describe('lodash mixins', function () {
 

@@ -53,6 +53,11 @@ module.exports = (function() {
     if (!ld.isFunction(callback)) {
       throw(new TypeError('callback must be a function'));
     }
+    if (!ld.isUndefined(params._id)) {
+      if (!ld.isString(params._id) || (ld.isEmpty(params._id))) {
+        throw new TypeError('_id, when defined, must be a string');
+      }
+    }
   };
 
   /**

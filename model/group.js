@@ -89,15 +89,11 @@ module.exports = (function () {
   *
   */
 
-  group.add = function (params, callback, edit) {
-    edit = !!edit;
+  group.add = function (params, callback) {
     common.addSetInit(params, callback);
     var isFullStr = function (s) { return (ld.isString(s) && !ld.isEmpty(s)); };
     if (!(isFullStr(params.name) && isFullStr(params.admin))) {
       throw(new TypeError('name and admin must be strings'));
-    }
-    if (edit && !ld.isString(params._id)) {
-      throw(new TypeError('unique _id must be given in params object'));
     }
     var adminKey = user.DBPREFIX + params.admin;
     var g = group.fn.assignProps(params);
@@ -113,9 +109,9 @@ module.exports = (function () {
           return callback(null, g);
         });
       };
-      if (edit) {
-        g._id = group.DBPREFIX + params._id;
-        common.checkExistence(g._id, function (err, res) {
+      if (params._id) {
+        g._id = params._id;
+        common.checkExistence(group.DBPREFIX + g._id, function (err, res) {
           if (err) { return callback(err); }
           if (!res) { return callback(new Error('group does not exist')); }
           _final();
@@ -147,7 +143,7 @@ module.exports = (function () {
   *  Please refer to `group.add` for documentation.
   */
 
-  group.set = ld.partialRight(group.add, true);
+  group.set = group.add;
 
   /**
   * ### del

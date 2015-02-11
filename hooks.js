@@ -45,12 +45,15 @@ module.exports = (function () {
   };
   /**
   * `expressCreateServer` hook profits from the args.app express instance to
-  * initialize all MyPads routes from its own API.
+  * initialize all MyPads routes from its own API and local indexes from storage
   */
   hooks.expressCreateServer = function (name, args, callback) {
+    var storage = require('./storage.js');
     var api = require('./api.js');
-    api.init(args.app);
-    return callback();
+    storage.init(function () {
+      api.init(args.app);
+      return callback();
+    });
   };
   return hooks;
 

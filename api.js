@@ -189,17 +189,18 @@ module.exports = (function () {
       var setFn;
       if (req.method === 'POST') {
         key = req.body.login;
-        setFn = ld.partial(user.add, value);
+        setFn = ld.partial(user.set, value);
       } else {
         key = req.params.key;
         value.login = key;
+        value._id = user.ids[key];
         setFn = ld.partial(user.set, value);
       }
       fn.set(setFn, key, value, req, res);
     };
 
     /**
-    * POST method : `user.add` with user value for user creation
+    * POST method : `user.set` with user value for user creation
     * Sample URL:
     *
     * http://etherpad.ndd/mypads/api/user

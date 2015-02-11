@@ -46,6 +46,16 @@ module.exports = (function () {
   }
 
   /**
+  * `init` function for in memory secondary indexes.
+  * At the moment only user / logins.
+  */
+
+  storage.init = function (callback) {
+    var user = require('model/user.js');
+    user.init(callback);
+  };
+
+  /**
   * ## Internal functions `fn`
   */
 

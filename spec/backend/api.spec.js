@@ -211,12 +211,12 @@
 
     beforeAll(function (done) {
       conf.init(function () {
-        var add = require('../../model/user.js').add;
-        add({ login: 'guest', password: 'willnotlivelong' }, done);
+        var set = require('../../model/user.js').set;
+        set({ login: 'guest', password: 'willnotlivelong' }, done);
       });
     });
 
-      describe('user.add POST and value as params', function () {
+      describe('user.set/add POST and value as params', function () {
 
         it('should return error when arguments are not as expected',
           function (done) {

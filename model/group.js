@@ -30,7 +30,6 @@ module.exports = (function () {
   var storage = require('../storage.js');
   //var conf = require('../configuration.js');
   var common = require('./common.js');
-  var user = require('./user.js');
 
   /**
   * ## Description
@@ -95,32 +94,32 @@ module.exports = (function () {
     if (!(isFullStr(params.name) && isFullStr(params.admin))) {
       throw(new TypeError('name and admin must be strings'));
     }
-    var adminKey = user.DBPREFIX + params.admin;
     var g = group.fn.assignProps(params);
-    common.checkExistence(adminKey, function (err, res) {
-      if (err) { return callback(err); }
-      if (!res) {
-        var e = 'admin user does not exist';
-        return callback(new Error(e));
-      }
-      var _final = function () {
+    var _final = function () {
+      var allKeys = ld.union(g.admins, g.users, g.pads);
+      common.checkMultiExist(allKeys, function (err, res) {
+        if (err) { return callback(err); }
+        if (!res) {
+          var e = 'Some users, admins or pads have not been found';
+          return callback(new Error(e));
+        }
         storage.db.set(group.DBPREFIX + g._id, g, function (err) {
           if (err) { return callback(err); }
           return callback(null, g);
         });
-      };
-      if (params._id) {
-        g._id = params._id;
-        common.checkExistence(group.DBPREFIX + g._id, function (err, res) {
-          if (err) { return callback(err); }
-          if (!res) { return callback(new Error('group does not exist')); }
-          _final();
-        });
-      } else {
-        g._id = cuid();
+      });
+    };
+    if (params._id) {
+      g._id = params._id;
+      common.checkExistence(group.DBPREFIX + g._id, function (err, res) {
+        if (err) { return callback(err); }
+        if (!res) { return callback(new Error('group does not exist')); }
         _final();
-      }
-    });
+      });
+    } else {
+      g._id = cuid();
+      _final();
+    }
   };
 
   /**

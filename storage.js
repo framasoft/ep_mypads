@@ -61,33 +61,55 @@ module.exports = (function () {
 
   storage.fn = {};
 
-  /**
-  * `getKeys` is a function for multiple asynchronous gets, taking :
-  s
+  /** ### _getDelKeys
+  *
+  * `_getDelKeys` is a private function for multiple asynchronous gets and
+  * removes, taking :
+  *
+  * - a `del` boolean, for removals to *true*
   * - a `keys` array, wich contains a list a keys to retrieve
   * - a `callback` function, called if error or when finished with null and the
-  *   `results` object composed of keys and values
+  *   `results` object composed of keys and values for gets, null for removals
   * FIXME: TCO ?
   */
 
-  storage.fn.getKeys = function (keys, callback) {
-    var results = {};
-    var get = function (k) {
-      storage.db.get(k, function (err, res) {
+  storage.fn._getDelKeys = function (del, keys, callback) {
+    var results = del ? true : {};
+    var action = del ? 'remove' : 'get';
+    var getDel = function (k) {
+      storage.db[action](k, function (err, res) {
         if (err) { return callback(err); }
-        results[k] = res;
+        if (!del) { results[k] = res; }
         done();
       });
     };
     var done = function () {
       if (keys.length) {
-        get(keys.pop());
+        getDel(keys.pop());
       } else {
         return callback(null, results);
       }
     };
     done();
   };
+
+  /**
+  * ### getKeys
+  *
+  * `getKeys` is an helper around `storage.fn._getDelKeys` with `del` argument
+  * to *false*.
+  */
+
+  storage.fn.getKeys = ld.partial(storage.fn._getDelKeys, false);
+
+  /**
+  * ### delKeys
+  *
+  * `delKeys` is an helper around `storage.fn._getDelKeys` with `del` argument
+  * to *true*.
+  */
+
+  storage.fn.delKeys = ld.partial(storage.fn._getDelKeys, true);
 
   /**
   * `setKeys` is a function for multiple asynchronous sets, taking :

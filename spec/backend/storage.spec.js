@@ -34,7 +34,7 @@
     beforeAll(specCommon.reInitDatabase);
     afterAll(specCommon.reInitDatabase);
 
-    describe('Private functions fn', function () {
+    describe('Internal functions fn', function () {
 
       describe('getKeys', function () {
 
@@ -67,6 +67,36 @@
             });
           });
         });
+      });
+
+      describe('delKeys', function () {
+
+        beforeAll(function (done) {
+          var db = storage.db;
+          db.set('key1', 'value1', function () {
+            db.set('key2', 'value2', function () {
+              db.set('key3', 'value3', function () {
+                done();
+              });
+            });
+          });
+        });
+
+        it('should removes every given keys, even if thet don`t exist',
+          function (done) {
+            storage.fn.delKeys(['key1'], function (err, res) {
+              expect(err).toBeNull();
+              expect(res).toBeTruthy();
+              storage.fn.delKeys(['key2', 'key3', 'key4'],
+                function (err, res) {
+                  expect(err).toBeNull();
+                  expect(res).toBeTruthy();
+                  done();
+                }
+              );
+            });
+          }
+        );
       });
 
       describe('setKeys', function () {

@@ -20,7 +20,7 @@
 (function () {
   'use strict';
   var ld = require('lodash');
-  var db = require('../../../storage').db;
+  var storage = require('../../../storage');
   var specCommon = require('../common.js');
   var common = require('../../../model/common.js');
 
@@ -50,8 +50,8 @@
     describe('checkExistence', function () {
       var key = 'test:john';
 
-      beforeAll(function (done) { db.set(key, 'exists', done); });
-      afterAll(function (done) { db.remove(key, done); });
+      beforeAll(function (done) { storage.db.set(key, 'exists', done); });
+      afterAll(function (done) { storage.db.remove(key, done); });
 
       it('should return null and true if the key exists', function (done) {
         common.checkExistence(key, function (err, res) {
@@ -72,11 +72,42 @@
       });
     });
 
+    describe('checkMultiExist', function () {
+      var kv = {
+        'test:parker': 123,
+        'test:jerry': ['a','c', 'e'],
+        'test:mikey': 'a string'
+      };
+
+      beforeAll(function (done) { storage.fn.setKeys(kv, done); });
+      afterAll(specCommon.reInitDatabase);
+
+      it('should return null and true if all keys are found', function (done) {
+        common.checkMultiExist(ld.keys(kv), function (err, res) {
+          expect(err).toBeNull();
+          expect(res).toBeTruthy();
+          done();
+        });
+      });
+
+      it('should return null and false if one or more keys are not found',
+        function (done) {
+          common.checkMultiExist(['test:parker', 'test:indexistent'],
+            function (err, res) {
+              expect(err).toBeNull();
+              expect(res).toBeFalsy();
+              done();
+            }
+          );
+        }
+      );
+    });
+
     describe('getDel', function () {
       var key = 'test:john';
 
-      beforeAll(function (done) { db.set(key, 'exists', done); });
-      afterAll(function (done) { db.remove(key, done); });
+      beforeAll(function (done) { storage.db.set(key, 'exists', done); });
+      afterAll(function (done) { storage.db.remove(key, done); });
 
       it('throws error if arguments are not given correctly', function () {
         expect(common.getDel).toThrow();

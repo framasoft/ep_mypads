@@ -67,6 +67,7 @@ module.exports = (function () {
   * - a `keys` array, wich contains a list a keys to retrieve
   * - a `callback` function, called if error or when finished with null and the
   *   `results` object composed of keys and values
+  * FIXME: TCO ?
   */
 
   storage.fn.getKeys = function (keys, callback) {
@@ -93,6 +94,7 @@ module.exports = (function () {
   s
   * - a `kv` object, wich contains a list a keys and values to set
   * - a `callback` function, called if error or when finished with null
+  * FIXME: TCO ?
   */
   storage.fn.setKeys = function (kv, callback) {
     var pairs = ld.pairs(kv);

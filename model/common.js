@@ -77,6 +77,34 @@ module.exports = (function() {
   };
 
   /**
+  * ### checkMultiExist
+  *
+  * `checkMultiExist` is an asynchronous function that uses
+  * `common.checkExistence` to check multiple keys.
+  * It takes :
+  *
+  * - an array of `keys`
+  * - a `callback` function, returning an Error or *null* and a boolean for
+  *   existence.
+  *
+  * At the first not found record, callback will be called.
+  * FIXME: TCO ?
+  */
+
+  common.checkMultiExist = function (keys, callback) {
+    var done = function (err, res) {
+      if (keys.length) {
+        if (err) { return callback(err); }
+        if (!res) { return callback(null, res); }
+        common.checkExistence(keys.pop(), done);
+      } else {
+        return callback(null, res);
+      }
+    };
+    done(undefined, true);
+  };
+
+  /**
   *  ### getDel
   *
   *  Model common reading

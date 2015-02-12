@@ -26,10 +26,7 @@
 
   var gparams;
   var guser;
-  var reInit = function (done) {
-    user.ids = {};
-    specCommon.reInitDatabase(done);
-  };
+
   var initOneGroup = function (done) {
     specCommon.reInitDatabase(function () {
       user.set({ login: 'parker', password: 'lovesKubiak'}, function (err, u) {
@@ -54,7 +51,7 @@
 
   describe('group', function () {
     beforeAll(specCommon.reInitDatabase);
-    afterAll(reInit);
+    afterAll(specCommon.reInitDatabase);
 
     describe('add', function () {
       var adm;
@@ -73,7 +70,7 @@
           );
         });
       });
-      afterAll(reInit);
+      afterAll(specCommon.reInitDatabase);
 
       it('should throws errors if params.name or params.admin, callback or ' +
         'edit aren`t correct', function () {
@@ -191,7 +188,7 @@
           );
         });
       });
-      afterAll(reInit);
+      afterAll(specCommon.reInitDatabase);
 
       it('should throws errors if params._id|name|admin, callback or edit ' +
         'aren`t correct', function () {
@@ -275,7 +272,7 @@
     describe('group get and del', function () {
 
       beforeAll(initOneGroup);
-      afterAll(reInit);
+      afterAll(specCommon.reInitDatabase);
 
       it('should throw errors if arguments are not provided as expected',
         function () {

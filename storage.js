@@ -51,7 +51,7 @@ module.exports = (function () {
   */
 
   storage.init = function (callback) {
-    var user = require('model/user.js');
+    var user = require('./model/user.js');
     user.init(callback);
   };
 

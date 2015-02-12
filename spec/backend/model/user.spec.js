@@ -26,15 +26,10 @@
   var conf = require('../../../configuration.js');
   var user = require('../../../model/user.js');
 
-  var reInit = function (done) {
-    user.ids = {};
-    specCommon.reInitDatabase(done);
-  };
-
   describe('user', function () {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000;
     beforeAll(specCommon.reInitDatabase);
-    afterAll(reInit);
+    afterAll(specCommon.reInitDatabase);
 
     describe('init', function () {
 
@@ -47,7 +42,7 @@
           storage.fn.setKeys(kv, done);
         });
       });
-      afterAll(reInit);
+      afterAll(specCommon.reInitDatabase);
 
       it('should populate the user.ids field', function (done) {
         user.init(function (err) {
@@ -68,7 +63,7 @@
           conf.init(done);
         });
       });
-      afterAll(reInit);
+      afterAll(specCommon.reInitDatabase);
 
       it('should return a TypeError and a message if either login or password' +
         ' aren\'t given; nor callback function', function () {
@@ -201,7 +196,7 @@
         }, done);
       });
     });
-    afterAll(reInit);
+    afterAll(specCommon.reInitDatabase);
 
     it('should throw errors if arguments are not provided as expected',
       function () {
@@ -243,7 +238,7 @@
         }, done);
       });
     });
-    afterAll(reInit);
+    afterAll(specCommon.reInitDatabase);
 
     it('should throw errors if arguments are not provided as expected',
       function () {

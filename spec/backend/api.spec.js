@@ -395,9 +395,9 @@
 
       });
 
-      describe('user.get DELETE and key/login', function () {
+      describe('user.del DELETE and key/login', function () {
 
-        it('will return an error if the field does not exist',
+        it('will return an error if the user does not exist',
           function (done) {
             rq.del(userRoute + '/inexistent', function (err, resp, body) {
               expect(resp.statusCode).toBe(404);
@@ -407,7 +407,7 @@
           }
         );
 
-        it('should deletes the record and returns the key, value and success' +
+        it('should deletes the record and returns the key and success' +
          ' otherwise', function (done) {
             rq.del(userRoute + '/guest', function (err, resp, body) {
               expect(resp.statusCode).toBe(200);
@@ -635,6 +635,33 @@
             );
           });
         });
+      });
+
+      describe('group.del DELETE and id', function () {
+        it('will return an error if the group does not exist',
+          function (done) {
+            rq.del(groupRoute + '/inexistentId', function (err, resp, body) {
+              expect(resp.statusCode).toBe(404);
+              expect(body.error).toMatch('key is not found');
+              done();
+            });
+          }
+        );
+
+        it('should deletes the record and returns the key and success' +
+         ' otherwise', function (done) {
+            rq.del(groupRoute + '/' + gid, function (err, resp, body) {
+              expect(resp.statusCode).toBe(200);
+              expect(body.success).toBeTruthy();
+              expect(body.key).toBe(gid);
+              rq.get(groupRoute + '/' + gid, function (err, resp, body) {
+                expect(resp.statusCode).toBe(404);
+                expect(body.error).toMatch('key is not found');
+                done();
+              });
+            });
+          }
+        );
       });
     });
   });

@@ -274,6 +274,15 @@ module.exports = (function () {
 
     app.put(groupRoute + '/:key', _set);
 
+    /**
+    * DELETE method : `group.del` with group id
+    * Sample URL:
+    *
+    * http://etherpad.ndd/mypads/api/group/xxxx
+    */
+
+    app.delete(groupRoute + '/:key', ld.partial(fn.del, group.del));
+
   };
 
 

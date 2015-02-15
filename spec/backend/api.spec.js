@@ -323,7 +323,7 @@
           }
         );
 
-        it('should create a new user otherwise', function (done) {
+        it('should create a user otherwise', function (done) {
           var b = {
             body: {
               password: 'lovesKubiak',
@@ -459,7 +459,7 @@
           function (done) {
             rq.get(groupRoute + '/' + gid, function (err, resp, body) {
               expect(resp.statusCode).toBe(200);
-              expect(resp.statusCode).toBe(200);
+              expect(body.key).toBe(gid);
               expect(body.value._id).toBe(gid);
               expect(body.value.name).toBe('g1');
               expect(body.value.visibility).toBe('restricted');
@@ -473,7 +473,163 @@
             });
           }
         );
+      });
 
+      describe('group.set/add POST and value as params', function () {
+
+        it('should return error when arguments are not as expected',
+          function (done) {
+            rq.post(groupRoute, function (err, resp, body) {
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('must be strings');
+              var b = { body: { name: 'group1' } };
+              rq.post(groupRoute, b, function (err, resp, body) {
+                expect(resp.statusCode).toBe(400);
+                expect(body.error).toMatch('must be strings');
+                done();
+              });
+            });
+          }
+        );
+
+        it('should return an error if admin user does not exist',
+          function (done) {
+            var b = { body: { name: 'group1', admin: 'inexistentId' } };
+            rq.post(groupRoute, b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('Some users');
+              done();
+            });
+          }
+        );
+
+        it('should create a new group otherwise', function (done) {
+          var b = {
+            body: {
+              name: 'groupOk',
+              admin: 'mypads:user:_guest',
+              visibility: 'private',
+              password: 'secret'
+            }
+          };
+          rq.post(groupRoute, b, function (err, resp, body) {
+            expect(err).toBeNull();
+            expect(resp.statusCode).toBe(200);
+            expect(body.success).toBeTruthy();
+            expect(body.key).toBeDefined();
+            var key = body.key;
+            expect(body.value.name).toBe('groupOk');
+            rq.get(groupRoute + '/' + key,
+              function (err, resp, body) {
+                expect(err).toBeNull();
+                expect(resp.statusCode).toBe(200);
+                expect(body.key).toBe(key);
+                expect(body.value._id).toBe(key);
+                expect(body.value.name).toBe('groupOk');
+                expect(body.value.visibility).toBe('private');
+                expect(body.value.password).toBeDefined();
+                expect(ld.isArray(body.value.users)).toBeTruthy();
+                expect(ld.isArray(body.value.pads)).toBeTruthy();
+                expect(body.value.readonly).toBeFalsy();
+                expect(ld.size(body.value.admins)).toBe(1);
+                expect(body.value.admins[0]).toBe('mypads:user:_guest');
+                done();
+              }
+            );
+          });
+        });
+
+      });
+
+      describe('group.set PUT key in URL and value as params', function () {
+
+        it('should return error when arguments are not as expected',
+          function (done) {
+            rq.put(groupRoute + '/' + gid, function (err, resp, body) {
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('must be strings');
+              var b = { body: { name: 'group1' } };
+              rq.put(groupRoute + '/' + gid, b, function (err, resp, body) {
+                expect(resp.statusCode).toBe(400);
+                expect(body.error).toMatch('must be strings');
+                b = { body: { name: 'group1', admin: 'inexistentId' } };
+                rq.put(groupRoute + '/' + gid, b, function (err, resp, body) {
+                  expect(resp.statusCode).toBe(400);
+                  expect(body.error).toMatch('Some users');
+                  done();
+                });
+              });
+            });
+          }
+        );
+
+        it('should update an existing group otherwise', function (done) {
+          var b = {
+            body: {
+              _id: gid,
+              name: 'gUpdated',
+              admin: 'mypads:user:_guest',
+              visibility: 'public',
+              readonly: true
+            }
+          };
+          rq.put(groupRoute + '/' + gid, b, function (err, resp, body) {
+            expect(err).toBeNull();
+            expect(resp.statusCode).toBe(200);
+            expect(body.success).toBeTruthy();
+            expect(body.key).toBe(gid);
+            expect(body.value.name).toBe('gUpdated');
+            rq.get(groupRoute + '/' + gid,
+              function (err, resp, body) {
+                expect(resp.statusCode).toBe(200);
+                expect(body.key).toBe(gid);
+                expect(body.value._id).toBe(gid);
+                expect(body.value.name).toBe('gUpdated');
+                expect(body.value.visibility).toBe('public');
+                expect(ld.isArray(body.value.users)).toBeTruthy();
+                expect(ld.isArray(body.value.pads)).toBeTruthy();
+                expect(body.value.readonly).toBeTruthy();
+                expect(ld.size(body.value.admins)).toBe(1);
+                expect(body.value.admins[0]).toBe('mypads:user:_guest');
+                done();
+              }
+            );
+          });
+        });
+
+        it('should also create a non existent group', function (done) {
+          var b = {
+            body: {
+              name: 'gCreated',
+              admin: 'mypads:user:_guest',
+              visibility: 'public',
+              readonly: true
+            }
+          };
+          rq.put(groupRoute + '/newgid', b, function (err, resp, body) {
+            expect(err).toBeNull();
+            expect(resp.statusCode).toBe(200);
+            expect(body.success).toBeTruthy();
+            expect(body.key).toBeDefined();
+            expect(body.value.name).toBe('gCreated');
+            var key = body.key;
+            rq.get(groupRoute + '/' + key,
+              function (err, resp, body) {
+                expect(resp.statusCode).toBe(200);
+                expect(body.key).toBe(key);
+                expect(body.value._id).toBe(key);
+                expect(body.value.name).toBe('gCreated');
+                expect(body.value.visibility).toBe('public');
+                expect(ld.isArray(body.value.users)).toBeTruthy();
+                expect(ld.isArray(body.value.pads)).toBeTruthy();
+                expect(body.value.readonly).toBeTruthy();
+                expect(ld.size(body.value.admins)).toBe(1);
+                expect(body.value.admins[0]).toBe('mypads:user:_guest');
+                done();
+              }
+            );
+          });
+        });
       });
     });
   });

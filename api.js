@@ -82,9 +82,9 @@ module.exports = (function () {
 
   fn.set = function (setFn, key, value, req, res) {
     try {
-      setFn(function (err) {
+      setFn(function (err, data) {
         if (err) { return res.send(400, { error: err.message }); }
-        res.send({ success: true, key: key, value: value });
+        res.send({ success: true, key: key || data._id, value: data || value });
       });
     }
     catch (e) {
@@ -191,20 +191,18 @@ module.exports = (function () {
 
     app.get(userRoute + '/:key', ld.partial(fn.get, user));
 
-    // _set for POST and  PUT, see below
+    // `set` for POST and PUT, see below
     var _set = function (req, res) {
       var key;
       var value = req.body;
-      var setFn;
       if (req.method === 'POST') {
         key = req.body.login;
-        setFn = ld.partial(user.set, value);
       } else {
         key = req.params.key;
         value.login = key;
         value._id = user.ids[key];
-        setFn = ld.partial(user.set, value);
       }
+      var setFn = ld.partial(user.set, value);
       fn.set(setFn, key, value, req, res);
     };
 
@@ -251,6 +249,30 @@ module.exports = (function () {
     */
 
     app.get(groupRoute + '/:key', ld.partial(fn.get, group));
+
+    // `set` for POST and PUT, see below
+    var _set = function (req, res) {
+      var setFn = ld.partial(group.set, req.body);
+      fn.set(setFn, req.body._id, req.body, req, res);
+    };
+
+    /**
+    * POST method : `group.set` with user value for user creation
+    * Sample URL:
+    *
+    * http://etherpad.ndd/mypads/api/group
+    */
+
+    app.post(groupRoute, _set);
+
+    /**
+    * PUT method : `group.set` with group id plus value for existing group
+    * Sample URL:
+    *
+    * http://etherpad.ndd/mypads/api/user/xxx
+    */
+
+    app.put(groupRoute + '/:key', _set);
 
   };
 

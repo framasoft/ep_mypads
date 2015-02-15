@@ -22,11 +22,13 @@ module.exports = (function () {
   var ld = require('lodash');
   var storage = require('../../storage.js');
   var common = {};
+
   /**
   * `reInitDatabase` is a private function aiming to remove the test database
   * file and lets it virgin comme previsous testing before and after all module
   * tests. It also initializes secondary in-memory index.
   */
+
   common.reInitDatabase = function (done) {
     var unlink = require('fs').unlink;
     var db = require('../../storage.js').db;

@@ -29,6 +29,7 @@
 var ld = require('lodash');
 var conf = require('./configuration.js');
 var user = require('./model/user.js');
+var group = require('./model/group.js');
 
 module.exports = (function () {
   'use strict';
@@ -45,6 +46,7 @@ module.exports = (function () {
     // FIXME: authentification
     configurationAPI(app);
     userAPI(app);
+    groupAPI(app);
   };
 
   /**
@@ -52,6 +54,25 @@ module.exports = (function () {
   */
 
   var fn = {};
+
+  /**
+  * `get` internal takes a mandatory `module` argument to call its get method.
+  * Otherwise, it will use `req.params.key` to get the database record.
+  */
+
+  fn.get = function (module, req, res) {
+    try {
+      module.get(req.params.key, function (err, val) {
+        if (err) {
+          return res.send(404, { error: err.message, key: req.params.key });
+        }
+        res.send({ key: req.params.key, value: val });
+      });
+    }
+    catch (e) {
+      res.send(400, { error: e.message });
+    }
+  };
 
   /**
   * `set` internal takes the values of key and val that will be given to the
@@ -168,19 +189,7 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/user/someone
     */
 
-    app.get(userRoute + '/:key', function (req, res) {
-      try {
-        user.get(req.params.key, function (err, val) {
-          if (err) {
-            return res.send(404, { error: err.message, key: req.params.key });
-          }
-          res.send({ key: req.params.key, value: val });
-        });
-      }
-      catch (e) {
-        res.send(400, { error: e.message });
-      }
-    });
+    app.get(userRoute + '/:key', ld.partial(fn.get, user));
 
     // _set for POST and  PUT, see below
     var _set = function (req, res) {
@@ -226,6 +235,25 @@ module.exports = (function () {
 
     app.delete(userRoute + '/:key', ld.partial(fn.del, user.del));
   };
+
+  /**
+  * ## Group API
+  */
+
+  var groupAPI = function (app) {
+    var groupRoute = api.initialRoute + 'group';
+
+    /**
+    * GET method : `group.get` unique id
+    * Sample URL:
+    *
+    * http://etherpad.ndd/mypads/api/group/xxxx
+    */
+
+    app.get(groupRoute + '/:key', ld.partial(fn.get, group));
+
+  };
+
 
   return api;
 

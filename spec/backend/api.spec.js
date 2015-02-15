@@ -421,6 +421,61 @@
 
     });
 
+    describe('group API', function () {
+      var groupRoute = route + 'group';
+      var gid;
+
+      beforeAll(function (done) {
+        var uset = require('../../model/user.js').set;
+        var gset = require('../../model/group.js').set;
+        specCommon.reInitDatabase(function () {
+          uset({ _id: '_guest', login: 'guest', password: 'willnotlivelong' },
+            function () {
+              gset({ name: 'g1', admin: 'mypads:user:_guest' },
+                function (err, res) {
+                  if (err) { console.log(err); }
+                  gid = res._id;
+                  done();
+              });
+          });
+        });
+      });
+      afterAll(specCommon.reInitDatabase);
+
+      describe('group.get GET and id', function () {
+
+        it('should return an error if the id does not exist',
+          function (done) {
+            rq.get(groupRoute + '/ginexistent', function (err, resp, body) {
+              expect(resp.statusCode).toBe(404);
+              expect(body.error).toMatch('key is not found');
+              expect(body.key).toBe('ginexistent');
+              done();
+            });
+          }
+        );
+
+        it('should give the key and the group attributes otherwise',
+          function (done) {
+            rq.get(groupRoute + '/' + gid, function (err, resp, body) {
+              expect(resp.statusCode).toBe(200);
+              expect(resp.statusCode).toBe(200);
+              expect(body.value._id).toBe(gid);
+              expect(body.value.name).toBe('g1');
+              expect(body.value.visibility).toBe('restricted');
+              expect(ld.isArray(body.value.users)).toBeTruthy();
+              expect(ld.isArray(body.value.pads)).toBeTruthy();
+              expect(body.value.password).toBeNull();
+              expect(body.value.readonly).toBeFalsy();
+              expect(ld.size(body.value.admins)).toBe(1);
+              expect(body.value.admins[0]).toBe('mypads:user:_guest');
+              done();
+            });
+          }
+        );
+
+      });
+    });
   });
 
 }).call(this);

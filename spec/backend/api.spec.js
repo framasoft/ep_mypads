@@ -338,8 +338,13 @@
             expect(body.key).toBe('parker');
             expect(body.value.login).toBe('parker');
             expect(body.value.lastname).toBe('Lewis');
-            // TODO: rq.get to check existence in db
-            done();
+            rq.get(userRoute + '/parker', function (err, resp, body) {
+              expect(resp.statusCode).toBe(200);
+              expect(body.value.login).toBe('parker');
+              expect(body.value.firstname).toBe('Parker');
+              expect(ld.isArray(body.value.groups)).toBeTruthy();
+              done();
+            });
           });
         });
 

@@ -82,7 +82,7 @@ module.exports = (function () {
   *   admins: [ 'userkey1', 'userkey2' ],
   *   users: [ 'ukey1' ],
   *   visibility: 'restricted' || 'public' || 'private',
-  *   password: '',
+  *   password: 'secret',
   *   readonly: false
   * };
   *
@@ -234,7 +234,7 @@ module.exports = (function () {
   * - a `pads` array, empty or with given keys,
   * - a `visibility` string, defaults to *restricted*, with only two other
   *   possibilities : *private* or *public*
-  * - a `password` string, empty by default
+  * - a `password` string, *null* by default
   * - a `readonly` boolean, *false* by default
   *
   * It returns the group object.
@@ -249,7 +249,7 @@ module.exports = (function () {
     var v = p.visibility;
     var vVal = ['restricted', 'private', 'public'];
     g.visibility = (ld.isString(v) && ld.includes(vVal, v)) ? v : 'restricted';
-    g.password = ld.isString(p.password) ? p.password : '';
+    g.password = ld.isString(p.password) ? p.password : null;
     g.readonly = ld.isBoolean(p.readonly) ? p.readonly : false;
     return g;
   };

@@ -114,8 +114,7 @@
             expect(ld.isArray(g.pads) && ld.isEmpty(g.pads)).toBeTruthy();
             expect(ld.first(g.admins)).toBe(gadm._id);
             expect(g.visibility).toBe('restricted');
-            expect(ld.isString(g.password) && ld.isEmpty(g.password))
-              .toBeTruthy();
+            expect(g.password).toBeNull();
             expect(ld.readonly).toBeFalsy();
 
             params = {

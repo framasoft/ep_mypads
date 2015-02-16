@@ -33,36 +33,40 @@
 
   var initGroupUsersAndPads = function (done) {
     gadm = {
-      _id: user.DBPREFIX + 'parkerId',
       login: 'parker',
       password: 'lovesKubiak',
       firstname: 'Parker',
-      lastname: 'Lewis'
+      lastname: 'Lewis',
+      groups: []
     };
     gusers = ld.map(['frank', 'grace','shelly', 'mikey', 'jerry'],
-      function (v) { return 'mypads:user:' + v; });
+      function (v) { return user.DBPREFIX + v; });
     gpads = ['mypads:pad:pad1', 'mypads:pad:pad2', 'mypads:pad:pad3'];
-    gparams = {
-      name: 'college',
-      admin: gadm._id,
-      admins: ld.takeRight(gusers, 2),
-      users: ld.take(gusers, 3),
-      pads: [ 'mypads:pad:pad1' ],
-      visibility: 'private',
-      password: 'aGoodOne',
-      readonly: true
-    };
     specCommon.reInitDatabase(function () {
       var kv = ld.reduce(ld.union(gusers, gpads),
       function (memo, val) {
-        memo[val] = true; 
+        memo[val] = { groups: [] }; 
         return memo;
-        }, { 'mypads:user:parkerId': gadm });
+        }, {});
       storage.fn.setKeys(kv, function (err) {
         if (err) { console.log(err); }
-        group.add(gparams, function (err, res) {
-          if (!err) { gparams = res; }
-          done();
+        user.set(gadm, function (err, u) {
+          if (err) { console.log(err); }
+          gadm = u;
+          gparams = {
+            name: 'college',
+            admin: user.DBPREFIX + u._id,
+            admins: ld.takeRight(gusers, 2),
+            users: ld.take(gusers, 3),
+            pads: [ 'mypads:pad:pad1' ],
+            visibility: 'private',
+            password: 'aGoodOne',
+            readonly: true
+          };
+          group.add(gparams, function (err, res) {
+            if (!err) { gparams = res; }
+            done();
+          });
         });
       });
     });
@@ -73,8 +77,8 @@
     afterAll(specCommon.reInitDatabase);
 
     describe('add', function () {
-      beforeAll(initGroupUsersAndPads);
-      afterAll(specCommon.reInitDatabase);
+      beforeEach(initGroupUsersAndPads);
+      afterEach(specCommon.reInitDatabase);
 
       it('should throws errors if params.name or params.admin, callback or ' +
         'edit aren`t correct', function () {
@@ -105,21 +109,21 @@
 
       it('should assign defaults if other params are not properly typed nor' +
         'defined', function (done) {
-          var params = { name: 'group', admin: gadm._id };
+          var params = { name: 'group', admin: user.DBPREFIX + gadm._id };
           group.add(params, function (err, g) {
             expect(err).toBeNull();
             expect(g.name).toBe('group');
             expect(ld.isArray(g.admins)).toBeTruthy();
             expect(ld.isArray(g.users) && ld.isEmpty(g.users)).toBeTruthy();
             expect(ld.isArray(g.pads) && ld.isEmpty(g.pads)).toBeTruthy();
-            expect(ld.first(g.admins)).toBe(gadm._id);
+            expect(ld.first(g.admins)).toBe(user.DBPREFIX + gadm._id);
             expect(g.visibility).toBe('restricted');
             expect(g.password).toBeNull();
             expect(ld.readonly).toBeFalsy();
 
             params = {
               name: 'college',
-              admin: gadm._id,
+              admin: user.DBPREFIX + gadm._id,
               admins: [123],
               users: {},
               pads: false,
@@ -133,7 +137,7 @@
               expect(g._id).not.toBe('will not be given');
               expect(g.name).toBe('college');
               expect(ld.isArray(g.admins)).toBeTruthy();
-              expect(ld.first(g.admins)).toBe(gadm._id);
+              expect(ld.first(g.admins)).toBe(user.DBPREFIX + gadm._id);
               expect(ld.size(g.admins)).toBe(1);
               expect(ld.isArray(g.users) && ld.isEmpty(g.users)).toBeTruthy();
               expect(ld.isArray(g.pads) && ld.isEmpty(g.pads)).toBeTruthy();
@@ -149,7 +153,7 @@
       it('should otherwise accept well defined parameters', function (done) {
         var params = {
           name: 'college2',
-          admin: gadm._id,
+          admin: user.DBPREFIX + gadm._id,
           admins: [ 'mypads:user:mikey', 'mypads:user:jerry' ],
           users: [ 'mypads:user:grace', 'mypads:user:frank',
             'mypads:user:shelly' ],
@@ -163,7 +167,7 @@
           expect(ld.isString(g._id)).toBeTruthy();
           expect(g.name).toBe('college2');
           expect(ld.isArray(g.admins)).toBeTruthy();
-          expect(ld.first(g.admins)).toBe(gadm._id);
+          expect(ld.first(g.admins)).toBe(user.DBPREFIX + gadm._id);
           expect(ld.includes(g.admins, 'mypads:user:mikey')).toBeTruthy();
           expect(ld.includes(g.admins, 'mypads:user:jerry')).toBeTruthy();
           expect(ld.isEmpty(ld.xor(g.users, params.users))).toBeTruthy();
@@ -172,7 +176,14 @@
           expect(g.password).toBeDefined();
           expect(ld.isEmpty(g.password)).toBeFalsy();
           expect(g.readonly).toBeTruthy();
-          done();
+          user.get(gadm.login, function (err, u) {
+            expect(err).toBeNull();
+            expect(u.login).toBe(gadm.login);
+            expect(ld.isArray(u.groups)).toBeTruthy();
+            expect(ld.size(u.groups)).toBe(2);
+            expect(u.groups[1]).toBe(g._id);
+            done();
+          });
         });
       });
     });
@@ -220,7 +231,7 @@
       it('should otherwise accept well defined parameters', function (done) {
         var params = {
           name: 'college2',
-          admin: gadm._id,
+          admin: user.DBPREFIX + gadm._id,
           admins: ld.takeRight(gusers, 2),
           users: ld.take(gusers, 3),
           pads: [ 'mypads:pad:pad1' ],
@@ -233,7 +244,7 @@
           expect(ld.isString(g._id)).toBeTruthy();
           expect(g.name).toBe('college2');
           expect(ld.isArray(g.admins)).toBeTruthy();
-          expect(ld.first(g.admins)).toBe(gadm._id);
+          expect(ld.first(g.admins)).toBe(user.DBPREFIX + gadm._id);
           expect(ld.includes(g.admins, user.DBPREFIX + 'mikey')).toBeTruthy();
           expect(ld.includes(g.admins, user.DBPREFIX + 'jerry')).toBeTruthy();
           expect(ld.isEmpty(ld.xor(g.users, params.users))).toBeTruthy();
@@ -247,7 +258,7 @@
             expect(ld.isString(g._id)).toBeTruthy();
             expect(g.name).toBe('college2');
             expect(ld.isArray(g.admins)).toBeTruthy();
-            expect(ld.first(g.admins)).toBe(gadm._id);
+            expect(ld.first(g.admins)).toBe(user.DBPREFIX + gadm._id);
             expect(ld.includes(g.admins, user.DBPREFIX + 'mikey')).toBeTruthy();
             expect(ld.includes(g.admins, user.DBPREFIX + 'jerry')).toBeTruthy();
             expect(ld.isEmpty(ld.xor(g.users, params.users))).toBeTruthy();
@@ -256,13 +267,20 @@
             expect(g.password).toBeDefined();
             expect(ld.isEmpty(g.password)).toBeFalsy();
             expect(g.readonly).toBeTruthy();
-            done();
+            user.get(gadm.login, function (err, u) {
+              expect(err).toBeNull();
+              expect(u.login).toBe(gadm.login);
+              expect(ld.isArray(u.groups)).toBeTruthy();
+              expect(ld.size(u.groups)).toBe(2);
+              expect(u.groups[1]).toBe(g._id);
+              done();
+            });
           });
         });
       });
     });
 
-    describe('group get and del', function () {
+    describe('group get', function () {
 
       beforeAll(initGroupUsersAndPads);
       afterAll(specCommon.reInitDatabase);
@@ -290,7 +308,7 @@
           expect(ld.isString(g._id)).toBeTruthy();
           expect(g.name).toBe('college');
           expect(ld.isArray(g.admins)).toBeTruthy();
-          expect(ld.first(g.admins)).toBe(gadm._id);
+          expect(ld.first(g.admins)).toBe(user.DBPREFIX + gadm._id);
           expect(ld.includes(g.admins, user.DBPREFIX + 'mikey')).toBeTruthy();
           expect(ld.includes(g.admins, user.DBPREFIX + 'jerry')).toBeTruthy();
           expect(ld.isEmpty(ld.xor(g.users, gparams.users))).toBeTruthy();
@@ -300,6 +318,43 @@
           expect(ld.isEmpty(g.password)).toBeFalsy();
           expect(g.readonly).toBeTruthy();
           done();
+        });
+      });
+
+    });
+
+    describe('group del', function () {
+
+      beforeAll(initGroupUsersAndPads);
+      afterAll(specCommon.reInitDatabase);
+
+      it('should throw errors if arguments are not provided as expected',
+        function () {
+          expect(group.del).toThrow();
+          expect(ld.partial(group.del, 123)).toThrow();
+          expect(ld.partial(group.del, 'key')).toThrow();
+          expect(ld.partial(group.del, 'key', 'notAFunc')).toThrow();
+        }
+      );
+
+      it('should return an Error if the key is not found', function (done) {
+        group.del('inexistent', function (err, g) {
+          expect(ld.isError(err)).toBeTruthy();
+          expect(g).toBeUndefined();
+          done();
+        });
+      });
+
+      it('should removes the group otherwise', function (done) {
+        group.del(gparams._id, function (err) {
+          expect(err).toBeNull();
+          user.get(gadm.login, function (err, u) {
+            expect(err).toBeNull();
+            expect(u.login).toBe(gadm.login);
+            expect(ld.isArray(u.groups)).toBeTruthy();
+            expect(ld.includes(u.groups, gparams._id)).toBeFalsy();
+            done();
+          });
         });
       });
 

@@ -26,3 +26,7 @@
 * mypads:pad:$id
 * pad = { group: $id, properties: false || { visibility: $, readonly: $ } }
 */
+
+module.exports = (function () {
+  'use strict';
+}).call(this);

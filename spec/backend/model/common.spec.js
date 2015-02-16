@@ -130,7 +130,7 @@
         }
       );
 
-      it('should return null and the object otherwise in edit case (not del)',
+      it('should return null and the object otherwise, as in edit case',
         function (done) {
           common.getDel(false, 'test:', 'john', function (err, res) {
             expect(err).toBeNull();
@@ -140,11 +140,11 @@
         );
       });
 
-      it('should return null in successfull del case',
+      it('should return null and the object otherwise, as in del case',
         function (done) {
           common.getDel(true, 'test:', 'john', function (err, res) {
             expect(err).toBeNull();
-            expect(res).toBeUndefined();
+            expect(res).toBe('exists');
             done();
           }
         );

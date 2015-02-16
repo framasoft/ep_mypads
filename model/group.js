@@ -105,7 +105,10 @@ module.exports = (function () {
         }
         storage.db.set(group.DBPREFIX + g._id, g, function (err) {
           if (err) { return callback(err); }
-          return callback(null, g);
+          group.fn.indexUsersAndPads(false, g, function (err) {
+            if (err) { return callback(err); }
+            return callback(null, g);
+          });
         });
       });
     };
@@ -152,9 +155,20 @@ module.exports = (function () {
   *  This function uses `common.getDel` with `del` to *false* and DBPREFIX
   *  fixed.  It will takes mandatory key string and callback function. See
   *  `common.getDel` for documentation.
+  *
+  *  It uses the `callback` function to handle secondary indexes for users and
+  *  pads.
   */
 
-  group.del = ld.partial(common.getDel, true, group.DBPREFIX);
+  group.del = function (key, callback) {
+    if (!ld.isFunction(callback)) {
+      throw(new TypeError('callback must be a function'));
+    }
+    common.getDel(true, group.DBPREFIX, key, function (err, g) {
+      if (err) { return callback(err); }
+      group.fn.indexUsersAndPads(true, g, callback);
+    });
+  };
 
   /**
   *  ## Helper Functions
@@ -217,6 +231,8 @@ module.exports = (function () {
 
   /**
   *  ## Internal Functions
+  *
+  *  All are tested through public API.
   */
 
   group.fn = {};
@@ -252,6 +268,36 @@ module.exports = (function () {
     g.password = ld.isString(p.password) ? p.password : null;
     g.readonly = ld.isBoolean(p.readonly) ? p.readonly : false;
     return g;
+  };
+
+  /**
+  * ### indexUsersAndPads
+  *
+  * `indexUsersAndPads` is an asynchronous function which handles secondary
+  * indexes for *users.groups* and *pad.group* after group creation. It takes :
+  *
+  * - a `del` boolean to know if we have to delete key from index or add it
+  * - the `group` objectwith
+  * - a `callback` function, returning Error or *null* if succeeded
+  */
+
+  group.fn.indexUsersAndPads = function (del, group, callback) {
+    // TODO: pads
+    var users = ld.union(group.admins, group.users);
+    ld.forEach(users, function (ukey) {
+      storage.db.get(ukey, function (err, u) {
+        if (err) { return callback(err); }
+        if (del) {
+          ld.pull(u.groups, group._id);
+        } else {
+          u.groups.push(group._id);
+        }
+        storage.db.set(ukey, u, function (err) {
+          if (err) { return callback(err); }
+          callback(null);
+        });
+      });
+    });
   };
 
   return group;

@@ -117,7 +117,7 @@ module.exports = (function() {
   *  - a `key`, the unique identifier of the object
   *  - a `callback` function, that returns an error if there is a problem or if
   *  the key is not found. In the other case, it returns null if `del` and null
-  *  plus the model object if not `del`.
+  *  plus the model object.
   */
 
   common.getDel = function (del, PREFIX, key, callback) {
@@ -136,7 +136,7 @@ module.exports = (function() {
       } else {
         storage.db.remove(key, function (err) {
           if (err) { return callback(err); }
-          return callback(null);
+          return callback(null, obj);
         });
       }
     });

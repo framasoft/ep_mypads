@@ -109,6 +109,8 @@ module.exports = (function () {
   * `assignProps` takes params object and assign defaults if needed. It adds a
   * `groups` array field, which will holds `model.group` of pads ids. It
   * returns the user object.
+  *
+  * FIXME: params sould not be emptied at each update...
   */
 
   user.fn.assignProps = function (params) {
@@ -165,10 +167,11 @@ module.exports = (function () {
   *
   * Local `getDel` wrapper that uses `user.ids` object to ensure uniqueness of
   * login and _id fields before returning `common.getDel` with DBPREFIX fixed.
-  * It takes a mandatory login string as argument and return an error if login
+  * It also handles secondary indexes for *model.group* elements.
+  *
+  * It takes the mandatory login string as argument and return an error if login
   * already exists. It also takes a mandatory callback function.
   *
-  * TODO: test by itself !
   */
 
   user.fn.getDel = function (del, login, callback) {
@@ -180,9 +183,22 @@ module.exports = (function () {
     }
     var cb = callback;
     if (del) {
-      cb = function (err, res) {
-        delete user.ids[login];
-        callback(err, res);
+      cb = function (err, u) {
+        delete user.ids[u.login];
+        var done = function () {
+          if (u.groups.length) {
+            var g = u.groups.pop();
+            ld.pull(g.users, u._id);
+            ld.pull(g.admins, u._id);
+            storage.db.set(g._id, g, function (err) {
+              if (err) { callback(err); }
+              done();
+            });
+          } else {
+            callback(err, u); 
+          }
+        };
+        done();
       };
     }
     common.getDel(del, user.DBPREFIX, user.ids[login], cb);

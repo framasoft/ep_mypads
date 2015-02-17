@@ -261,6 +261,7 @@
       user.del('parker', function (err, u) {
         expect(err).toBeNull();
         expect(u).toBeDefined();
+        expect(u.login).toBe('parker');
         expect(user.ids.parker).toBeUndefined();
         user.get('parker', function (err, u) {
           expect(ld.isError(err)).toBeTruthy();

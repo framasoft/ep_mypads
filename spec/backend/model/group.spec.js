@@ -63,7 +63,7 @@
             password: 'aGoodOne',
             readonly: true
           };
-          group.add(gparams, function (err, res) {
+          group.set(gparams, function (err, res) {
             if (!err) { gparams = res; }
             done();
           });
@@ -76,28 +76,28 @@
     beforeAll(specCommon.reInitDatabase);
     afterAll(specCommon.reInitDatabase);
 
-    describe('add', function () {
+    describe('addition using set', function () {
       beforeEach(initGroupUsersAndPads);
       afterEach(specCommon.reInitDatabase);
 
       it('should throws errors if params.name or params.admin, callback or ' +
         'edit aren`t correct', function () {
-          expect(group.add).toThrow();
-          expect(ld.partial(group.add, [])).toThrow();
+          expect(group.set).toThrow();
+          expect(ld.partial(group.set, [])).toThrow();
           var params = { name: 123, noadmin: true };
-          expect(ld.partial(group.add, params, ld.noop)).toThrow();
+          expect(ld.partial(group.set, params, ld.noop)).toThrow();
           params = { name: 'ok', admin: false };
-          expect(ld.partial(group.add, params, ld.noop)).toThrow();
+          expect(ld.partial(group.set, params, ld.noop)).toThrow();
           params.name = [];
-          expect(ld.partial(group.add, params, ld.noop)).toThrow();
+          expect(ld.partial(group.set, params, ld.noop)).toThrow();
           params.name = 'ok';
           params.admin = 'ok';
-          expect(ld.partial(group.add, params, false)).toThrow();
+          expect(ld.partial(group.set, params, false)).toThrow();
         }
       );
 
       it('should return an error if admin user is not found', function (done) {
-        group.add({ name: 'g', admin: 'mypads:user:inexistent' },
+        group.set({ name: 'g', admin: 'mypads:user:inexistent' },
           function (err, g) {
             expect(ld.isError(err)).toBeTruthy();
             expect(err).toMatch('Some users, admins');
@@ -110,7 +110,7 @@
       it('should assign defaults if other params are not properly typed nor' +
         'defined', function (done) {
           var params = { name: 'group', admin: user.DBPREFIX + gadm._id };
-          group.add(params, function (err, g) {
+          group.set(params, function (err, g) {
             expect(err).toBeNull();
             expect(g.name).toBe('group');
             expect(ld.isArray(g.admins)).toBeTruthy();
@@ -131,7 +131,7 @@
               password: [],
               readonly: 'needABoolean'
             };
-            group.add(params, function (err, g) {
+            group.set(params, function (err, g) {
               expect(err).toBeNull();
               expect(ld.isString(g._id)).toBeTruthy();
               expect(g._id).not.toBe('will not be given');
@@ -162,7 +162,7 @@
           password: 'aGoodOne',
           readonly: true
         };
-        group.add(params, function (err, g) {
+        group.set(params, function (err, g) {
           expect(err).toBeNull();
           expect(ld.isString(g._id)).toBeTruthy();
           expect(g.name).toBe('college2');
@@ -239,7 +239,7 @@
           password: 'aGoodOne',
           readonly: true
         };
-        group.add(params, function (err, g) {
+        group.set(params, function (err, g) {
           expect(err).toBeNull();
           expect(ld.isString(g._id)).toBeTruthy();
           expect(g.name).toBe('college2');

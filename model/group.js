@@ -258,19 +258,20 @@ module.exports = (function () {
 
   group.fn.indexUsersAndPads = function (del, group, callback) {
     // TODO: pads
-    var users = ld.union(group.admins, group.users);
-    ld.forEach(users, function (ukey) {
-      storage.db.get(ukey, function (err, u) {
-        if (err) { return callback(err); }
+    var usersKeys = ld.union(group.admins, group.users);
+    storage.fn.getKeys(usersKeys, function (err, users) {
+      if (err) { return callback(err); }
+      ld.forIn(users, function (u, k) {
         if (del) {
           ld.pull(u.groups, group._id);
         } else {
           u.groups.push(group._id);
         }
-        storage.db.set(ukey, u, function (err) {
-          if (err) { return callback(err); }
-          callback(null);
-        });
+        users[k] = u;
+      });
+      storage.fn.setKeys(users, function (err) {
+        if (err) { return callback(err); }
+        callback(null);
       });
     });
   };

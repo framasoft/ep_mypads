@@ -31,6 +31,15 @@ module.exports = (function () {
   var ld = require('lodash');
 
   var storage = {};
+
+  // Database PREFIX CONSTANTS
+  storage.DBPREFIX = {
+    GLOBAL: 'mypad:',
+    CONF: 'mypad:configuration:',
+    USER: 'mypad:user:',
+    GROUP: 'mypad:group:',
+  };
+
   try {
     // Normal case : when installed as a plugin
     storage.db = require('ep_etherpad-lite/node/db/DB').db;

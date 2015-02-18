@@ -28,8 +28,9 @@ module.exports = (function () {
   var ld = require('lodash');
   var cuid = require('cuid');
   var storage = require('../storage.js');
-  var conf = require('../configuration.js');
   var common = require('./common.js');
+  var DBPREFIX = storage.DBPREFIX.USER;
+  var CPREFIX = storage.DBPREFIX.CONF;
 
   /**
   *  ## Description
@@ -38,12 +39,11 @@ module.exports = (function () {
   *
   * It initially contains :
   *
-  * - `DBPREFIX`, the database key prefix for users
   * - `ids`, an huge in memory object to map `_id` to `login` field and ensures
   *   uniqueness of logins
   */
 
-  var user = { DBPREFIX: 'mypads:user:', ids: {} };
+  var user = { ids: {} };
 
   /**
   *  ## Internal Functions
@@ -61,7 +61,7 @@ module.exports = (function () {
   */
 
   user.fn.getPasswordConf = function (callback) {
-    var _keys = [conf.DBPREFIX + 'passwordMin', conf.DBPREFIX + 'passwordMax'];
+    var _keys = [CPREFIX + 'passwordMin', CPREFIX + 'passwordMax'];
     storage.fn.getKeys(_keys, function (err, results) {
       if (err) { return callback(err); }
       return callback(null, results);
@@ -86,8 +86,8 @@ module.exports = (function () {
 
   user.fn.checkPassword = function (password, params) {
     var pass = password;
-    var min = params[conf.DBPREFIX + 'passwordMin'];
-    var max = params[conf.DBPREFIX + 'passwordMax'];
+    var min = params[CPREFIX + 'passwordMin'];
+    var max = params[CPREFIX + 'passwordMax'];
     if (pass.length < min || pass.length > max) {
       return new TypeError('password length must be between ' + min + ' and ' +
       max + ' characters');
@@ -110,7 +110,6 @@ module.exports = (function () {
   * `groups` array field, which will holds `model.group` of pads ids. It
   * returns the user object.
   *
-  * FIXME: params sould not be emptied at each update...
   */
 
   user.fn.assignProps = function (params) {
@@ -123,6 +122,25 @@ module.exports = (function () {
     u.email = (ld.isEmail(p.email)) ? p.email : '';
     u.groups = [];
     return ld.assign({ _id: p._id, login: p.login, password: p.password }, u);
+  };
+
+  /**
+  * ### getGroups
+  *
+  * `getGroups` is an asynchronous function that is used for updates only, to
+  * retrieve existing `groups` from user and assign them to him. It takes :
+  *
+  * - the `u` user object
+  * - a `callback` function, returning an *Error* or *null* and the updated `u`
+  *   object
+  */
+
+  user.fn.getGroups = function (u, callback) {
+    user.get(u.login, function (err, dbuser) {
+      if (err) { return callback(err); }
+      u.groups = dbuser.groups;
+      callback(null, u);
+    });
   };
 
   /**
@@ -185,23 +203,30 @@ module.exports = (function () {
     if (del) {
       cb = function (err, u) {
         delete user.ids[u.login];
-        var done = function () {
-          if (u.groups.length) {
-            var g = u.groups.pop();
-            ld.pull(g.users, u._id);
-            ld.pull(g.admins, u._id);
-            storage.db.set(g._id, g, function (err) {
-              if (err) { callback(err); }
-              done();
-            });
-          } else {
-            callback(err, u); 
-          }
-        };
-        done();
+        if (u.groups.length) {
+          var GPREFIX = storage.DBPREFIX.GROUP;
+          storage.fn.getKeys(
+            ld.map(u.groups, function (g) { return GPREFIX + g; }),
+            function (err, groups) {
+              if (err) { return callback(err); }
+              groups = ld.reduce(groups, function (memo, g) {
+                ld.pull(g.users, u._id);
+                ld.pull(g.admins, u._id);
+                memo[GPREFIX + g._id] = g;
+                return memo;
+              }, {});
+              storage.fn.setKeys(groups, function (err) {
+                if (err) { return callback(err); }
+                callback(null, u);
+              });
+            }
+          );
+        } else {
+          callback(null, u); 
+        }
       };
     }
-    common.getDel(del, user.DBPREFIX, user.ids[login], cb);
+    common.getDel(del, DBPREFIX, user.ids[login], cb);
   };
 
 
@@ -218,12 +243,12 @@ module.exports = (function () {
   */
 
   user.init = function (callback) {
-    storage.db.findKeys(user.DBPREFIX + '*', null, function (err, keys) {
+    storage.db.findKeys(DBPREFIX + '*', null, function (err, keys) {
       if (err) { return callback(err); }
       storage.fn.getKeys(keys, function (err, results) {
         if (results) {
           user.ids = ld.transform(results, function (memo, val, key) {
-            memo[val.login] = key.replace(user.DBPREFIX, '');
+            memo[val.login] = key.replace(DBPREFIX, '');
           });
         }
         callback(null);
@@ -251,6 +276,8 @@ module.exports = (function () {
   *   and the user object
   *
   * It takes care of updating correcly the user.ids in memory index.
+  * `groups` array can't be fixed here but will be retrieved from database in
+  * case of update.
   */
 
   user.set = function (params, callback) {
@@ -267,11 +294,22 @@ module.exports = (function () {
       u._id = u._id || cuid();
       user.fn.checkLogin(params._id, u, function (err) {
         if (err) { return callback(err); }
-        storage.db.set(user.DBPREFIX + u._id, u, function (err) {
-          if (err) { return callback(err); }
-          user.ids[u.login] = u._id;
-          return callback(null, u);
-        });
+        var _final = function (u) {
+          storage.db.set(DBPREFIX + u._id, u, function (err) {
+            if (err) { return callback(err); }
+            user.ids[u.login] = u._id;
+            return callback(null, u);
+          });
+        };
+        // Update/Edit case
+        if (params._id) {
+          user.fn.getGroups(u, function (err, u) {
+            if (err) { return callback(err); }
+            _final(u);
+          });
+        } else {
+          _final(u);
+        }
       });
     });
   };

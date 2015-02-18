@@ -30,16 +30,16 @@ module.exports = (function () {
   var storage = require('../storage.js');
   //var conf = require('../configuration.js');
   var common = require('./common.js');
-  var UPREFIX = require('./user.js').DBPREFIX;
+  var DBPREFIX = storage.DBPREFIX.GROUP;
+  var UPREFIX = storage.DBPREFIX.USER;
 
   /**
   * ## Description
   *
   * Groups belong to users. Each user can have multiple groups of pads.
-  * DBPREFIX is fixed for database key work.
   */
 
-  var group = { DBPREFIX: 'mypads:group:' };
+  var group = {};
 
   /**
   * ## Public Functions
@@ -53,7 +53,7 @@ module.exports = (function () {
   *  `common.getDel` for documentation.
   */
 
-  group.get = ld.partial(common.getDel, false, group.DBPREFIX);
+  group.get = ld.partial(common.getDel, false, DBPREFIX);
 
   /**
   * ### set
@@ -106,12 +106,12 @@ module.exports = (function () {
     common.addSetInit(params, callback);
     var isFullStr = function (s) { return (ld.isString(s) && !ld.isEmpty(s)); };
     if (!(isFullStr(params.name) && isFullStr(params.admin))) {
-      throw(new TypeError('name and admin must be strings'));
+      throw new TypeError('name and admin must be strings');
     }
     var g = group.fn.assignProps(params);
     if (params._id) {
       g._id = params._id;
-      common.checkExistence(group.DBPREFIX + g._id, function (err, res) {
+      common.checkExistence(DBPREFIX + g._id, function (err, res) {
         if (err) { return callback(err); }
         if (!res) { return callback(new Error('group does not exist')); }
         group.fn.checkSet(g, callback);
@@ -138,9 +138,9 @@ module.exports = (function () {
 
   group.del = function (key, callback) {
     if (!ld.isFunction(callback)) {
-      throw(new TypeError('callback must be a function'));
+      throw new TypeError('callback must be a function');
     }
-    common.getDel(true, group.DBPREFIX, key, function (err, g) {
+    common.getDel(true, DBPREFIX, key, function (err, g) {
       if (err) { return callback(err); }
       group.fn.indexUsersAndPads(true, g, callback);
     });
@@ -276,7 +276,7 @@ module.exports = (function () {
       });
       storage.fn.setKeys(users, function (err) {
         if (err) { return callback(err); }
-        callback(null);
+        return callback(null);
       });
     });
   };
@@ -296,7 +296,7 @@ module.exports = (function () {
   */
 
   group.fn.set = function (g, callback) {
-    storage.db.set(group.DBPREFIX + g._id, g, function (err) {
+    storage.db.set(DBPREFIX + g._id, g, function (err) {
       if (err) { return callback(err); }
       group.fn.indexUsersAndPads(false, g, function (err) {
         if (err) { return callback(err); }

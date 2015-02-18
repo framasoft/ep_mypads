@@ -121,9 +121,9 @@ module.exports = (function() {
   */
 
   common.getDel = function (del, PREFIX, key, callback) {
-    if (!ld.isString(key)) { throw(new TypeError('key must be a string')); }
+    if (!ld.isString(key)) { throw new TypeError('key must be a string'); }
     if (!ld.isFunction(callback)) {
-      throw(new TypeError('callback must be a function'));
+      throw new TypeError('callback must be a function');
     }
     key = PREFIX + key;
     storage.db.get(key, function (err, obj) {

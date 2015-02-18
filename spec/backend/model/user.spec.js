@@ -24,10 +24,12 @@
   var specCommon = require('../common.js');
   var storage = require('../../../storage.js');
   var conf = require('../../../configuration.js');
+  var group = require('../../../model/group.js');
   var user = require('../../../model/user.js');
+  var UPREFIX = storage.DBPREFIX.USER;
+  var CPREFIX = storage.DBPREFIX.CONF;
 
   describe('user', function () {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000;
     beforeAll(specCommon.reInitDatabase);
     afterAll(specCommon.reInitDatabase);
 
@@ -35,7 +37,7 @@
 
       beforeAll(function (done) {
         specCommon.reInitDatabase(function () {
-          var genId = function () { return user.DBPREFIX + cuid(); };
+          var genId = function () { return UPREFIX + cuid(); };
           var kv = {};
           kv[genId()] = { login: 'parker' };
           kv[genId()] = { login: 'kubiak' };
@@ -106,6 +108,23 @@
         }
       );
 
+      it('should ignore fixing groups for a valid creation', function (done) {
+        user.set({
+          login: 'grace',
+          password: 'isTheDirector',
+          groups: ['one', 'two']
+        }, function (err, u) {
+          expect(err).toBeNull();
+          expect(u._id).toBeDefined();
+          expect(u.login).toBe('grace');
+          expect(u.password).toBeDefined();
+          expect((ld.isArray(u.groups) && ld.isEmpty(u.groups))).toBeTruthy();
+          expect(ld.includes(ld.values(user.ids), u._id)).toBeTruthy();
+          expect((user.ids[u.login])).toBe(u._id);
+          done();
+        });
+      });
+
       it('should deny usage of an existing login', function (done) {
         user.set({ login: 'parker', password: 'lovesKubiak' },
           function (err, u) {
@@ -160,27 +179,33 @@
         });
       });
 
-      it('should allow setting of an existing user', function (done) {
-        user.set({
-          _id: mikey._id,
-          login: 'mikey',
-          password: 'principalMusso',
-          email: 'mik@randall.com',
-          firstname: 'Michael',
-          lastname: 'Randall'
-        },
-          function (err, u) {
+      it('should allow setting of an existing user, and gets back its groups',
+        function (done) {
+          group.set({ name: 'g1', admin: mikey._id }, function (err, g) {
             expect(err).toBeNull();
-            expect(u.login).toBe('mikey');
-            expect(u.email).toBe('mik@randall.com');
-            expect(u.firstname).toBe('Michael');
-            expect(u.lastname).toBe('Randall');
-            expect(ld.isArray(u.groups)).toBeTruthy();
-            expect(user.ids.mikey).toBe(u._id);
-            done();
-          }
-        );
-      });
+            user.set({
+              _id: mikey._id,
+              login: 'mikey',
+              password: 'principalMusso',
+              email: 'mik@randall.com',
+              firstname: 'Michael',
+              lastname: 'Randall'
+            },
+              function (err, u) {
+                expect(err).toBeNull();
+                expect(u.login).toBe('mikey');
+                expect(u.email).toBe('mik@randall.com');
+                expect(u.firstname).toBe('Michael');
+                expect(u.lastname).toBe('Randall');
+                expect(ld.isArray(u.groups)).toBeTruthy();
+                expect(ld.first(u.groups)).toBe(g._id);
+                expect(user.ids.mikey).toBe(u._id);
+                done();
+              }
+            );
+        });
+        }
+      );
 
     });
   });
@@ -235,7 +260,10 @@
           password: 'lovesKubiak',
           firstname: 'Parker',
           lastname: 'Lewis'
-        }, done);
+        }, function (err, u) {
+          if (err) { console.log(err); }
+          group.set({ name: 'college', admin: u._id }, done);
+        });
       });
     });
     afterAll(specCommon.reInitDatabase);
@@ -257,19 +285,25 @@
       });
     });
 
-    it('should delete the user otherwise', function (done) {
-      user.del('parker', function (err, u) {
-        expect(err).toBeNull();
-        expect(u).toBeDefined();
-        expect(u.login).toBe('parker');
-        expect(user.ids.parker).toBeUndefined();
-        user.get('parker', function (err, u) {
-          expect(ld.isError(err)).toBeTruthy();
-          expect(u).toBeUndefined();
-          done();
+    it('should delete the user otherwise and pops it from its eventual groups',
+      function (done) {
+        user.del('parker', function (err, _u) {
+          expect(err).toBeNull();
+          expect(_u).toBeDefined();
+          expect(_u.login).toBe('parker');
+          expect(user.ids.parker).toBeUndefined();
+          user.get('parker', function (err, u) {
+            expect(ld.isError(err)).toBeTruthy();
+            expect(u).toBeUndefined();
+            group.get(_u.groups[0], function (err, g) {
+              expect(err).toBeNull();
+              expect(ld.includes(g.admins, _u._id)).toBeFalsy();
+              done();
+            });
+          });
         });
-      });
-    });
+      }
+    );
   });
 
   describe('user functions', function() {
@@ -280,9 +314,9 @@
         user.fn.getPasswordConf(function (err, results) {
           expect(err).toBeNull();
           var rkeys = ld.keys(results);
-          expect(ld.contains(rkeys, conf.DBPREFIX + 'passwordMin'))
+          expect(ld.contains(rkeys, CPREFIX + 'passwordMin'))
             .toBeTruthy();
-          expect(ld.contains(rkeys, conf.DBPREFIX + 'passwordMax'))
+          expect(ld.contains(rkeys, CPREFIX + 'passwordMax'))
             .toBeTruthy();
           done();
         });
@@ -294,8 +328,8 @@
       var params = {};
 
       beforeAll(function () {
-        params[conf.DBPREFIX + 'passwordMin'] = 4;
-        params[conf.DBPREFIX + 'passwordMax'] = 8;
+        params[CPREFIX + 'passwordMin'] = 4;
+        params[CPREFIX + 'passwordMax'] = 8;
       });
 
       it('should return an Error if password size is not appropriate',

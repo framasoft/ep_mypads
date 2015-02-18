@@ -40,7 +40,7 @@ module.exports = (function() {
   */
 
   var defaults = { passwordMin: 8, passwordMax: 30 };
-  var DBPREFIX = 'mypads:configuration:';
+  var DBPREFIX = storage.DBPREFIX.CONF;
 
   /**
   * `configuration` object is a closure to interact with the whole
@@ -48,7 +48,6 @@ module.exports = (function() {
   */
 
   var configuration = {
-    DBPREFIX: DBPREFIX,
     /**
     * `init` is called when mypads plugin is initialized. It fixes the default
     * data for the configuration into the database.
@@ -58,7 +57,7 @@ module.exports = (function() {
     init: function (callback) {
       callback = callback || function () {};
       if (!ld.isFunction(callback)) {
-        throw(new TypeError('callback must be a function'));
+        throw new TypeError('callback must be a function');
       }
       // Would like to use doBulk but not supported for all *ueberDB* backends
       storage.fn.setKeys(ld.transform(defaults, function (memo, val, key) {
@@ -72,10 +71,10 @@ module.exports = (function() {
     */
     get: function (key, callback) {
       if (!ld.isString(key)) {
-        throw(new TypeError('key must be a string'));
+        throw new TypeError('key must be a string');
       }
       if (!ld.isFunction(callback)) {
-        throw(new TypeError('callback must be a function'));
+        throw new TypeError('callback must be a function');
       }
       db.get(DBPREFIX + key, function (err, res) {
         if (err) { return callback(err); }
@@ -96,13 +95,13 @@ module.exports = (function() {
     */
     set: function (key, value, callback) {
       if (!ld.isString(key)) {
-        throw(new TypeError('key must be a string'));
+        throw new TypeError('key must be a string');
       }
       if (ld.isUndefined(value)) {
-        throw(new TypeError('value is mandatory'));
+        throw new TypeError('value is mandatory');
       }
       if (!ld.isFunction(callback)) {
-        throw(new TypeError('callback must be a function'));
+        throw new TypeError('callback must be a function');
       }
       db.set(DBPREFIX + key, value, callback);
     },
@@ -114,10 +113,10 @@ module.exports = (function() {
     */
     del: function (key, callback) {
       if (!ld.isString(key)) {
-        throw(new TypeError('key must be a string'));
+        throw new TypeError('key must be a string');
       }
       if (!ld.isFunction(callback)) {
-        throw(new TypeError('callback must be a function'));
+        throw new TypeError('callback must be a function');
       }
       db.remove(DBPREFIX + key, callback);
     },
@@ -128,7 +127,7 @@ module.exports = (function() {
     */
     all: function(callback) {
       if (!ld.isFunction(callback)) {
-        throw(new TypeError('callback must be a function'));
+        throw new TypeError('callback must be a function');
       }
       db.findKeys(DBPREFIX + '*', null, function (err, keys) {
         if (err) { return callback(err); }

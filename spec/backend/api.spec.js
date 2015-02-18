@@ -25,6 +25,7 @@
   var api = require('../../api.js');
   var storage = require('../../storage.js');
   var specCommon = require('./common.js');
+  var CPREFIX = storage.DBPREFIX.CONF;
 
   describe('MyPads API', function () {
     /**
@@ -55,10 +56,9 @@
       var confRoute = route + 'configuration';
 
       beforeAll(function (done) {
-        var conf = require('../../configuration.js');
         var kv = { field1: 8, field2: 3, field3: ['a', 'b'] };
         storage.fn.setKeys(ld.transform(kv, function (memo, val, key) {
-          memo[conf.DBPREFIX + key] = val; }), done);
+          memo[CPREFIX + key] = val; }), done);
       });
 
       describe('configuration.all GET', function () {
@@ -428,15 +428,18 @@
 
     describe('group API', function () {
       var groupRoute = route + 'group';
+      var uid;
       var gid;
 
       beforeAll(function (done) {
         var uset = require('../../model/user.js').set;
         var gset = require('../../model/group.js').set;
         specCommon.reInitDatabase(function () {
-          uset({ _id: '_guest', login: 'guest', password: 'willnotlivelong' },
-            function () {
-              gset({ name: 'g1', admin: '_guest' },
+          uset({ login: 'guest', password: 'willnotlivelong' },
+            function (err, u) {
+              if (err) { console.log(err); }
+              uid = u._id;
+              gset({ name: 'g1', admin: u._id },
                 function (err, res) {
                   if (err) { console.log(err); }
                   gid = res._id;
@@ -473,7 +476,7 @@
               expect(body.value.password).toBeNull();
               expect(body.value.readonly).toBeFalsy();
               expect(ld.size(body.value.admins)).toBe(1);
-              expect(body.value.admins[0]).toBe('_guest');
+              expect(body.value.admins[0]).toBe(uid);
               done();
             });
           }
@@ -512,7 +515,7 @@
           var b = {
             body: {
               name: 'groupOk',
-              admin: '_guest',
+              admin: uid,
               visibility: 'private',
               password: 'secret'
             }
@@ -537,7 +540,7 @@
                 expect(ld.isArray(body.value.pads)).toBeTruthy();
                 expect(body.value.readonly).toBeFalsy();
                 expect(ld.size(body.value.admins)).toBe(1);
-                expect(body.value.admins[0]).toBe('_guest');
+                expect(body.value.admins[0]).toBe(uid);
                 done();
               }
             );
@@ -573,7 +576,7 @@
             body: {
               _id: gid,
               name: 'gUpdated',
-              admin: '_guest',
+              admin: uid,
               visibility: 'public',
               readonly: true
             }
@@ -595,7 +598,7 @@
                 expect(ld.isArray(body.value.pads)).toBeTruthy();
                 expect(body.value.readonly).toBeTruthy();
                 expect(ld.size(body.value.admins)).toBe(1);
-                expect(body.value.admins[0]).toBe('_guest');
+                expect(body.value.admins[0]).toBe(uid);
                 done();
               }
             );
@@ -606,7 +609,7 @@
           var b = {
             body: {
               name: 'gCreated',
-              admin: '_guest',
+              admin: uid,
               visibility: 'public',
               readonly: true
             }
@@ -629,7 +632,7 @@
                 expect(ld.isArray(body.value.pads)).toBeTruthy();
                 expect(body.value.readonly).toBeTruthy();
                 expect(ld.size(body.value.admins)).toBe(1);
-                expect(body.value.admins[0]).toBe('_guest');
+                expect(body.value.admins[0]).toBe(uid);
                 done();
               }
             );

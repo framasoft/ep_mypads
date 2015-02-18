@@ -436,7 +436,7 @@
         specCommon.reInitDatabase(function () {
           uset({ _id: '_guest', login: 'guest', password: 'willnotlivelong' },
             function () {
-              gset({ name: 'g1', admin: 'mypads:user:_guest' },
+              gset({ name: 'g1', admin: '_guest' },
                 function (err, res) {
                   if (err) { console.log(err); }
                   gid = res._id;
@@ -473,7 +473,7 @@
               expect(body.value.password).toBeNull();
               expect(body.value.readonly).toBeFalsy();
               expect(ld.size(body.value.admins)).toBe(1);
-              expect(body.value.admins[0]).toBe('mypads:user:_guest');
+              expect(body.value.admins[0]).toBe('_guest');
               done();
             });
           }
@@ -512,7 +512,7 @@
           var b = {
             body: {
               name: 'groupOk',
-              admin: 'mypads:user:_guest',
+              admin: '_guest',
               visibility: 'private',
               password: 'secret'
             }
@@ -537,7 +537,7 @@
                 expect(ld.isArray(body.value.pads)).toBeTruthy();
                 expect(body.value.readonly).toBeFalsy();
                 expect(ld.size(body.value.admins)).toBe(1);
-                expect(body.value.admins[0]).toBe('mypads:user:_guest');
+                expect(body.value.admins[0]).toBe('_guest');
                 done();
               }
             );
@@ -573,7 +573,7 @@
             body: {
               _id: gid,
               name: 'gUpdated',
-              admin: 'mypads:user:_guest',
+              admin: '_guest',
               visibility: 'public',
               readonly: true
             }
@@ -595,7 +595,7 @@
                 expect(ld.isArray(body.value.pads)).toBeTruthy();
                 expect(body.value.readonly).toBeTruthy();
                 expect(ld.size(body.value.admins)).toBe(1);
-                expect(body.value.admins[0]).toBe('mypads:user:_guest');
+                expect(body.value.admins[0]).toBe('_guest');
                 done();
               }
             );
@@ -606,7 +606,7 @@
           var b = {
             body: {
               name: 'gCreated',
-              admin: 'mypads:user:_guest',
+              admin: '_guest',
               visibility: 'public',
               readonly: true
             }
@@ -629,7 +629,7 @@
                 expect(ld.isArray(body.value.pads)).toBeTruthy();
                 expect(body.value.readonly).toBeTruthy();
                 expect(ld.size(body.value.admins)).toBe(1);
-                expect(body.value.admins[0]).toBe('mypads:user:_guest');
+                expect(body.value.admins[0]).toBe('_guest');
                 done();
               }
             );

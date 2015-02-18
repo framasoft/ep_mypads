@@ -30,6 +30,7 @@ module.exports = (function () {
   var storage = require('../storage.js');
   //var conf = require('../configuration.js');
   var common = require('./common.js');
+  var UPREFIX = require('./user.js').DBPREFIX;
 
   /**
   * ## Description
@@ -258,7 +259,11 @@ module.exports = (function () {
 
   group.fn.indexUsersAndPads = function (del, group, callback) {
     // TODO: pads
-    var usersKeys = ld.union(group.admins, group.users);
+    var usersKeys = ld.map(ld.union(group.admins, group.users),
+      function (u) {
+        return UPREFIX + u;
+      }
+    );
     storage.fn.getKeys(usersKeys, function (err, users) {
       if (err) { return callback(err); }
       ld.forIn(users, function (u, k) {
@@ -311,7 +316,11 @@ module.exports = (function () {
   */
 
   group.fn.checkSet = function (g, callback) {
-    var allKeys = ld.union(g.admins, g.users, g.pads);
+    var pre = ld.curry(function (pre, val) { return pre + val; });
+    var admins = ld.map(g.admins, pre(UPREFIX));
+    var users = ld.map(g.users, pre(UPREFIX));
+    var pads = ld.map(g.pads, pre('mypads:pad:'));
+    var allKeys = ld.union(admins, users, pads);
     common.checkMultiExist(allKeys, function (err, res) {
       if (err) { return callback(err); }
       if (!res) {

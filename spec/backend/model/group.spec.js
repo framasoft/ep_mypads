@@ -39,11 +39,13 @@
       lastname: 'Lewis',
       groups: []
     };
-    gusers = ld.map(['frank', 'grace','shelly', 'mikey', 'jerry'],
-      function (v) { return user.DBPREFIX + v; });
-    gpads = ['mypads:pad:pad1', 'mypads:pad:pad2', 'mypads:pad:pad3'];
+    gusers = ['frank', 'grace','shelly', 'mikey', 'jerry'];
+    gpads = ['pad1', 'pad2', 'pad3'];
     specCommon.reInitDatabase(function () {
-      var kv = ld.reduce(ld.union(gusers, gpads),
+      var pre = ld.curry(function (pre, val) { return pre + val; });
+      var _gusers = ld.map(gusers, pre(user.DBPREFIX));
+      var _gpads = ld.map(gpads, pre('mypads:pad:'));
+      var kv = ld.reduce(ld.union(_gusers, _gpads),
       function (memo, val) {
         memo[val] = { groups: [] }; 
         return memo;
@@ -55,10 +57,10 @@
           gadm = u;
           gparams = {
             name: 'college',
-            admin: user.DBPREFIX + u._id,
+            admin: u._id,
             admins: ld.takeRight(gusers, 2),
             users: ld.take(gusers, 3),
-            pads: [ 'mypads:pad:pad1' ],
+            pads: [ 'pad1' ],
             visibility: 'private',
             password: 'aGoodOne',
             readonly: true
@@ -97,7 +99,7 @@
       );
 
       it('should return an error if admin user is not found', function (done) {
-        group.set({ name: 'g', admin: 'mypads:user:inexistent' },
+        group.set({ name: 'g', admin: 'inexistent' },
           function (err, g) {
             expect(ld.isError(err)).toBeTruthy();
             expect(err).toMatch('Some users, admins');
@@ -109,21 +111,21 @@
 
       it('should assign defaults if other params are not properly typed nor' +
         'defined', function (done) {
-          var params = { name: 'group', admin: user.DBPREFIX + gadm._id };
+          var params = { name: 'group', admin: gadm._id };
           group.set(params, function (err, g) {
             expect(err).toBeNull();
             expect(g.name).toBe('group');
             expect(ld.isArray(g.admins)).toBeTruthy();
             expect(ld.isArray(g.users) && ld.isEmpty(g.users)).toBeTruthy();
             expect(ld.isArray(g.pads) && ld.isEmpty(g.pads)).toBeTruthy();
-            expect(ld.first(g.admins)).toBe(user.DBPREFIX + gadm._id);
+            expect(ld.first(g.admins)).toBe(gadm._id);
             expect(g.visibility).toBe('restricted');
             expect(g.password).toBeNull();
             expect(ld.readonly).toBeFalsy();
 
             params = {
               name: 'college',
-              admin: user.DBPREFIX + gadm._id,
+              admin: gadm._id,
               admins: [123],
               users: {},
               pads: false,
@@ -137,7 +139,7 @@
               expect(g._id).not.toBe('will not be given');
               expect(g.name).toBe('college');
               expect(ld.isArray(g.admins)).toBeTruthy();
-              expect(ld.first(g.admins)).toBe(user.DBPREFIX + gadm._id);
+              expect(ld.first(g.admins)).toBe(gadm._id);
               expect(ld.size(g.admins)).toBe(1);
               expect(ld.isArray(g.users) && ld.isEmpty(g.users)).toBeTruthy();
               expect(ld.isArray(g.pads) && ld.isEmpty(g.pads)).toBeTruthy();
@@ -153,11 +155,10 @@
       it('should otherwise accept well defined parameters', function (done) {
         var params = {
           name: 'college2',
-          admin: user.DBPREFIX + gadm._id,
-          admins: [ 'mypads:user:mikey', 'mypads:user:jerry' ],
-          users: [ 'mypads:user:grace', 'mypads:user:frank',
-            'mypads:user:shelly' ],
-          pads: [ 'mypads:pad:pad2' ],
+          admin: gadm._id,
+          admins: [ 'mikey', 'jerry' ],
+          users: [ 'grace', 'frank', 'shelly' ],
+          pads: [ 'pad2' ],
           visibility: 'private',
           password: 'aGoodOne',
           readonly: true
@@ -167,11 +168,11 @@
           expect(ld.isString(g._id)).toBeTruthy();
           expect(g.name).toBe('college2');
           expect(ld.isArray(g.admins)).toBeTruthy();
-          expect(ld.first(g.admins)).toBe(user.DBPREFIX + gadm._id);
-          expect(ld.includes(g.admins, 'mypads:user:mikey')).toBeTruthy();
-          expect(ld.includes(g.admins, 'mypads:user:jerry')).toBeTruthy();
+          expect(ld.first(g.admins)).toBe(gadm._id);
+          expect(ld.includes(g.admins, 'mikey')).toBeTruthy();
+          expect(ld.includes(g.admins, 'jerry')).toBeTruthy();
           expect(ld.isEmpty(ld.xor(g.users, params.users))).toBeTruthy();
-          expect(ld.includes(g.pads, 'mypads:pad:pad2')).toBeTruthy();
+          expect(ld.includes(g.pads, 'pad2')).toBeTruthy();
           expect(g.visibility).toBe('private');
           expect(g.password).toBeDefined();
           expect(ld.isEmpty(g.password)).toBeFalsy();
@@ -231,10 +232,10 @@
       it('should otherwise accept well defined parameters', function (done) {
         var params = {
           name: 'college2',
-          admin: user.DBPREFIX + gadm._id,
+          admin: gadm._id,
           admins: ld.takeRight(gusers, 2),
           users: ld.take(gusers, 3),
-          pads: [ 'mypads:pad:pad1' ],
+          pads: [ 'pad1' ],
           visibility: 'private',
           password: 'aGoodOne',
           readonly: true
@@ -244,11 +245,11 @@
           expect(ld.isString(g._id)).toBeTruthy();
           expect(g.name).toBe('college2');
           expect(ld.isArray(g.admins)).toBeTruthy();
-          expect(ld.first(g.admins)).toBe(user.DBPREFIX + gadm._id);
-          expect(ld.includes(g.admins, user.DBPREFIX + 'mikey')).toBeTruthy();
-          expect(ld.includes(g.admins, user.DBPREFIX + 'jerry')).toBeTruthy();
+          expect(ld.first(g.admins)).toBe(gadm._id);
+          expect(ld.includes(g.admins, 'mikey')).toBeTruthy();
+          expect(ld.includes(g.admins, 'jerry')).toBeTruthy();
           expect(ld.isEmpty(ld.xor(g.users, params.users))).toBeTruthy();
-          expect(ld.includes(g.pads, 'mypads:pad:pad1')).toBeTruthy();
+          expect(ld.includes(g.pads, 'pad1')).toBeTruthy();
           expect(g.visibility).toBe('private');
           expect(g.password).toBeDefined();
           expect(ld.isEmpty(g.password)).toBeFalsy();
@@ -258,11 +259,11 @@
             expect(ld.isString(g._id)).toBeTruthy();
             expect(g.name).toBe('college2');
             expect(ld.isArray(g.admins)).toBeTruthy();
-            expect(ld.first(g.admins)).toBe(user.DBPREFIX + gadm._id);
-            expect(ld.includes(g.admins, user.DBPREFIX + 'mikey')).toBeTruthy();
-            expect(ld.includes(g.admins, user.DBPREFIX + 'jerry')).toBeTruthy();
+            expect(ld.first(g.admins)).toBe(gadm._id);
+            expect(ld.includes(g.admins, 'mikey')).toBeTruthy();
+            expect(ld.includes(g.admins, 'jerry')).toBeTruthy();
             expect(ld.isEmpty(ld.xor(g.users, params.users))).toBeTruthy();
-            expect(ld.includes(g.pads, 'mypads:pad:pad1')).toBeTruthy();
+            expect(ld.includes(g.pads, 'pad1')).toBeTruthy();
             expect(g.visibility).toBe('private');
             expect(g.password).toBeDefined();
             expect(ld.isEmpty(g.password)).toBeFalsy();
@@ -308,11 +309,11 @@
           expect(ld.isString(g._id)).toBeTruthy();
           expect(g.name).toBe('college');
           expect(ld.isArray(g.admins)).toBeTruthy();
-          expect(ld.first(g.admins)).toBe(user.DBPREFIX + gadm._id);
-          expect(ld.includes(g.admins, user.DBPREFIX + 'mikey')).toBeTruthy();
-          expect(ld.includes(g.admins, user.DBPREFIX + 'jerry')).toBeTruthy();
+          expect(ld.first(g.admins)).toBe(gadm._id);
+          expect(ld.includes(g.admins, 'mikey')).toBeTruthy();
+          expect(ld.includes(g.admins, 'jerry')).toBeTruthy();
           expect(ld.isEmpty(ld.xor(g.users, gparams.users))).toBeTruthy();
-          expect(ld.includes(g.pads, 'mypads:pad:pad1')).toBeTruthy();
+          expect(ld.includes(g.pads, 'pad1')).toBeTruthy();
           expect(g.visibility).toBe('private');
           expect(g.password).toBeDefined();
           expect(ld.isEmpty(g.password)).toBeFalsy();

@@ -120,8 +120,8 @@ module.exports = (function () {
   *
   * Group removal
   *
-  *  This function uses `common.getDel` with `del` to *false* and GPREFIX
-  *  fixed.  It will takes mandatory key string and callback function. See
+  *  This function uses `common.getDel` with `del` to *true* and GPREFIX
+  *  fixed. It will takes mandatory key string and callback function. See
   *  `common.getDel` for documentation.
   *
   *  It uses the `callback` function to handle secondary indexes for users and
@@ -240,10 +240,11 @@ module.exports = (function () {
   * ### indexUsersAndPads
   *
   * `indexUsersAndPads` is an asynchronous function which handles secondary
-  * indexes for *users.groups* and *pad.group* after group creation. It takes :
+  * indexes for *users.groups* and *pad.group* after group creation, update,
+  * removal. It takes :
   *
   * - a `del` boolean to know if we have to delete key from index or add it
-  * - the `group` objectwith
+  * - the `group` object
   * - a `callback` function, returning Error or *null* if succeeded
   */
 
@@ -260,7 +261,9 @@ module.exports = (function () {
         if (del) {
           ld.pull(u.groups, group._id);
         } else {
-          u.groups.push(group._id);
+          if (!ld.includes(u.groups, group._id)) {
+            u.groups.push(group._id);
+          }
         }
         users[k] = u;
       });

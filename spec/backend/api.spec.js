@@ -222,11 +222,11 @@
           function (done) {
             rq.post(userRoute, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('must be strings');
+              expect(body.error).toMatch('must be a string');
               var b = { body: { login: 'parker', password: '' } };
               rq.post(userRoute, b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
-                expect(body.error).toMatch('must be strings');
+                expect(body.error).toMatch('must be a string');
                 b = { body: { login: 'parker', password: 'secret' } };
                 rq.post(userRoute, b, function (err, resp, body) {
                   expect(resp.statusCode).toBe(400);
@@ -296,11 +296,11 @@
           function (done) {
             rq.put(userRoute + '/parker', function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('must be strings');
+              expect(body.error).toMatch('must be a string');
               var b = { body: { login: 'parker', password: '' } };
               rq.put(userRoute + '/parker', b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
-                expect(body.error).toMatch('must be strings');
+                expect(body.error).toMatch('must be a string');
                 b = { body: { login: 'parker', password: 'secret' } };
                 rq.put(userRoute + '/parker', b, function (err, resp, body) {
                   expect(resp.statusCode).toBe(400);
@@ -489,11 +489,11 @@
           function (done) {
             rq.post(groupRoute, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('must be strings');
+              expect(body.error).toMatch('must be a string');
               var b = { body: { name: 'group1' } };
               rq.post(groupRoute, b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
-                expect(body.error).toMatch('must be strings');
+                expect(body.error).toMatch('must be a string');
                 done();
               });
             });
@@ -555,11 +555,11 @@
           function (done) {
             rq.put(groupRoute + '/' + gid, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('must be strings');
+              expect(body.error).toMatch('must be a string');
               var b = { body: { name: 'group1' } };
               rq.put(groupRoute + '/' + gid, b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
-                expect(body.error).toMatch('must be strings');
+                expect(body.error).toMatch('must be a string');
                 b = { body: { name: 'group1', admin: 'inexistentId' } };
                 rq.put(groupRoute + '/' + gid, b, function (err, resp, body) {
                   expect(resp.statusCode).toBe(400);

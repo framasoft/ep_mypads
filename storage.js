@@ -33,12 +33,12 @@ module.exports = (function () {
   var storage = {};
 
   // Database PREFIX CONSTANTS
-  storage.DBPREFIX = {
-    GLOBAL: 'mypad:',
-    CONF: 'mypad:configuration:',
-    USER: 'mypad:user:',
-    GROUP: 'mypad:group:',
-  };
+  storage.DBPREFIX = { GLOBAL: 'mypads:' };
+  var DBPG = storage.DBPREFIX.GLOBAL;
+  storage.DBPREFIX.CONF = DBPG + 'conf:';
+  storage.DBPREFIX.USER = DBPG + 'user:';
+  storage.DBPREFIX.GROUP = DBPG + 'group:';
+  storage.DBPREFIX.PAD = DBPG + 'pad:';
 
   try {
     // Normal case : when installed as a plugin

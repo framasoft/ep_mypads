@@ -281,11 +281,7 @@ module.exports = (function () {
   */
 
   user.set = function (params, callback) {
-    common.addSetInit(params, callback);
-    var isFullStr = function (s) { return (ld.isString(s) && !ld.isEmpty(s)); };
-    if (!(isFullStr(params.login) && isFullStr(params.password))) {
-      throw new TypeError('login and password must be strings');
-    }
+    common.addSetInit(params, callback, ['login', 'password']);
     user.fn.getPasswordConf(function (err, results) {
       if (err) { return callback(err); }
       var e = user.fn.checkPassword(params.password, results);

@@ -44,9 +44,11 @@ module.exports = (function() {
   *
   * - a `params` JS object
   * - a `callback` function
+  * - a `strFields` optional, array, with fields of the `params` objects that
+  *   must be strings not empty
   */
 
-  common.addSetInit = function (params, callback) {
+  common.addSetInit = function (params, callback, strFields) {
     if (!ld.isObject(params)) {
       throw(new TypeError('parameters are mandatory for creation'));
     }
@@ -57,6 +59,14 @@ module.exports = (function() {
       if (!ld.isString(params._id) || (ld.isEmpty(params._id))) {
         throw new TypeError('_id, when defined, must be a string');
       }
+    }
+    if (strFields) {
+      var isFS = function (s) { return (ld.isString(s) && !ld.isEmpty(s)); };
+      ld.forEach(strFields, function (s) {
+        if (!isFS(params[s])) {
+          throw new TypeError(s + ' must be a string'); 
+        }
+      });
     }
   };
 

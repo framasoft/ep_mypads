@@ -99,11 +99,7 @@ module.exports = (function () {
   */
 
   group.set = function (params, callback) {
-    common.addSetInit(params, callback);
-    var isFullStr = function (s) { return (ld.isString(s) && !ld.isEmpty(s)); };
-    if (!(isFullStr(params.name) && isFullStr(params.admin))) {
-      throw new TypeError('name and admin must be strings');
-    }
+    common.addSetInit(params, callback, ['name', 'admin']);
     var g = group.fn.assignProps(params);
     if (params._id) {
       g._id = params._id;

@@ -41,6 +41,14 @@
             .toThrow();
       });
 
+      it('should throw TypeError if strFields is given and these fields are' +
+        ' anything else than strings not empty', function () {
+          var params = { a: false, obj: 123 };
+          expect(ld.partial (addSetI, params, ld.noop, ['a', 'obj'])).toThrow();
+          expect(ld.partial (addSetI, params, ld.noop, ['obj'])).toThrow();
+          expect(ld.partial (addSetI, params, ld.noop, ['inexist'])).toThrow();
+      });
+
       it('should retuns nothing otherwise', function () {
         expect(ld.partial(addSetI, { empty: false }, ld.noop)).not.toThrow();
         expect(addSetI({ empty: false }, ld.noop)).toBeUndefined();

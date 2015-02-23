@@ -28,18 +28,18 @@
   var group = require('../../../model/group.js');
 
   // Pre-created user, group and pad
-  var _u;
-  var _g;
-  var _p;
+  var guser;
+  var ggroup;
+  var gpad;
 
   var initAll = function (done) {
     specCommon.reInitDatabase(function () {
       user.set({ login: 'parker', password: 'lovesKubiak' }, function (err, u) {
-        if (!err) { _u = u; }
-        group.set({ name: 'college', admin: _u._id }, function (err, g) {
-          if (!err) { _g = g; }
-          pad.set({ name: 'exam1', group: _g._id }, function (err, p) {
-            if (!err) { _p = p; }
+        if (!err) { guser = u; }
+        group.set({ name: 'college', admin: guser._id }, function (err, g) {
+          if (!err) { ggroup = g; }
+          pad.set({ name: 'exam1', group: ggroup._id }, function (err, p) {
+            if (!err) { gpad = p; }
             done();
           });
         });
@@ -81,7 +81,7 @@
         function (done) {
           var params = {
             name: 'name',
-            group: _g._id,
+            group: ggroup._id,
             visibility: 'restricted',
             users: ['inexistent']
           };
@@ -98,7 +98,7 @@
         ' not found', function (done) {
           var params = {
             name: 'name',
-            group: _g._id,
+            group: ggroup._id,
             _id: 'notAPad'
           };
           pad.set(params, function (err, p) {
@@ -114,14 +114,14 @@
         'defined and updates group.pads array accordingly', function (done) {
           var params = {
             name: 'conqueringTheWorld',
-            group: _g._id
+            group: ggroup._id
           };
           pad.set(params, function (err, p) {
             expect(err).toBeNull();
             expect(ld.isObject(p)).toBeTruthy();
             expect(p._id).toBeDefined();
             expect(p.name).toBe('conqueringTheWorld');
-            expect(p.group).toBe(_g._id);
+            expect(p.group).toBe(ggroup._id);
             expect(p.visibility).toBeNull();
             expect(p.password).toBeNull();
             expect(p.readonly).toBeNull();
@@ -136,7 +136,7 @@
               expect(ld.isObject(p)).toBeTruthy();
               expect(p._id).toBeDefined();
               expect(p.name).toBe('conqueringTheWorld');
-              expect(p.group).toBe(_g._id);
+              expect(p.group).toBe(ggroup._id);
               expect(p.visibility).toBeNull();
               expect(p.password).toBeNull();
               expect(p.readonly).toBeNull();
@@ -155,8 +155,8 @@
       it('should otherwise accept well defined parameters', function (done) {
         var params = {
           name: 'trapFrank',
-          group: _g._id,
-          users: [_u._id],
+          group: ggroup._id,
+          users: [guser._id],
           visibility: 'restricted',
           readonly: false
         };
@@ -165,12 +165,12 @@
           expect(ld.isObject(p)).toBeTruthy();
           expect(p._id).toBeDefined();
           expect(p.name).toBe('trapFrank');
-          expect(p.group).toBe(_g._id);
+          expect(p.group).toBe(ggroup._id);
           expect(p.visibility).toBe('restricted');
           expect(p.password).toBeNull();
           expect(p.readonly).toBeFalsy();
           expect(ld.isArray(p.users)).toBeTruthy();
-          expect(ld.first(p.users)).toBe(_u._id);
+          expect(ld.first(p.users)).toBe(guser._id);
           p.visibility = 'private';
           p.password = 'GraceHasFever';
           pad.set(p, function (err, p) {
@@ -185,20 +185,20 @@
       });
 
       it('should also allow updating existing pad', function (done) {
-        _p.name = 'shellyNator';
-        _p.visibility = 'restricted';
-        _p.users.push(_u._id);
-        pad.set(_p, function (err, p) {
+        gpad.name = 'shellyNator';
+        gpad.visibility = 'restricted';
+        gpad.users.push(guser._id);
+        pad.set(gpad, function (err, p) {
           expect(err).toBeNull();
           expect(ld.isObject(p)).toBeTruthy();
-          expect(p._id).toBe(_p._id);
+          expect(p._id).toBe(gpad._id);
           expect(p.name).toBe('shellyNator');
-          expect(p.group).toBe(_p.group);
+          expect(p.group).toBe(gpad.group);
           expect(p.visibility).toBe('restricted');
           expect(p.password).toBeNull();
           expect(p.readonly).toBeNull();
           expect(ld.isArray(p.users)).toBeTruthy();
-          expect(ld.first(p.users)).toBe(_u._id);
+          expect(ld.first(p.users)).toBe(guser._id);
           group.get(p.group, function (err, g) {
             expect(err).toBeNull();
             expect(ld.includes(g.pads, p._id)).toBeTruthy();
@@ -231,12 +231,12 @@
       });
 
       it('should return the pad otherwise', function (done) {
-        pad.get(_p._id, function (err, p) {
+        pad.get(gpad._id, function (err, p) {
           expect(err).toBeNull();
           expect(ld.isObject(p)).toBeTruthy();
           expect(p._id).toBeDefined();
           expect(p.name).toBe('exam1');
-          expect(p.group).toBe(_g._id);
+          expect(p.group).toBe(ggroup._id);
           expect(p.visibility).toBeNull();
           expect(p.password).toBeNull();
           expect(p.readonly).toBeNull();
@@ -272,15 +272,15 @@
 
       it('should removes and returns null otherwise, removes indexes',
         function (done) {
-          pad.del(_p._id, function (err, p) {
+          pad.del(gpad._id, function (err, p) {
             expect(err).toBeNull();
             expect(p).toBeUndefined();
-            pad.get(_p._id, function (err, p) {
+            pad.get(gpad._id, function (err, p) {
               expect(ld.isError(err)).toBeTruthy();
               expect(p).toBeUndefined();
-              group.get(_p.group, function (err, g) {
+              group.get(gpad.group, function (err, g) {
                 expect(err).toBeNull();
-                expect(ld.includes(g.pads, _p._id)).toBeFalsy();
+                expect(ld.includes(g.pads, gpad._id)).toBeFalsy();
                 done();
               });
             });

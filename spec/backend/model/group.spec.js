@@ -21,10 +21,8 @@
   'use strict';
   var ld = require('lodash');
   var specCommon = require('../common.js');
-  var storage = require('../../../storage.js');
   var user = require('../../../model/user.js');
-  var UPREFIX = storage.DBPREFIX.USER;
-  var PPREFIX = storage.DBPREFIX.PAD;
+  var pad = require('../../../model/pad.js');
   var group = require('../../../model/group.js');
 
   var gparams;
@@ -41,37 +39,59 @@
       lastname: 'Lewis',
       groups: []
     };
-    gusers = ['frank', 'grace','shelly', 'mikey', 'jerry'];
-    gpads = ['pad1', 'pad2', 'pad3'];
+    gusers = [];
+    gpads = [];
+    var users = ld.map(['frank', 'grace','shelly', 'mikey', 'jerry'], 
+      function (val) { return { login: val, password: 'lovesKubiak' }; });
     specCommon.reInitDatabase(function () {
-      var pre = ld.curry(function (pre, val) { return pre + val; });
-      var _gusers = ld.map(gusers, pre(UPREFIX));
-      var _gpads = ld.map(gpads, pre(PPREFIX));
-      var kv = ld.reduce(ld.union(_gusers, _gpads),
-      function (memo, val) {
-        memo[val] = { groups: [] }; 
-        return memo;
-        }, {});
-      storage.fn.setKeys(kv, function (err) {
+      user.set(gadm, function (err, u) {
         if (err) { console.log(err); }
-        user.set(gadm, function (err, u) {
-          if (err) { console.log(err); }
-          gadm = u;
-          gparams = {
-            name: 'college',
-            admin: u._id,
-            admins: ld.takeRight(gusers, 2),
-            users: ld.take(gusers, 3),
-            pads: [ 'pad1' ],
-            visibility: 'private',
-            password: 'aGoodOne',
-            readonly: true
-          };
-          group.set(gparams, function (err, res) {
-            if (!err) { gparams = res; }
-            done();
-          });
-        });
+        gadm = u;
+        var setUsers = function () {
+          if (users.length) {
+            user.set(users.pop(), function (err, u) {
+              if (err) { console.log(err); }
+              gusers.push(u._id);
+              setUsers();
+            });
+          } else {
+            gusers.push(gadm._id);
+            gparams = {
+              name: 'college',
+              admin: gadm._id,
+              visibility: 'private',
+              password: 'aGoodOne',
+              readonly: true
+            };
+            group.set(gparams, function (err, g) {
+              if (err) { console.log(err); }
+              gparams = g;
+              gparams.admin = gadm._id;
+              gparams.admins = ld.takeRight(gusers, 2);
+              gparams.users = ld.take(gusers, 3);
+              var pads = ld.map(['pad1', 'pad2', 'pad3'], function (val) {
+                return { name: val, group: gparams._id };
+              });
+              var setPads = function () {
+                if (pads.length) {
+                  pad.set(pads.pop(), function (err, p) {
+                    if (err) { console.log(err); }
+                    gpads.push(p._id);
+                    setPads();
+                  });
+                } else {
+                  gparams.pads = ld.take(gpads, 2);
+                  group.set(gparams, function (err) {
+                    if (err) { console.log(err); }
+                    done();
+                  });
+                }
+              };
+              setPads();
+            });
+          }
+        };
+        setUsers();
       });
     });
   };
@@ -158,9 +178,9 @@
         var params = {
           name: 'college2',
           admin: gadm._id,
-          admins: [ 'mikey', 'jerry' ],
-          users: [ 'grace', 'frank', 'shelly' ],
-          pads: [ 'pad2' ],
+          admins: ld.take(gusers, 2),
+          users: ld.takeRight(gusers, 3),
+          pads: ld.at(gpads, 1),
           visibility: 'private',
           password: 'aGoodOne',
           readonly: true
@@ -171,10 +191,11 @@
           expect(g.name).toBe('college2');
           expect(ld.isArray(g.admins)).toBeTruthy();
           expect(ld.first(g.admins)).toBe(gadm._id);
-          expect(ld.includes(g.admins, 'mikey')).toBeTruthy();
-          expect(ld.includes(g.admins, 'jerry')).toBeTruthy();
+          var contained = (ld.size(ld.intersection(g.admins, gusers)) ===
+            ld.size(g.admins));
+          expect(contained).toBeTruthy();
           expect(ld.isEmpty(ld.xor(g.users, params.users))).toBeTruthy();
-          expect(ld.includes(g.pads, 'pad2')).toBeTruthy();
+          expect(ld.includes(gpads, ld.first(g.pads))).toBeTruthy();
           expect(g.visibility).toBe('private');
           expect(g.password).toBeDefined();
           expect(ld.isEmpty(g.password)).toBeFalsy();
@@ -237,7 +258,7 @@
           admin: gadm._id,
           admins: ld.takeRight(gusers, 2),
           users: ld.take(gusers, 3),
-          pads: [ 'pad1' ],
+          pads: ld.at(gpads, 2),
           visibility: 'private',
           password: 'aGoodOne',
           readonly: true
@@ -248,10 +269,11 @@
           expect(g.name).toBe('college2');
           expect(ld.isArray(g.admins)).toBeTruthy();
           expect(ld.first(g.admins)).toBe(gadm._id);
-          expect(ld.includes(g.admins, 'mikey')).toBeTruthy();
-          expect(ld.includes(g.admins, 'jerry')).toBeTruthy();
+          var contained = (ld.size(ld.intersection(g.admins, gusers)) ===
+            ld.size(g.admins));
+          expect(contained).toBeTruthy();
           expect(ld.isEmpty(ld.xor(g.users, params.users))).toBeTruthy();
-          expect(ld.includes(g.pads, 'pad1')).toBeTruthy();
+          expect(ld.includes(gpads, ld.first(g.pads))).toBeTruthy();
           expect(g.visibility).toBe('private');
           expect(g.password).toBeDefined();
           expect(ld.isEmpty(g.password)).toBeFalsy();
@@ -262,10 +284,11 @@
             expect(g.name).toBe('college2');
             expect(ld.isArray(g.admins)).toBeTruthy();
             expect(ld.first(g.admins)).toBe(gadm._id);
-            expect(ld.includes(g.admins, 'mikey')).toBeTruthy();
-            expect(ld.includes(g.admins, 'jerry')).toBeTruthy();
+            contained = (ld.size(ld.intersection(g.admins, gusers)) ===
+              ld.size(g.admins));
+            expect(contained).toBeTruthy();
             expect(ld.isEmpty(ld.xor(g.users, params.users))).toBeTruthy();
-            expect(ld.includes(g.pads, 'pad1')).toBeTruthy();
+            expect(ld.includes(gpads, ld.first(g.pads))).toBeTruthy();
             expect(g.visibility).toBe('private');
             expect(g.password).toBeDefined();
             expect(ld.isEmpty(g.password)).toBeFalsy();
@@ -312,10 +335,11 @@
           expect(g.name).toBe('college');
           expect(ld.isArray(g.admins)).toBeTruthy();
           expect(ld.first(g.admins)).toBe(gadm._id);
-          expect(ld.includes(g.admins, 'mikey')).toBeTruthy();
-          expect(ld.includes(g.admins, 'jerry')).toBeTruthy();
+          var contained = (ld.size(ld.intersection(g.admins, gusers)) ===
+            ld.size(g.admins));
+          expect(contained).toBeTruthy();
           expect(ld.isEmpty(ld.xor(g.users, gparams.users))).toBeTruthy();
-          expect(ld.includes(g.pads, 'pad1')).toBeTruthy();
+          expect(ld.includes(gpads, ld.first(g.pads))).toBeTruthy();
           expect(g.visibility).toBe('private');
           expect(g.password).toBeDefined();
           expect(ld.isEmpty(g.password)).toBeFalsy();

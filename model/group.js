@@ -29,7 +29,7 @@ module.exports = (function () {
   var cuid = require('cuid');
   var storage = require('../storage.js');
   var common = require('./common.js');
-  var DBPREFIX = storage.DBPREFIX.GROUP;
+  var GPREFIX = storage.DBPREFIX.GROUP;
   var UPREFIX = storage.DBPREFIX.USER;
   var PPREFIX = storage.DBPREFIX.PAD;
 
@@ -62,12 +62,12 @@ module.exports = (function () {
   *
   *  Group reading
   *
-  *  This function uses `common.getDel` with `del` to *false* and DBPREFIX
+  *  This function uses `common.getDel` with `del` to *false* and GPREFIX
   *  fixed.  It will takes mandatory key string and callback function. See
   *  `common.getDel` for documentation.
   */
 
-  group.get = ld.partial(common.getDel, false, DBPREFIX);
+  group.get = ld.partial(common.getDel, false, GPREFIX);
 
   /**
   * ### set
@@ -103,7 +103,7 @@ module.exports = (function () {
     var g = group.fn.assignProps(params);
     if (params._id) {
       g._id = params._id;
-      common.checkExistence(DBPREFIX + g._id, function (err, res) {
+      common.checkExistence(GPREFIX + g._id, function (err, res) {
         if (err) { return callback(err); }
         if (!res) { return callback(new Error('group does not exist')); }
         group.fn.checkSet(g, callback);
@@ -120,7 +120,7 @@ module.exports = (function () {
   *
   * Group removal
   *
-  *  This function uses `common.getDel` with `del` to *false* and DBPREFIX
+  *  This function uses `common.getDel` with `del` to *false* and GPREFIX
   *  fixed.  It will takes mandatory key string and callback function. See
   *  `common.getDel` for documentation.
   *
@@ -132,7 +132,7 @@ module.exports = (function () {
     if (!ld.isFunction(callback)) {
       throw new TypeError('callback must be a function');
     }
-    common.getDel(true, DBPREFIX, key, function (err, g) {
+    common.getDel(true, GPREFIX, key, function (err, g) {
       if (err) { return callback(err); }
       group.fn.indexUsersAndPads(true, g, callback);
     });
@@ -209,8 +209,6 @@ module.exports = (function () {
   * ### assignProps
   *
   * `assignProps` takes params object and assign defaults if needed.
-  * For performance reasons, it won't check existence for all pads, users,
-  * admins given.
   * It creates :
   *
   * - an `admins` array, unioning admin key to optional others admins,
@@ -288,7 +286,7 @@ module.exports = (function () {
   */
 
   group.fn.set = function (g, callback) {
-    storage.db.set(DBPREFIX + g._id, g, function (err) {
+    storage.db.set(GPREFIX + g._id, g, function (err) {
       if (err) { return callback(err); }
       group.fn.indexUsersAndPads(false, g, function (err) {
         if (err) { return callback(err); }
@@ -300,7 +298,7 @@ module.exports = (function () {
   /**
   * ### checkSet
   *
-  * `checkSet` is will ensure that all users and pads exist. If true, it calls
+  * `checkSet` will ensure that all users and pads exist. If true, it calls
   * `fn.set`, else it will return and *Error*. `checkSet` takes :
   *
   * - a `g` group object

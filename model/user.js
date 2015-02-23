@@ -29,7 +29,7 @@ module.exports = (function () {
   var cuid = require('cuid');
   var storage = require('../storage.js');
   var common = require('./common.js');
-  var DBPREFIX = storage.DBPREFIX.USER;
+  var UPREFIX = storage.DBPREFIX.USER;
   var CPREFIX = storage.DBPREFIX.CONF;
 
   /**
@@ -184,7 +184,7 @@ module.exports = (function () {
   * ### getDel
   *
   * Local `getDel` wrapper that uses `user.ids` object to ensure uniqueness of
-  * login and _id fields before returning `common.getDel` with DBPREFIX fixed.
+  * login and _id fields before returning `common.getDel` with UPREFIX fixed.
   * It also handles secondary indexes for *model.group* elements.
   *
   * It takes the mandatory login string as argument and return an error if login
@@ -226,7 +226,7 @@ module.exports = (function () {
         }
       };
     }
-    common.getDel(del, DBPREFIX, user.ids[login], cb);
+    common.getDel(del, UPREFIX, user.ids[login], cb);
   };
 
 
@@ -243,12 +243,12 @@ module.exports = (function () {
   */
 
   user.init = function (callback) {
-    storage.db.findKeys(DBPREFIX + '*', null, function (err, keys) {
+    storage.db.findKeys(UPREFIX + '*', null, function (err, keys) {
       if (err) { return callback(err); }
       storage.fn.getKeys(keys, function (err, results) {
         if (results) {
           user.ids = ld.transform(results, function (memo, val, key) {
-            memo[val.login] = key.replace(DBPREFIX, '');
+            memo[val.login] = key.replace(UPREFIX, '');
           });
         }
         callback(null);
@@ -291,7 +291,7 @@ module.exports = (function () {
       user.fn.checkLogin(params._id, u, function (err) {
         if (err) { return callback(err); }
         var _final = function (u) {
-          storage.db.set(DBPREFIX + u._id, u, function (err) {
+          storage.db.set(UPREFIX + u._id, u, function (err) {
             if (err) { return callback(err); }
             user.ids[u.login] = u._id;
             return callback(null, u);

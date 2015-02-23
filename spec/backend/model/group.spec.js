@@ -24,6 +24,7 @@
   var user = require('../../../model/user.js');
   var pad = require('../../../model/pad.js');
   var group = require('../../../model/group.js');
+  var storage = require('../../../storage.js');
 
   var gparams;
   var gadm;
@@ -80,9 +81,9 @@
                     setPads();
                   });
                 } else {
-                  gparams.pads = ld.take(gpads, 2);
-                  group.set(gparams, function (err) {
+                  group.set(gparams, function (err, g) {
                     if (err) { console.log(err); }
+                    gparams = g;
                     done();
                   });
                 }
@@ -180,7 +181,6 @@
           admin: gadm._id,
           admins: ld.take(gusers, 2),
           users: ld.takeRight(gusers, 3),
-          pads: ld.at(gpads, 1),
           visibility: 'private',
           password: 'aGoodOne',
           readonly: true
@@ -195,7 +195,6 @@
             ld.size(g.admins));
           expect(contained).toBeTruthy();
           expect(ld.isEmpty(ld.xor(g.users, params.users))).toBeTruthy();
-          expect(ld.includes(gpads, ld.first(g.pads))).toBeTruthy();
           expect(g.visibility).toBe('private');
           expect(g.password).toBeDefined();
           expect(ld.isEmpty(g.password)).toBeFalsy();
@@ -254,11 +253,11 @@
 
       it('should otherwise accept well defined parameters', function (done) {
         var params = {
+          _id: gparams._id,
           name: 'college2',
           admin: gadm._id,
           admins: ld.takeRight(gusers, 2),
           users: ld.take(gusers, 3),
-          pads: ld.at(gpads, 2),
           visibility: 'private',
           password: 'aGoodOne',
           readonly: true
@@ -297,8 +296,8 @@
               expect(err).toBeNull();
               expect(u.login).toBe(gadm.login);
               expect(ld.isArray(u.groups)).toBeTruthy();
-              expect(ld.size(u.groups)).toBe(2);
-              expect(u.groups[1]).toBe(g._id);
+              expect(ld.size(u.groups)).toBe(1);
+              expect(u.groups[0]).toBe(g._id);
               done();
             });
           });
@@ -372,18 +371,27 @@
         });
       });
 
-      it('should removes the group otherwise', function (done) {
-        group.del(gparams._id, function (err) {
-          expect(err).toBeNull();
-          user.get(gadm.login, function (err, u) {
+      it('should removes the group otherwise, and all the linked pads',
+        function (done) {
+          group.del(gparams._id, function (err) {
             expect(err).toBeNull();
-            expect(u.login).toBe(gadm.login);
-            expect(ld.isArray(u.groups)).toBeTruthy();
-            expect(ld.includes(u.groups, gparams._id)).toBeFalsy();
-            done();
+            user.get(gadm.login, function (err, u) {
+              expect(err).toBeNull();
+              expect(u.login).toBe(gadm.login);
+              expect(ld.isArray(u.groups)).toBeTruthy();
+              expect(ld.includes(u.groups, gparams._id)).toBeFalsy();
+              var PFX = storage.DBPREFIX.PAD;
+              var pads = ld.map(gpads, function (p) { return PFX + p; });
+              storage.fn.getKeys(pads, function (err, res) {
+                expect(err).toBeNull();
+                expect(ld.isObject(res)).toBeTruthy();
+                expect(ld.every(res, ld.isUndefined)).toBeTruthy();
+                done();
+              });
+            });
           });
-        });
-      });
+        }
+      );
 
     });
 

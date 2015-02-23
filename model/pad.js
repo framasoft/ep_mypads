@@ -207,6 +207,7 @@ module.exports = (function () {
   * - a special `edit` boolean, defaults to *false* for reusing the function for
   *   set (edit) an existing pad.
   *
+  * TODO: ensure user has the right to link _this_ group (admin)
   */
 
   pad.set = function (params, callback) {

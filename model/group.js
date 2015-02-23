@@ -89,13 +89,15 @@ module.exports = (function () {
   *   the group will be set on readonly mode
   *   - `password` string field, only usefull if visibility fixed to private,
   *   by default to an empty string
-  * - a `pads` array, will contain ids of pads attached to the group
   * - `users` and `admins` arrays, with ids of users invited to read and/or edit
   *   pads, for restricted visibility only; and group administrators
   *
   * - `callback` function returning error if error, null otherwise and the
   *   group object.
   *
+  * `set` created an empty `pads` array in case of creation, otherwise it just
+  * gets back old value. `pads` array contains ids of pads attached to the
+  * group via `model.pad` creation or update.
   */
 
   group.set = function (params, callback) {
@@ -103,13 +105,15 @@ module.exports = (function () {
     var g = group.fn.assignProps(params);
     if (params._id) {
       g._id = params._id;
-      common.checkExistence(GPREFIX + g._id, function (err, res) {
+      storage.db.get(GPREFIX + g._id, function (err, res) {
         if (err) { return callback(err); }
         if (!res) { return callback(new Error('group does not exist')); }
+        g.pads = res.pads;
         group.fn.checkSet(g, callback);
       });
     } else {
       g._id = cuid();
+      g.pads = [];
       group.fn.checkSet(g, callback);
     }
   };
@@ -134,7 +138,10 @@ module.exports = (function () {
     }
     common.getDel(true, GPREFIX, key, function (err, g) {
       if (err) { return callback(err); }
-      group.fn.indexUsersAndPads(true, g, callback);
+      group.fn.indexUsers(true, g, function (err) {
+        if (err) { return callback(err); }
+        group.fn.cascadePads(g, callback);
+      });
     });
   };
 
@@ -213,7 +220,7 @@ module.exports = (function () {
   *
   * - an `admins` array, unioning admin key to optional others admins,
   * - a `users` array, empty or with given keys,
-  * - a `pads` array, empty or with given keys,
+  * - a `pads` array, empty on creation, can't be fixed either,
   * - a `visibility` string, defaults to *restricted*, with only two other
   *   possibilities : *private* or *public*
   * - a `password` string, *null* by default
@@ -227,7 +234,7 @@ module.exports = (function () {
     var g = { name: p.name };
     p.admins = ld.isArray(p.admins) ? ld.filter(p.admins, ld.isString) : [];
     g.admins = ld.union([ p.admin ], p.admins);
-    ld.forEach(['pads', 'users'], function (k) { g[k] = ld.uniq(p[k]); });
+    g.users = ld.uniq(p.users);
     var v = p.visibility;
     var vVal = ['restricted', 'private', 'public'];
     g.visibility = (ld.isString(v) && ld.includes(vVal, v)) ? v : 'restricted';
@@ -236,25 +243,46 @@ module.exports = (function () {
     return g;
   };
 
+
   /**
-  * ### indexUsersAndPads
+  * ### cascadePads
   *
-  * `indexUsersAndPads` is an asynchronous function which handles secondary
-  * indexes for *users.groups* and *pad.group* after group creation, update,
-  * removal. It takes :
+  * `cascadePads` is an asynchronous function which handles cascade removals
+  * after group removal.
+  * It takes :
+  *
+  * - the `group` object
+  * - a `callback` function, returning Error or *null* if succeeded
+  */
+
+  group.fn.cascadePads = function (group, callback) {
+    if (!ld.isEmpty(group.pads)) {
+      var padsKeys = ld.map(group.pads, function (p) { return PPREFIX + p; });
+      storage.fn.delKeys(padsKeys, function (err, res) {
+        if (err) { return callback(err); }
+        var e = 'something goes wrong with cascade pads removal';
+        if (!res) { return callback(new Error(e)); }
+        callback(null);
+      });
+    } else {
+      callback(null);
+    }
+  };
+
+  /**
+  * ### indexUsers
+  *
+  * `indexUsers` is an asynchronous function which handles secondary indexes
+  * for *users.groups* after group creation, update, removal. It takes :
   *
   * - a `del` boolean to know if we have to delete key from index or add it
   * - the `group` object
   * - a `callback` function, returning Error or *null* if succeeded
   */
 
-  group.fn.indexUsersAndPads = function (del, group, callback) {
-    // TODO: pads
+  group.fn.indexUsers = function (del, group, callback) {
     var usersKeys = ld.map(ld.union(group.admins, group.users),
-      function (u) {
-        return UPREFIX + u;
-      }
-    );
+      function (u) { return UPREFIX + u; });
     storage.fn.getKeys(usersKeys, function (err, users) {
       if (err) { return callback(err); }
       ld.forIn(users, function (u, k) {
@@ -279,7 +307,7 @@ module.exports = (function () {
   *
   * `set` is internal function that sets the user group into the database.
   * It takes care of secondary indexes for users and pads by calling
-  * `indexUsersAndPads`
+  * `indexUsers`.
   *
   * It takes, as arguments :
   *
@@ -291,7 +319,7 @@ module.exports = (function () {
   group.fn.set = function (g, callback) {
     storage.db.set(GPREFIX + g._id, g, function (err) {
       if (err) { return callback(err); }
-      group.fn.indexUsersAndPads(false, g, function (err) {
+      group.fn.indexUsers(false, g, function (err) {
         if (err) { return callback(err); }
         return callback(null, g);
       });

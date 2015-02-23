@@ -21,12 +21,6 @@
 *  under the License.
 */
 
-/* model
-*
-* mypads:pad:$id
-* pad = { group: $id, properties: false || { visibility: $, readonly: $ } }
-*/
-
 module.exports = (function () {
   'use strict';
 
@@ -79,7 +73,8 @@ module.exports = (function () {
   * - a `password` string, *null* by default
   * - a `readonly` boolean, *null* by default
   *
-  * It returns the pad object.
+  * *null* fields are intented to tell MyPads that group properties should be
+  * applied here. `assignProps` returns the pad object.
   */
 
   pad.fn.assignProps = function (params) {
@@ -177,7 +172,7 @@ module.exports = (function () {
     var p = pad.fn.assignProps(params);
     if (params._id) {
       p._id = params._id;
-      common.checkExistence(storage.DBPREFIX + p._id, function (err, res) {
+      common.checkExistence(PPREFIX + p._id, function (err, res) {
         if (err) { return callback(err); }
         if (!res) { return callback(new Error('pad does not exist')); }
         pad.fn.checkSet(p, callback);

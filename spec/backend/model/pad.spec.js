@@ -52,8 +52,8 @@
     afterAll(initAll);
 
     describe('setting a pad', function () {
-      beforeAll(specCommon.reInitDatabase);
-      afterAll(specCommon.reInitDatabase);
+      beforeAll(initAll);
+      afterAll(initAll);
 
       it('should return errors if arguments are not as expected', function () {
           expect(pad.set).toThrow();
@@ -110,14 +110,93 @@
         }
       );
 
-      xit('should assign defaults if other params are not properly typed nor' +
+      it('should assign defaults if other params are not properly typed nor' +
         'defined', function (done) {
-          done();
+          var params = {
+            name: 'conqueringTheWorld',
+            group: _g._id
+          };
+          pad.set(params, function (err, p) {
+            expect(err).toBeNull();
+            expect(ld.isObject(p)).toBeTruthy();
+            expect(p._id).toBeDefined();
+            expect(p.name).toBe('conqueringTheWorld');
+            expect(p.group).toBe(_g._id);
+            expect(p.visibility).toBeNull();
+            expect(p.password).toBeNull();
+            expect(p.readonly).toBeNull();
+            expect(ld.isArray(p.users)).toBeTruthy();
+            expect(ld.isEmpty(p.users)).toBeTruthy();
+            params.users = 'notAnArray';
+            params.visibility = 121;
+            params.password = true;
+            params.readonly = 'shouldBeABoolean';
+            pad.set(params, function (err, p) {
+              expect(err).toBeNull();
+              expect(ld.isObject(p)).toBeTruthy();
+              expect(p._id).toBeDefined();
+              expect(p.name).toBe('conqueringTheWorld');
+              expect(p.group).toBe(_g._id);
+              expect(p.visibility).toBeNull();
+              expect(p.password).toBeNull();
+              expect(p.readonly).toBeNull();
+              expect(ld.isArray(p.users)).toBeTruthy();
+              expect(ld.isEmpty(p.users)).toBeTruthy();
+              done();
+            });
+          });
         }
       );
 
-      xit('should otherwise accept well defined parameters', function (done) {
-        done();
+      it('should otherwise accept well defined parameters', function (done) {
+        var params = {
+          name: 'trapFrank',
+          group: _g._id,
+          users: [_u._id],
+          visibility: 'restricted',
+          readonly: false
+        };
+        pad.set(params, function (err, p) {
+          expect(err).toBeNull();
+          expect(ld.isObject(p)).toBeTruthy();
+          expect(p._id).toBeDefined();
+          expect(p.name).toBe('trapFrank');
+          expect(p.group).toBe(_g._id);
+          expect(p.visibility).toBe('restricted');
+          expect(p.password).toBeNull();
+          expect(p.readonly).toBeFalsy();
+          expect(ld.isArray(p.users)).toBeTruthy();
+          expect(ld.first(p.users)).toBe(_u._id);
+          p.visibility = 'private';
+          p.password = 'GraceHasFever';
+          pad.set(p, function (err, p) {
+            expect(err).toBeNull();
+            expect(p._id).toBeDefined();
+            expect(p.name).toBe('trapFrank');
+            expect(p.visibility).toBe('private');
+            expect(p.password).toBe('GraceHasFever');
+            done();
+          });
+        });
+      });
+
+      it('should also allow updating existing pad', function (done) {
+        _p.name = 'shellyNator';
+        _p.visibility = 'restricted';
+        _p.users.push(_u._id);
+        pad.set(_p, function (err, p) {
+          expect(err).toBeNull();
+          expect(ld.isObject(p)).toBeTruthy();
+          expect(p._id).toBe(_p._id);
+          expect(p.name).toBe('shellyNator');
+          expect(p.group).toBe(_p.group);
+          expect(p.visibility).toBe('restricted');
+          expect(p.password).toBeNull();
+          expect(p.readonly).toBeNull();
+          expect(ld.isArray(p.users)).toBeTruthy();
+          expect(ld.first(p.users)).toBe(_u._id);
+          done();
+        });
       });
     });
 

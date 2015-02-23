@@ -24,6 +24,7 @@
   var storage = require('../../../storage.js');
   var user = require('../../../model/user.js');
   var UPREFIX = storage.DBPREFIX.USER;
+  var PPREFIX = storage.DBPREFIX.PAD;
   var group = require('../../../model/group.js');
 
   var gparams;
@@ -45,7 +46,7 @@
     specCommon.reInitDatabase(function () {
       var pre = ld.curry(function (pre, val) { return pre + val; });
       var _gusers = ld.map(gusers, pre(UPREFIX));
-      var _gpads = ld.map(gpads, pre('mypads:pad:'));
+      var _gpads = ld.map(gpads, pre(PPREFIX));
       var kv = ld.reduce(ld.union(_gusers, _gpads),
       function (memo, val) {
         memo[val] = { groups: [] }; 

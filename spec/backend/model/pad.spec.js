@@ -48,12 +48,12 @@
   };
 
   describe('Pad', function () {});
-    beforeAll(initAll);
-    afterAll(initAll);
+    beforeAll(specCommon.reInitDatabase);
+    afterAll(specCommon.reInitDatabase);
 
-    describe('setting a pad', function () {
+    describe('pad set (and add)', function () {
       beforeAll(initAll);
-      afterAll(initAll);
+      afterAll(specCommon.reInitDatabase);
 
       it('should return errors if arguments are not as expected', function () {
           expect(pad.set).toThrow();
@@ -111,7 +111,7 @@
       );
 
       it('should assign defaults if other params are not properly typed nor' +
-        'defined', function (done) {
+        'defined and updates group.pads array accordingly', function (done) {
           var params = {
             name: 'conqueringTheWorld',
             group: _g._id
@@ -142,7 +142,11 @@
               expect(p.readonly).toBeNull();
               expect(ld.isArray(p.users)).toBeTruthy();
               expect(ld.isEmpty(p.users)).toBeTruthy();
-              done();
+              group.get(p.group, function (err, g) {
+                expect(err).toBeNull();
+                expect(ld.includes(g.pads, p._id)).toBeTruthy();
+                done();
+              });
             });
           });
         }
@@ -195,9 +199,95 @@
           expect(p.readonly).toBeNull();
           expect(ld.isArray(p.users)).toBeTruthy();
           expect(ld.first(p.users)).toBe(_u._id);
+          group.get(p.group, function (err, g) {
+            expect(err).toBeNull();
+            expect(ld.includes(g.pads, p._id)).toBeTruthy();
+            done();
+          });
+        });
+      });
+    });
+
+    describe('pad get', function () {
+
+      beforeAll(initAll);
+      afterAll(specCommon.reInitDatabase);
+
+      it('should throw errors if arguments are not provided as expected',
+        function () {
+          expect(pad.get).toThrow();
+          expect(ld.partial(pad.get, 123)).toThrow();
+          expect(ld.partial(pad.get, 'key')).toThrow();
+          expect(ld.partial(pad.get, 'key', 'notAFunc')).toThrow();
+        }
+      );
+
+      it('should return an Error if the key is not found', function (done) {
+        pad.get('inexistent', function (err, p) {
+          expect(ld.isError(err)).toBeTruthy();
+          expect(p).toBeUndefined();
           done();
         });
       });
+
+      it('should return the pad otherwise', function (done) {
+        pad.get(_p._id, function (err, p) {
+          expect(err).toBeNull();
+          expect(ld.isObject(p)).toBeTruthy();
+          expect(p._id).toBeDefined();
+          expect(p.name).toBe('exam1');
+          expect(p.group).toBe(_g._id);
+          expect(p.visibility).toBeNull();
+          expect(p.password).toBeNull();
+          expect(p.readonly).toBeNull();
+          expect(ld.isArray(p.users)).toBeTruthy();
+          expect(ld.isEmpty(p.users)).toBeTruthy();
+          done();
+        });
+      });
+
+    });
+
+    describe('pad del', function () {
+
+      beforeAll(initAll);
+      afterAll(specCommon.reInitDatabase);
+
+      it('should throw errors if arguments are not provided as expected',
+        function () {
+          expect(pad.del).toThrow();
+          expect(ld.partial(pad.del, 123)).toThrow();
+          expect(ld.partial(pad.del, 'key')).toThrow();
+          expect(ld.partial(pad.del, 'key', 'notAFunc')).toThrow();
+        }
+      );
+
+      it('should return an Error if the key is not found', function (done) {
+        pad.del('inexistent', function (err, p) {
+          expect(ld.isError(err)).toBeTruthy();
+          expect(p).toBeUndefined();
+          done();
+        });
+      });
+
+      it('should removes and returns null otherwise, removes indexes',
+        function (done) {
+          pad.del(_p._id, function (err, p) {
+            expect(err).toBeNull();
+            expect(p).toBeUndefined();
+            pad.get(_p._id, function (err, p) {
+              expect(ld.isError(err)).toBeTruthy();
+              expect(p).toBeUndefined();
+              group.get(_p.group, function (err, g) {
+                expect(err).toBeNull();
+                expect(ld.includes(g.pads, _p._id)).toBeFalsy();
+                done();
+              });
+            });
+          });
+        }
+      );
+
     });
 
 }).call(this);

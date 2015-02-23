@@ -31,6 +31,7 @@ module.exports = (function () {
   var storage = require('../storage.js');
   var PPREFIX = storage.DBPREFIX.PAD;
   var UPREFIX = storage.DBPREFIX.USER;
+  var GPREFIX = storage.DBPREFIX.GROUP;
 
   /**
   * ## Description
@@ -117,6 +118,40 @@ module.exports = (function () {
   };
 
   /**
+  * ### indexGroups
+  *
+  * `indexGroups` is an asynchronous function which handles secondary indexes
+  * for *group.pads* after pad creation, update, removal. It takes :
+  *
+  * - a `del` boolean to know if we have to delete key from index or add it
+  * - the `pad` object
+  * - a `callback` function, returning Error or *null* if succeeded
+  */
+
+  pad.fn.indexGroups = function (del, pad, callback) {
+    var _set = function (g) {
+      storage.db.set(GPREFIX + g._id, g, function (err) {
+        if (err) { return callback(err); }
+        callback(null);
+      });
+    };
+    storage.db.get(GPREFIX + pad.group, function (err, g) {
+      if (err) { return callback(err); }
+      if (del) {
+        ld.pull(g.pads, pad._id);
+        _set(g);
+      } else {
+        if (!ld.includes(g.pads, pad._id)) {
+          g.pads.push(pad._id);
+          _set(g);
+        } else {
+          callback(null);
+        }
+      }
+    });
+  };
+
+  /**
   * ### set
   *
   * `set` is internal function that sets the pad into the database.
@@ -131,7 +166,10 @@ module.exports = (function () {
   pad.fn.set = function (p, callback) {
     storage.db.set(PPREFIX + p._id, p, function (err) {
       if (err) { return callback(err); }
-      return callback(null, p);
+      pad.fn.indexGroups(false, p, function (err) {
+        if (err) { return callback(err); }
+        callback(null, p);
+      });
     });
   };
 
@@ -139,9 +177,13 @@ module.exports = (function () {
   * ## Public functions
   *
   * ### get
+  *
+  *  This function uses `common.getDel` with `del` to *false* and PPREFIX
+  *  fixed. It will takes mandatory key string and callback function. See
+  *  `common.getDel` for documentation.
   */
 
-  pad.get = ld.noop;
+  pad.get = ld.partial(common.getDel, false, PPREFIX);
 
   /**
   * ### set
@@ -185,9 +227,23 @@ module.exports = (function () {
 
   /**
   * ### del
+  *
+  *  This function uses `common.getDel` with `del` to *false* and GPREFIX
+  *  fixed.  It will takes mandatory key string and callback function. See
+  *  `common.getDel` for documentation.
+  *
+  *  It uses the `callback` function to handle secondary indexes for groups.
   */
 
-  pad.del = ld.noop;
+  pad.del = function (key, callback) {
+    if (!ld.isFunction(callback)) {
+      throw new TypeError('callback must be a function');
+    }
+    common.getDel(true, PPREFIX, key, function (err, p) {
+      if (err) { return callback(err); }
+      pad.fn.indexGroups(true, p, callback);
+    });
+  };
 
   /**
   * ## Helpers functions

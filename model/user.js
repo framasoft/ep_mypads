@@ -25,6 +25,7 @@ module.exports = (function () {
   'use strict';
 
   // Dependencies
+  var crypto = require('crypto');
   var ld = require('lodash');
   var cuid = require('cuid');
   var storage = require('../storage.js');
@@ -69,9 +70,9 @@ module.exports = (function () {
   };
 
   /**
-  * ### checkPassword
+  * ### checkPasswordLength
   *
-  *  `checkPassword` is a private helper aiming at respecting the minimum
+  *  `checkPasswordLength` is a private helper aiming at respecting the minimum
   *  length fixed into MyPads configuration.
   *
   *  It takes two arguments, with fields
@@ -84,7 +85,7 @@ module.exports = (function () {
   *  It returns an error message if the verification has failed.
   */
 
-  user.fn.checkPassword = function (password, params) {
+  user.fn.checkPasswordLength = function (password, params) {
     var pass = password;
     var min = params[CPREFIX + 'passwordMin'];
     var max = params[CPREFIX + 'passwordMax'];
@@ -95,13 +96,75 @@ module.exports = (function () {
   };
 
   /**
-  *  ### hashPassword
+  * ### genPassword
   *
-  *  TODO: `hashPassword` takes the password and returns a hashed password, for
-  *  storing in database and verification.
+  * `checkPassword` is an asynchronous function which checks :
+  *
+  * - if the size is between `conf.passwordMin` and `conf.passwordMax`
+  * - if the given `password` matches the already used one in case of update
+  * - in addition or if it does not match, generates a new `salt` and hashed
+  *   `password`
+  *
+  *   It takes :
+  *
+  *   - an `old` user object, null in case of creation
+  *   - the `user` object
+  *   - a `callback` function returning *Error* if needed, or *null* and the
+  *   updated `user` object
   */
 
-  user.fn.hashPassword = ld.noop;
+  user.fn.genPassword = function (old, u, callback) {
+    user.fn.getPasswordConf(function (err, res) {
+      if (err) { return callback(err); }
+      err = user.fn.checkPasswordLength(u.password, res);
+      if (err) { return callback(err); }
+      var newPass = function () {
+        user.fn.hashPassword(null, u.password, function (err, pass) {
+          if (err) { return callback(err); }
+          u.password = pass;
+          callback(null, u);
+        });
+      };
+      if (old) {
+        var oldp = old.password;
+        user.fn.hashPassword(oldp.salt, u.password, function (err, p) {
+          if (err) { return callback(err); }
+          if (p.hash === oldp.hash) {
+            u.password = oldp;
+            callback(null, u);
+          } else {
+            newPass();
+          }
+        });
+      } else {
+        newPass();
+      }
+    });
+  };
+
+  /**
+  *  ### hashPassword
+  *
+  *  `hashPassword` takes :
+  *
+  *  - an optional `salt` string
+  *  - the mandatory `password` string
+  *  - a `callback` function which returns an object with `hash`ed password and
+  *    the `salt`.
+  */
+
+  user.fn.hashPassword = function (salt, password, callback) {
+    crypto.randomBytes(40, function (ex, buf) {
+      if (ex) { return callback(ex); }
+      salt = salt || buf.toString('hex');
+      var sha512 = crypto.createHash('sha512');
+      sha512.update(salt);
+      callback(null, {
+        salt: salt,
+        hash: sha512.update(password).digest('hex')
+      });
+    });
+  };
 
   /**
   * ### assignProps
@@ -122,25 +185,6 @@ module.exports = (function () {
     u.email = (ld.isEmail(p.email)) ? p.email : '';
     u.groups = [];
     return ld.assign({ _id: p._id, login: p.login, password: p.password }, u);
-  };
-
-  /**
-  * ### getGroups
-  *
-  * `getGroups` is an asynchronous function that is used for updates only, to
-  * retrieve existing `groups` from user and assign them to him. It takes :
-  *
-  * - the `u` user object
-  * - a `callback` function, returning an *Error* or *null* and the updated `u`
-  *   object
-  */
-
-  user.fn.getGroups = function (u, callback) {
-    user.get(u.login, function (err, dbuser) {
-      if (err) { return callback(err); }
-      u.groups = dbuser.groups;
-      callback(null, u);
-    });
   };
 
   /**
@@ -229,6 +273,23 @@ module.exports = (function () {
     common.getDel(del, UPREFIX, user.ids[login], cb);
   };
 
+  /**
+  * ### set
+  *
+  * `set` is a function with real user setting into the database and secondary
+  * index handling. It takes :
+  *
+  * - a `u` user object
+  * - a `callback` function, returning an *Error* or *null* and the `u` object
+  */
+
+  user.fn.set = function (u, callback) {
+    storage.db.set(UPREFIX + u._id, u, function (err) {
+      if (err) { return callback(err); }
+      user.ids[u.login] = u._id;
+      return callback(null, u);
+    });
+  };
 
   /**
   * ## Public Functions
@@ -266,7 +327,7 @@ module.exports = (function () {
   *   - optional `_id` string, for update only and existing user
   *   - required `login` string
   *   - required `password` string, between *conf.passwordMin* and
-  *   *conf.passwordMax*
+  *   *conf.passwordMax*, will be an object with `hash` and `salt` strings
   *   - optional `email` string, used for communication
   *   - optional `firstname` string
   *   - optional `lastname` string
@@ -282,31 +343,26 @@ module.exports = (function () {
 
   user.set = function (params, callback) {
     common.addSetInit(params, callback, ['login', 'password']);
-    user.fn.getPasswordConf(function (err, results) {
+    var u = user.fn.assignProps(params);
+    u._id = u._id || cuid();
+    user.fn.checkLogin(params._id, u, function (err) {
       if (err) { return callback(err); }
-      var e = user.fn.checkPassword(params.password, results);
-      if (e) { return callback(e); }
-      var u = user.fn.assignProps(params);
-      u._id = u._id || cuid();
-      user.fn.checkLogin(params._id, u, function (err) {
-        if (err) { return callback(err); }
-        var _final = function (u) {
-          storage.db.set(UPREFIX + u._id, u, function (err) {
+      // Update/Edit case
+      if (params._id) {
+        user.get(u.login, function (err, dbuser) {
+          if (err) { return callback(err); }
+          u.groups = dbuser.groups;
+          user.fn.genPassword(dbuser, u, function (err, u) {
             if (err) { return callback(err); }
-            user.ids[u.login] = u._id;
-            return callback(null, u);
+            user.fn.set(u, callback);
           });
-        };
-        // Update/Edit case
-        if (params._id) {
-          user.fn.getGroups(u, function (err, u) {
-            if (err) { return callback(err); }
-            _final(u);
-          });
-        } else {
-          _final(u);
-        }
-      });
+        });
+      } else {
+        user.fn.genPassword(null, u, function (err, u) {
+          if (err) { return callback(err); }
+          user.fn.set(u, callback);
+        });
+      }
     });
   };
 

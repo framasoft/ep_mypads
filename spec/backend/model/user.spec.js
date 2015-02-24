@@ -96,7 +96,7 @@
             expect(err).toBeNull();
             expect(u._id).toBeDefined();
             expect(u.login).toBe('parker');
-            expect(u.password).toBeDefined();
+            expect(ld.isObject(u.password)).toBeTruthy();
             expect(u.firstname).toBe('Parker');
             expect(u.lastname).toBe('Lewis');
             expect(ld.isString(u.organization)).toBeTruthy();
@@ -117,7 +117,7 @@
           expect(err).toBeNull();
           expect(u._id).toBeDefined();
           expect(u.login).toBe('grace');
-          expect(u.password).toBeDefined();
+          expect(ld.isObject(u.password)).toBeTruthy();
           expect((ld.isArray(u.groups) && ld.isEmpty(u.groups))).toBeTruthy();
           expect(ld.includes(ld.values(user.ids), u._id)).toBeTruthy();
           expect((user.ids[u.login])).toBe(u._id);
@@ -243,7 +243,7 @@
         expect(err).toBeNull();
         expect(u._id).toBeDefined();
         expect(u.login).toBe('parker');
-        expect(u.password).toBeDefined();
+        expect(ld.isObject(u.password)).toBeTruthy();
         expect(u.firstname).toBe('Parker');
         expect(u.lastname).toBe('Lewis');
         expect(ld.isString(u.email)).toBeTruthy();
@@ -324,7 +324,7 @@
 
     });
 
-    describe('checkPassword', function () {
+    describe('checkPasswordLength', function () {
       var params = {};
 
       beforeAll(function () {
@@ -334,12 +334,122 @@
 
       it('should return an Error if password size is not appropriate',
         function () {
-          expect(ld.isError(user.fn.checkPassword('a', params))).toBeTruthy();
+          var cPL = user.fn.checkPasswordLength;
+          expect(ld.isError(cPL('a', params))).toBeTruthy();
       });
 
       it('should return nothing if password size is good', function () {
-        expect(user.fn.checkPassword('123456', params)).toBeUndefined();
+        expect(user.fn.checkPasswordLength('123456', params)).toBeUndefined();
       });
+    });
+
+    describe('hashPassword', function () {
+
+      it('should hash any given string password', function (done) {
+        user.fn.hashPassword(null, 'pass', function (err, pass) {
+          expect(err).toBeNull();
+          expect(ld.isObject(pass)).toBeTruthy();
+          expect(ld.isString(pass.hash)).toBeTruthy();
+          expect(ld.isEmpty(pass.hash)).toBeFalsy();
+          expect(ld.isString(pass.salt)).toBeTruthy();
+          expect(ld.isEmpty(pass.salt)).toBeFalsy();
+          done();
+        });
+      });
+      it('should hash any given string password with given salt',
+        function (done) {
+          user.fn.hashPassword('salt', 'pass', function (err, pass) {
+            expect(err).toBeNull();
+            expect(ld.isObject(pass)).toBeTruthy();
+            expect(ld.isString(pass.hash)).toBeTruthy();
+            expect(ld.isEmpty(pass.hash)).toBeFalsy();
+            expect(ld.isString(pass.salt)).toBeTruthy();
+            expect(ld.isEmpty(pass.salt)).toBeFalsy();
+            var _pass = pass;
+            user.fn.hashPassword('salt', 'pass', function (err, pass) {
+              expect(err).toBeNull();
+              expect(ld.isObject(pass)).toBeTruthy();
+              expect(pass.salt).toBe(_pass.salt);
+              expect(pass.hash).toBe(_pass.hash);
+              done();
+            });
+          });
+        }
+      );
+    });
+
+    describe('genPassword', function () {
+
+      it('should check and returns an updated user object for user creation',
+        function (done) {
+          var params = {
+            login: 'brian',
+            password: 'verySecret',
+            organization: 'etherInc'
+          };
+          user.fn.genPassword(null, params, function (err, u) {
+            expect(err).toBeNull();
+            expect(ld.isObject(u)).toBeTruthy();
+            expect(u.login).toBe('brian');
+            expect(ld.isObject(u.password)).toBeTruthy();
+            expect(ld.isString(u.password.hash)).toBeTruthy();
+            expect(ld.isEmpty(u.password.hash)).toBeFalsy();
+            expect(ld.isString(u.password.salt)).toBeTruthy();
+            expect(ld.isEmpty(u.password.salt)).toBeFalsy();
+            done();
+          });
+        }
+      );
+
+      it('should keep the password object for update with the same pass',
+        function (done) {
+          user.fn.hashPassword(null, 'verySecret', function (err, pass) {
+            var old = {
+              login: 'brian',
+              password: pass,
+              organization: 'etherInc'
+            };
+            var params = ld.clone(old);
+            params.password = 'verySecret';
+            user.fn.genPassword(old, params, function (err, u) {
+              expect(err).toBeNull();
+              expect(ld.isObject(u)).toBeTruthy();
+              expect(u.login).toBe('brian');
+              expect(ld.isObject(u.password)).toBeTruthy();
+              expect(ld.isString(u.password.hash)).toBeTruthy();
+              expect(u.password.hash).toBe(pass.hash);
+              expect(ld.isString(u.password.salt)).toBeTruthy();
+              expect(u.password.salt).toBe(pass.salt);
+              done();
+            });
+          });
+        }
+      );
+
+      it('should check and update the password object for update with new pass',
+        function (done) {
+          user.fn.hashPassword(null, 'verySecret', function (err, pass) {
+            var old = {
+              login: 'brian',
+              password: pass,
+              organization: 'etherInc'
+            };
+            var params = ld.clone(old);
+            params.password = 'newSecret';
+            user.fn.genPassword(old, params, function (err, u) {
+              expect(err).toBeNull();
+              expect(ld.isObject(u)).toBeTruthy();
+              expect(u.login).toBe('brian');
+              expect(ld.isObject(u.password)).toBeTruthy();
+              expect(ld.isString(u.password.hash)).toBeTruthy();
+              expect(u.password.hash).not.toBe(pass.hash);
+              expect(ld.isString(u.password.salt)).toBeTruthy();
+              expect(u.password.salt).not.toBe(pass.salt);
+              done();
+            });
+          });
+        }
+      );
     });
 
     describe('assignProps', function () {

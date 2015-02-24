@@ -105,16 +105,14 @@ module.exports = (function () {
   */
 
   pad.fn.checkSet = function (p, callback) {
-    if (ld.size(p.users)) {
-      var keys = ld.map(p.users, function (v) { return UPREFIX + v; });
-      common.checkMultiExist(keys, function (err, res) {
-        if (err) { return callback(err); }
-        if (!res) { return callback(new Error('some users not found')); }
-        pad.fn.set(p, callback);
-      });
-    } else {
+    var keys = ld.map(p.users, function (v) { return UPREFIX + v; });
+    keys.push(GPREFIX + p.group);
+    common.checkMultiExist(keys, function (err, res) {
+      if (err) { return callback(err); }
+      var e = 'pad group or at least one of the users are not found';
+      if (!res) { return callback(new Error(e)); }
       pad.fn.set(p, callback);
-    }
+    });
   };
 
   /**

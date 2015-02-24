@@ -67,11 +67,21 @@
         }
       );
 
-      it('should return an Error if group is not found', function (done) {
+      it('should return an Error if pad is not found', function (done) {
         var params = { name: 'name', group: 'group1', _id: 'inexistent' };
         pad.set(params, function (err, p) {
           expect(ld.isError(err)).toBeTruthy();
           expect(err).toMatch('pad does not exist'); 
+          expect(p).toBeUndefined();
+          done();
+        });
+      });
+
+      it('should return an Error if group is not found', function (done) {
+        var params = { name: 'name', group: 'inexistent' };
+        pad.set(params, function (err, p) {
+          expect(ld.isError(err)).toBeTruthy();
+          expect(err).toMatch('pad group'); 
           expect(p).toBeUndefined();
           done();
         });
@@ -87,7 +97,7 @@
           };
           pad.set(params, function (err, p) {
             expect(ld.isError(err)).toBeTruthy();
-            expect(err).toMatch('some users not found'); 
+            expect(err).toMatch('users are not found'); 
             expect(p).toBeUndefined();
             done();
           });

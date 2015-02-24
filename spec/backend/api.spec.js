@@ -24,6 +24,9 @@
   var request = require('request');
   var api = require('../../api.js');
   var storage = require('../../storage.js');
+  var user = require('../../model/user.js');
+  var group = require('../../model/group.js');
+  var pad = require('../../model/pad.js');
   var specCommon = require('./common.js');
   var CPREFIX = storage.DBPREFIX.CONF;
 
@@ -432,14 +435,12 @@
       var gid;
 
       beforeAll(function (done) {
-        var uset = require('../../model/user.js').set;
-        var gset = require('../../model/group.js').set;
         specCommon.reInitDatabase(function () {
-          uset({ login: 'guest', password: 'willnotlivelong' },
+          user.set({ login: 'guest', password: 'willnotlivelong' },
             function (err, u) {
               if (err) { console.log(err); }
               uid = u._id;
-              gset({ name: 'g1', admin: u._id },
+              group.set({ name: 'g1', admin: u._id },
                 function (err, res) {
                   if (err) { console.log(err); }
                   gid = res._id;
@@ -658,6 +659,261 @@
               expect(body.success).toBeTruthy();
               expect(body.key).toBe(gid);
               rq.get(groupRoute + '/' + gid, function (err, resp, body) {
+                expect(resp.statusCode).toBe(404);
+                expect(body.error).toMatch('key is not found');
+                done();
+              });
+            });
+          }
+        );
+      });
+    });
+
+    describe('pad API', function () {
+      var padRoute = route + 'pad';
+      var uid;
+      var gid;
+      var pid;
+
+      beforeAll(function (done) {
+        specCommon.reInitDatabase(function () {
+          user.set({ login: 'guest', password: 'willnotlivelong' },
+            function (err, u) {
+              if (err) { console.log(err); }
+              uid = u._id;
+              group.set({ name: 'g1', admin: u._id }, function (err, g) {
+                if (err) { console.log(err); }
+                gid = g._id;
+                pad.set({ name: 'p1', group: g._id }, function (err, p) {
+                  if (err) { console.log(err); }
+                  pid = p._id;
+                  done();
+                });
+              });
+          });
+        });
+      });
+      afterAll(specCommon.reInitDatabase);
+
+      describe('pad.get GET and id', function () {
+
+        it('should return an error if the id does not exist',
+          function (done) {
+            rq.get(padRoute + '/pinexistent', function (err, resp, body) {
+              expect(resp.statusCode).toBe(404);
+              expect(body.error).toMatch('key is not found');
+              expect(body.key).toBe('pinexistent');
+              done();
+            });
+          }
+        );
+
+        it('should give the key and the pad attributes otherwise',
+          function (done) {
+            rq.get(padRoute + '/' + pid, function (err, resp, body) {
+              expect(resp.statusCode).toBe(200);
+              expect(body.key).toBe(pid);
+              expect(body.value._id).toBe(pid);
+              expect(body.value.group).toBe(gid);
+              expect(body.value.name).toBe('p1');
+              expect(body.value.visibility).toBeNull();
+              expect(body.value.password).toBeNull();
+              expect(body.value.readonly).toBeNull();
+              expect(ld.isArray(body.value.users)).toBeTruthy();
+              done();
+            });
+          }
+        );
+      });
+
+      describe('pad.set/add POST and value as params', function () {
+
+        it('should return error when arguments are not as expected',
+          function (done) {
+            rq.post(padRoute, function (err, resp, body) {
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('must be a string');
+              var b = { body: { name: 'pad1' } };
+              rq.post(padRoute, b, function (err, resp, body) {
+                expect(resp.statusCode).toBe(400);
+                expect(body.error).toMatch('must be a string');
+                done();
+              });
+            });
+          }
+        );
+
+        it('should return an error if pad does not exist',
+          function (done) {
+            var b = { body: { name: 'pad1', group: gid, _id: 'inexistent' } };
+            rq.post(padRoute, b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('pad does not');
+              done();
+            });
+          }
+        );
+
+        it('should return an error if group does not exist',
+          function (done) {
+            var b = { body: { name: 'pad1', group: 'inexistentId' } };
+            rq.post(padRoute, b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('pad group');
+              done();
+            });
+          }
+        );
+
+        it('should return an error if users are not found',
+          function (done) {
+            var b = { body:
+              {
+                name: 'pad1',
+                group: gid,
+                visibility: 'restricted',
+                users: ['inexistentId'] 
+              } 
+            };
+            rq.post(padRoute, b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('users are not found');
+              done();
+            });
+          }
+        );
+
+        it('should create a new pad otherwise', function (done) {
+          var b = {
+            body: {
+              name: 'padOk',
+              group: gid,
+              visibility: 'private',
+              password: 'secret'
+            }
+          };
+          rq.post(padRoute, b, function (err, resp, body) {
+            expect(err).toBeNull();
+            expect(resp.statusCode).toBe(200);
+            expect(body.success).toBeTruthy();
+            expect(body.key).toBeDefined();
+            var key = body.key;
+            expect(body.value.name).toBe('padOk');
+            rq.get(padRoute + '/' + key,
+              function (err, resp, body) {
+                expect(err).toBeNull();
+                expect(resp.statusCode).toBe(200);
+                expect(body.key).toBe(key);
+                expect(body.value._id).toBe(key);
+                expect(body.value.name).toBe('padOk');
+                expect(body.value.visibility).toBe('private');
+                expect(body.value.password).toBeDefined();
+                expect(ld.isArray(body.value.users)).toBeTruthy();
+                expect(body.value.readonly).toBeNull();
+                done();
+              }
+            );
+          });
+        });
+
+      });
+
+      describe('pad.set PUT key in URL and value as params', function () {
+
+        it('should return error when arguments are not as expected',
+          function (done) {
+            rq.put(padRoute, function (err, resp) {
+              expect(resp.statusCode).toBe(404);
+              var b = { body: { name: 'pad1' } };
+              rq.put(padRoute + '/' + pid, b, function (err, resp, body) {
+                expect(resp.statusCode).toBe(400);
+                expect(body.error).toMatch('must be a string');
+                done();
+              });
+            });
+          }
+        );
+
+        it('should update an existing pad otherwise', function (done) {
+          var b = {
+            body: {
+              _id: pid,
+              name: 'pUpdated',
+              group: gid,
+              visibility: 'public',
+              readonly: true
+            }
+          };
+          rq.put(padRoute + '/' + pid, b, function (err, resp, body) {
+            expect(err).toBeNull();
+            expect(resp.statusCode).toBe(200);
+            expect(body.success).toBeTruthy();
+            expect(body.key).toBe(pid);
+            expect(body.value.name).toBe('pUpdated');
+            rq.get(padRoute + '/' + pid,
+              function (err, resp, body) {
+                expect(resp.statusCode).toBe(200);
+                expect(body.key).toBe(pid);
+                expect(body.value._id).toBe(pid);
+                expect(body.value.group).toBe(gid);
+                expect(body.value.name).toBe('pUpdated');
+                expect(body.value.visibility).toBe('public');
+                expect(ld.isArray(body.value.users)).toBeTruthy();
+                done();
+              }
+            );
+          });
+        });
+
+        it('should also create a non existent pad', function (done) {
+          var b = {
+            body: {
+              name: 'pCreated',
+              group: gid,
+              visibility: 'public',
+              readonly: true
+            }
+          };
+          rq.put(padRoute + '/newpid', b, function (err, resp, body) {
+            expect(err).toBeNull();
+            expect(resp.statusCode).toBe(200);
+            expect(body.success).toBeTruthy();
+            expect(body.key).toBeDefined();
+            expect(body.value.name).toBe('pCreated');
+            rq.get(padRoute + '/' + pid,
+              function (err, resp, body) {
+                expect(resp.statusCode).toBe(200);
+                expect(body.key).toBe(pid);
+                expect(body.value._id).toBe(pid);
+                expect(body.value.group).toBe(gid);
+                expect(body.value.name).toBe('pUpdated');
+                expect(body.value.visibility).toBe('public');
+                expect(ld.isArray(body.value.users)).toBeTruthy();
+                done();
+              }
+            );
+          });
+        });
+      });
+
+      describe('pad.del DELETE and id', function () {
+        it('will return an error if the pad does not exist',
+          function (done) {
+            rq.del(padRoute + '/inexistentId', function (err, resp, body) {
+              expect(resp.statusCode).toBe(404);
+              expect(body.error).toMatch('key is not found');
+              done();
+            });
+          }
+        );
+
+        it('should deletes the record and returns the key and success' +
+         ' otherwise', function (done) {
+            rq.del(padRoute + '/' + pid, function (err, resp, body) {
+              expect(resp.statusCode).toBe(200);
+              expect(body.success).toBeTruthy();
+              expect(body.key).toBe(pid);
+              rq.get(padRoute + '/' + pid, function (err, resp, body) {
                 expect(resp.statusCode).toBe(404);
                 expect(body.error).toMatch('key is not found');
                 done();

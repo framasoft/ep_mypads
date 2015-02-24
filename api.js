@@ -30,6 +30,7 @@ var ld = require('lodash');
 var conf = require('./configuration.js');
 var user = require('./model/user.js');
 var group = require('./model/group.js');
+var pad = require('./model/pad.js');
 
 module.exports = (function () {
   'use strict';
@@ -47,6 +48,7 @@ module.exports = (function () {
     configurationAPI(app);
     userAPI(app);
     groupAPI(app);
+    padAPI(app);
   };
 
   /**
@@ -257,7 +259,7 @@ module.exports = (function () {
     };
 
     /**
-    * POST method : `group.set` with user value for user creation
+    * POST method : `group.set` with user value for group creation
     * Sample URL:
     *
     * http://etherpad.ndd/mypads/api/group
@@ -269,7 +271,7 @@ module.exports = (function () {
     * PUT method : `group.set` with group id plus value for existing group
     * Sample URL:
     *
-    * http://etherpad.ndd/mypads/api/user/xxx
+    * http://etherpad.ndd/mypads/api/group/xxx
     */
 
     app.put(groupRoute + '/:key', _set);
@@ -282,6 +284,57 @@ module.exports = (function () {
     */
 
     app.delete(groupRoute + '/:key', ld.partial(fn.del, group.del));
+
+  };
+
+  /**
+  * ## Pad API
+  */
+
+  var padAPI = function (app) {
+    var padRoute = api.initialRoute + 'pad';
+
+    /**
+    * GET method : `pad.get` unique id
+    * Sample URL:
+    *
+    * http://etherpad.ndd/mypads/api/pad/xxxx
+    */
+
+    app.get(padRoute + '/:key', ld.partial(fn.get, pad));
+
+    // `set` for POST and PUT, see below
+    var _set = function (req, res) {
+      var setFn = ld.partial(pad.set, req.body);
+      fn.set(setFn, req.body._id, req.body, req, res);
+    };
+
+    /**
+    * POST method : `pad.set` with user value for pad creation
+    * Sample URL:
+    *
+    * http://etherpad.ndd/mypads/api/pad
+    */
+
+    app.post(padRoute, _set);
+
+    /**
+    * PUT method : `pad.set` with group id plus value for existing pad
+    * Sample URL:
+    *
+    * http://etherpad.ndd/mypads/api/pad/xxx
+    */
+
+    app.put(padRoute + '/:key', _set);
+
+    /**
+    * DELETE method : `pad.del` with pad id
+    * Sample URL:
+    *
+    * http://etherpad.ndd/mypads/api/pad/xxxx
+    */
+
+    app.delete(padRoute + '/:key', ld.partial(fn.del, pad.del));
 
   };
 

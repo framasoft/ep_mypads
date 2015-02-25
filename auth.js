@@ -72,17 +72,36 @@ module.exports = (function () {
     passport.use(new localStrategy({
       usernameField: 'login',
       passwordField: 'password'
-    },
-    function (login, password, callback) {
-      user.get(login, function (err, u) {
+    }, auth.fn.localFn));
+  };
+
+
+  /**
+  * ### localFn
+  *
+  * `localFn` is the function used by `localStrategy` for verifying if login and
+  * password are correct. It takes :
+  *
+  * - a `login` string
+  * - a `password` string
+  * - a `callback` function, returning
+  *   - *Error* if there is a problem
+  *   - *null*, *false* and an object for auth error
+  *   - *null* and the *user* object for auth success
+  */
+
+  auth.fn.localFn = function (login, password, callback) {
+    user.get(login, function (err, u) {
+      if (err) { return callback(err); }
+      auth.fn.isPasswordValid(u, password, function (err, isValid) {
         if (err) { return callback(err); }
-        if (auth.checkPassword(u, password)) {
-          callback(null, u);
+        if (!isValid) {
+          callback(new Error('login or password not correct'), false);
         } else {
-          callback(null, false, { message: 'login or user are not correct' });
+          callback(null, u);
         }
       });
-    }));
+    });
   };
 
   /**

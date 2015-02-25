@@ -26,11 +26,14 @@
 *  Please refer to binded function when no details are given.
 */
 
+// External dependencies
 var ld = require('lodash');
+// Local dependencies
 var conf = require('./configuration.js');
 var user = require('./model/user.js');
 var group = require('./model/group.js');
 var pad = require('./model/pad.js');
+var auth = require('./auth.js');
 
 module.exports = (function () {
   'use strict';
@@ -44,7 +47,7 @@ module.exports = (function () {
   */
 
   api.init = function (app) {
-    // FIXME: authentification
+    auth.init();
     configurationAPI(app);
     userAPI(app);
     groupAPI(app);

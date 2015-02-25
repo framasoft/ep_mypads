@@ -34,12 +34,16 @@ module.exports = (function() {
   var db = storage.db;
 
   /**
-  * The closure contains a private `defaults` field, holding defaults settings.
+  * The closure contains a private `DEFAULTS` field, holding defaults settings.
   * Configuration data is taken from the database, applying defaults when
   * necessary, for example at the plugin initialization.
   */
 
-  var defaults = { passwordMin: 8, passwordMax: 30 };
+  var DEFAULTS = {
+    passwordMin: 8,
+    passwordMax: 30,
+    sessionSecret: 'LvP@WHB#I5)u@u@nAX9RL*n7CEQPxs'
+  };
   var DBPREFIX = storage.DBPREFIX.CONF;
 
   /**
@@ -60,7 +64,7 @@ module.exports = (function() {
         throw new TypeError('callback must be a function');
       }
       // Would like to use doBulk but not supported for all *ueberDB* backends
-      storage.fn.setKeys(ld.transform(defaults, function (memo, val, key) {
+      storage.fn.setKeys(ld.transform(DEFAULTS, function (memo, val, key) {
         memo[DBPREFIX + key] = val; }), callback);
     },
     /**

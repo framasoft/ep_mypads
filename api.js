@@ -28,6 +28,7 @@
 
 // External dependencies
 var ld = require('lodash');
+var passport = require('passport');
 // Local dependencies
 var conf = require('./configuration.js');
 var user = require('./model/user.js');
@@ -47,7 +48,8 @@ module.exports = (function () {
   */
 
   api.init = function (app) {
-    auth.init();
+    auth.init(app);
+    authAPI(app);
     configurationAPI(app);
     userAPI(app);
     groupAPI(app);
@@ -112,6 +114,55 @@ module.exports = (function () {
       if (err) { return res.send(404, { error: err.message }); }
       res.send({ success: true, key: key });
     });
+  };
+
+  /**
+  * ## Authentificaton API
+  */
+
+  var authAPI = function (app) {
+    var authRoute = api.initialRoute + 'auth';
+
+    /**
+    * POST method : login, method returning user object minus password if auth
+    * is a success.
+    * Sample URL:
+    *
+    * http://etherpad.ndd/mypads/api/auth/login
+    */
+
+    /*app.post(authRoute + '/login', function (req, res) {
+      res.send(200, { success: true, user: ld.omit(user, 'password') });
+    });*/
+    app.post(authRoute + '/login', function (req, res, next) {
+      passport.authenticate('local', function (err, user, info) {
+        if (err) { return res.send(400, { error: err.message }); }
+        if (!user) { return res.send(400, { error: info.message }); }
+        req.login(user, function (err) {
+          req.session.login = user.login;
+          if (err) { return res.send(400, { error: err }); }
+          res.send(200, { success: true, user: ld.omit(user, 'password') });
+        });
+      })(req, res, next);
+    });
+
+    /**
+    * GET method : logout
+    * Sample URL:
+    *
+    * http://etherpad.ndd/mypads/api/auth/logout
+    */
+
+    app.get(authRoute + '/logout', function (req, res) {
+      if (req.isAuthenticated() || req.session.login) {
+        req.logout();
+        req.session.destroy();
+        res.send(200, { success: true });
+      } else {
+        res.send(400, { error: 'not authenticated' });
+      }
+    });
+
   };
 
   /**

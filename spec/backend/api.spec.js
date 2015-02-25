@@ -38,15 +38,21 @@
     var express = require('express');
     var app = express();
     app.use(express.bodyParser());
-    api.init(app);
-    var server = app.listen(8042);
+    var server;
     var route = 'http://127.0.0.1:8042' + api.initialRoute;
     var rq;
     var conf = require('../../configuration.js');
+    var j = request.jar();
 
     beforeAll(function (done) {
-      rq = request.defaults({ json: true });
-      specCommon.reInitDatabase(done);
+      specCommon.reInitDatabase(function () {
+        conf.init(function () {
+          api.init(app);
+          server = app.listen(8042);
+          rq = request.defaults({ json: true, jar: j });
+          done();
+        });
+      });
     });
 
     afterAll(function (done) {
@@ -54,6 +60,102 @@
       specCommon.reInitDatabase(done);
     });
 
+    describe('authentification API', function () {
+      var authRoute = route + 'auth';
+
+      beforeAll(function (done) {
+        specCommon.reInitDatabase(function () {
+          user.set({ login: 'guest', password: 'willnotlivelong' }, done);
+        });
+      });
+      afterAll(specCommon.reInitDatabase);
+
+      describe('auth.login POST', function () {
+
+        it('should not auth if params are inexistent', function (done) {
+          rq.post(authRoute + '/login', {}, function (err, resp, body) {
+            expect(resp.statusCode).toBe(400);
+            expect(body.error).toBe('Missing credentials');
+            done();
+          });
+        });
+
+        it('should not auth if params are incorrect', function (done) {
+          var params = { body: { login: 'inexistent', password: 123 } };
+          rq.post(authRoute + '/login', params, function (err, resp, body) {
+            expect(resp.statusCode).toBe(400);
+            expect(body.error).toBe('password must be a string');
+            done();
+          });
+        });
+
+        it('should not auth if user does not exist', function (done) {
+          var params = { body: { login: 'inexistent', password: 'pass' } };
+          rq.post(authRoute + '/login', params, function (err, resp, body) {
+            expect(resp.statusCode).toBe(400);
+            expect(body.error).toBe('user not found');
+            done();
+          });
+        });
+
+        it('should not auth if user exists but pasword does not match',
+          function (done) {
+            var params = { body: { login: 'guest', password: 'pass' } };
+            rq.post(authRoute + '/login', params, function (err, resp, body) {
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toBe('password is not correct');
+              done();
+            });
+          }
+        );
+
+        it('should auth otherwise', function (done) {
+          var params = {
+            body: { login: 'guest', password: 'willnotlivelong' } 
+          };
+          rq.post(authRoute + '/login', params, function (err, resp, body) {
+            expect(resp.statusCode).toBe(200);
+            expect(body.success).toBeTruthy();
+            expect(body.user).toBeDefined();
+            expect(body.user._id).toBeDefined();
+            expect(body.user.login).toBe('guest');
+            expect(body.user.password).toBeUndefined();
+            done();
+          });
+        });
+      });
+
+      describe('auth.logout GET', function () {
+
+        it('should not logout if not already authenticated', function (done) {
+          rq.get(authRoute + '/logout', { jar: false }, 
+            function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toBe('not authenticated');
+              done();
+            }
+          );
+        });
+
+        it('should logout if authenticated', function (done) {
+          var params = {
+            body: { login: 'guest', password: 'willnotlivelong' }
+          };
+          rq.post(authRoute + '/login', params, function (err, resp, body) {
+            expect(resp.statusCode).toBe(200);
+            expect(body.success).toBeTruthy();
+            rq.get(authRoute + '/logout', function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(200);
+              expect(body.success).toBeTruthy();
+              done();
+            });
+          });
+        });
+
+      });
+    });
 
     describe('configuration API', function () {
       var confRoute = route + 'configuration';

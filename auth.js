@@ -30,10 +30,12 @@
 
 // External dependencies
 var ld = require('lodash');
+var express = require('express');
 var passport = require('passport');
 var localStrategy = require('passport-local').Strategy;
 
 // Local dependencies
+var conf = require('./configuration.js');
 var user = require('./model/user.js');
 
 module.exports = (function () {
@@ -69,10 +71,24 @@ module.exports = (function () {
   */
 
   auth.fn.local = function () {
+    passport.serializeUser(function(user, done) {
+      done(null, user._id);
+    });
+    passport.deserializeUser(function(id, done) {
+      user.get(id, done);
+    });
     passport.use(new localStrategy({
       usernameField: 'login',
       passwordField: 'password'
-    }, auth.fn.localFn));
+    }, function (login, password, callback) {
+      var isFS = function (s) { return (ld.isString(s) && !ld.isEmpty(s)); };
+      if (!isFS(login)) { throw new TypeError('login must be a string'); }
+      if (!isFS(password)) { throw new TypeError('password must be a string'); }
+      if (!ld.isFunction(callback)) {
+        throw new TypeError('callback must be a function');
+      }
+      auth.fn.localFn.apply(this, arguments);
+    }));
   };
 
 
@@ -96,7 +112,7 @@ module.exports = (function () {
       auth.fn.isPasswordValid(u, password, function (err, isValid) {
         if (err) { return callback(err); }
         if (!isValid) {
-          callback(new Error('login or password not correct'), false);
+          callback(new Error('password is not correct'), false);
         } else {
           callback(null, u);
         }
@@ -140,6 +156,13 @@ module.exports = (function () {
 
   auth.init = function (app) {
     auth.fn.local();
+    app.use(express.cookieParser());
+    app.use(passport.initialize());
+    app.use(passport.session());
+    conf.get('sessionSecret', function (err, res) {
+      if (err) { throw new Error(err); }
+      app.use(express.session({ secret: res }));
+    });
   };
 
 

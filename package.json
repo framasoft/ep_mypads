@@ -32,6 +32,7 @@
     "jasmine": "^2.2.0",
     "jshint": "^2.6.0",
     "request": "^2.53.0",
+    "tough-cookie": "^0.12.1",
     "ueberDB": "^0.2.11"
   },
   "scripts": {

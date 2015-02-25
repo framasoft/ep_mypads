@@ -82,7 +82,7 @@
       it('should not auth if password does not match', function (done) {
         auth.fn.localFn(params.login, 'anotherOne', function (err, res) {
           expect(ld.isError(err)).toBeTruthy();
-          expect(err).toMatch('login or password not correct');
+          expect(err).toMatch('password is not correct');
           expect(res).toBeFalsy();
           done();
         });

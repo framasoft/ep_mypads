@@ -111,7 +111,7 @@
 
         it('should auth otherwise', function (done) {
           var params = {
-            body: { login: 'guest', password: 'willnotlivelong' } 
+            body: { login: 'guest', password: 'willnotlivelong' }
           };
           rq.post(authRoute + '/login', params, function (err, resp, body) {
             expect(resp.statusCode).toBe(200);
@@ -128,7 +128,7 @@
       describe('auth.logout GET', function () {
 
         it('should not logout if not already authenticated', function (done) {
-          rq.get(authRoute + '/logout', { jar: false }, 
+          rq.get(authRoute + '/logout', { jar: false },
             function (err, resp, body) {
               expect(err).toBeNull();
               expect(resp.statusCode).toBe(400);
@@ -163,7 +163,17 @@
       beforeAll(function (done) {
         var kv = { field1: 8, field2: 3, field3: ['a', 'b'] };
         storage.fn.setKeys(ld.transform(kv, function (memo, val, key) {
-          memo[CPREFIX + key] = val; }), done);
+          memo[CPREFIX + key] = val; }), function () {
+            var u = { login: 'guest', password: 'willnotlivelong' };
+            user.set(u, function () {
+              rq.post(route + 'auth/login', { body: u }, done);
+            });
+          }
+        );
+      });
+
+      afterAll(function (done) {
+        rq.get(route + 'auth/logout', done);
       });
 
       describe('configuration.all GET', function () {
@@ -312,14 +322,21 @@
     });
 
     describe('user API', function () {
-    var userRoute = route + 'user';
+      var userRoute = route + 'user';
 
-    beforeAll(function (done) {
-      conf.init(function () {
-        var set = require('../../model/user.js').set;
-        set({ login: 'guest', password: 'willnotlivelong' }, done);
+      beforeAll(function (done) {
+        conf.init(function () {
+          var set = require('../../model/user.js').set;
+          var u = { login: 'guest', password: 'willnotlivelong' };
+          set(u, function () {
+            rq.post(route + 'auth/login', { body: u }, done);
+          });
+        });
       });
-    });
+
+      afterAll(function (done) {
+        rq.get(route + 'auth/logout', done);
+      });
 
       describe('user.set/add POST and value as params', function () {
 
@@ -538,20 +555,24 @@
 
       beforeAll(function (done) {
         specCommon.reInitDatabase(function () {
-          user.set({ login: 'guest', password: 'willnotlivelong' },
-            function (err, u) {
-              if (err) { console.log(err); }
-              uid = u._id;
-              group.set({ name: 'g1', admin: u._id },
-                function (err, res) {
-                  if (err) { console.log(err); }
-                  gid = res._id;
-                  done();
-              });
+          var params = { login: 'guest', password: 'willnotlivelong' };
+          user.set(params, function (err, u) {
+            if (err) { console.log(err); }
+            uid = u._id;
+            group.set({ name: 'g1', admin: u._id },
+              function (err, res) {
+                if (err) { console.log(err); }
+                gid = res._id;
+                rq.post(route + 'auth/login', { body: params }, done);
+            });
           });
         });
       });
-      afterAll(specCommon.reInitDatabase);
+      afterAll(function (done) {
+        rq.get(route + 'auth/logout', function () {
+          specCommon.reInitDatabase(done);
+        });
+      });
 
       describe('group.get GET and id', function () {
 
@@ -779,23 +800,27 @@
 
       beforeAll(function (done) {
         specCommon.reInitDatabase(function () {
-          user.set({ login: 'guest', password: 'willnotlivelong' },
-            function (err, u) {
+          var params = { login: 'guest', password: 'willnotlivelong' };
+          user.set(params, function (err, u) {
+            if (err) { console.log(err); }
+            uid = u._id;
+            group.set({ name: 'g1', admin: u._id }, function (err, g) {
               if (err) { console.log(err); }
-              uid = u._id;
-              group.set({ name: 'g1', admin: u._id }, function (err, g) {
+              gid = g._id;
+              pad.set({ name: 'p1', group: g._id }, function (err, p) {
                 if (err) { console.log(err); }
-                gid = g._id;
-                pad.set({ name: 'p1', group: g._id }, function (err, p) {
-                  if (err) { console.log(err); }
-                  pid = p._id;
-                  done();
-                });
+                pid = p._id;
+                rq.post(route + 'auth/login', { body: params }, done);
               });
+            });
           });
         });
       });
-      afterAll(specCommon.reInitDatabase);
+      afterAll(function (done) {
+        rq.get(route + 'auth/logout', function () {
+          specCommon.reInitDatabase(done);
+        });
+      });
 
       describe('pad.get GET and id', function () {
 
@@ -874,8 +899,8 @@
                 name: 'pad1',
                 group: gid,
                 visibility: 'restricted',
-                users: ['inexistentId'] 
-              } 
+                users: ['inexistentId']
+              }
             };
             rq.post(padRoute, b, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);

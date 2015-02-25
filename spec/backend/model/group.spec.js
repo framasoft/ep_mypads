@@ -42,7 +42,7 @@
     };
     gusers = [];
     gpads = [];
-    var users = ld.map(['frank', 'grace','shelly', 'mikey', 'jerry'], 
+    var users = ld.map(['frank', 'grace','shelly', 'mikey', 'jerry'],
       function (val) { return { login: val, password: 'lovesKubiak' }; });
     specCommon.reInitDatabase(function () {
       user.set(gadm, function (err, u) {
@@ -235,7 +235,7 @@
         group.set({ _id: gparams._id, name: 'college', admin: 'inexist' },
           function (err, g) {
             expect(ld.isError(err)).toBeTruthy();
-            expect(err).toMatch('Some users, admins'); 
+            expect(err).toMatch('Some users, admins');
             expect(g).toBeUndefined();
             done();
           }

@@ -38,7 +38,7 @@
         });
       });
 
-      it('should return null and false if password does not match', 
+      it('should return null and false if password does not match',
         function (done) {
           auth.fn.isPasswordValid(params, 'anotherOne', function (err, res) {
             expect(err).toBeNull();

@@ -216,7 +216,7 @@ module.exports = (function () {
       // u.login has changed for existing user
       if (ld.isUndefined(user.ids[u.login])) {
         var key = ld.findKey(user.ids, function (uid) {
-          return uid === _id; 
+          return uid === _id;
         });
         delete user.ids[key];
       }
@@ -266,7 +266,7 @@ module.exports = (function () {
             }
           );
         } else {
-          callback(null, u); 
+          callback(null, u);
         }
       };
     }

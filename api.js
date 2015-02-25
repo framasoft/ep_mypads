@@ -117,6 +117,19 @@ module.exports = (function () {
   };
 
   /**
+  * `ensureAuthentificated` internal is an Express middleware takes `req`,
+  * `res` and `next`. It returns error or lets the next middleware go.
+  */
+
+  fn.ensureAuthentificated = function (req, res, next) {
+    if (req.isAuthenticated() || req.session.login) {
+      return next();
+    } else {
+      res.send(401, { error: 'you must be authenticated' });
+    }
+  };
+
+  /**
   * ## Authentificaton API
   */
 
@@ -179,7 +192,7 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/configuration
     */
 
-    app.get(confRoute, function (req, res) {
+    app.get(confRoute, fn.ensureAuthentificated, function (req, res) {
       conf.all(function (err, value) {
         if (err) { return res.send(400, { error: err }); }
         res.send({ value: value });
@@ -193,7 +206,7 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/configuration/something
     */
 
-    app.get(confRoute + '/:key', function (req, res) {
+    app.get(confRoute + '/:key', fn.ensureAuthentificated, function (req, res) {
       conf.get(req.params.key, function (err, value) {
         if (err) {
           return res.send(404, { error: err.message, key: req.params.key });
@@ -218,8 +231,8 @@ module.exports = (function () {
       fn.set(setFn, key, value, req, res);
     };
 
-    app.post(confRoute, _set);
-    app.put(confRoute + '/:key', _set);
+    app.post(confRoute, fn.ensureAuthentificated, _set);
+    app.put(confRoute + '/:key', fn.ensureAuthentificated, _set);
 
     /**
     * DELETE method : `configuration.del` key
@@ -228,7 +241,8 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/configuration/something
     */
 
-    app.delete(confRoute + '/:key', ld.partial(fn.del, conf.del));
+    app.delete(confRoute + '/:key', fn.ensureAuthentificated,
+      ld.partial(fn.del, conf.del));
   };
 
   /**
@@ -245,7 +259,8 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/user/someone
     */
 
-    app.get(userRoute + '/:key', ld.partial(fn.get, user));
+    app.get(userRoute + '/:key', fn.ensureAuthentificated,
+      ld.partial(fn.get, user));
 
     // `set` for POST and PUT, see below
     var _set = function (req, res) {
@@ -269,7 +284,7 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/user
     */
 
-    app.post(userRoute, _set);
+    app.post(userRoute, fn.ensureAuthentificated, _set);
 
     /**
     * PUT method : `user.set` with user key/login plus value for existing user
@@ -278,7 +293,7 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/user/someone
     */
 
-    app.put(userRoute + '/:key', _set);
+    app.put(userRoute + '/:key', fn.ensureAuthentificated, _set);
 
     /**
     * DELETE method : `user.del` with user key/login
@@ -287,7 +302,8 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/user/someone
     */
 
-    app.delete(userRoute + '/:key', ld.partial(fn.del, user.del));
+    app.delete(userRoute + '/:key', fn.ensureAuthentificated,
+      ld.partial(fn.del, user.del));
   };
 
   /**
@@ -304,7 +320,8 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/group/xxxx
     */
 
-    app.get(groupRoute + '/:key', ld.partial(fn.get, group));
+    app.get(groupRoute + '/:key', fn.ensureAuthentificated,
+      ld.partial(fn.get, group));
 
     // `set` for POST and PUT, see below
     var _set = function (req, res) {
@@ -319,7 +336,7 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/group
     */
 
-    app.post(groupRoute, _set);
+    app.post(groupRoute, fn.ensureAuthentificated, _set);
 
     /**
     * PUT method : `group.set` with group id plus value for existing group
@@ -328,7 +345,7 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/group/xxx
     */
 
-    app.put(groupRoute + '/:key', _set);
+    app.put(groupRoute + '/:key', fn.ensureAuthentificated, _set);
 
     /**
     * DELETE method : `group.del` with group id
@@ -337,7 +354,8 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/group/xxxx
     */
 
-    app.delete(groupRoute + '/:key', ld.partial(fn.del, group.del));
+    app.delete(groupRoute + '/:key', fn.ensureAuthentificated,
+      ld.partial(fn.del, group.del));
 
   };
 
@@ -355,7 +373,8 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/pad/xxxx
     */
 
-    app.get(padRoute + '/:key', ld.partial(fn.get, pad));
+    app.get(padRoute + '/:key', fn.ensureAuthentificated,
+      ld.partial(fn.get, pad));
 
     // `set` for POST and PUT, see below
     var _set = function (req, res) {
@@ -370,7 +389,7 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/pad
     */
 
-    app.post(padRoute, _set);
+    app.post(padRoute, fn.ensureAuthentificated, _set);
 
     /**
     * PUT method : `pad.set` with group id plus value for existing pad
@@ -379,7 +398,7 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/pad/xxx
     */
 
-    app.put(padRoute + '/:key', _set);
+    app.put(padRoute + '/:key', fn.ensureAuthentificated, _set);
 
     /**
     * DELETE method : `pad.del` with pad id
@@ -388,7 +407,8 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/pad/xxxx
     */
 
-    app.delete(padRoute + '/:key', ld.partial(fn.del, pad.del));
+    app.delete(padRoute + '/:key', fn.ensureAuthentificated,
+      ld.partial(fn.del, pad.del));
 
   };
 

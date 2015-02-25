@@ -64,7 +64,7 @@ module.exports = (function() {
       var isFS = function (s) { return (ld.isString(s) && !ld.isEmpty(s)); };
       ld.forEach(strFields, function (s) {
         if (!isFS(params[s])) {
-          throw new TypeError(s + ' must be a string'); 
+          throw new TypeError(s + ' must be a string');
         }
       });
     }

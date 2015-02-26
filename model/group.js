@@ -36,7 +36,7 @@ module.exports = (function () {
   /**
   * ## Description
   *
-  * Groups belong to users. Each user can have multiple groups of pads.
+  * Groups belongs to users. Each user can have multiple groups of pads.
   *
   * A group object can be represented like :
   *
@@ -62,8 +62,8 @@ module.exports = (function () {
   *
   *  Group reading
   *
-  *  This function uses `common.getDel` with `del` to *false* and GPREFIX
-  *  fixed.  It will takes mandatory key string and callback function. See
+  *  This function uses `common.getDel` with `del` to *false* and `GPREFIX`
+  *  fixed. It will takes mandatory key string and callback function. See
   *  `common.getDel` for documentation.
   */
 
@@ -87,15 +87,15 @@ module.exports = (function () {
   *   phrase chosen by the administrator
   *   - `readonly`, *false* on creation. If *true*, pads that will be linked to
   *   the group will be set on readonly mode
-  *   - `password` string field, only usefull if visibility fixed to private,
-  *   by default to an empty string
+  *   - `password` string field, only usefull if visibility has been fixed to
+  *   private, by default an empty string
   * - `users` and `admins` arrays, with ids of users invited to read and/or edit
   *   pads, for restricted visibility only; and group administrators
   *
-  * - `callback` function returning error if error, null otherwise and the
+  * - `callback` function returning *Error* if error, *null* otherwise and the
   *   group object.
   *
-  * `set` created an empty `pads` array in case of creation, otherwise it just
+  * `set` creates an empty `pads` array in case of creation, otherwise it just
   * gets back old value. `pads` array contains ids of pads attached to the
   * group via `model.pad` creation or update.
   */
@@ -124,7 +124,7 @@ module.exports = (function () {
   *
   * Group removal
   *
-  *  This function uses `common.getDel` with `del` to *true* and GPREFIX
+  *  This function uses `common.getDel` with `del` to *true* and *GPREFIX*
   *  fixed. It will takes mandatory key string and callback function. See
   *  `common.getDel` for documentation.
   *
@@ -149,7 +149,7 @@ module.exports = (function () {
   *  ## Helper Functions
   *
   *  Helper here are public functions created to facilitate interaction with
-  *  the API and improve performance avoiding extra checking.
+  *  the API and improve performance, avoiding extra checking when not needed.
   *  TODO : may be written to improve API usage
   */
 
@@ -207,7 +207,9 @@ module.exports = (function () {
   /**
   *  ## Internal Functions
   *
-  *  All are tested through public API.
+  * These functions are not private like with closures, for testing purposes,
+  * but they are expected be used only internally by other MyPads functions.
+  * All of these are tested through public API.
   */
 
   group.fn = {};
@@ -218,9 +220,9 @@ module.exports = (function () {
   * `assignProps` takes params object and assign defaults if needed.
   * It creates :
   *
-  * - an `admins` array, unioning admin key to optional others admins,
-  * - a `users` array, empty or with given keys,
-  * - a `pads` array, empty on creation, can't be fixed either,
+  * - an `admins` array, unioning admin key to optional others admins
+  * - a `users` array, empty or with given keys
+  * - a `pads` array, empty on creation, can't be fixed either
   * - a `visibility` string, defaults to *restricted*, with only two other
   *   possibilities : *private* or *public*
   * - a `password` string, *null* by default
@@ -247,12 +249,11 @@ module.exports = (function () {
   /**
   * ### cascadePads
   *
-  * `cascadePads` is an asynchronous function which handles cascade removals
-  * after group removal.
-  * It takes :
+  * `cascadePads` is an asynchronous function which handle cascade removals
+  * after group removal. It takes :
   *
   * - the `group` object
-  * - a `callback` function, returning Error or *null* if succeeded
+  * - a `callback` function, returning *Error* or *null* if succeeded
   */
 
   group.fn.cascadePads = function (group, callback) {
@@ -277,7 +278,7 @@ module.exports = (function () {
   *
   * - a `del` boolean to know if we have to delete key from index or add it
   * - the `group` object
-  * - a `callback` function, returning Error or *null* if succeeded
+  * - a `callback` function, returning *Error* or *null* if succeeded
   */
 
   group.fn.indexUsers = function (del, group, callback) {
@@ -305,14 +306,14 @@ module.exports = (function () {
   /**
   * ### set
   *
-  * `set` is internal function that sets the user group into the database.
+  * `set` is internal function that set the user group into the database.
   * It takes care of secondary indexes for users and pads by calling
   * `indexUsers`.
   *
   * It takes, as arguments :
   *
   * - the `g` group object
-  * - the `callback` function returning and *Error* or *null* and the `g`
+  * - the `callback` function returning an *Error* or *null* and the `g`
   *   object.
   */
 
@@ -330,10 +331,10 @@ module.exports = (function () {
   * ### checkSet
   *
   * `checkSet` will ensure that all users and pads exist. If true, it calls
-  * `fn.set`, else it will return and *Error*. `checkSet` takes :
+  * `fn.set`, else it will return an *Error*. `checkSet` takes :
   *
   * - a `g` group object
-  * - a `callback` function returning and *Error* or *null* and the `g` object.
+  * - a `callback` function returning an *Error* or *null* and the `g` object.
   */
 
   group.fn.checkSet = function (g, callback) {

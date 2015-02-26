@@ -44,7 +44,7 @@ module.exports = (function () {
 
   /**
   * `init` is the first function that takes an Express app as argument.
-  * It initializes all mypads routes.
+  * It initializes all API requirements, particularly mypads routes.
   */
 
   api.init = function (app) {
@@ -58,12 +58,15 @@ module.exports = (function () {
 
   /**
   * ## Internal functions helpers
+  *
+  * These functions are not private like with closures, for testing purposes,
+  * but they are expected be used only internally by other MyPads functions.
   */
 
   var fn = {};
 
   /**
-  * `get` internal takes a mandatory `module` argument to call its get method.
+  * `get` internal takes a mandatory `module` argument to call its `get` method.
   * Otherwise, it will use `req.params.key` to get the database record.
   */
 
@@ -82,9 +85,12 @@ module.exports = (function () {
   };
 
   /**
-  * `set` internal takes the values of key and val that will be given to the
-  * `setFn` bounded function targetted the original `set` from the module used
-  * in the case of this public API
+  * `set` internal takes :
+  *
+  * - a `setFn` bounded function targetted the original `set` from the module
+  *   used in the case of this public API
+  * - `key` and `value` that has been given to the `setFn` function
+  * - `req` and `res` express request and response
   */
 
   fn.set = function (setFn, key, value, req, res) {
@@ -122,10 +128,10 @@ module.exports = (function () {
   */
 
   fn.ensureAuthentificated = function (req, res, next) {
-    if (req.isAuthenticated() || req.session.login) {
-      return next();
-    } else {
+    if (!req.isAuthenticated() && !req.session.login) {
       res.send(401, { error: 'you must be authenticated' });
+    } else {
+      return next();
     }
   };
 
@@ -138,15 +144,12 @@ module.exports = (function () {
 
     /**
     * POST method : login, method returning user object minus password if auth
-    * is a success.
-    * Sample URL:
+    * is a success, plus fixes a `login` session.
     *
+    * Sample URL:
     * http://etherpad.ndd/mypads/api/auth/login
     */
 
-    /*app.post(authRoute + '/login', function (req, res) {
-      res.send(200, { success: true, user: ld.omit(user, 'password') });
-    });*/
     app.post(authRoute + '/login', function (req, res, next) {
       passport.authenticate('local', function (err, user, info) {
         if (err) { return res.send(400, { error: err.message }); }
@@ -160,9 +163,10 @@ module.exports = (function () {
     });
 
     /**
-    * GET method : logout
-    * Sample URL:
+    * GET method : logout, method that destroy current `req.session` and logout
+    * from passport.
     *
+    * Sample URL:
     * http://etherpad.ndd/mypads/api/auth/logout
     */
 
@@ -180,6 +184,8 @@ module.exports = (function () {
 
   /**
   * ## Configuration API
+  *
+  * All methods needs `fn.ensureAuthentificated`
   */
 
   var configurationAPI = function (app) {
@@ -187,8 +193,8 @@ module.exports = (function () {
 
     /**
     * GET method : get all configuration
-    * Sample URL:
     *
+    * Sample URL:
     * http://etherpad.ndd/mypads/api/configuration
     */
 
@@ -201,8 +207,8 @@ module.exports = (function () {
 
     /**
     * GET method : `configuration.get` key
-    * Sample URL:
     *
+    * Sample URL:
     * http://etherpad.ndd/mypads/api/configuration/something
     */
 
@@ -217,9 +223,9 @@ module.exports = (function () {
 
     /**
     * POST/PUT methods : `configuration.set` key and value on initial
+    *
     * Sample URL for POST:
     * http://etherpad.ndd/mypads/api/configuration
-    *
     * for PUT
     * http://etherpad.ndd/mypads/api/configuration/something
     */
@@ -236,8 +242,8 @@ module.exports = (function () {
 
     /**
     * DELETE method : `configuration.del` key
-    * Sample URL:
     *
+    * Sample URL:
     * http://etherpad.ndd/mypads/api/configuration/something
     */
 
@@ -247,6 +253,8 @@ module.exports = (function () {
 
   /**
   *  ## User API
+  *
+  * All methods needs `fn.ensureAuthentificated`
   */
 
   var userAPI = function (app) {
@@ -254,8 +262,8 @@ module.exports = (function () {
 
     /**
     * GET method : `user.get` login (key)
-    * Sample URL:
     *
+    * Sample URL:
     * http://etherpad.ndd/mypads/api/user/someone
     */
 
@@ -279,8 +287,8 @@ module.exports = (function () {
 
     /**
     * POST method : `user.set` with user value for user creation
-    * Sample URL:
     *
+    * Sample URL:
     * http://etherpad.ndd/mypads/api/user
     */
 
@@ -288,8 +296,8 @@ module.exports = (function () {
 
     /**
     * PUT method : `user.set` with user key/login plus value for existing user
-    * Sample URL:
     *
+    * Sample URL:
     * http://etherpad.ndd/mypads/api/user/someone
     */
 
@@ -297,8 +305,8 @@ module.exports = (function () {
 
     /**
     * DELETE method : `user.del` with user key/login
-    * Sample URL:
     *
+    * Sample URL:
     * http://etherpad.ndd/mypads/api/user/someone
     */
 
@@ -308,6 +316,8 @@ module.exports = (function () {
 
   /**
   * ## Group API
+  *
+  * All methods needs `fn.ensureAuthentificated`
   */
 
   var groupAPI = function (app) {
@@ -315,8 +325,8 @@ module.exports = (function () {
 
     /**
     * GET method : `group.get` unique id
-    * Sample URL:
     *
+    * Sample URL:
     * http://etherpad.ndd/mypads/api/group/xxxx
     */
 
@@ -331,8 +341,8 @@ module.exports = (function () {
 
     /**
     * POST method : `group.set` with user value for group creation
-    * Sample URL:
     *
+    * Sample URL:
     * http://etherpad.ndd/mypads/api/group
     */
 
@@ -340,8 +350,8 @@ module.exports = (function () {
 
     /**
     * PUT method : `group.set` with group id plus value for existing group
-    * Sample URL:
     *
+    * Sample URL:
     * http://etherpad.ndd/mypads/api/group/xxx
     */
 
@@ -349,8 +359,8 @@ module.exports = (function () {
 
     /**
     * DELETE method : `group.del` with group id
-    * Sample URL:
     *
+    * Sample URL:
     * http://etherpad.ndd/mypads/api/group/xxxx
     */
 
@@ -361,6 +371,8 @@ module.exports = (function () {
 
   /**
   * ## Pad API
+  *
+  * All methods needs `fn.ensureAuthentificated`
   */
 
   var padAPI = function (app) {
@@ -368,8 +380,8 @@ module.exports = (function () {
 
     /**
     * GET method : `pad.get` unique id
-    * Sample URL:
     *
+    * Sample URL:
     * http://etherpad.ndd/mypads/api/pad/xxxx
     */
 
@@ -384,8 +396,8 @@ module.exports = (function () {
 
     /**
     * POST method : `pad.set` with user value for pad creation
-    * Sample URL:
     *
+    * Sample URL:
     * http://etherpad.ndd/mypads/api/pad
     */
 
@@ -393,8 +405,8 @@ module.exports = (function () {
 
     /**
     * PUT method : `pad.set` with group id plus value for existing pad
-    * Sample URL:
     *
+    * Sample URL:
     * http://etherpad.ndd/mypads/api/pad/xxx
     */
 
@@ -402,8 +414,8 @@ module.exports = (function () {
 
     /**
     * DELETE method : `pad.del` with pad id
-    * Sample URL:
     *
+    * Sample URL:
     * http://etherpad.ndd/mypads/api/pad/xxxx
     */
 
@@ -411,7 +423,6 @@ module.exports = (function () {
       ld.partial(fn.del, pad.del));
 
   };
-
 
   return api;
 

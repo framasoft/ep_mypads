@@ -36,18 +36,21 @@ module.exports = (function () {
   /**
   *  ## Description
   *
-  *  The `user` is the masterpiece of the MyPads plugin.
+  * The `user` is the masterpiece of the MyPads plugin.
   *
   * It initially contains :
   *
-  * - `ids`, an huge in memory object to map `_id` to `login` field and ensures
+  * - `ids`, an in memory object to map `_id` to `login` field and ensures
   *   uniqueness of logins
   */
 
   var user = { ids: {} };
 
   /**
-  *  ## Internal Functions
+  * ## Internal Functions
+  *
+  * These functions are not private like with closures, for testing purposes,
+  * but they are expected be used only internally by other MyPads functions.
   */
 
   user.fn = {};
@@ -57,7 +60,7 @@ module.exports = (function () {
   *
   * `getPasswordConf` is an asynchronous function that get from database values
   * for minimum and maximum passwords. It takes a `callback` function as unique
-  * argument called with error or null and results.
+  * argument called with *Error* or *null* and results.
   * Internally, it uses `storage.getKeys`.
   */
 
@@ -72,17 +75,17 @@ module.exports = (function () {
   /**
   * ### checkPasswordLength
   *
-  *  `checkPasswordLength` is a private helper aiming at respecting the minimum
-  *  length fixed into MyPads configuration.
+  * `checkPasswordLength` is a private helper aiming at respecting the minimum
+  * length fixed into MyPads configuration.
   *
-  *  It takes two arguments, with fields
+  * It takes two arguments, with fields
   *
-  *    - `password` string
-  *    - an options objec with
-    *    - `passwordMin` size
-    *    - `passwordMax` size
+  *   - `password` string
+  *   - a `params` object with
+  *     - `passwordMin` size
+  *     - `passwordMax` size
   *
-  *  It returns an error message if the verification has failed.
+  *  It returns a *TypeError* if the verification has failed.
   */
 
   user.fn.checkPasswordLength = function (password, params) {
@@ -98,16 +101,16 @@ module.exports = (function () {
   /**
   * ### genPassword
   *
-  * `checkPassword` is an asynchronous function which checks :
+  * `genPassword` is an asynchronous function which do :
   *
   * - if the size is between `conf.passwordMin` and `conf.passwordMax`
   * - if the given `password` matches the already used one in case of update
   * - in addition or if it does not match, generates a new `salt` and hashed
   *   `password`
   *
-  *   It takes :
+  *   It takes
   *
-  *   - an `old` user object, null in case of creation
+  *   - an `old` user object, *null* in case of creation
   *   - the `user` object
   *   - a `callback` function returning *Error* if needed, or *null* and the
   *   updated `user` object
@@ -143,14 +146,16 @@ module.exports = (function () {
   };
 
   /**
-  *  ### hashPassword
+  * ### hashPassword
   *
-  *  `hashPassword` takes :
+  * `hashPassword` is an asynchronous function that use `crypto.randomBytes` to
+  * generate a strong `salt` if needed and return a `sha512` `hash` composed of
+  * the `salt` and the given `password`. It takes
   *
-  *  - an optional `salt` string
-  *  - the mandatory `password` string
-  *  - a `callback` function which returns an object with `hash`ed password and
-  *    the `salt`.
+  * - an optional `salt` string
+  * - the mandatory `password` string
+  * - a `callback` function which returns an object with `hash`ed password and
+  *   the `salt`.
   */
 
   user.fn.hashPassword = function (salt, password, callback) {
@@ -169,8 +174,8 @@ module.exports = (function () {
   /**
   * ### assignProps
   *
-  * `assignProps` takes params object and assign defaults if needed. It adds a
-  * `groups` array field, which will holds `model.group` of pads ids. It
+  * `assignProps` takes `params` object and assign defaults if needed. It adds a
+  * `groups` array field, which will hold `model.group` of pads ids. It
   * returns the user object.
   *
   */
@@ -190,10 +195,10 @@ module.exports = (function () {
   /**
   * ### checkLogin
   *
-  * This is a function which checks if id or login are already taken for new
+  * This is a function which check if id or login are already taken for new
   * users and if the login has changed for existing users (updates).
   *
-  * It takes, as arguments :
+  * It takes, as arguments
   *
   * - the given `id`, from `params._id` from `user.set`
   * - the assigned `u` user object
@@ -228,11 +233,11 @@ module.exports = (function () {
   * ### getDel
   *
   * Local `getDel` wrapper that uses `user.ids` object to ensure uniqueness of
-  * login and _id fields before returning `common.getDel` with UPREFIX fixed.
+  * login and _id fields before returning `common.getDel` with *UPREFIX* fixed.
   * It also handles secondary indexes for *model.group* elements.
   *
-  * It takes the mandatory login string as argument and return an error if login
-  * already exists. It also takes a mandatory callback function.
+  * It takes the mandatory `login` string as argument and return an error if
+  * login already exists. It also takes a mandatory `callback` function.
   *
   */
 
@@ -300,7 +305,7 @@ module.exports = (function () {
   * and loops over all users to map their *login* to their *_id* and then
   * ensures uniqueness.
   *
-  * It takes a callback function which is returned with null when finished.
+  * It takes a callback function which is returned with *null* when finished.
   */
 
   user.init = function (callback) {
@@ -321,7 +326,7 @@ module.exports = (function () {
   * ### set
   *
   * Creation and update sets the defaults and checks if required fields have
-  * been fixed. It takes :
+  * been fixed. It takes
   *
   * - a `params` object, with
   *   - optional `_id` string, for update only and existing user
@@ -333,10 +338,10 @@ module.exports = (function () {
   *   - optional `lastname` string
   *   - optional `organization` string
   *
-  * - a classic `callback` function returning error if error, null otherwise
+  * - a classic `callback` function returning *Error* if error, *null* otherwise
   *   and the user object
   *
-  * It takes care of updating correcly the user.ids in memory index.
+  * It takes care of updating correcly the `user.ids` in-memory index.
   * `groups` array can't be fixed here but will be retrieved from database in
   * case of update.
   */
@@ -372,7 +377,7 @@ module.exports = (function () {
   *  User reading
   *
   *  This function uses `user.fn.getDel` and `common.getDel` with `del` to
-  *  *false* . It takes mandatory login string and callback function.
+  *  *false* . It takes mandatory `login` string and `callback` function.
   */
 
   user.get = ld.partial(user.fn.getDel, false);
@@ -383,14 +388,14 @@ module.exports = (function () {
   * User removal
   *
   *  This function uses `user.fn.getDel` and `common.getDel` with `del` to
-  *  *true* . It takes mandatory login string and callback function.
+  *  *true* . It takes mandatory `login` string and `callback` function.
   */
   user.del = ld.partial(user.fn.getDel, true);
 
   /**
   * ## lodash mixins
   *
-  * Here are lodash extensions for MyPads.
+  * Here are lodash user extensions for MyPads.
   *
   * ### isEmail
   *

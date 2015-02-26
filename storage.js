@@ -45,10 +45,8 @@ module.exports = (function () {
     storage.db = require('ep_etherpad-lite/node/db/DB').db;
   }
   catch (e) {
-    /**
-    * Testing case : we need to mock the database connection, using ueberDB and
-    * coherent default configuration with eptherpad-lite one.
-    */
+    // Testing case : we need to mock the database connection, using ueberDB and
+    // coherent default configuration with eptherpad-lite one.
     var ueberDB = require('ueberDB');
     storage.db = new ueberDB.database('dirty', { filename: './test.db' });
     storage.db.init(function (err) { if (err) { console.log(err); } });
@@ -66,23 +64,27 @@ module.exports = (function () {
 
   /**
   * ## Internal functions `fn`
+  *
+  * These functions are not private like with closures, for testing purposes,
+  * but they are expected be used only internally by other MyPads functions.
   */
 
   storage.fn = {};
 
-  /** ### _getDelKeys
+  /** ### getDelKeys
   *
-  * `_getDelKeys` is a private function for multiple asynchronous gets and
-  * removes, taking :
+  * `getDelKeys` is a function for multiple asynchronous gets and removes,
+  * taking :
   *
   * - a `del` boolean, for removals to *true*
-  * - a `keys` array, wich contains a list a keys to retrieve
-  * - a `callback` function, called if error or when finished with null and the
-  *   `results` object composed of keys and values for gets, null for removals
+  * - a `keys` array, wich contains a list of keys to retrieve
+  * - a `callback` function, called if error or when finished with *null* and
+  *   the `results` object, which is composed of keys and values for gets,
+  *   *true* for removals
   * FIXME: TCO ?
   */
 
-  storage.fn._getDelKeys = function (del, keys, callback) {
+  storage.fn.getDelKeys = function (del, keys, callback) {
     var results = del ? true : {};
     var action = del ? 'remove' : 'get';
     var getDel = function (k) {
@@ -105,20 +107,20 @@ module.exports = (function () {
   /**
   * ### getKeys
   *
-  * `getKeys` is an helper around `storage.fn._getDelKeys` with `del` argument
+  * `getKeys` is an helper around `storage.fn.getDelKeys` with `del` argument
   * to *false*.
   */
 
-  storage.fn.getKeys = ld.partial(storage.fn._getDelKeys, false);
+  storage.fn.getKeys = ld.partial(storage.fn.getDelKeys, false);
 
   /**
   * ### delKeys
   *
-  * `delKeys` is an helper around `storage.fn._getDelKeys` with `del` argument
+  * `delKeys` is an helper around `storage.fn.getDelKeys` with `del` argument
   * to *true*.
   */
 
-  storage.fn.delKeys = ld.partial(storage.fn._getDelKeys, true);
+  storage.fn.delKeys = ld.partial(storage.fn.getDelKeys, true);
 
   /**
   * `setKeys` is a function for multiple asynchronous sets, taking :
@@ -127,6 +129,7 @@ module.exports = (function () {
   * - a `callback` function, called if error or when finished with null
   * FIXME: TCO ?
   */
+
   storage.fn.setKeys = function (kv, callback) {
     var pairs = ld.pairs(kv);
     var set = function (k, v) { storage.db.set(k, v, done); };

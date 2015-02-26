@@ -31,10 +31,12 @@ module.exports = (function () {
   'use strict';
 
   var hooks = {};
+
   /**
-  * `init` hook is run once after plugin installation. At the moment, it
+  * `init` hook is runned once after plugin installation. At the moment, it
   * only populates database.
   */
+
   hooks.init = function (name, args, callback) {
     var configuration = require('./configuration.js');
     configuration.init(function (err) {
@@ -43,10 +45,13 @@ module.exports = (function () {
       }
     });
   };
+
   /**
   * `expressCreateServer` hook profits from the args.app express instance to
-  * initialize all MyPads routes from its own API and local indexes from storage
+  * initialize all MyPads routes from its own API and local indexes from
+  * storage.
   */
+
   hooks.expressCreateServer = function (name, args, callback) {
     var storage = require('./storage.js');
     var api = require('./api.js');
@@ -55,6 +60,7 @@ module.exports = (function () {
       return callback();
     });
   };
+
   return hooks;
 
 }).call(this);

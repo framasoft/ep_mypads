@@ -36,7 +36,7 @@ module.exports = (function () {
   /**
   * ## Description
   *
-  * The pad module contains business logic for private pads. These belongs to
+  * The pad module contains business logic for private pads. These belong to
   * groups and can have their own visibility settings.
   *
   * A pad can be viewed as an object like :
@@ -47,7 +47,7 @@ module.exports = (function () {
   *   group: 'idOfTheLinkedGroup',
   *   visibility: 'restricted',
   *   users: ['u1', 'u2'],
-  *   password: undefined,
+  *   password: null,
   *   readonly: true
   * };
   */
@@ -57,7 +57,9 @@ module.exports = (function () {
   /**
   * ## Internal functions
   *
-  * These functions are tested through public functions and API.
+  * These functions are not private like with closures, for testing purposes,
+  * but they are expected be used only internally by other MyPads functions.
+  * They are tested through public functions and API.
   */
 
   pad.fn = {};
@@ -98,10 +100,10 @@ module.exports = (function () {
   * ### checkSet
   *
   * `checkSet` is an async function that ensures that all given users exist.
-  * If true, it calls `fn.set`, else it will return and *Error*. It takes :
+  * If true, it calls `fn.set`, else it will return an *Error*. It takes :
   *
   * - a `p` pad object
-  * - a `callback` function returning and *Error* or *null* and the `p` object.
+  * - a `callback` function returning an *Error* or *null* and the `p` object.
   */
 
   pad.fn.checkSet = function (p, callback) {
@@ -123,7 +125,7 @@ module.exports = (function () {
   *
   * - a `del` boolean to know if we have to delete key from index or add it
   * - the `pad` object
-  * - a `callback` function, returning Error or *null* if succeeded
+  * - a `callback` function, returning *Error* or *null* if succeeded
   */
 
   pad.fn.indexGroups = function (del, pad, callback) {
@@ -157,7 +159,7 @@ module.exports = (function () {
   * It takes, as arguments :
   *
   * - the `p` pad object
-  * - the `callback` function returning and *Error* or *null* and the `p`
+  * - the `callback` function returning an *Error* or *null* and the `p`
   *   object.
   */
 
@@ -176,7 +178,7 @@ module.exports = (function () {
   *
   * ### get
   *
-  *  This function uses `common.getDel` with `del` to *false* and PPREFIX
+  *  This function uses `common.getDel` with `del` to *false* and *PPREFIX*
   *  fixed. It will takes mandatory key string and callback function. See
   *  `common.getDel` for documentation.
   */
@@ -187,7 +189,7 @@ module.exports = (function () {
   * ### set
   *
   * This function adds a new pad or updates properties of an existing one.
-  * It checks the fields, throws error if needed, set defaults options. As
+  * It checks the fields, throws error if needed, sets defaults options. As
   * arguments, it takes mandatory :
   *
   * - `params` object, with
@@ -199,8 +201,7 @@ module.exports = (function () {
   *   defined
   * - `users` array, with ids of users invited to read and/or edit the pad, for
   *   restricted visibility only
-  *
-  * - `callback` function returning error if error, null otherwise and the
+  * - `callback` function returning *Error* if error, *null* otherwise and the
   *   pad object;
   * - a special `edit` boolean, defaults to *false* for reusing the function for
   *   set (edit) an existing pad.
@@ -227,7 +228,7 @@ module.exports = (function () {
   /**
   * ### del
   *
-  *  This function uses `common.getDel` with `del` to *false* and GPREFIX
+  *  This function uses `common.getDel` with `del` to *false* and *PPREFIX*
   *  fixed.  It will takes mandatory key string and callback function. See
   *  `common.getDel` for documentation.
   *

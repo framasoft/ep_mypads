@@ -49,6 +49,9 @@ module.exports = (function () {
 
   /**
   * ## Internal functions
+  *
+  * These functions are not private like with closures, for testing purposes,
+  * but they are expected be used only internally by other MyPads functions.
   */
 
   auth.fn = {};
@@ -57,17 +60,6 @@ module.exports = (function () {
   * ### local
   *
   * `local` is a synchronous function used to set up local strategy.
-  * It takes :
-  *
-  * - a `login` string,
-  * - a `password` string,
-  * - a `callback` function, returning
-  *   - an *Error* if there is one
-  *   - *null*, *false* and an Object describing the problem if
-  *   authentification fails
-  *   - *null* and the `model.user` object otherwise
-  *
-  * It uses `model.user` internally.
   */
 
   auth.fn.local = function () {
@@ -127,8 +119,8 @@ module.exports = (function () {
   * the one saved in database.
   * It takes :
   *
-  * - the `u` user object,
-  * - the `password` string,
+  * - the `u` user object
+  * - the `password` string
   * - a `callback` function, returning *Error* or *null* and a boolean
   */
 
@@ -151,7 +143,9 @@ module.exports = (function () {
   * `iniŧ` is a synchronous function used to set up authentification. It :
   *
   * - initializes local strategy by default
-  *
+  * - uses of passport middlwares for express
+  * - launch session middleware bundled with express, using secret phrase saved
+  *   in database
   */
 
   auth.init = function (app) {
@@ -164,7 +158,6 @@ module.exports = (function () {
       app.use(express.session({ secret: res }));
     });
   };
-
 
   return auth;
 

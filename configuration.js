@@ -52,12 +52,14 @@ module.exports = (function() {
   */
 
   var configuration = {
+
     /**
     * `init` is called when mypads plugin is initialized. It fixes the default
     * data for the configuration into the database.
-    * It takes an optional `callback` function used after db.set abstraction to
-    * return an eventual error.
+    * It takes an optional `callback` function used after `db.set` abstraction
+    * to return an eventual *error*.
     */
+
     init: function (callback) {
       callback = callback || function () {};
       if (!ld.isFunction(callback)) {
@@ -67,12 +69,15 @@ module.exports = (function() {
       storage.fn.setKeys(ld.transform(DEFAULTS, function (memo, val, key) {
         memo[DBPREFIX + key] = val; }), callback);
     },
+
     /**
     * `get` is an asynchronous function taking :
+    *
     * - a mandatory `key` string argument,
-    * - a mandatory `callback` function argument returning error if error, null
-    *   otherwise and the result
+    * - a mandatory `callback` function argument returning *Error* if error,
+    *   *null* otherwise and the result
     */
+
     get: function (key, callback) {
       if (!ld.isString(key)) {
         throw new TypeError('key must be a string');
@@ -88,15 +93,18 @@ module.exports = (function() {
         callback(null, res);
       });
     },
+
     /**
     * `set` is an asynchronous function taking two mandatory arguments:
     *
     * - `key` string;
     * - `value`.
-    * - `callback` function argument returning error if error, null otherwise
+    * - `callback` function argument returning *Error* if error, *null*
+    *   otherwise
     *
-    * `set` sets the value for the configuration key.
+    * `set` sets the `value` for the configuration `key`.
     */
+
     set: function (key, value, callback) {
       if (!ld.isString(key)) {
         throw new TypeError('key must be a string');
@@ -109,12 +117,15 @@ module.exports = (function() {
       }
       db.set(DBPREFIX + key, value, callback);
     },
+
     /**
     * `del` is an asynchronous function that removes a configuration option.
     * It takes two mandatory arguments :
+    *
     * - a `key` string,
-    * - a `callback` function argument returning error if error
+    * - a `callback` function argument returning *Error* if error
     */
+
     del: function (key, callback) {
       if (!ld.isString(key)) {
         throw new TypeError('key must be a string');
@@ -124,11 +135,13 @@ module.exports = (function() {
       }
       db.remove(DBPREFIX + key, callback);
     },
+
     /**
     * `all` is an asynchronous function that returns the whole configuration
     * from database. Fields / keys are unprefixed. It needs a `callback`
-    * function returning error if error, null otherwise and the result.
+    * function returning *Error* if error, *null* otherwise and the result.
     */
+
     all: function(callback) {
       if (!ld.isFunction(callback)) {
         throw new TypeError('callback must be a function');
@@ -146,7 +159,9 @@ module.exports = (function() {
       });
     }
   };
+
   return configuration;
+
 }).call(this);
 
 

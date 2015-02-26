@@ -40,12 +40,12 @@ module.exports = (function() {
   * ### addSetInit
   *
   * This function throws errors for common parameters missing or mistyped.
-  * It takes two mandatory arguments :
+  * It takes three arguments :
   *
   * - a `params` JS object
   * - a `callback` function
-  * - a `strFields` optional, array, with fields of the `params` objects that
-  *   must be strings not empty
+  * - a n optional `strFields` array, with fields of the `params` objects that
+  *   must be not empty strings
   */
 
   common.addSetInit = function (params, callback, strFields) {
@@ -76,7 +76,7 @@ module.exports = (function() {
   * `checkExistence` is an asynchronous function that takes
   *
   * - a database `key`
-  * - a `callback` function, returnning an Error or a boolean for existence
+  * - a `callback` function, returnning an *Error* or a boolean for existence
   */
 
   common.checkExistence = function (key, callback) {
@@ -111,7 +111,7 @@ module.exports = (function() {
         return callback(null, res);
       }
     };
-    done(undefined, true);
+    done(null, true);
   };
 
   /**
@@ -122,12 +122,11 @@ module.exports = (function() {
   *  This function takes mandatory arguments
   *
   *  - a `del` boolean, to add a second step, removal, in the case of *true*
-  *  (not tested because of internal use)
-  *  - a `PREFIX`, used to compute real key (idem)
+  *  - a `PREFIX`, used to compute real key
   *  - a `key`, the unique identifier of the object
   *  - a `callback` function, that returns an error if there is a problem or if
-  *  the key is not found. In the other case, it returns null if `del` and null
-  *  plus the model object.
+  *  the key is not found. In the other case, it returns *null* if `del` or
+  *  *null* plus the model object.
   */
 
   common.getDel = function (del, PREFIX, key, callback) {

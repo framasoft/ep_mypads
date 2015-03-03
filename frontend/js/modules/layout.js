@@ -29,7 +29,8 @@ module.exports = (function () {
   // Dependencies
   var m = require('mithril');
   var ld = require('lodash');
-  var LANG = require('../configuration.js').LANG;
+  var conf = require('../configuration.js');
+  var LANG = conf.LANG;
   var auth = require('../auth.js');
 
   var layout = {};
@@ -104,7 +105,7 @@ module.exports = (function () {
   layout.view = function (main, aside) {
     return [
       m('header.block', [
-        m('h1', LANG.GLOBAL.TITLE),
+        m('h1', conf.SERVER.title),
         m('nav.menu-main', [
           m('ul.menu-main', views.menuMain())
         ])

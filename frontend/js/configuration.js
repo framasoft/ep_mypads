@@ -26,8 +26,28 @@
 */
 
 module.exports = (function () {
+  // Dependencies
+  var m = require('mithril');
+
   var config = {};
+  window.config = config;
+  config.URLS = { BASE: '/mypads/api' };
+  config.URLS.CONF = config.URLS.BASE + '/configuration';
+  config.SERVER = m.prop();
   // FIXME : tmp to EN only
   config.LANG = require('../l10n/en.js');
+
+  /**
+  * ## init
+  *
+  * `init` is an asynchronous function that calls for the public configuration
+  * of MyPads and push them to the `SERVER` field.
+  */
+
+  config.init = function () {
+    m.request({ method: 'GET', url: config.URLS.CONF })
+      .then(function (settings) { config.SERVER = settings.value; });
+  };
+
   return config;
 }).call(this);

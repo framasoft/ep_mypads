@@ -1,6 +1,5 @@
 module.exports = {
   GLOBAL: {
-    TITLE: 'MyPads',
     FOOTER: 'Propusé par MyPads<br><a href="https://git.framasoft.org/framasoft/ep_mypads">Publié</a> sous licence Apache 2.0',
     HELP: 'Aide'
   },

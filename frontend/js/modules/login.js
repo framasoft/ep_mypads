@@ -30,8 +30,8 @@ module.exports = (function () {
   var m = require('mithril');
   // Local dependencies
   var layout = require('./layout.js');
-  var LANG = require('../configuration.js').LANG;
-  var LOG = LANG.LOGIN;
+  var conf = require('../configuration.js');
+  var LOG = conf.LANG.LOGIN;
 
   var login = {};
 
@@ -55,8 +55,8 @@ module.exports = (function () {
   };
   views.aside = function () {
     return m('section.login-aside', [
-      m('h2.login-aside', LANG.GLOBAL.TITLE),
-      m('article.login-aside', m.trust(LANG.GLOBAL.DESCR))
+      m('h2.login-aside', conf.SERVER.title),
+      m('article.login-aside', m.trust(conf.SERVER.descr))
     ]);
   };
 

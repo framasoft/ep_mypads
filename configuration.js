@@ -40,9 +40,10 @@ module.exports = (function() {
   */
 
   var DEFAULTS = {
+    title: 'MyPads',
     passwordMin: 8,
     passwordMax: 30,
-    sessionSecret: 'LvP@WHB#I5)u@u@nAX9RL*n7CEQPxs'
+    sessionSecret: 'aSecretThatShouldBeChanged'
   };
   var DBPREFIX = storage.DBPREFIX.CONF;
 

@@ -35,20 +35,16 @@
     * For standalone backend testing : mocking a fresh Express app and
     * initializate API routes.
     */
-    var express = require('express');
-    var app = express();
-    app.use(express.bodyParser());
-    var server;
     var route = 'http://127.0.0.1:8042' + api.initialRoute;
     var rq;
     var conf = require('../../configuration.js');
     var j = request.jar();
 
     beforeAll(function (done) {
+      specCommon.mockupExpressServer();
       specCommon.reInitDatabase(function () {
         conf.init(function () {
-          api.init(app);
-          server = app.listen(8042);
+          api.init(specCommon.express.app);
           rq = request.defaults({ json: true, jar: j });
           done();
         });
@@ -56,7 +52,7 @@
     });
 
     afterAll(function (done) {
-      server.close();
+      specCommon.unmockExpressServer();
       specCommon.reInitDatabase(done);
     });
 

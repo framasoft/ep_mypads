@@ -42,6 +42,7 @@
   "scripts": {
     "frontend:build": "./node_modules/browserify/bin/cmd.js -o static/js/mypads.js frontend.js",
     "frontend:watch": "./node_modules/watchify/bin/cmd.js -o static/js/mypads.js frontend.js",
+    "mockupserver": "node mockupserver.js",
     "doc": "./node_modules/docker/docker -I -x node_modules,doc -i . -o doc",
     "lint": "./node_modules/jshint/bin/jshint ./",
     "test": "./node_modules/jasmine/bin/jasmine.js",

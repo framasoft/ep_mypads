@@ -39,5 +39,25 @@ module.exports = (function () {
     });
   };
 
+  /**
+  * `mockupExpressServer` is a private function that launch an Express Server,
+  * for local testing. It uses an intern namespace : `common.express`.
+  */
+
+  common.mockupExpressServer = function () {
+    var express = require('express');
+    common.express = {};
+    common.express.app = express();
+    common.express.app.use(express.static(__dirname + '/../../static'));
+    common.express.app.use(express.bodyParser());
+    common.express.server = common.express.app.listen(8042);
+  };
+
+  /**
+  * `unmockExpressServer` closes the server launched with `mockupExpressServer`.
+  */
+
+  common.unmockExpressServer = function() { common.express.server.close(); };
+
   return common;
 }).call(this);

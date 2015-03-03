@@ -35,7 +35,7 @@ module.exports = (function () {
   var login = require('./modules/login.js');
   var admin = require('./modules/admin.js');
 
-  route = { model: {} };
+  var route = { model: {} };
 
   /*
   * ## Model

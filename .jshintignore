@@ -1,2 +1,5 @@
 node_modules*
 doc*
+static/js/*
+static/l10n/*
+frontend/l10n/*

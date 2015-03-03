@@ -28,7 +28,6 @@
 module.exports = (function () {
   // Global dependencies
   var m = require('mithril');
-  var ld = require('lodash');
   // Local dependencies
   var layout = require('./layout.js');
   var LANG = require('../configuration.js').LANG;

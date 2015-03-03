@@ -192,14 +192,16 @@ module.exports = (function () {
     var confRoute = api.initialRoute + 'configuration';
 
     /**
-    * GET method : get all configuration
+    * GET method : get all configuration if logged, else public fields
     *
     * Sample URL:
     * http://etherpad.ndd/mypads/api/configuration
     */
 
-    app.get(confRoute, fn.ensureAuthentificated, function (req, res) {
-      conf.all(function (err, value) {
+    app.get(confRoute, function (req, res) {
+      var isAuth = (req.isAuthenticated() || req.session.login);
+      var action = isAuth ? 'all' : 'public';
+      conf[action](function (err, value) {
         if (err) { return res.send(400, { error: err }); }
         res.send({ value: value });
       });

@@ -157,6 +157,34 @@
       });
     });
 
+    describe('unAuth legitimate tests', function () {
+
+      describe('configuration.public GET', function () {
+        var confRoute = route + 'configuration';
+
+        beforeAll(function (done) {
+          var kv = { title: 'Amigo', field: 3 };
+          storage.fn.setKeys(ld.transform(kv, function (memo, val, key) {
+            memo[CPREFIX + key] = val; }), done);
+        });
+
+        afterAll(specCommon.reInitDatabase);
+
+        it('should reply with all public setting with GET method',
+          function (done) {
+            rq.get(confRoute, function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(200);
+              expect(ld.isObject(body.value)).toBeTruthy();
+              expect(body.value.title).toBe('Amigo');
+              expect(body.value.field).toBeUndefined();
+              done();
+            });
+          }
+        );
+      });
+    });
+
     describe('configuration API', function () {
       var confRoute = route + 'configuration';
 
@@ -185,7 +213,7 @@
           });
         });
 
-        it('should reply with all setting with GET method', function (done) {
+        it('should reply with all settings with GET method', function (done) {
           rq.get(confRoute, function (err, resp, body) {
             expect(err).toBeNull();
             expect(resp.statusCode).toBe(200);
@@ -193,7 +221,7 @@
             expect(body.value.field1).toBe(8);
             expect(body.value.field2).toBe(3);
             expect(ld.size(body.value.field3)).toBe(2);
-            expect(body.value.field3[1]).toBe('b');
+            //expect(body.value.field3[1]).toBe('b');
             done();
           });
         });

@@ -152,6 +152,27 @@
         });
       });
     });
+
+    describe('public', function () {
+
+      it('requires a mandatory function as callback', function () {
+        expect(conf.public).toThrow();
+        expect(ld.partial(conf.public, 'notAFn')).toThrow();
+      });
+
+      it('returns the filtered configuration object', function (done) {
+        conf.set('power', 'max', function () {
+          conf.public(function (err, settings) {
+            expect(settings.power).toBeUndefined();
+            expect(settings.title).toBeDefined();
+            expect(settings.descr).toBeDefined();
+            expect(settings.passwordMin).toBeDefined();
+            expect(settings.passwordMax).toBeDefined();
+            done();
+          });
+        });
+      });
+    });
   });
 
 }).call(this);

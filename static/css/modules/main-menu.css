@@ -1,0 +1,19 @@
+/* Menu Main */
+nav.menu-main {
+  text-align: right;
+}
+
+ul.menu-main {
+  list-style-type: none;
+}
+
+li.menu-main {
+  padding: 1em;
+  display: inline; 
+  font-weight: bold;
+}
+
+li.menu-main.is-active {
+  background-color: #8157c2;
+}
+

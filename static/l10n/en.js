@@ -25,6 +25,11 @@ module.exports = {
     LOGIN: 'Login',
     PASSWORD: 'Password',
     UNDEF: '********',
-    OK: 'Ok'
+    OK: 'Ok',
+    INFO: {
+      LOGIN: 'The unique login you choose when you have subscribed',
+      PASSWORD_BEGIN: 'Must be between ',
+      PASSWORD_END: ' characters'
+    }
   }
 };

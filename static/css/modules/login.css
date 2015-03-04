@@ -6,9 +6,9 @@ section.login-main {
   margin: 0 auto 0 auto;
 }
 
-label.login-main, input.login-main {
-  width: 100%;
-}
+label.login-main { width: 100%; }
+input.login-main { width: 95%; }
+i.login-main { width: 5%; }
 
 input[type=submit].login-main {
   text-transform: uppercase;
@@ -28,9 +28,9 @@ input[type=submit].login-main {
 @media (min-width: 60em) {
   section.login-main { width: 40em; }
 
-  label.login-main, input.login-main {
-    width: 50%;
-  }
+  label.login-main { width: 50%; }
+  input.login-main { width: 45%; }
+  i.login-main { width: 5%; }
 }
 
 section.login-main > h2 { color: #a15014; }

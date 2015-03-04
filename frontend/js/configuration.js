@@ -30,7 +30,6 @@ module.exports = (function () {
   var m = require('mithril');
 
   var config = {};
-  window.config = config;
   config.URLS = { BASE: '/mypads/api' };
   config.URLS.CONF = config.URLS.BASE + '/configuration';
   config.SERVER = m.prop();

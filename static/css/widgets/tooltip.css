@@ -1,0 +1,24 @@
+/* Tooltip Widget */
+
+.tooltip { position: relative; }
+
+.tooltip:hover:after, .tooltip:focus:after {
+  position: absolute;
+  bottom: 1.5em;
+  right: 0.1em;
+  padding: 0.2em;
+  width: 17em;
+  color: #f5f5f5;
+  background-color: #333333;
+  border: 0.1em solid #f5f5f5;
+  border-radius: 0.1em;
+  font-size: 0.8em;
+  content: attr(data-info);
+}
+
+/* Tablet and up */
+@media (min-width: 40em) {
+  .tooltip:hover:after, .tooltip:focus:after {
+    width: 30em;
+  }
+}

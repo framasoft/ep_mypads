@@ -3,5 +3,8 @@
 @import url('vendor/normalize.css');
 /* Internal Dependencies */
 @import url('layout.css');
+/* Widgets */
+@import url('widgets/tooltip.css');
+/* Modules */
 @import url('modules/main-menu.css');
 @import url('modules/login.css');

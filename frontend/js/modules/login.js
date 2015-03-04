@@ -35,8 +35,13 @@ module.exports = (function () {
 
   var login = {};
 
+  login.controller = function () {
+  };
+
   var views = {};
   views.main = function () {
+    var infoPass = LOG.INFO.PASSWORD_BEGIN + conf.SERVER.passwordMin + ' and ' +
+      conf.SERVER.passwordMax + LOG.INFO.PASSWORD_END;
     return m('section.login-main.block-group', [
       m('h2.block', LOG.FORM),
       m('form.block', [
@@ -45,9 +50,18 @@ module.exports = (function () {
           m('label.login-main.block', { for: 'login' }, LOG.USERNAME),
           m('input.login-main.block',
             { type: 'text', name: 'login', placeholder: LOG.LOGIN }),
+          m('i.login-main.block.icon-info-circled.tooltip',
+            { 'data-info': LOG.INFO.LOGIN }),
           m('label.login-main.block', { for: 'password' }, LOG.PASSWORD),
-          m('input.login-main.block',
-          { type: 'password', name: 'password', placeholder: LOG.UNDEF }),
+          m('input.login-main.block', {
+            type: 'password',
+            name: 'password',
+            placeholder: LOG.UNDEF,
+            minlength: conf.SERVER.passwordMin,
+            maxlength: conf.SERVER.passwordMax
+          }),
+          m('i.login-main.block.icon-info-circled.tooltip',
+            { 'data-info': infoPass }),
           m('input.login-main.send.block', { type: 'submit', value: LOG.LOGIN })
         ]),
       ])

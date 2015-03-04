@@ -84,7 +84,9 @@ module.exports = (function () {
     };
     var activeRoute = function (r) {
       if (m.route() === r.route) { r.cls.push('is-active'); }
-      return m('li', { class: r.cls.join(' ') }, r.txt);
+      return m('li', { class: r.cls.join(' ') }, [
+        m('a.menu-main', { href: r.route, config: m.route }, r.txt)
+      ]);
     };
     if (auth.isAuthenticated()) {
       return ld.map(_routes.auth, activeRoute);

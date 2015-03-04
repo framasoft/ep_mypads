@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'mypadsfont';
-  src: url('../font/mypadsfont.eot?85221091');
-  src: url('../font/mypadsfont.eot?85221091#iefix') format('embedded-opentype'),
-       url('../font/mypadsfont.woff?85221091') format('woff'),
-       url('../font/mypadsfont.ttf?85221091') format('truetype'),
-       url('../font/mypadsfont.svg?85221091#mypadsfont') format('svg');
+  src: url('../font/mypadsfont.eot?60139023');
+  src: url('../font/mypadsfont.eot?60139023#iefix') format('embedded-opentype'),
+       url('../font/mypadsfont.woff?60139023') format('woff'),
+       url('../font/mypadsfont.ttf?60139023') format('truetype'),
+       url('../font/mypadsfont.svg?60139023#mypadsfont') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -14,7 +14,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'mypadsfont';
-    src: url('../font/mypadsfont.svg?85221091#mypadsfont') format('svg');
+    src: url('../font/mypadsfont.svg?60139023#mypadsfont') format('svg');
   }
 }
 */
@@ -58,3 +58,8 @@
 .icon-logout:before { content: '\e805'; } /* '' */
 .icon-thumbs-up:before { content: '\e806'; } /* '' */
 .icon-info-circled:before { content: '\e807'; } /* '' */
+.icon-alert:before { content: '\e808'; } /* '' */
+.icon-attention:before { content: '\e809'; } /* '' */
+.icon-cancel-circled:before { content: '\e80a'; } /* '' */
+.icon-cancel:before { content: '\e80b'; } /* '' */
+.icon-check:before { content: '\e80c'; } /* '' */

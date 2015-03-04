@@ -7,3 +7,8 @@
 .icon-logout:before { content: '\e805'; } /* '' */
 .icon-thumbs-up:before { content: '\e806'; } /* '' */
 .icon-info-circled:before { content: '\e807'; } /* '' */
+.icon-alert:before { content: '\e808'; } /* '' */
+.icon-attention:before { content: '\e809'; } /* '' */
+.icon-cancel-circled:before { content: '\e80a'; } /* '' */
+.icon-cancel:before { content: '\e80b'; } /* '' */
+.icon-check:before { content: '\e80c'; } /* '' */

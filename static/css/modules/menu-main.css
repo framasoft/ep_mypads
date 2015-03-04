@@ -17,3 +17,7 @@ li.menu-main.is-active {
   background-color: #8157c2;
 }
 
+a.menu-main {
+  background: none;
+  text-decoration: none;
+}

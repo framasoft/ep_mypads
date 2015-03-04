@@ -19,6 +19,7 @@ module.exports = {
   },
   LOGIN: {
     FORM: 'Login form',
+    ORSUB: '(or subscribe ?)',
     MYPADS_ACCOUNT: 'MyPads account',
     SUBSCRIBE: 'Subscribe',
     USERNAME: 'Username',
@@ -30,6 +31,9 @@ module.exports = {
       LOGIN: 'The unique login you choose when you have subscribed',
       PASSWORD_BEGIN: 'Must be between ',
       PASSWORD_END: ' characters'
+    },
+    ERR: {
+      LOGIN: 'Login is required'
     }
   }
 };

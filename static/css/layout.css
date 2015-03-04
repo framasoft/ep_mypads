@@ -1,8 +1,25 @@
 /* Global layout */
 
+/* Responsivity */
+
+main.block, aside.block { background-color: #fafafa; }
+
+/* Common */
+main.block > section.block { width: 100%; padding: 1em; }
+main.block > aside.block { width: 100%;, padding: 1em; }
+
+/* Desktop */
+@media (min-width: 60em) {
+  main.block > section.block { width: 70%; padding: 1em; }
+  main.block > aside.block { width: 30%;, padding: 1em; }
+}
+
+/* Tags */
+
 body.block-group {
   font-size: 1em;
   font-family: DejaVu Sans, Verdana, sans-serif;
+  background: #333333;
 }
 
 header, footer {
@@ -40,6 +57,7 @@ label, input { margin: 0.5em 0 0.5em; }
 label {
   text-transform: uppercase; 
 }
+
 input {
   padding: 0.7em;
   border: 0.1em solid #e0e0e0;
@@ -62,13 +80,6 @@ input.send {
 
 input.send:hover, input.send:focus { background: #c47e1b; }
 
-/* Common */
-main.block > section.block { width: 100%; padding: 1em; }
-main.block > aside.block { width: 100%;, padding: 1em; }
+/* Icons */
 
-/* Desktop */
-@media (min-width: 60em) {
-  main.block > section.block { width: 70%; padding: 1em; }
-  main.block > aside.block { width: 30%;, padding: 1em; }
-}
-
+i.icon-alert { color: #cc2d18; }

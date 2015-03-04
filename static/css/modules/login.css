@@ -34,6 +34,11 @@ input[type=submit].login-main {
 }
 
 section.login-main > h2 { color: #a15014; }
+a.login-main {
+  color: #333333; 
+  background: none;
+  font-size: smaller;
+}
 section.login-main > form {
   background: #fff8e3;
   border: 0.1em solid #ffcf4f;

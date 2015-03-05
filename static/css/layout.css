@@ -72,6 +72,8 @@ input[type=text]:focus, input[type=password]:focus {
   border-right-width: 0.3em;
 }
 
+input:invalid { border-color: #cc2d18; }
+
 input.send {
   font-weight: bold;
   color: #fff8e3;

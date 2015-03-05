@@ -71,7 +71,6 @@ module.exports = (function () {
     var msg = isValid() ? LOG.INFO.LOGIN : LOG.ERR.LOGIN;
     return m('i', {
       class: 'login-main tooltip block ' + icls,
-      validationMessage: LOG.ERR.LOGIN,
       'data-msg': msg
     });
   };
@@ -91,7 +90,8 @@ module.exports = (function () {
   view.field.login = function (c) {
     return [
       m('label.login-main.block', { for: 'login' }, LOG.USERNAME),
-      m('input.login-main.block', {
+      m('input', {
+        class: 'login-main block',
         type: 'text',
         name: 'login',
         placeholder: LOG.LOGIN,
@@ -108,7 +108,8 @@ module.exports = (function () {
     var passMax = conf.SERVER.passwordMax;
     return [
       m('label.login-main.block', { for: 'password' }, LOG.PASSWORD),
-      m('input.login-main.block', {
+      m('input', {
+        class: 'login-main block',
         type: 'password',
         name: 'password',
         placeholder: LOG.UNDEF,

@@ -10,8 +10,8 @@ main.block > aside.block { width: 100%;, padding: 1em; }
 
 /* Desktop */
 @media (min-width: 60em) {
-  main.block > section.block { width: 70%; padding: 1em; }
-  main.block > aside.block { width: 30%;, padding: 1em; }
+  main.block > section.block { width: 70%; }
+  main.block > aside.block { width: 30%; }
 }
 
 /* Tags */

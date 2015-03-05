@@ -1,5 +1,5 @@
 /**
-*  # Configuration
+*  # Home module
 *
 *  ## License
 *
@@ -22,34 +22,17 @@
 *
 *  ## Description
 *
-*  This module contains configuration-like for frontend.
+*  This module contains the home of MyPads.
 */
 
 module.exports = (function () {
-  // Dependencies
+  // Global dependencies
   var m = require('mithril');
 
-  var config = {};
-  config.URLS = { BASE: '/mypads/api' };
-  config.URLS.CONF = config.URLS.BASE + '/configuration';
-  config.URLS.AUTH = config.URLS.BASE + '/auth';
-  config.URLS.LOGIN = config.URLS.AUTH + '/login';
-  config.URLS.LOGOUT = config.URLS.AUTH + '/logout';
-  config.SERVER = m.prop();
-  // FIXME : tmp to EN only
-  config.LANG = require('../l10n/en.js');
-
-  /**
-  * ## init
-  *
-  * `init` is an asynchronous function that calls for the public configuration
-  * of MyPads and push them to the `SERVER` field.
-  */
-
-  config.init = function () {
-    m.request({ method: 'GET', url: config.URLS.CONF })
-      .then(function (settings) { config.SERVER = settings.value; });
+  var home = {
+    controller: function () { m.route('/login'); },
+    view: function () {}
   };
 
-  return config;
+  return home;
 }).call(this);

@@ -21,3 +21,10 @@ a.menu-main {
   background: none;
   text-decoration: none;
 }
+
+span.menu-main { display: none; }
+
+/* Responsivity : full menu items for large tablets and up */
+@media (min-width: 50em) {
+  span.menu-main { display: inherit; }
+}

@@ -12,7 +12,8 @@ module.exports = {
     PAD: 'My Pads',
     BOOKMARK: 'My Bookmarks',
     PROFILE: 'My Profile',
-    ADMIN: 'Administration'
+    ADMIN: 'Administration',
+    LOGOUT: 'Logout'
   },
   ADMIN: {
     GLOBAL_SETTINGS: 'Global settings'
@@ -25,8 +26,8 @@ module.exports = {
     WARNING: 'Warning'
   },
   LOGIN: {
-    FORM: 'Login form',
-    ORSUB: '(or subscribe ?)',
+    FORM: 'Login',
+    ORSUB: ' (or subscribe ?)',
     MYPADS_ACCOUNT: 'MyPads account',
     SUBSCRIBE: 'Subscribe',
     USERNAME: 'Username',
@@ -40,7 +41,12 @@ module.exports = {
       PASSWORD_END: ' characters'
     },
     ERR: {
-      LOGIN: 'Login is required'
+      LOGIN: 'Login is required',
+      LOGOUT: 'Log out error : you wasn\'t authenticated.'
+    },
+    AUTH: {
+      SUCCESS: 'Successfull authentication ! Welcome.',
+      SUCCESS_OUT: 'You have been successfully disconnected.'
     }
   }
 };

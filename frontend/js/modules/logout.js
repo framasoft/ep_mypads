@@ -1,5 +1,5 @@
 /**
-*  # Configuration
+*  # Home module
 *
 *  ## License
 *
@@ -22,34 +22,39 @@
 *
 *  ## Description
 *
-*  This module contains configuration-like for frontend.
+*  This module contains the logout logic.
 */
 
 module.exports = (function () {
-  // Dependencies
+  // Global dependencies
   var m = require('mithril');
+  var conf = require('../configuration.js');
+  var auth = require('../auth.js');
+  var LOG = conf.LANG.LOGIN;
+  var notif = require('./notification.js');
 
-  var config = {};
-  config.URLS = { BASE: '/mypads/api' };
-  config.URLS.CONF = config.URLS.BASE + '/configuration';
-  config.URLS.AUTH = config.URLS.BASE + '/auth';
-  config.URLS.LOGIN = config.URLS.AUTH + '/login';
-  config.URLS.LOGOUT = config.URLS.AUTH + '/logout';
-  config.SERVER = m.prop();
-  // FIXME : tmp to EN only
-  config.LANG = require('../l10n/en.js');
+  var logout = {
+    /**
+    * `controller` calls the API for logout and returns either :
+    *
+    * - an error noticiation if the user was not authenticated
+    * - a success notification if he was, with updates of local cached data
+    */
 
-  /**
-  * ## init
-  *
-  * `init` is an asynchronous function that calls for the public configuration
-  * of MyPads and push them to the `SERVER` field.
-  */
-
-  config.init = function () {
-    m.request({ method: 'GET', url: config.URLS.CONF })
-      .then(function (settings) { config.SERVER = settings.value; });
+    controller: function () {
+      m.request({ method: 'GET', url: conf.URLS.LOGOUT })
+      .then(function () {
+        auth.isAuthenticated(false);
+        auth.userInfo(null);
+        notif.success({ body: LOG.AUTH.SUCCESS_OUT });
+        m.route('/');
+      }, function (err) {
+        notif.error({ body: err.error });
+        m.route('/');
+      });
+    },
+    view: function () {}
   };
 
-  return config;
+  return logout;
 }).call(this);

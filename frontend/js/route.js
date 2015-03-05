@@ -32,7 +32,10 @@ module.exports = (function () {
   var ld = require('lodash');
   // Local dependencies
   var auth = require('./auth.js');
+  // Modules
+  var home = require('./modules/home.js');
   var login = require('./modules/login.js');
+  var logout = require('./modules/logout.js');
   var admin = require('./modules/admin.js');
 
   var route = { model: {} };
@@ -54,8 +57,9 @@ module.exports = (function () {
       memo[r] = auth.isAuthenticated() ? mod : login;
     });
     m.route(document.body, '/', ld.defaults({
-      '/': login,
-      '/login': login
+      '/': home,
+      '/login': login,
+      '/logout': logout,
     }, authRoutes));
   };
 

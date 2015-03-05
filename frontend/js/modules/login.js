@@ -30,9 +30,11 @@ module.exports = (function () {
   var m = require('mithril');
   var ld = require('lodash');
   // Local dependencies
-  var layout = require('./layout.js');
   var conf = require('../configuration.js');
+  var auth = require('../auth.js');
   var LOG = conf.LANG.LOGIN;
+  var notif = require('./notification.js');
+  var layout = require('./layout.js');
 
   var login = {};
 
@@ -40,18 +42,43 @@ module.exports = (function () {
   * ## Controller
   *
   * Used for module state and actions.
+  * And user submission.
   *
   */
 
   login.controller = function () {
     var c = {};
-    c.valid = {
-      login: m.prop(true),
-      password: m.prop(true)
-    };
-    c.isValid = function (e) {
+    c.data = { login: m.prop(), password: m.prop() };
+    c.valid = { login: m.prop(true), password: m.prop(true) };
+    /**
+    * `handleInput` private local function takes a DOM Event , fixes the real
+    * value to the current data state and uses HTML5 Validation API to ensure
+    * input is valid or noit.
+    */
+    c.handleInput = function (e) {
       var field = e.target.getAttribute('name');
       c.valid[field](e.target.checkValidity());
+      c.data[field](e.target.value);
+    };
+    /**
+    * `submit` internal calls the public API to login with given login and
+    * password. It displays errors if needed or success and fixes local cached
+    * data for the user.
+    */
+    c.submit = function (e) {
+      e.preventDefault();
+      m.request({
+        method: 'POST',
+        url: conf.URLS.LOGIN,
+        data: c.data
+      }).then(function (resp) {
+        auth.isAuthenticated(true);
+        auth.userInfo(resp.user);
+        notif.success({ body: LOG.AUTH.SUCCESS });
+        m.route('/');
+      }, function (err) {
+        notif.error({ body: err.error });
+      });
     };
     return c;
   };
@@ -96,8 +123,7 @@ module.exports = (function () {
         name: 'login',
         placeholder: LOG.LOGIN,
         required: true,
-        oninput: c.isValid,
-        onblur: c.isValid
+        oninput: c.handleInput
       }),
       view.icon.login(c.valid.login)
     ];
@@ -117,20 +143,20 @@ module.exports = (function () {
         minlength: passMin,
         maxlength: passMax,
         pattern: '.{' + passMin + ',' + passMax + '}',
-        oninput: c.isValid,
-        onblur: c.isValid
+        oninput: c.handleInput
       }),
       view.icon.password(c.valid.password),
     ];
   };
 
   view.form = function (c) {
-    return m('form.block', [
+    return m('form.block', { id: 'login-form', onsubmit: c.submit }, [
       m('fieldset.login-main.block-group', ld.flatten([
         m('legend', LOG.MYPADS_ACCOUNT),
         view.field.login(c),
         view.field.password(c),
-        m('input.login-main.send.block', { type: 'submit', value: LOG.LOGIN })
+        m('input.login-main.send.block',
+          { form: 'login-form', type: 'submit', value: LOG.LOGIN })
       ])),
     ]);
   };

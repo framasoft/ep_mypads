@@ -51,42 +51,55 @@ module.exports = (function () {
     var _routes = {
       auth: [
         {
-          route: '/mypads/',
+          route: '/mypads',
           cls: ['menu-main', 'icon-doc-text' ],
           txt: LANG.MENU.PAD
         },
         {
-          route: '/mybookmarks/',
-          cls: ['menu-main', 'icon-bookmarks' ],
+          route: '/mybookmarks',
+          icon: 'bookmarks',
           txt: LANG.MENU.BOOKMARK
         },
         {
-          route: '/myprofile/',
-          cls: ['menu-main', 'icon-user' ],
+          route: '/myprofile',
+          icon: 'user',
           txt: LANG.MENU.PROFILE
         },
         {
-          cls: ['menu-main', 'icon-tools' ],
-          txt: LANG.MENU.ADMINS
+          route: '/admin',
+          icon: 'tools',
+          txt: LANG.MENU.ADMIN
+        },
+        {
+          route: '/logout',
+          icon: 'logout',
+          txt: LANG.MENU.LOGOUT
         }
       ],
       unauth: [
         {
-          route: '/login/',
-          cls: ['menu-main', 'icon-login' ],
+          route: '/login',
+          icon: 'login',
           txt: LANG.LOGIN.LOGIN
         },
         {
-          route: '/subscribe/',
-          cls: ['menu-main', 'icon-thumbs-up' ],
+          route: '/subscribe',
+          icon: 'thumbs-up',
           txt: LANG.LOGIN.SUBSCRIBE
         }
       ]
     };
     var activeRoute = function (r) {
-      if (m.route() === r.route) { r.cls.push('is-active'); }
-      return m('li', { class: r.cls.join(' ') }, [
-        m('a.menu-main', { href: r.route, config: m.route }, r.txt)
+      var liCls = (m.route() === r.route) ? ' is-active' : '';
+      return m('li', { class: 'menu-main' + liCls }, [
+        m('a.menu-main', {
+          class: 'menu-main',
+          href: r.route,
+          config: m.route
+        }, [
+          m('i', { class: 'icon-' + r.icon, title: r.txt }),
+          m('span.menu-main', r.txt)
+        ])
       ]);
     };
     if (auth.isAuthenticated()) {

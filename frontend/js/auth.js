@@ -30,5 +30,6 @@ module.exports = (function () {
 
   var auth = {};
   auth.isAuthenticated = m.prop(false);
+  auth.userInfo = m.prop();
   return auth;
 }).call(this);

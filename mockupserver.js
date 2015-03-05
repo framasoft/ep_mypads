@@ -15,20 +15,36 @@
 *  kind, either express or implied.  see the license for the
 *  specific language governing permissions and limitations
 *  under the license.
+*
+*  ## Description
+*
+*  Express server mockup for development purposes. It initializes all needed
+*  stuff for MyPads, except Etherpad itself and creates a first user.
 */
 
 (function () {
   'use strict';
 
-  var conf = require('./configuration.js');
+  var hooks = require('./hooks.js');
+  var storage = require('./storage.js');
   var api = require('./api.js');
+  var user = require('./model/user.js');
   var specCommon = require('./spec/backend/common.js');
 
   specCommon.mockupExpressServer();
   specCommon.reInitDatabase(function () {
-    conf.init(function () {
-      api.init(specCommon.express.app);
-      console.log('Mockup Server runs on port 8042');
+    hooks.init(null, null, function () {
+      storage.init(function () {
+        user.set({
+          login: 'parker',
+          password: 'lovesKubiak',
+          firstname: 'Parker',
+          lastname: 'Lewis'
+        }, function () {
+          api.init(specCommon.express.app);
+          console.log('Mockup Server runs on port 8042');
+        });
+      });
     });
   });
 

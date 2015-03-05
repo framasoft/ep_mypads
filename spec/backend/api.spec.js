@@ -145,7 +145,13 @@
               expect(err).toBeNull();
               expect(resp.statusCode).toBe(200);
               expect(body.success).toBeTruthy();
-              done();
+              rq.get(route + 'configuration/inexistent',
+                function (err, resp, body) {
+                  expect(err).toBeNull();
+                  expect(body.error).toMatch('must be authenticated');
+                  done();
+                }
+              );
             });
           });
         });

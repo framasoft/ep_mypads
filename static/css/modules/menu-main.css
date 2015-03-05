@@ -13,8 +13,10 @@ li.menu-main {
   font-weight: bold;
 }
 
-li.menu-main.is-active {
-  background-color: #8157c2;
+li.menu-main.is-active { background-color: #8157c2; }
+
+li.menu-main:hover, a.menu-main:focus {
+  background-color: #635182;
 }
 
 a.menu-main {

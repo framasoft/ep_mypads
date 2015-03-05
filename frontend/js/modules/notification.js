@@ -34,8 +34,6 @@ module.exports = (function () {
   var NOTIF = conf.LANG.NOTIFICATION;
 
   var notif = {};
-  window.notif = notif;
-  window.m = m;
 
   /**
   * ## Model

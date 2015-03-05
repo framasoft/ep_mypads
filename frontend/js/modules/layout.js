@@ -32,6 +32,7 @@ module.exports = (function () {
   var conf = require('../configuration.js');
   var LANG = conf.LANG;
   var auth = require('../auth.js');
+  var notif = require('./notification.js');
 
   var layout = {};
 
@@ -116,6 +117,7 @@ module.exports = (function () {
         m('section.block', main || ''),
         m('aside.block', aside || '')
       ]),
+      m('section.notification', notif.view(notif.controller())),
       m('footer.block', m('p', m.trust(LANG.GLOBAL.FOOTER)))
     ];
   };

@@ -17,6 +17,13 @@ module.exports = {
   ADMIN: {
     GLOBAL_SETTINGS: 'Global settings'
   },
+  NOTIFICATION: {
+    SUCCESS: 'Success',
+    INFO: 'Info',
+    ERROR: 'Erreur',
+    ERROR_UNEXPECTED: 'An unexpected error has raised. Please contact the administrator.',
+    WARNING: 'Warning'
+  },
   LOGIN: {
     FORM: 'Login form',
     ORSUB: '(or subscribe ?)',

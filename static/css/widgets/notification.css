@@ -1,0 +1,48 @@
+/* Notification Widget */
+
+/* Global styling */
+
+.notification {
+  z-index: 99;
+  cursor: pointer;
+}
+
+section.notification {
+  width: 20%;
+  position: fixed;
+  right: 1%;
+  bottom: 2%;
+}
+
+div.notification {
+  margin: 0.3em;
+  padding: 0.8em;
+  border: 0.1em solid;
+  border-radius: 0.3em;
+  background-color: #e0e0e0;
+  animation: 1s fadein;
+  -moz-animation: 1s fadein;
+  -webkit-animation: 1s fadein;
+}
+
+div.notification.success { background-color: #b3cc66; }
+div.notification.info { background-color: #83c9d6; }
+div.notification.warning { background-color: #ffcf4f; }
+div.notification.error { background-color: #f69988; }
+
+header.notification.block {
+  color: inherit;
+  background-color: inherit;
+  font-weight: bold;
+  width: 95%;
+}
+
+p.notification { font-size: 0.8em; }
+
+i.notification.close.block { width: 5%; }
+
+/* Animation */
+
+@keyframes fadein { from { opacity: 0 } to { opacity: 1 } }
+@-moz-keyframes fadein { from { opacity: 0 } to { opacity: 1 } }
+@-webkit-keyframes fadein { from { opacity: 0 } to { opacity: 1 } }

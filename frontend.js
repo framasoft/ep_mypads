@@ -27,8 +27,10 @@
 */
 
 (function () {
+  var css = require('./frontend/js/css.js');
   var conf = require('./frontend/js/configuration.js');
   var route = require('./frontend/js/route.js');
+  css.init();
   conf.init();
   route.init();
 }).call(this);

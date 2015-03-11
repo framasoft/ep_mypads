@@ -36,6 +36,25 @@ module.exports = (function () {
   var notif = {};
 
   /**
+  * ## CSS Style
+  *
+  * Here are local styles.
+  */
+
+  notif.css = {
+    global: {},
+    blocks: {
+      header: {},
+      paragraph: {},
+      icon: {}
+    },
+    success: {},
+    info: {},
+    warning: {},
+    error: {}
+  };
+
+  /**
   * ## Model
   *
   * `model` contains a list of items id -> item and an autoincrement id.

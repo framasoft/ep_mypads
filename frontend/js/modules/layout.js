@@ -31,10 +31,31 @@ module.exports = (function () {
   var ld = require('lodash');
   var conf = require('../configuration.js');
   var LANG = conf.LANG;
+  var css = require('../css.js');
   var auth = require('../auth.js');
   var notif = require('./notification.js');
 
   var layout = {};
+
+
+  /**
+  * ## CSS local styles
+  *
+  * Here are essentially menu styles.
+  */
+
+  layout.css = {};
+  layout.css.mainMenu = {
+    nav: { textAlign: 'right' },
+    ul: { listStyleType: 'none' },
+    li: {
+      padding: '1em',
+      display: 'inline',
+      fontWeight: 'bold'
+    },
+    liIsActive: { backgroundColor: css.colors.purpleMid },
+    hover: {},
+  };
 
   var views = {};
 
@@ -52,7 +73,7 @@ module.exports = (function () {
       auth: [
         {
           route: '/mypads',
-          cls: ['menu-main', 'icon-doc-text' ],
+          icon: 'doc-text',
           txt: LANG.MENU.PAD
         },
         {

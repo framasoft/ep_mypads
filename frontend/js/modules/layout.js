@@ -44,6 +44,7 @@ module.exports = (function () {
   * Here are essentially menu styles.
   */
 
+  var colors = css.vars.colors;
   layout.css = {};
   layout.css.mainMenu = {
     nav: { textAlign: 'right' },
@@ -53,8 +54,14 @@ module.exports = (function () {
       display: 'inline',
       fontWeight: 'bold'
     },
-    liIsActive: { backgroundColor: css.colors.purpleMid },
-    hover: {},
+    a: {
+      background: 'none',
+      textDecoration: 'none'
+    },
+    span: { display: 'none' },
+    spanLarge: { display: 'inherit' },
+    itemActive: { backgroundColor: css.vars.colors.purplemid },
+    itemFocus: { backgroundColor: css.vars.colors.purpledark },
   };
 
   var views = {};
@@ -110,16 +117,25 @@ module.exports = (function () {
         }
       ]
     };
+    var mcss = layout.css.mainMenu;
+    var largetablet = css.medias.breaks.largetablet;
     var activeRoute = function (r) {
-      var liCls = (m.route() === r.route) ? ' is-active' : '';
-      return m('li', { class: 'menu-main' + liCls }, [
-        m('a.menu-main', {
-          class: 'menu-main',
+      var liStyle = ld.clone(mcss.li);
+      liStyle.backgroundColor = (m.route() === r.route) ? colors.purplemid : '';
+      var spanStyle = largetablet.matches ? mcss.spanLarge : mcss.span;
+      return m('li', {
+        style: liStyle,
+        onmouseover: function () {
+          liStyle.backgroundColor = colors.purpledark;
+        },
+      }, [
+        m('a', {
+          style: mcss.a,
           href: r.route,
           config: m.route
         }, [
           m('i', { class: 'icon-' + r.icon, title: r.txt }),
-          m('span.menu-main', r.txt)
+          m('span', { style: spanStyle }, r.txt)
         ])
       ]);
     };
@@ -143,8 +159,8 @@ module.exports = (function () {
     return [
       m('header.block', [
         m('h1', conf.SERVER.title),
-        m('nav.menu-main', [
-          m('ul.menu-main', views.menuMain())
+        m('nav', { style: layout.css.mainMenu.nav }, [
+          m('ul', { style: layout.css.mainMenu.ul }, views.menuMain())
         ])
       ]),
       m('main.block', [

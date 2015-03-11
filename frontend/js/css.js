@@ -27,6 +27,9 @@
 
 module.exports = (function () {
 
+  // Dependencies
+  var m = require('mithril');
+
   var css = {};
 
   /*
@@ -45,6 +48,7 @@ module.exports = (function () {
     dark: '#333333',
     purplemid: '#8157c2',
     purple : '#6a5687',
+    purpledark: '#635182',
     red: '#cc2d18',
     yellowlight: '#fff8e3',
     yellowdark: '#c47e1b',
@@ -171,7 +175,6 @@ module.exports = (function () {
         ruleStr += r + ': ' + v + '; ';
       }
       ruleStr = selector + ' { ' + ruleStr + '}';
-      console.log(ruleStr);
       sheet.insertRule(ruleStr, sheet.cssRules.length);
     }
   };
@@ -214,6 +217,7 @@ module.exports = (function () {
     for (r in css.rulesRaw) {
       sheet.insertRule(css.rulesRaw[r], sheet.cssRules.length);
     }
+    // TODO: only m.redraws ?
     var listener = function (name) {
       return function (m) {
         if (m.matches) {
@@ -223,8 +227,11 @@ module.exports = (function () {
         }
       };
     };
-    css.medias.breaks.desktop.addListener(listener('desktop'));
-    css.medias.breaks.tablet.addListener(listener('tablet'));
+    //css.medias.breaks.desktop.addListener(listener('desktop'));
+    //css.medias.breaks.tablet.addListener(listener('tablet'));
+    for (var name in css.medias.breaks) {
+      css.medias.breaks[name].addListener(m.redraw);
+    }
   };
 
   return css;

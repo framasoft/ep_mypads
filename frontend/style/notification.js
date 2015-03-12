@@ -90,14 +90,6 @@ module.exports = (function () {
     notif.sheet = utils.fn.attach(notif.rules, notif.responsive);
   };
 
-  /**
-  * ## detach
-  *
-  * Detaching already attached local styles, performance reasons
-  */
-
-  notif.detach = utils.fn.detach.bind(null, notif.sheet);
-
   return notif;
 
 }).call(this);

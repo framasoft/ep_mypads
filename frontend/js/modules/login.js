@@ -37,6 +37,7 @@ module.exports = (function () {
   var notif = require('./notification.js');
   var layout = require('./layout.js');
   var tooltipStyle = require('../../style/tooltip.js');
+  var stylesDetach = require('../../style/utils.js').fn.detach;
   var classes = { tooltip: tooltipStyle.sheet.main.classes };
 
   var login = {};
@@ -52,8 +53,8 @@ module.exports = (function () {
   login.controller = function () {
     loginStyle.attach();
     classes.login = loginStyle.sheet.main.classes;
-    this.onunload = loginStyle.detach;
     var c = {};
+    c.onunload = stylesDetach.bind(null, loginStyle.sheet);
     c.data = { login: m.prop(), password: m.prop() };
     c.valid = { login: m.prop(true), password: m.prop(true) };
     /**

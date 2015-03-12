@@ -100,14 +100,6 @@ module.exports = (function () {
     login.sheet = utils.fn.attach(login.rules, login.responsive);
   };
 
-  /**
-  * ## detach
-  *
-  * Detaching already attached local styles, performance reasons
-  */
-
-  login.detach = utils.fn.detach.bind(null, login.sheet);
-
   return login;
 
 }).call(this);

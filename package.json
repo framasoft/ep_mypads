@@ -28,16 +28,19 @@
   },
   "devDependencies": {
     "browserify": "^9.0.3",
-    "watchify": "^2.4.0",
     "docker": "^0.2.14",
     "express": "^3.19.2",
     "jasmine": "^2.2.0",
     "jshint": "^2.6.0",
+    "jss": "^1.0.7",
+    "jss-extend": "^0.1.6",
+    "jss-nested": "^0.1.7",
     "mithril": "^0.1.30",
     "normalize.css": "^3.0.2",
     "request": "^2.53.0",
     "tough-cookie": "^0.12.1",
-    "ueberDB": "^0.2.11"
+    "ueberDB": "^0.2.11",
+    "watchify": "^2.4.0"
   },
   "scripts": {
     "frontend:build": "./node_modules/browserify/bin/cmd.js -o static/js/mypads.js frontend.js",

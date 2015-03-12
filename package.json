@@ -33,7 +33,6 @@
     "jasmine": "^2.2.0",
     "jshint": "^2.6.0",
     "jss": "^1.0.7",
-    "jss-extend": "^0.1.6",
     "jss-nested": "^0.1.7",
     "mithril": "^0.1.30",
     "normalize.css": "^3.0.2",

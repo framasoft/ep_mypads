@@ -29,16 +29,13 @@ module.exports = (function () {
 
   // Dependencies
   var jss = require('jss');
-  var jssExtend = require('jss-extend');
-  jss.use(jssExtend);
   var jssNested = require('jss-nested');
   jss.use(jssNested);
   var vars = require('./vars.js');
-  var media = require('./media.js');
-  media.init();
+  var tooltip = require('./tooltip.js');
+  var notif = require('./notification.js');
 
-
-  var global = {};
+  var layout = {};
 
   /**
   * ## rules
@@ -46,7 +43,7 @@ module.exports = (function () {
   * All global CSS rules.
   */
 
-  global.rules = {
+  layout.rules = {
     'main.block, aside.block': { 'background-color': vars.color.lightest },
     'aside.block, main.block > section.block': {
       'width': '100%',
@@ -92,38 +89,60 @@ module.exports = (function () {
       'border-right-width': '0.3em'
     },
     'input:invalid': { 'border-color': vars.color.red },
-    'input.send': {
+    'input[type=submit]': {
       'font-weight': 'bold',
       'color': vars.color.yellowlight,
       'background': vars.color.yellowdarkest
     },
-    'input.send:hover, input.send:focus': {
+    'input[type=submit]:hover, input[type=submit]:focus': {
       'background': vars.color.yellowdark
-    }
+    },
+    'i.icon-alert': { 'color': vars.color.red }
   };
 
-  global.responsive = {
+  /**
+  * ## Animations
+  */
+
+  var fadeIn = { from: { 'opacity': 0 }, to: { 'opacity': 1 } };
+  layout.rules['@keyframes fadein'] = { 'from': fadeIn.from, 'to': fadeIn.to };
+  layout.rules['@-moz-keyframes fadein'] = {
+    'from': fadeIn.from,
+    'to': fadeIn.to
+  };
+  layout.rules['@-webkit-keyframes fadein'] = {
+    'from': fadeIn.from,
+    'to': fadeIn.to
+  };
+
+  /**
+  * ## Responsiveness
+  */
+
+  layout.responsive = {
     'main.block > section.block': { 'width': '70%' },
     'main.block > aside.block': { 'width': '30%' }
   };
 
   /**
-  * ## init
+  * ## attach
   *
   * This function attaches the global stylesheet to the application.
   * It uses classic css tags and not the named ones.
   */
 
-  global.init = function () {
-    global.sheet = {
-      main: jss.createStyleSheet(global.rules, { named: false }).attach(),
-      desktop: jss.createStyleSheet(global.responsive, {
+  layout.attach = function () {
+    layout.sheet = {
+      main: jss.createStyleSheet(layout.rules, { named: false }).attach(),
+      desktop: jss.createStyleSheet(layout.responsive, {
         media: '(min-width: 60em)',
         named: false
       }).attach()
     };
+    tooltip.attach();
+    notif.attach();
   };
 
-  return global;
+  return layout;
 
 }).call(this);

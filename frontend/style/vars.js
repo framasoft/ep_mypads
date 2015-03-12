@@ -40,13 +40,20 @@ module.exports = (function () {
     lightgrey: '#e0e0e0',
     grey: '#949494',
     dark: '#333333',
+    purplelight: '#d3c5e8',
+    purplemidlight: '#9876cc',
     purplemid: '#8157c2',
     purple: '#6a5687',
     purpledark: '#635182',
+    purpledarkest: '#3e3363',
     red: '#cc2d18',
+    redlight: '#f9bdbb',
     yellowlight: '#fff8e3',
+    yellow: '#ffcf4f',
     yellowdark: '#c47e1b',
-    yellowdarkest: '#a15014'
+    yellowdarkest: '#a15014',
+    green: '#b3cc66',
+    bluelight: '#83c9d6'
   };
 
   /*

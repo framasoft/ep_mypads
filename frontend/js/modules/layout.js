@@ -32,7 +32,9 @@ module.exports = (function () {
   var conf = require('../configuration.js');
   var menuStyle = require('../../style/menu-main.js');
   menuStyle.attach();
-  var classes = menuStyle.sheet.default.classes;
+  var classes = menuStyle.sheet.main.classes;
+  var notifStyle = require('../../style/notification.js');
+  var notifCls = notifStyle.sheet.main.classes;
   var LANG = conf.LANG;
   var auth = require('../auth.js');
   var notif = require('./notification.js');
@@ -49,7 +51,7 @@ module.exports = (function () {
   layout.controller = function () {
     menuStyle.attach();
     this.onunload(menuStyle.detach);
-    return { classes: menuStyle.sheet.default.classes };
+    return { classes: menuStyle.sheet.main.classes };
   };
 
   var views = {};
@@ -147,7 +149,7 @@ module.exports = (function () {
         m('section.block', main || ''),
         m('aside.block', aside || '')
       ]),
-      m('section.notification', notif.view(notif.controller())),
+      m('section', { class: notifCls.section }, notif.view(notif.controller())),
       m('footer.block', m('p', m.trust(LANG.GLOBAL.FOOTER)))
     ];
   };

@@ -31,10 +31,13 @@ module.exports = (function () {
   var ld = require('lodash');
   // Local dependencies
   var conf = require('../configuration.js');
+  var loginStyle = require('../../style/login.js');
   var auth = require('../auth.js');
   var LOG = conf.LANG.LOGIN;
   var notif = require('./notification.js');
   var layout = require('./layout.js');
+  var tooltipStyle = require('../../style/tooltip.js');
+  var classes = { tooltip: tooltipStyle.sheet.main.classes };
 
   var login = {};
 
@@ -47,13 +50,16 @@ module.exports = (function () {
   */
 
   login.controller = function () {
+    loginStyle.attach();
+    classes.login = loginStyle.sheet.main.classes;
+    this.onunload = loginStyle.detach;
     var c = {};
     c.data = { login: m.prop(), password: m.prop() };
     c.valid = { login: m.prop(true), password: m.prop(true) };
     /**
     * `handleInput` private local function takes a DOM Event , fixes the real
     * value to the current data state and uses HTML5 Validation API to ensure
-    * input is valid or noit.
+    * input is valid or not.
     */
     c.handleInput = function (e) {
       var field = e.target.getAttribute('name');
@@ -94,10 +100,13 @@ module.exports = (function () {
   view.icon = {};
 
   view.icon.login = function (isValid) {
-    var icls = isValid() ? 'icon-info-circled' : 'icon-alert';
+    var icls = isValid() ? ['icon-info-circled'] : ['icon-alert'];
+    icls.push(classes.tooltip.global);
+    icls.push(classes.login.i);
+    icls.push('block');
     var msg = isValid() ? LOG.INFO.LOGIN : LOG.ERR.LOGIN;
     return m('i', {
-      class: 'login-main tooltip block ' + icls,
+      class: icls.join(' '),
       'data-msg': msg
     });
   };
@@ -105,9 +114,12 @@ module.exports = (function () {
   view.icon.password = function (isValid) {
     var infoPass = LOG.INFO.PASSWORD_BEGIN + conf.SERVER.passwordMin +
     ' and ' + conf.SERVER.passwordMax + LOG.INFO.PASSWORD_END;
-    var icls = isValid() ? 'icon-info-circled' : 'icon-alert';
+    var icls = isValid() ? ['icon-info-circled'] : ['icon-alert'];
+    icls.push(classes.tooltip.global);
+    icls.push(classes.login.i);
+    icls.push('block');
     return m('i', {
-      class: 'login-main tooltip block ' + icls,
+      class: icls.join(' '),
       'data-msg': infoPass
     });
   };
@@ -116,9 +128,12 @@ module.exports = (function () {
 
   view.field.login = function (c) {
     return [
-      m('label.login-main.block', { for: 'login' }, LOG.USERNAME),
+      m('label', {
+        class: 'block ' + classes.login.label,
+        for: 'login'
+      }, LOG.USERNAME),
       m('input', {
-        class: 'login-main block',
+        class: 'block ' + classes.login.input,
         type: 'text',
         name: 'login',
         placeholder: LOG.LOGIN,
@@ -133,9 +148,12 @@ module.exports = (function () {
     var passMin = conf.SERVER.passwordMin;
     var passMax = conf.SERVER.passwordMax;
     return [
-      m('label.login-main.block', { for: 'password' }, LOG.PASSWORD),
+      m('label', {
+        class: 'block ' + classes.login.label,
+        for: 'password'
+      }, LOG.PASSWORD),
       m('input', {
-        class: 'login-main block',
+        class: 'block ' + classes.login.input,
         type: 'password',
         name: 'password',
         placeholder: LOG.UNDEF,
@@ -150,31 +168,44 @@ module.exports = (function () {
   };
 
   view.form = function (c) {
-    return m('form.block', { id: 'login-form', onsubmit: c.submit }, [
-      m('fieldset.login-main.block-group', ld.flatten([
-        m('legend', LOG.MYPADS_ACCOUNT),
+    return m('form', {
+      id: 'login-form',
+      class: 'block ' + classes.login.form,
+      onsubmit: c.submit
+      }, [
+      m('fieldset.block-group', ld.flatten([
+        m('legend', { class: classes.login.legend }, LOG.MYPADS_ACCOUNT),
         view.field.login(c),
         view.field.password(c),
-        m('input.login-main.send.block',
-          { form: 'login-form', type: 'submit', value: LOG.LOGIN })
+        m('input', {
+          class: 'block ' + classes.login.inputSubmit,
+          form: 'login-form',
+          type: 'submit',
+          value: LOG.LOGIN
+        })
       ])),
     ]);
   };
 
   view.main = function (c) {
-    return m('section.login-main.block-group', [
-      m('h2.block', [
+    return m('section', { class: 'block-group ' + classes.login.section }, [
+      m('h2', { class: 'block ' + classes.login.h2 }, [
         m('span', LOG.FORM),
-        m('a.login-main', { href: '/subscribe', config: m.route }, LOG.ORSUB)
+        m('a', {
+          class: classes.login.a,
+          href: '/subscribe', config: m.route
+        }, LOG.ORSUB)
       ]),
       view.form(c)
     ]);
   };
 
   view.aside = function () {
-    return m('section.login-aside', [
-      m('h2.login-aside', conf.SERVER.title),
-      m('article.login-aside', m.trust(conf.SERVER.descr))
+    return m('section', { class: classes.login.sectionAside }, [
+      m('h2', { class: classes.login.h2Aside }, conf.SERVER.title),
+      m('article',
+        { class: classes.login.articleAside },
+        m.trust(conf.SERVER.descr))
     ]);
   };
 

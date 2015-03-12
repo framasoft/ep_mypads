@@ -1,5 +1,5 @@
 /**
-*  # Menu Main Style
+*  # Tooltip style
 *
 *  ## License
 *
@@ -28,36 +28,33 @@ module.exports = (function () {
   var utils = require('./utils.js');
   var vars = require('./vars.js');
 
-  var menuMain = {};
+  var tooltip = {};
 
   /**
   * ## rules
   *
-  * Local rules for the main menu
+  * Local rules for tooltips
   */
 
-  menuMain.rules = {};
-  var rules = menuMain.rules;
-  var itemFocused = { 'background-color': vars.color.purpledark };
-
-  rules.nav = { 'text-align': 'right' };
-  rules.ul = { 'list-style-type': 'none' };
-  rules.li = {
-    'padding': '1em',
-    'display': 'inline',
-    'font-weight': 'bold',
-    '&:hover': itemFocused
+  tooltip.rules = {};
+  var tooltipOn = {
+    'position': 'absolute',
+    'bottom': '1.5em',
+    'right': '0.1em',
+    'padding': '0.4em',
+    'width': '17em',
+    'color': vars.color.light,
+    'background-color': vars.color.dark,
+    'opacity': '0.9',
+    'border': '0.1em solid ' + vars.color.light,
+    'border-radius': '0.1em',
+    'font-size': '0.8em',
+    'content': 'attr(data-msg)'
   };
-
-  var link = { 'background': 'none', 'text-decoration': 'none' };
-  rules.a = link;
-  rules.a['&:link'] = link;
-  rules.a['&:focus'] = itemFocused;
-  rules.span = { 'display': 'none' };
-  rules.itemActive = { 'background-color': vars.color.purplemid };
-
-  menuMain.responsive = {
-    largetablet: { span: { 'display': 'inherit' } }
+  tooltip.rules.global = {
+    'position': 'relative',
+    '&:hover:after': tooltipOn,
+    '&:focus:after': tooltipOn
   };
 
   /**
@@ -66,8 +63,8 @@ module.exports = (function () {
   * Attach the local styles, plus all responsives variants
   */
 
-  menuMain.attach = function () {
-    menuMain.sheet = utils.fn.attach(menuMain.rules, menuMain.responsive);
+  tooltip.attach = function () {
+    tooltip.sheet = utils.fn.attach(tooltip.rules);
   };
 
   /**
@@ -76,8 +73,8 @@ module.exports = (function () {
   * Detaching already attached local styles, performance reasons
   */
 
-  menuMain.detach = utils.fn.detach.bind(null, menuMain.sheet);
+  tooltip.detach = utils.fn.detach.bind(null, tooltip.sheet);
 
-  return menuMain;
+  return tooltip;
 
 }).call(this);

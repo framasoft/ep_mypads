@@ -32,6 +32,8 @@ module.exports = (function () {
   // Local dependencies
   var conf = require('../configuration.js');
   var NOTIF = conf.LANG.NOTIFICATION;
+  var notifStyle = require('../../style/notification.js');
+  var classes = notifStyle.sheet.main.classes;
 
   var notif = {};
 
@@ -84,26 +86,25 @@ module.exports = (function () {
 
   notif.view = function (ctrl) {
     var keys = Object.keys(notif.model.items).sort();
-    return m('div', keys.map(function (id) {
+    return m('div', { class: classes.global }, keys.map(function (id) {
       var n = notif.model.items[id];
       ctrl.delayClose(id, n.timeout);
       var closeFn = ctrl.close.bind(ctrl, id, n.timeout);
-      var notifClass = ['notification'];
-      if (n.cls) { notifClass.push(n.cls); }
-      //if (n.icon) { notifClass.push('icon'); }
+      var notifClass = [classes.div];
+      if (n.cls) { notifClass.push(classes[n.cls]); }
       return m('div.block-group', {
         class: notifClass.join(' '),
         onclick: (n.click ? n.click : closeFn)
       }, [
-        m('header.notification.block', [
+        m('header', { class: 'block ' + classes.header }, [
           (n.icon ? m('i', { class: 'icon-' + n.icon }) : ''),
           m('span', n.title)
         ]),
-        m('i.block', {
-          class: 'notification close icon-cancel-circled',
+        m('i', {
+          class: 'block close icon-cancel-circled ' + classes.iclose,
           onclick: closeFn
         }),
-        m('p.notification.block', m.trust(n.body))
+        m('p', { class: 'block ' + classes.p }, m.trust(n.body))
       ]);
     }));
   };

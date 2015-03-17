@@ -1,5 +1,5 @@
 /**
-*  # Login module
+*  # Subscription module
 *
 *  ## License
 *
@@ -22,22 +22,20 @@
 *
 *  ## Description
 *
-*  This module contains the login markup.
+*  This module contains the subscription logic and markup.
 */
 
 module.exports = (function () {
-  // Global dependencies
+  // Dependencies
   var m = require('mithril');
-  // Local dependencies
+  // Local Dependencies
   var conf = require('../configuration.js');
-  var USER = conf.LANG.USER;
-  var auth = require('../auth.js');
   var form = require('../helpers/form.js');
-  var notif = require('./notification.js');
+  var USER = conf.LANG.USER;
   var layout = require('./layout.js');
   var user = require('./user.js');
 
-  var login = {};
+  var subscribe = {};
 
   /**
   * ## Controller
@@ -46,40 +44,16 @@ module.exports = (function () {
   * And user submission.
   *
   */
-
-  login.controller = function () {
+  subscribe.controller = function () {
     var c = user.controller();
     form.initFields(c, ['login', 'password']);
-
-    /**
-    * `submit` internal calls the public API to login with given login and
-    * password. It displays errors if needed or success and fixes local cached
-    * data for the user.
-    */
-
-    c.submit = function (e) {
-      e.preventDefault();
-      m.request({
-        method: 'POST',
-        url: conf.URLS.LOGIN,
-        data: c.data
-      }).then(function (resp) {
-        auth.isAuthenticated(true);
-        auth.userInfo(resp.user);
-        notif.success({ body: USER.AUTH.SUCCESS });
-        m.route('/');
-      }, function (err) {
-        notif.error({ body: err.error });
-      });
-    };
     return c;
   };
 
   /**
   * ## Views
   *
-  * `main`, `aside` views.
-  * `form`, `field` and `icon` views.
+  * `main` and `aside`, used with layout.
   */
 
   var view = {};
@@ -88,39 +62,41 @@ module.exports = (function () {
     var login = user.view.field.login(c);
     var password = user.view.field.password(c);
     return m('form', {
-      id: 'login-form',
-      class: 'block ' + c.classes.user.form,
-      onsubmit: c.submit
+      id: 'subscribe-form',
+      class: 'block ' + c.classes.user.form
       }, [
       m('fieldset.block-group', [
-        m('legend', { class: c.classes.user.legend }, USER.MYPADS_ACCOUNT),
+        m('legend', { class: c.classes.user.legend }, USER.MANDATORY_FIELDS),
         login.label, login.input, login.icon,
         password.label, password.input, password.icon,
-        m('input', {
-          class: 'block ' + c.classes.user.inputSubmit,
-          form: 'login-form',
-          type: 'submit',
-          value: USER.LOGIN
-        })
+        m('p', 'passwordConfirm')
       ]),
+      m('fieldset.block-group', [
+        m('legend', { class: c.classes.user.legendopt }, USER.OPTIONAL_FIELDS),
+        m('p', 'email'),
+        m('p', 'firstname'),
+        m('p', 'lastname'),
+        m('p', 'organization')
+      ]),
+      m('input', {
+        class: 'block ' + c.classes.user.inputSubmit,
+        form: 'subscribe-form',
+        type: 'submit',
+        value: USER.REGISTER
+      })
     ]);
   };
 
   view.main = function (c) {
     return m('section', { class: 'block-group ' + c.classes.user.section }, [
-      m('h2', { class: 'block ' + c.classes.user.h2 }, [
-        m('span', USER.FORM),
-        m('a', {
-          class: c.classes.user.a,
-          href: '/subscribe', config: m.route
-        }, USER.ORSUB)
-      ]),
+      m('h2', { class: 'block ' + c.classes.user.h2 }, USER.SUBSCRIBE),
       view.form(c)
     ]);
   };
 
-  login.view = function (c) {
+  subscribe.view = function (c) {
     return layout.view(view.main(c), user.view.aside(c));
   };
-  return login;
+
+  return subscribe;
 }).call(this);

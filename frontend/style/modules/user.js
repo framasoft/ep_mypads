@@ -29,6 +29,8 @@
 module.exports = (function () {
 
   // Dependencies
+  var m = require('mithril');
+  console.log(m.route());
   var utils = require('../utils.js');
   var vars = require('../vars.js');
 

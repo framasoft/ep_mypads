@@ -22,8 +22,8 @@
 *
 *  ## Description
 *
-*  This module contains common views for `login`, `subscribe` and `profile
-*  modules.`
+*  This module contains common functions for `login`, `subscribe` and `profile`
+*  modules.
 */
 
 module.exports = (function () {
@@ -32,12 +32,37 @@ module.exports = (function () {
   // Local dependencies
   var conf = require('../configuration.js');
   var USER = conf.LANG.USER;
+  var form = require('../helpers/form.js');
+  // Style dependencies
+  var userStyle = require('../../style/modules/user.js');
+  var tooltipStyle = require('../../style/tooltip.js');
+  var stylesDetach = require('../../style/utils.js').fn.detach;
 
-  var userView = {};
+  var user = {};
 
-  userView.icon = {};
+  /**
+  * ## Controller
+  */
 
-  userView.icon.login = function (c) {
+  user.controller = function () {
+    userStyle.attach();
+    var c = {};
+    c.classes = {
+      tooltip: tooltipStyle.sheet.main.classes,
+      user: userStyle.sheet.main.classes
+    };
+    c.onunload = stylesDetach.bind(null, userStyle.sheet);
+    return c;
+  };
+
+  /**
+  * ## View
+  */
+
+  user.view = {};
+  user.view.icon = {};
+
+  user.view.icon.login = function (c) {
     var icls = c.valid.login() ? ['icon-info-circled'] : ['icon-alert'];
     icls.push(c.classes.tooltip.global);
     icls.push(c.classes.user.i);
@@ -49,7 +74,7 @@ module.exports = (function () {
     });
   };
 
-  userView.icon.password = function (c) {
+  user.view.icon.password = function (c) {
     var infoPass = USER.INFO.PASSWORD_BEGIN + conf.SERVER.passwordMin +
     ' and ' + conf.SERVER.passwordMax + USER.INFO.PASSWORD_END;
     var icls = c.valid.password() ? ['icon-info-circled'] : ['icon-alert'];
@@ -62,9 +87,9 @@ module.exports = (function () {
     });
   };
 
-  userView.field = {};
+  user.view.field = {};
 
-  userView.field.login = function (c) {
+  user.view.field.login = function (c) {
     return {
       label: m('label', {
         class: 'block ' + c.classes.user.label,
@@ -76,13 +101,13 @@ module.exports = (function () {
         name: 'login',
         placeholder: USER.LOGIN,
         required: true,
-        oninput: c.handleInput
+        oninput: form.handleField.bind(null, c)
       }),
-      icon: userView.icon.login(c)
+      icon: user.view.icon.login(c)
     };
   };
 
-  userView.field.password = function (c) {
+  user.view.field.password = function (c) {
     var passMin = conf.SERVER.passwordMin;
     var passMax = conf.SERVER.passwordMax;
     return {
@@ -99,14 +124,14 @@ module.exports = (function () {
         minlength: passMin,
         maxlength: passMax,
         pattern: '.{' + passMin + ',' + passMax + '}',
-        oninput: c.handleInput
+        oninput: form.handleField.bind(null, c)
       }),
-      icon: userView.icon.password(c)
+      icon: user.view.icon.password(c)
     };
   };
 
 
-  userView.aside = function (c) {
+  user.view.aside = function (c) {
     return m('section', { class: c.classes.user.sectionAside }, [
       m('h2', { class: c.classes.user.h2Aside }, conf.SERVER.title),
       m('article',
@@ -115,6 +140,6 @@ module.exports = (function () {
     ]);
   };
 
-  return userView;
+  return user;
 
 }).call(this);

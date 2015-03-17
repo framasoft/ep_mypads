@@ -36,6 +36,7 @@ module.exports = (function () {
   var home = require('./modules/home.js');
   var login = require('./modules/login.js');
   var logout = require('./modules/logout.js');
+  var subscribe = require('./modules/subscribe.js');
   var admin = require('./modules/admin.js');
 
   var route = { model: {} };
@@ -60,6 +61,7 @@ module.exports = (function () {
       '/': home,
       '/login': login,
       '/logout': logout,
+      '/subscribe': subscribe
     }, authRoutes));
   };
 

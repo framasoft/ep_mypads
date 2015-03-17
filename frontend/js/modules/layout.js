@@ -30,7 +30,7 @@ module.exports = (function () {
   var m = require('mithril');
   var ld = require('lodash');
   var conf = require('../configuration.js');
-  var menuStyle = require('../../style/menu-main.js');
+  var menuStyle = require('../../style/modules/menu-main.js');
   menuStyle.attach();
   var classes = menuStyle.sheet.main.classes;
   var notifStyle = require('../../style/notification.js');
@@ -98,12 +98,12 @@ module.exports = (function () {
         {
           route: '/login',
           icon: 'login',
-          txt: LANG.LOGIN.LOGIN
+          txt: LANG.USER.LOGIN
         },
         {
           route: '/subscribe',
           icon: 'thumbs-up',
-          txt: LANG.LOGIN.SUBSCRIBE
+          txt: LANG.USER.SUBSCRIBE
         }
       ]
     };

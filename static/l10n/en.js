@@ -25,9 +25,11 @@ module.exports = {
     ERROR_UNEXPECTED: 'An unexpected error has raised. Please contact the administrator.',
     WARNING: 'Warning'
   },
-  LOGIN: {
+  USER: {
     FORM: 'Login',
     ORSUB: ' (or subscribe ?)',
+    MANDATORY_FIELDS: 'Mandatory fields',
+    OPTIONAL_FIELDS: 'Optional fields',
     MYPADS_ACCOUNT: 'MyPads account',
     SUBSCRIBE: 'Subscribe',
     USERNAME: 'Username',
@@ -35,6 +37,7 @@ module.exports = {
     PASSWORD: 'Password',
     UNDEF: '********',
     OK: 'Ok',
+    REGISTER: 'Register',
     INFO: {
       LOGIN: 'The unique login you choose when you have subscribed',
       PASSWORD_BEGIN: 'Must be between ',

@@ -25,8 +25,8 @@
 module.exports = (function () {
 
   // Dependencies
-  var utils = require('./utils.js');
-  var vars = require('./vars.js');
+  var utils = require('../utils.js');
+  var vars = require('../vars.js');
 
   var menuMain = {};
 

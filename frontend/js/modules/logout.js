@@ -30,7 +30,7 @@ module.exports = (function () {
   var m = require('mithril');
   var conf = require('../configuration.js');
   var auth = require('../auth.js');
-  var LOG = conf.LANG.LOGIN;
+  var LOG = conf.LANG.USER;
   var notif = require('./notification.js');
 
   var logout = {

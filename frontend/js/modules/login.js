@@ -28,17 +28,17 @@
 module.exports = (function () {
   // Global dependencies
   var m = require('mithril');
-  var ld = require('lodash');
   // Local dependencies
   var conf = require('../configuration.js');
-  var loginStyle = require('../../style/login.js');
+  var USER = conf.LANG.USER;
   var auth = require('../auth.js');
-  var LOG = conf.LANG.LOGIN;
   var notif = require('./notification.js');
   var layout = require('./layout.js');
+  var userView = require('../views/user.js');
+  // Style dependencies
+  var userStyle = require('../../style/modules/user.js');
   var tooltipStyle = require('../../style/tooltip.js');
   var stylesDetach = require('../../style/utils.js').fn.detach;
-  var classes = { tooltip: tooltipStyle.sheet.main.classes };
 
   var login = {};
 
@@ -51,10 +51,13 @@ module.exports = (function () {
   */
 
   login.controller = function () {
-    loginStyle.attach();
-    classes.login = loginStyle.sheet.main.classes;
+    userStyle.attach();
     var c = {};
-    c.onunload = stylesDetach.bind(null, loginStyle.sheet);
+    c.classes = {
+      tooltip: tooltipStyle.sheet.main.classes,
+      user: userStyle.sheet.main.classes
+    };
+    c.onunload = stylesDetach.bind(null, userStyle.sheet);
     c.data = { login: m.prop(), password: m.prop() };
     c.valid = { login: m.prop(true), password: m.prop(true) };
     /**
@@ -81,7 +84,7 @@ module.exports = (function () {
       }).then(function (resp) {
         auth.isAuthenticated(true);
         auth.userInfo(resp.user);
-        notif.success({ body: LOG.AUTH.SUCCESS });
+        notif.success({ body: USER.AUTH.SUCCESS });
         m.route('/');
       }, function (err) {
         notif.error({ body: err.error });
@@ -98,120 +101,44 @@ module.exports = (function () {
   */
 
   var view = {};
-  view.icon = {};
-
-  view.icon.login = function (isValid) {
-    var icls = isValid() ? ['icon-info-circled'] : ['icon-alert'];
-    icls.push(classes.tooltip.global);
-    icls.push(classes.login.i);
-    icls.push('block');
-    var msg = isValid() ? LOG.INFO.LOGIN : LOG.ERR.LOGIN;
-    return m('i', {
-      class: icls.join(' '),
-      'data-msg': msg
-    });
-  };
-
-  view.icon.password = function (isValid) {
-    var infoPass = LOG.INFO.PASSWORD_BEGIN + conf.SERVER.passwordMin +
-    ' and ' + conf.SERVER.passwordMax + LOG.INFO.PASSWORD_END;
-    var icls = isValid() ? ['icon-info-circled'] : ['icon-alert'];
-    icls.push(classes.tooltip.global);
-    icls.push(classes.login.i);
-    icls.push('block');
-    return m('i', {
-      class: icls.join(' '),
-      'data-msg': infoPass
-    });
-  };
-
-  view.field = {};
-
-  view.field.login = function (c) {
-    return [
-      m('label', {
-        class: 'block ' + classes.login.label,
-        for: 'login'
-      }, LOG.USERNAME),
-      m('input', {
-        class: 'block ' + classes.login.input,
-        type: 'text',
-        name: 'login',
-        placeholder: LOG.LOGIN,
-        required: true,
-        oninput: c.handleInput
-      }),
-      view.icon.login(c.valid.login)
-    ];
-  };
-
-  view.field.password = function (c) {
-    var passMin = conf.SERVER.passwordMin;
-    var passMax = conf.SERVER.passwordMax;
-    return [
-      m('label', {
-        class: 'block ' + classes.login.label,
-        for: 'password'
-      }, LOG.PASSWORD),
-      m('input', {
-        class: 'block ' + classes.login.input,
-        type: 'password',
-        name: 'password',
-        placeholder: LOG.UNDEF,
-        required: true,
-        minlength: passMin,
-        maxlength: passMax,
-        pattern: '.{' + passMin + ',' + passMax + '}',
-        oninput: c.handleInput
-      }),
-      view.icon.password(c.valid.password),
-    ];
-  };
 
   view.form = function (c) {
+    var login = userView.field.login(c);
+    var password = userView.field.password(c);
     return m('form', {
       id: 'login-form',
-      class: 'block ' + classes.login.form,
+      class: 'block ' + c.classes.user.form,
       onsubmit: c.submit
       }, [
-      m('fieldset.block-group', ld.flatten([
-        m('legend', { class: classes.login.legend }, LOG.MYPADS_ACCOUNT),
-        view.field.login(c),
-        view.field.password(c),
+      m('fieldset.block-group', [
+        m('legend', { class: c.classes.user.legend }, USER.MYPADS_ACCOUNT),
+        login.label, login.input, login.icon,
+        password.label, password.input, password.icon,
         m('input', {
-          class: 'block ' + classes.login.inputSubmit,
+          class: 'block ' + c.classes.user.inputSubmit,
           form: 'login-form',
           type: 'submit',
-          value: LOG.LOGIN
+          value: USER.LOGIN
         })
-      ])),
+      ]),
     ]);
   };
 
   view.main = function (c) {
-    return m('section', { class: 'block-group ' + classes.login.section }, [
-      m('h2', { class: 'block ' + classes.login.h2 }, [
-        m('span', LOG.FORM),
+    return m('section', { class: 'block-group ' + c.classes.user.section }, [
+      m('h2', { class: 'block ' + c.classes.user.h2 }, [
+        m('span', USER.FORM),
         m('a', {
-          class: classes.login.a,
+          class: c.classes.user.a,
           href: '/subscribe', config: m.route
-        }, LOG.ORSUB)
+        }, USER.ORSUB)
       ]),
       view.form(c)
     ]);
   };
 
-  view.aside = function () {
-    return m('section', { class: classes.login.sectionAside }, [
-      m('h2', { class: classes.login.h2Aside }, conf.SERVER.title),
-      m('article',
-        { class: classes.login.articleAside },
-        m.trust(conf.SERVER.descr))
-    ]);
-  };
-
   login.view = function (c) {
-    return layout.view(view.main(c), view.aside());
+    return layout.view(view.main(c), userView.aside(c));
   };
   return login;
 }).call(this);

@@ -19,7 +19,7 @@
 
 (function () {
   'use strict';
-  var ld = require('lodash');
+  var und = require('underscore');
   var specCommon = require('./common.js');
   var user = require('../../model/user.js');
   var auth = require('../../auth.js');
@@ -73,7 +73,7 @@
 
       it('should not auth if user does not exist', function (done) {
         auth.fn.localFn('inexistent', 'none', function (err) {
-          expect(ld.isError(err)).toBeTruthy();
+          expect(und.isError(err)).toBeTruthy();
           expect(err).toMatch('user not found');
           done();
         });
@@ -81,7 +81,7 @@
 
       it('should not auth if password does not match', function (done) {
         auth.fn.localFn(params.login, 'anotherOne', function (err, res) {
-          expect(ld.isError(err)).toBeTruthy();
+          expect(und.isError(err)).toBeTruthy();
           expect(err).toMatch('password is not correct');
           expect(res).toBeFalsy();
           done();
@@ -92,11 +92,11 @@
         auth.fn.localFn(params.login, params.password,
           function (err, res) {
             expect(err).toBeNull();
-            expect(ld.isObject(res)).toBeTruthy();
+            expect(und.isObject(res)).toBeTruthy();
             expect(res.login).toBe(params.login);
             expect(res.firstname).toBe(params.firstname);
             expect(res.lastname).toBe(params.lastname);
-            expect(ld.isString(res.password.hash)).toBeTruthy();
+            expect(und.isString(res.password.hash)).toBeTruthy();
             done();
           }
         );

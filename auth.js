@@ -29,7 +29,7 @@
 */
 
 // External dependencies
-var ld = require('lodash');
+var und = require('underscore');
 var express = require('express');
 var passport = require('passport');
 var localStrategy = require('passport-local').Strategy;
@@ -73,10 +73,10 @@ module.exports = (function () {
       usernameField: 'login',
       passwordField: 'password'
     }, function (login, password, callback) {
-      var isFS = function (s) { return (ld.isString(s) && !ld.isEmpty(s)); };
+      var isFS = function (s) { return (und.isString(s) && !und.isEmpty(s)); };
       if (!isFS(login)) { throw new TypeError('login must be a string'); }
       if (!isFS(password)) { throw new TypeError('password must be a string'); }
-      if (!ld.isFunction(callback)) {
+      if (!und.isFunction(callback)) {
         throw new TypeError('callback must be a function');
       }
       auth.fn.localFn.apply(this, arguments);

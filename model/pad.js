@@ -25,7 +25,7 @@ module.exports = (function () {
   'use strict';
 
   // Dependencies
-  var ld = require('lodash');
+  var und = require('underscore');
   var cuid = require('cuid');
   var common = require('./common.js');
   var storage = require('../storage.js');
@@ -83,16 +83,16 @@ module.exports = (function () {
   pad.fn.assignProps = function (params) {
     var p = params;
     var u = { name: p.name, group: p.group };
-    if (p.visibility === 'restricted' && ld.isArray(p.users)) {
-      u.users = ld.filter(p.users, ld.isString);
+    if (p.visibility === 'restricted' && und.isArray(p.users)) {
+      u.users = und.filter(p.users, und.isString);
     } else {
       u.users = [];
     }
     var vVal = ['restricted', 'private', 'public'];
     var v = p.visibility;
-    u.visibility = (ld.isString(v) && ld.includes(vVal, v)) ? v : null;
-    u.password = ld.isString(p.password) ? p.password : null;
-    u.readonly = ld.isBoolean(p.readonly) ? p.readonly : null;
+    u.visibility = (und.isString(v) && und.includes(vVal, v)) ? v : null;
+    u.password = und.isString(p.password) ? p.password : null;
+    u.readonly = und.isBoolean(p.readonly) ? p.readonly : null;
     return u;
   };
 
@@ -107,7 +107,7 @@ module.exports = (function () {
   */
 
   pad.fn.checkSet = function (p, callback) {
-    var keys = ld.map(p.users, function (v) { return UPREFIX + v; });
+    var keys = und.map(p.users, function (v) { return UPREFIX + v; });
     keys.push(GPREFIX + p.group);
     common.checkMultiExist(keys, function (err, res) {
       if (err) { return callback(err); }
@@ -138,10 +138,10 @@ module.exports = (function () {
     storage.db.get(GPREFIX + pad.group, function (err, g) {
       if (err) { return callback(err); }
       if (del) {
-        ld.pull(g.pads, pad._id);
+        g.pads = und.without(g.pads, pad._id);
         _set(g);
       } else {
-        if (!ld.includes(g.pads, pad._id)) {
+        if (!und.includes(g.pads, pad._id)) {
           g.pads.push(pad._id);
           _set(g);
         } else {
@@ -183,7 +183,7 @@ module.exports = (function () {
   *  `common.getDel` for documentation.
   */
 
-  pad.get = ld.partial(common.getDel, false, PPREFIX);
+  pad.get = und.partial(common.getDel, false, PPREFIX);
 
   /**
   * ### set
@@ -236,7 +236,7 @@ module.exports = (function () {
   */
 
   pad.del = function (key, callback) {
-    if (!ld.isFunction(callback)) {
+    if (!und.isFunction(callback)) {
       throw new TypeError('callback must be a function');
     }
     common.getDel(true, PPREFIX, key, function (err, p) {

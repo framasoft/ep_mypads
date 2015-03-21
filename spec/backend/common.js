@@ -19,7 +19,7 @@
 
 module.exports = (function () {
   'use strict';
-  var ld = require('lodash');
+  var und = require('underscore');
   var storage = require('../../storage.js');
   var common = {};
 
@@ -34,7 +34,7 @@ module.exports = (function () {
     var db = require('../../storage.js').db;
     db.close(function () {
       unlink('./test.db', function () {
-        db.init(ld.partial(storage.init, done));
+        db.init(und.partial(storage.init, done));
       });
     });
   };

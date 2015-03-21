@@ -19,7 +19,7 @@
 
 (function () {
   'use strict';
-  var ld = require('lodash');
+  var und = require('underscore');
   var cuid = require('cuid');
   var specCommon = require('../common.js');
   var storage = require('../../../storage.js');
@@ -49,10 +49,10 @@
       it('should populate the user.ids field', function (done) {
         user.init(function (err) {
           expect(err).toBeNull();
-          expect(ld.isObject(user.ids)).toBeTruthy();
-          expect(ld.size(user.ids)).toBe(2);
-          expect(ld.includes(ld.keys(user.ids), 'parker')).toBeTruthy();
-          expect(ld.includes(ld.keys(user.ids), 'kubiak')).toBeTruthy();
+          expect(und.isObject(user.ids)).toBeTruthy();
+          expect(und.size(user.ids)).toBe(2);
+          expect(und.includes(und.keys(user.ids), 'parker')).toBeTruthy();
+          expect(und.includes(und.keys(user.ids), 'kubiak')).toBeTruthy();
           done();
         });
       });
@@ -70,17 +70,17 @@
       it('should return a TypeError and a message if either login or password' +
         ' aren\'t given; nor callback function', function () {
         expect(user.set).toThrow();
-        expect(ld.partial(user.set, { another: 'object' })).toThrow();
-        expect(ld.partial(user.set, { login: 'Johnny' })).toThrow();
-        expect(ld.partial(user.set, { password: 'secret' })).toThrow();
-        expect(ld.partial(user.set, { login: 'john', password: 'secret' }))
+        expect(und.partial(user.set, { another: 'object' })).toThrow();
+        expect(und.partial(user.set, { login: 'Johnny' })).toThrow();
+        expect(und.partial(user.set, { password: 'secret' })).toThrow();
+        expect(und.partial(user.set, { login: 'john', password: 'secret' }))
           .toThrow();
       });
 
       it('should return an Error to the callback if password size is not' +
         ' appropriate', function (done) {
         user.set({ login: 'bob', password: '1'}, function (err) {
-          expect(ld.isError(err)).toBeTruthy();
+          expect(und.isError(err)).toBeTruthy();
           done();
         });
       });
@@ -96,12 +96,13 @@
             expect(err).toBeNull();
             expect(u._id).toBeDefined();
             expect(u.login).toBe('parker');
-            expect(ld.isObject(u.password)).toBeTruthy();
+            expect(und.isObject(u.password)).toBeTruthy();
             expect(u.firstname).toBe('Parker');
             expect(u.lastname).toBe('Lewis');
-            expect(ld.isString(u.organization)).toBeTruthy();
-            expect((ld.isArray(u.groups) && ld.isEmpty(u.groups))).toBeTruthy();
-            expect(ld.includes(ld.values(user.ids), u._id)).toBeTruthy();
+            expect(und.isString(u.organization)).toBeTruthy();
+            expect((und.isArray(u.groups) && und.isEmpty(u.groups)))
+              .toBeTruthy();
+            expect(und.includes(und.values(user.ids), u._id)).toBeTruthy();
             expect((user.ids[u.login])).toBe(u._id);
             done();
           });
@@ -117,9 +118,9 @@
           expect(err).toBeNull();
           expect(u._id).toBeDefined();
           expect(u.login).toBe('grace');
-          expect(ld.isObject(u.password)).toBeTruthy();
-          expect((ld.isArray(u.groups) && ld.isEmpty(u.groups))).toBeTruthy();
-          expect(ld.includes(ld.values(user.ids), u._id)).toBeTruthy();
+          expect(und.isObject(u.password)).toBeTruthy();
+          expect((und.isArray(u.groups) && und.isEmpty(u.groups))).toBeTruthy();
+          expect(und.includes(und.values(user.ids), u._id)).toBeTruthy();
           expect((user.ids[u.login])).toBe(u._id);
           done();
         });
@@ -128,7 +129,7 @@
       it('should deny usage of an existing login', function (done) {
         user.set({ login: 'parker', password: 'lovesKubiak' },
           function (err, u) {
-            expect(ld.isError(err)).toBeTruthy();
+            expect(und.isError(err)).toBeTruthy();
             expect(u).toBeUndefined();
             done();
           }
@@ -153,16 +154,17 @@
       it('should return a TypeError and a message if _id is not given, ' +
        'nor callback function', function () {
         expect(user.set).toThrow();
-        expect(ld.partial(user.set, { another: 'object' })).toThrow();
-        expect(ld.partial(user.set, { _id: 'Johnny' })).toThrow();
-        expect(ld.partial(user.set, { another: 'object' }, ld.noop)).toThrow();
+        expect(und.partial(user.set, { another: 'object' })).toThrow();
+        expect(und.partial(user.set, { _id: 'Johnny' })).toThrow();
+        expect(und.partial(user.set, { another: 'object' }, und.noop))
+          .toThrow();
       });
 
       it('should return an Error if the user does not already exist',
         function (done) {
           user.set({ _id: 'inexistent', login: 'i', password: 'p' },
             function (err, u) {
-              expect(ld.isError(err)).toBeTruthy();
+              expect(und.isError(err)).toBeTruthy();
               expect(u).toBeUndefined();
               done();
             }
@@ -173,7 +175,7 @@
       it('should return an Error to the callback if password size is not' +
         ' appropriate', function (done) {
         user.set({ login: 'bob', password: '1'}, function (err, res) {
-          expect(ld.isError(err)).toBeTruthy();
+          expect(und.isError(err)).toBeTruthy();
           expect(res).toBeUndefined();
           done();
         });
@@ -197,8 +199,8 @@
                 expect(u.email).toBe('mik@randall.com');
                 expect(u.firstname).toBe('Michael');
                 expect(u.lastname).toBe('Randall');
-                expect(ld.isArray(u.groups)).toBeTruthy();
-                expect(ld.first(u.groups)).toBe(g._id);
+                expect(und.isArray(u.groups)).toBeTruthy();
+                expect(und.first(u.groups)).toBe(g._id);
                 expect(user.ids.mikey).toBe(u._id);
                 done();
               }
@@ -226,13 +228,13 @@
     it('should throw errors if arguments are not provided as expected',
       function () {
         expect(user.get).toThrow();
-        expect(ld.partial(user.get, 123)).toThrow();
+        expect(und.partial(user.get, 123)).toThrow();
       }
     );
 
     it('should return an Error if the user is not found', function (done) {
       user.get('inexistent', function (err, u) {
-        expect(ld.isError(err)).toBeTruthy();
+        expect(und.isError(err)).toBeTruthy();
         expect(u).toBeUndefined();
         done();
       });
@@ -243,10 +245,10 @@
         expect(err).toBeNull();
         expect(u._id).toBeDefined();
         expect(u.login).toBe('parker');
-        expect(ld.isObject(u.password)).toBeTruthy();
+        expect(und.isObject(u.password)).toBeTruthy();
         expect(u.firstname).toBe('Parker');
         expect(u.lastname).toBe('Lewis');
-        expect(ld.isString(u.email)).toBeTruthy();
+        expect(und.isString(u.email)).toBeTruthy();
         done();
       });
     });
@@ -271,15 +273,15 @@
     it('should throw errors if arguments are not provided as expected',
       function () {
         expect(user.del).toThrow();
-        expect(ld.partial(user.del, 123)).toThrow();
-        expect(ld.partial(user.del, 'key')).toThrow();
-        expect(ld.partial(user.del, 'key', 'notAFunc')).toThrow();
+        expect(und.partial(user.del, 123)).toThrow();
+        expect(und.partial(user.del, 'key')).toThrow();
+        expect(und.partial(user.del, 'key', 'notAFunc')).toThrow();
       }
     );
 
     it('should return an Error if the user is not found', function (done) {
       user.del('inexistent', function (err, u) {
-        expect(ld.isError(err)).toBeTruthy();
+        expect(und.isError(err)).toBeTruthy();
         expect(u).toBeUndefined();
         done();
       });
@@ -293,11 +295,11 @@
           expect(_u.login).toBe('parker');
           expect(user.ids.parker).toBeUndefined();
           user.get('parker', function (err, u) {
-            expect(ld.isError(err)).toBeTruthy();
+            expect(und.isError(err)).toBeTruthy();
             expect(u).toBeUndefined();
             group.get(_u.groups[0], function (err, g) {
               expect(err).toBeNull();
-              expect(ld.includes(g.admins, _u._id)).toBeFalsy();
+              expect(und.includes(g.admins, _u._id)).toBeFalsy();
               done();
             });
           });
@@ -313,10 +315,10 @@
       it('should retrieve min and max length for password', function (done) {
         user.fn.getPasswordConf(function (err, results) {
           expect(err).toBeNull();
-          var rkeys = ld.keys(results);
-          expect(ld.contains(rkeys, CPREFIX + 'passwordMin'))
+          var rkeys = und.keys(results);
+          expect(und.contains(rkeys, CPREFIX + 'passwordMin'))
             .toBeTruthy();
-          expect(ld.contains(rkeys, CPREFIX + 'passwordMax'))
+          expect(und.contains(rkeys, CPREFIX + 'passwordMax'))
             .toBeTruthy();
           done();
         });
@@ -335,7 +337,7 @@
       it('should return an Error if password size is not appropriate',
         function () {
           var cPL = user.fn.checkPasswordLength;
-          expect(ld.isError(cPL('a', params))).toBeTruthy();
+          expect(und.isError(cPL('a', params))).toBeTruthy();
       });
 
       it('should return nothing if password size is good', function () {
@@ -348,11 +350,11 @@
       it('should hash any given string password', function (done) {
         user.fn.hashPassword(null, 'pass', function (err, pass) {
           expect(err).toBeNull();
-          expect(ld.isObject(pass)).toBeTruthy();
-          expect(ld.isString(pass.hash)).toBeTruthy();
-          expect(ld.isEmpty(pass.hash)).toBeFalsy();
-          expect(ld.isString(pass.salt)).toBeTruthy();
-          expect(ld.isEmpty(pass.salt)).toBeFalsy();
+          expect(und.isObject(pass)).toBeTruthy();
+          expect(und.isString(pass.hash)).toBeTruthy();
+          expect(und.isEmpty(pass.hash)).toBeFalsy();
+          expect(und.isString(pass.salt)).toBeTruthy();
+          expect(und.isEmpty(pass.salt)).toBeFalsy();
           done();
         });
       });
@@ -360,15 +362,15 @@
         function (done) {
           user.fn.hashPassword('salt', 'pass', function (err, pass) {
             expect(err).toBeNull();
-            expect(ld.isObject(pass)).toBeTruthy();
-            expect(ld.isString(pass.hash)).toBeTruthy();
-            expect(ld.isEmpty(pass.hash)).toBeFalsy();
-            expect(ld.isString(pass.salt)).toBeTruthy();
-            expect(ld.isEmpty(pass.salt)).toBeFalsy();
+            expect(und.isObject(pass)).toBeTruthy();
+            expect(und.isString(pass.hash)).toBeTruthy();
+            expect(und.isEmpty(pass.hash)).toBeFalsy();
+            expect(und.isString(pass.salt)).toBeTruthy();
+            expect(und.isEmpty(pass.salt)).toBeFalsy();
             var _pass = pass;
             user.fn.hashPassword('salt', 'pass', function (err, pass) {
               expect(err).toBeNull();
-              expect(ld.isObject(pass)).toBeTruthy();
+              expect(und.isObject(pass)).toBeTruthy();
               expect(pass.salt).toBe(_pass.salt);
               expect(pass.hash).toBe(_pass.hash);
               done();
@@ -389,13 +391,13 @@
           };
           user.fn.genPassword(null, params, function (err, u) {
             expect(err).toBeNull();
-            expect(ld.isObject(u)).toBeTruthy();
+            expect(und.isObject(u)).toBeTruthy();
             expect(u.login).toBe('brian');
-            expect(ld.isObject(u.password)).toBeTruthy();
-            expect(ld.isString(u.password.hash)).toBeTruthy();
-            expect(ld.isEmpty(u.password.hash)).toBeFalsy();
-            expect(ld.isString(u.password.salt)).toBeTruthy();
-            expect(ld.isEmpty(u.password.salt)).toBeFalsy();
+            expect(und.isObject(u.password)).toBeTruthy();
+            expect(und.isString(u.password.hash)).toBeTruthy();
+            expect(und.isEmpty(u.password.hash)).toBeFalsy();
+            expect(und.isString(u.password.salt)).toBeTruthy();
+            expect(und.isEmpty(u.password.salt)).toBeFalsy();
             done();
           });
         }
@@ -409,16 +411,16 @@
               password: pass,
               organization: 'etherInc'
             };
-            var params = ld.clone(old);
+            var params = und.clone(old);
             params.password = 'verySecret';
             user.fn.genPassword(old, params, function (err, u) {
               expect(err).toBeNull();
-              expect(ld.isObject(u)).toBeTruthy();
+              expect(und.isObject(u)).toBeTruthy();
               expect(u.login).toBe('brian');
-              expect(ld.isObject(u.password)).toBeTruthy();
-              expect(ld.isString(u.password.hash)).toBeTruthy();
+              expect(und.isObject(u.password)).toBeTruthy();
+              expect(und.isString(u.password.hash)).toBeTruthy();
               expect(u.password.hash).toBe(pass.hash);
-              expect(ld.isString(u.password.salt)).toBeTruthy();
+              expect(und.isString(u.password.salt)).toBeTruthy();
               expect(u.password.salt).toBe(pass.salt);
               done();
             });
@@ -434,16 +436,16 @@
               password: pass,
               organization: 'etherInc'
             };
-            var params = ld.clone(old);
+            var params = und.clone(old);
             params.password = 'newSecret';
             user.fn.genPassword(old, params, function (err, u) {
               expect(err).toBeNull();
-              expect(ld.isObject(u)).toBeTruthy();
+              expect(und.isObject(u)).toBeTruthy();
               expect(u.login).toBe('brian');
-              expect(ld.isObject(u.password)).toBeTruthy();
-              expect(ld.isString(u.password.hash)).toBeTruthy();
+              expect(und.isObject(u.password)).toBeTruthy();
+              expect(und.isString(u.password.hash)).toBeTruthy();
               expect(u.password.hash).not.toBe(pass.hash);
-              expect(ld.isString(u.password.salt)).toBeTruthy();
+              expect(und.isString(u.password.salt)).toBeTruthy();
               expect(u.password.salt).not.toBe(pass.salt);
               done();
             });
@@ -473,15 +475,15 @@
           expect(u.email).toBe('brian@sample.net');
           var uf = u.firstname;
           var ul = u.lastname;
-          expect(ld.isString(uf) && ld.isEmpty(uf)).toBeTruthy();
-          expect(ld.isString(ul) && ld.isEmpty(ul)).toBeTruthy();
-          expect(ld.isArray(u.groups)).toBeTruthy();
-          expect(ld.isEmpty(u.groups)).toBeTruthy();
+          expect(und.isString(uf) && und.isEmpty(uf)).toBeTruthy();
+          expect(und.isString(ul) && und.isEmpty(ul)).toBeTruthy();
+          expect(und.isArray(u.groups)).toBeTruthy();
+          expect(und.isEmpty(u.groups)).toBeTruthy();
           expect(u.irrelevant).toBeUndefined();
           params.email = 'notenamail@@@@';
           u = user.fn.assignProps(params);
           var ue = u.email;
-          expect(ld.isString(ue) && ld.isEmpty(ue)).toBeTruthy();
+          expect(und.isString(ue) && und.isEmpty(ue)).toBeTruthy();
         }
       );
     });
@@ -499,11 +501,11 @@
         function (done) {
           var u = { login: 'l', _id: '087654321' };
           user.fn.checkLogin(undefined, u, function (err) {
-            expect(ld.isError(err)).toBeTruthy();
+            expect(und.isError(err)).toBeTruthy();
             expect(err).toMatch('user already exists');
             u = { login: 'jerry', _id: 'anotherone' };
             user.fn.checkLogin(undefined, u, function (err) {
-              expect(ld.isError(err)).toBeTruthy();
+              expect(und.isError(err)).toBeTruthy();
               expect(err).toMatch('user already exists');
               done();
             });
@@ -534,16 +536,16 @@
     describe('isEmail', function () {
 
       it ('should returns if the value is an email or not', function () {
-        expect(ld.isEmail(1)).toBeFalsy();
-        expect(ld.isEmail([])).toBeFalsy();
-        expect(ld.isEmail({})).toBeFalsy();
-        expect(ld.isEmail('aaa')).toBeFalsy();
-        expect(ld.isEmail('aaa@')).toBeFalsy();
-        expect(ld.isEmail('aaa@bbb')).toBeFalsy();
-        expect(ld.isEmail('aaabbb.com')).toBeFalsy();
-        expect(ld.isEmail('@example.com')).toBeFalsy();
-        expect(ld.isEmail('john@example.com')).toBeTruthy();
-        expect(ld.isEmail('j@example.newdd')).toBeTruthy();
+        expect(und.isEmail(1)).toBeFalsy();
+        expect(und.isEmail([])).toBeFalsy();
+        expect(und.isEmail({})).toBeFalsy();
+        expect(und.isEmail('aaa')).toBeFalsy();
+        expect(und.isEmail('aaa@')).toBeFalsy();
+        expect(und.isEmail('aaa@bbb')).toBeFalsy();
+        expect(und.isEmail('aaabbb.com')).toBeFalsy();
+        expect(und.isEmail('@example.com')).toBeFalsy();
+        expect(und.isEmail('john@example.com')).toBeTruthy();
+        expect(und.isEmail('j@example.newdd')).toBeTruthy();
       });
     });
 

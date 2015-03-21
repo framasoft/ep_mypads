@@ -19,7 +19,7 @@
 
 (function () {
   'use strict';
-  var ld = require('lodash');
+  var und = require('underscore');
   var storage = require('../../../storage');
   var specCommon = require('../common.js');
   var common = require('../../../model/common.js');
@@ -34,24 +34,24 @@
       it('should throw TypeError if params is not an object or if callback ' +
         'is not a function', function () {
           expect(addSetI).toThrow();
-          expect(ld.partial(addSetI, 'notAnObject')).toThrow();
-          expect(ld.partial(addSetI, 123, ld.noop)).toThrow();
-          expect(ld.partial(addSetI, { empty: false })).toThrow();
-          expect(ld.partial(addSetI, { empty: false }, 'notAFunction'))
+          expect(und.partial(addSetI, 'notAnObject')).toThrow();
+          expect(und.partial(addSetI, 123, und.noop)).toThrow();
+          expect(und.partial(addSetI, { empty: false })).toThrow();
+          expect(und.partial(addSetI, { empty: false }, 'notAFunction'))
             .toThrow();
       });
 
       it('should throw TypeError if strFields is given and these fields are' +
         ' anything else than strings not empty', function () {
           var params = { a: false, obj: 123 };
-          expect(ld.partial (addSetI, params, ld.noop, ['a', 'obj'])).toThrow();
-          expect(ld.partial (addSetI, params, ld.noop, ['obj'])).toThrow();
-          expect(ld.partial (addSetI, params, ld.noop, ['inexist'])).toThrow();
+          expect(und.partial(addSetI, params, und.noop, ['a','obj'])).toThrow();
+          expect(und.partial(addSetI, params, und.noop, ['obj'])).toThrow();
+          expect(und.partial(addSetI, params, und.noop, ['inexist'])).toThrow();
       });
 
       it('should retuns nothing otherwise', function () {
-        expect(ld.partial(addSetI, { empty: false }, ld.noop)).not.toThrow();
-        expect(addSetI({ empty: false }, ld.noop)).toBeUndefined();
+        expect(und.partial(addSetI, { empty: false }, und.noop)).not.toThrow();
+        expect(addSetI({ empty: false }, und.noop)).toBeUndefined();
       });
     });
 
@@ -91,7 +91,7 @@
       afterAll(specCommon.reInitDatabase);
 
       it('should return null and true if all keys are found', function (done) {
-        common.checkMultiExist(ld.keys(kv), function (err, res) {
+        common.checkMultiExist(und.keys(kv), function (err, res) {
           expect(err).toBeNull();
           expect(res).toBeTruthy();
           done();
@@ -119,19 +119,19 @@
 
       it('throws error if arguments are not given correctly', function () {
         expect(common.getDel).toThrow();
-        expect(ld.partial(common.getDel, 123)).toThrow();
-        expect(ld.partial(common.getDel, false, 'prefix')).toThrow();
-        expect(ld.partial(common.getDel, false, 'prefix')).toThrow();
-        expect(ld.partial(common.getDel, true, 'prefix', {})).toThrow();
-        expect(ld.partial(common.getDel, true, 'prefix', 'key', {})).toThrow();
-        expect(ld.partial(common.getDel, true, 'prefix', false, ld.noop))
+        expect(und.partial(common.getDel, 123)).toThrow();
+        expect(und.partial(common.getDel, false, 'prefix')).toThrow();
+        expect(und.partial(common.getDel, false, 'prefix')).toThrow();
+        expect(und.partial(common.getDel, true, 'prefix', {})).toThrow();
+        expect(und.partial(common.getDel, true, 'prefix', 'key', {})).toThrow();
+        expect(und.partial(common.getDel, true, 'prefix', false, und.noop))
           .toThrow();
       });
 
       it('should return an error through the callback if the key is not found',
         function (done) {
           common.getDel(false, 'prefix:', 'key', function (err, res) {
-            expect(ld.isError(err)).toBeTruthy();
+            expect(und.isError(err)).toBeTruthy();
             expect(res).toBeUndefined();
             done();
           });

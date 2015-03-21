@@ -20,7 +20,7 @@
 (function () {
   'use strict';
 
-  var ld = require('lodash');
+  var und = require('underscore');
   var specCommon = require('./common.js');
   var conf = require('../../configuration.js');
 
@@ -32,7 +32,7 @@
 
       it('takes an optional callback as argument that must be a function',
         function () {
-          expect(ld.partial(conf.init, 'string')).toThrow();
+          expect(und.partial(conf.init, 'string')).toThrow();
           expect(conf.init).not.toThrow();
         }
       );
@@ -54,16 +54,16 @@
       it('throws an error if key isn\'t a string and callback not a function',
         function () {
           expect(conf.get).toThrow();
-          expect(ld.partial(conf.get, 1)).toThrow();
-          expect(ld.partial(conf.get, 1, 1)).toThrow();
-          expect(ld.partial(conf.get, 1, ld.noop)).toThrow();
-          expect(ld.partial(conf.get, 'key')).toThrow();
-          expect(ld.partial(conf.get, 'key', 2)).toThrow();
+          expect(und.partial(conf.get, 1)).toThrow();
+          expect(und.partial(conf.get, 1, 1)).toThrow();
+          expect(und.partial(conf.get, 1, und.noop)).toThrow();
+          expect(und.partial(conf.get, 'key')).toThrow();
+          expect(und.partial(conf.get, 'key', 2)).toThrow();
       });
 
       it('returns an Error if the field isn\'t defined', function (done) {
         conf.get('inexistent', function (err, res) {
-          expect(ld.isError(err)).toBeTruthy();
+          expect(und.isError(err)).toBeTruthy();
           expect(res).toBeUndefined();
           done();
         });
@@ -82,11 +82,11 @@
       it('throws an error if key isn\'t a string, value is undefined, ' +
         'callback is not a function', function (done) {
           expect(conf.set).toThrow();
-          expect(ld.partial(conf.set, 'key')).toThrow();
-          expect(ld.partial(conf.set, 'key', 'value')).toThrow();
-          expect(ld.partial(conf.set, 12, ld.noop)).toThrow();
-          expect(ld.partial(conf.set, [], 12, ld.noop)).toThrow();
-          expect(ld.partial(conf.set, 'key', 'notAFn')).toThrow();
+          expect(und.partial(conf.set, 'key')).toThrow();
+          expect(und.partial(conf.set, 'key', 'value')).toThrow();
+          expect(und.partial(conf.set, 12, und.noop)).toThrow();
+          expect(und.partial(conf.set, [], 12, und.noop)).toThrow();
+          expect(und.partial(conf.set, 'key', 'notAFn')).toThrow();
           done();
       });
 
@@ -110,11 +110,11 @@
       it('throws an error if key isn\'t a string and callback not a function',
         function () {
           expect(conf.del).toThrow();
-          expect(ld.partial(conf.del, 1)).toThrow();
-          expect(ld.partial(conf.del, 1, 1)).toThrow();
-          expect(ld.partial(conf.del, 1, ld.noop)).toThrow();
-          expect(ld.partial(conf.del, 'key')).toThrow();
-          expect(ld.partial(conf.del, 'key', 2)).toThrow();
+          expect(und.partial(conf.del, 1)).toThrow();
+          expect(und.partial(conf.del, 1, 1)).toThrow();
+          expect(und.partial(conf.del, 1, und.noop)).toThrow();
+          expect(und.partial(conf.del, 'key')).toThrow();
+          expect(und.partial(conf.del, 'key', 2)).toThrow();
       });
 
       it('removes the item otherwise', function (done) {
@@ -137,7 +137,7 @@
 
       it('requires a mandatory function as callback', function () {
         expect(conf.all).toThrow();
-        expect(ld.partial(conf.all, 'notAFn')).toThrow();
+        expect(und.partial(conf.all, 'notAFn')).toThrow();
       });
 
       it('returns the configuration object', function (done) {
@@ -157,7 +157,7 @@
 
       it('requires a mandatory function as callback', function () {
         expect(conf.public).toThrow();
-        expect(ld.partial(conf.public, 'notAFn')).toThrow();
+        expect(und.partial(conf.public, 'notAFn')).toThrow();
       });
 
       it('returns the filtered configuration object', function (done) {

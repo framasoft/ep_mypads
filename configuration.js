@@ -29,7 +29,7 @@ module.exports = (function() {
   'use strict';
 
   // Dependencies
-  var ld = require('lodash');
+  var und = require('underscore');
   var storage = require('./storage.js');
   var db = storage.db;
 
@@ -68,12 +68,14 @@ module.exports = (function() {
 
     init: function (callback) {
       callback = callback || function () {};
-      if (!ld.isFunction(callback)) {
+      if (!und.isFunction(callback)) {
         throw new TypeError('callback must be a function');
       }
       // Would like to use doBulk but not supported for all *ueberDB* backends
-      storage.fn.setKeys(ld.transform(DEFAULTS, function (memo, val, key) {
-        memo[DBPREFIX + key] = val; }), callback);
+      storage.fn.setKeys(und.reduce(DEFAULTS, function (memo, val, key) {
+        memo[DBPREFIX + key] = val;
+        return memo;
+      }, {}), callback);
     },
 
     /**
@@ -85,15 +87,15 @@ module.exports = (function() {
     */
 
     get: function (key, callback) {
-      if (!ld.isString(key)) {
+      if (!und.isString(key)) {
         throw new TypeError('key must be a string');
       }
-      if (!ld.isFunction(callback)) {
+      if (!und.isFunction(callback)) {
         throw new TypeError('callback must be a function');
       }
       db.get(DBPREFIX + key, function (err, res) {
         if (err) { return callback(err); }
-        if (ld.isUndefined(res)) {
+        if (und.isUndefined(res)) {
           return callback(new Error('Key doesn\'t exist'));
         }
         callback(null, res);
@@ -112,13 +114,13 @@ module.exports = (function() {
     */
 
     set: function (key, value, callback) {
-      if (!ld.isString(key)) {
+      if (!und.isString(key)) {
         throw new TypeError('key must be a string');
       }
-      if (ld.isUndefined(value)) {
+      if (und.isUndefined(value)) {
         throw new TypeError('value is mandatory');
       }
-      if (!ld.isFunction(callback)) {
+      if (!und.isFunction(callback)) {
         throw new TypeError('callback must be a function');
       }
       db.set(DBPREFIX + key, value, callback);
@@ -133,10 +135,10 @@ module.exports = (function() {
     */
 
     del: function (key, callback) {
-      if (!ld.isString(key)) {
+      if (!und.isString(key)) {
         throw new TypeError('key must be a string');
       }
-      if (!ld.isFunction(callback)) {
+      if (!und.isFunction(callback)) {
         throw new TypeError('callback must be a function');
       }
       db.remove(DBPREFIX + key, callback);
@@ -150,16 +152,17 @@ module.exports = (function() {
     */
 
     all: function (callback) {
-      if (!ld.isFunction(callback)) {
+      if (!und.isFunction(callback)) {
         throw new TypeError('callback must be a function');
       }
       db.findKeys(DBPREFIX + '*', null, function (err, keys) {
         if (err) { return callback(err); }
         storage.fn.getKeys(keys, function (err, results) {
           if (err) { return callback(err); }
-          results = ld.transform(results, function (memo, val, key) {
+          results = und.reduce(results, function (memo, val, key) {
             memo[key.replace(DBPREFIX, '')] = val;
-          });
+            return memo;
+          }, {});
           callback(null, results);
         });
       });
@@ -173,12 +176,12 @@ module.exports = (function() {
     */
 
     public: function (callback) {
-      if (!ld.isFunction(callback)) {
+      if (!und.isFunction(callback)) {
         throw new TypeError('callback must be a function');
       }
       configuration.all(function (err, all) {
         if (err) { return callback(err); }
-        var filtered = ld.pick(all, 'title', 'descr', 'passwordMin',
+        var filtered = und.pick(all, 'title', 'descr', 'passwordMin',
           'passwordMax');
         return callback(null, filtered);
       });

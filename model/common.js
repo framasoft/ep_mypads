@@ -25,7 +25,7 @@ module.exports = (function() {
   'use strict';
 
   // Dependencies
-  var ld = require('lodash');
+  var und = require('underscore');
   var storage = require('../storage.js');
 
   /**
@@ -49,20 +49,20 @@ module.exports = (function() {
   */
 
   common.addSetInit = function (params, callback, strFields) {
-    if (!ld.isObject(params)) {
+    if (!und.isObject(params)) {
       throw(new TypeError('parameters are mandatory for creation'));
     }
-    if (!ld.isFunction(callback)) {
+    if (!und.isFunction(callback)) {
       throw(new TypeError('callback must be a function'));
     }
-    if (!ld.isUndefined(params._id)) {
-      if (!ld.isString(params._id) || (ld.isEmpty(params._id))) {
+    if (!und.isUndefined(params._id)) {
+      if (!und.isString(params._id) || (und.isEmpty(params._id))) {
         throw new TypeError('_id, when defined, must be a string');
       }
     }
     if (strFields) {
-      var isFS = function (s) { return (ld.isString(s) && !ld.isEmpty(s)); };
-      ld.forEach(strFields, function (s) {
+      var isFS = function (s) { return (und.isString(s) && !und.isEmpty(s)); };
+      und.forEach(strFields, function (s) {
         if (!isFS(params[s])) {
           throw new TypeError(s + ' must be a string');
         }
@@ -130,14 +130,14 @@ module.exports = (function() {
   */
 
   common.getDel = function (del, PREFIX, key, callback) {
-    if (!ld.isString(key)) { throw new TypeError('key must be a string'); }
-    if (!ld.isFunction(callback)) {
+    if (!und.isString(key)) { throw new TypeError('key must be a string'); }
+    if (!und.isFunction(callback)) {
       throw new TypeError('callback must be a function');
     }
     key = PREFIX + key;
     storage.db.get(key, function (err, obj) {
       if (err) { return callback(err); }
-      if (ld.isUndefined(obj)) {
+      if (und.isUndefined(obj)) {
         return callback(new Error('key is not found'));
       }
       if (!del) {

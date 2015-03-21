@@ -26,7 +26,7 @@ module.exports = (function () {
 
   // Dependencies
   var crypto = require('crypto');
-  var ld = require('lodash');
+  var und = require('underscore');
   var cuid = require('cuid');
   var storage = require('../storage.js');
   var common = require('./common.js');
@@ -182,14 +182,14 @@ module.exports = (function () {
 
   user.fn.assignProps = function (params) {
     var p = params;
-    var u = ld.reduce(['firstname', 'lastname', 'organization'],
+    var u = und.reduce(['firstname', 'lastname', 'organization'],
       function (res, v) {
-        res[v] = ld.isString(p[v]) ? p[v] : '';
+        res[v] = und.isString(p[v]) ? p[v] : '';
         return res;
     }, {});
-    u.email = (ld.isEmail(p.email)) ? p.email : '';
+    u.email = (und.isEmail(p.email)) ? p.email : '';
     u.groups = [];
-    return ld.assign({ _id: p._id, login: p.login, password: p.password }, u);
+    return und.assign({ _id: p._id, login: p.login, password: p.password }, u);
   };
 
   /**
@@ -210,8 +210,8 @@ module.exports = (function () {
 
   user.fn.checkLogin = function (_id, u, callback) {
     if (!_id) {
-      var exists = (!ld.isUndefined(user.ids[u.login]) ||
-        (ld.includes(ld.values(user.ids), u._id)));
+      var exists = (!und.isUndefined(user.ids[u.login]) ||
+        (und.includes(und.values(user.ids), u._id)));
       if (exists) {
         var e = 'user already exists, please choose another login';
         return callback(new Error(e));
@@ -219,8 +219,8 @@ module.exports = (function () {
       return callback(null);
     } else {
       // u.login has changed for existing user
-      if (ld.isUndefined(user.ids[u.login])) {
-        var key = ld.findKey(user.ids, function (uid) {
+      if (und.isUndefined(user.ids[u.login])) {
+        var key = und.findKey(user.ids, function (uid) {
           return uid === _id;
         });
         delete user.ids[key];
@@ -242,10 +242,10 @@ module.exports = (function () {
   */
 
   user.fn.getDel = function (del, login, callback) {
-    if (!ld.isString(login) || ld.isEmpty(login)) {
+    if (!und.isString(login) || und.isEmpty(login)) {
       throw new TypeError('login must be a string');
     }
-    if (ld.isUndefined(user.ids[login])) {
+    if (und.isUndefined(user.ids[login])) {
       return callback(new Error('user not found'));
     }
     var cb = callback;
@@ -255,12 +255,12 @@ module.exports = (function () {
         if (u.groups.length) {
           var GPREFIX = storage.DBPREFIX.GROUP;
           storage.fn.getKeys(
-            ld.map(u.groups, function (g) { return GPREFIX + g; }),
+            und.map(u.groups, function (g) { return GPREFIX + g; }),
             function (err, groups) {
               if (err) { return callback(err); }
-              groups = ld.reduce(groups, function (memo, g) {
-                ld.pull(g.users, u._id);
-                ld.pull(g.admins, u._id);
+              groups = und.reduce(groups, function (memo, g) {
+                g.users = und.without(g.users, u._id);
+                g.admins = und.without(g.admins, u._id);
                 memo[GPREFIX + g._id] = g;
                 return memo;
               }, {});
@@ -313,9 +313,10 @@ module.exports = (function () {
       if (err) { return callback(err); }
       storage.fn.getKeys(keys, function (err, results) {
         if (results) {
-          user.ids = ld.transform(results, function (memo, val, key) {
+          user.ids = und.reduce(results, function (memo, val, key) {
             memo[val.login] = key.replace(UPREFIX, '');
-          });
+            return memo;
+          }, {});
         }
         callback(null);
       });
@@ -380,7 +381,7 @@ module.exports = (function () {
   *  *false* . It takes mandatory `login` string and `callback` function.
   */
 
-  user.get = ld.partial(user.fn.getDel, false);
+  user.get = und.partial(user.fn.getDel, false);
 
   /**
   * ### del
@@ -390,7 +391,7 @@ module.exports = (function () {
   *  This function uses `user.fn.getDel` and `common.getDel` with `del` to
   *  *true* . It takes mandatory `login` string and `callback` function.
   */
-  user.del = ld.partial(user.fn.getDel, true);
+  user.del = und.partial(user.fn.getDel, true);
 
   /**
   * ## lodash mixins
@@ -406,12 +407,12 @@ module.exports = (function () {
   * /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
   */
 
-  ld.mixin({ isEmail: function (val) {
+  und.mixin({ isEmail: function (val) {
     var rg = new RegExp(['[a-z0-9!#$%&\'*+/=?^_`{|}~-]+',
       '(?:\\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*@(?:[a-z0-9]',
       '(?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9]',
       '(?:[a-z0-9-]*[a-z0-9])?'].join(''));
-    return (ld.isString(val) && rg.test(val));
+    return (und.isString(val) && rg.test(val));
   }});
 
   return user;

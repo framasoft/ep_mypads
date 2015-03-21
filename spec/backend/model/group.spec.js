@@ -19,7 +19,7 @@
 
 (function () {
   'use strict';
-  var ld = require('lodash');
+  var und = require('underscore');
   var specCommon = require('../common.js');
   var user = require('../../../model/user.js');
   var pad = require('../../../model/pad.js');
@@ -42,7 +42,7 @@
     };
     gusers = [];
     gpads = [];
-    var users = ld.map(['frank', 'grace','shelly', 'mikey', 'jerry'],
+    var users = und.map(['frank', 'grace','shelly', 'mikey', 'jerry'],
       function (val) { return { login: val, password: 'lovesKubiak' }; });
     specCommon.reInitDatabase(function () {
       user.set(gadm, function (err, u) {
@@ -68,9 +68,9 @@
               if (err) { console.log(err); }
               gparams = g;
               gparams.admin = gadm._id;
-              gparams.admins = ld.takeRight(gusers, 2);
-              gparams.users = ld.take(gusers, 3);
-              var pads = ld.map(['pad1', 'pad2', 'pad3'], function (val) {
+              gparams.admins = gusers.slice(-2);
+              gparams.users = und.take(gusers, 3);
+              var pads = und.map(['pad1', 'pad2', 'pad3'], function (val) {
                 return { name: val, group: gparams._id };
               });
               var setPads = function () {
@@ -108,23 +108,23 @@
       it('should throws errors if params.name or params.admin, callback or ' +
         'edit aren`t correct', function () {
           expect(group.set).toThrow();
-          expect(ld.partial(group.set, [])).toThrow();
+          expect(und.partial(group.set, [])).toThrow();
           var params = { name: 123, noadmin: true };
-          expect(ld.partial(group.set, params, ld.noop)).toThrow();
+          expect(und.partial(group.set, params, und.noop)).toThrow();
           params = { name: 'ok', admin: false };
-          expect(ld.partial(group.set, params, ld.noop)).toThrow();
+          expect(und.partial(group.set, params, und.noop)).toThrow();
           params.name = [];
-          expect(ld.partial(group.set, params, ld.noop)).toThrow();
+          expect(und.partial(group.set, params, und.noop)).toThrow();
           params.name = 'ok';
           params.admin = 'ok';
-          expect(ld.partial(group.set, params, false)).toThrow();
+          expect(und.partial(group.set, params, false)).toThrow();
         }
       );
 
       it('should return an error if admin user is not found', function (done) {
         group.set({ name: 'g', admin: 'inexistent' },
           function (err, g) {
-            expect(ld.isError(err)).toBeTruthy();
+            expect(und.isError(err)).toBeTruthy();
             expect(err).toMatch('Some users, admins');
             expect(g).toBeUndefined();
             done();
@@ -138,13 +138,13 @@
           group.set(params, function (err, g) {
             expect(err).toBeNull();
             expect(g.name).toBe('group');
-            expect(ld.isArray(g.admins)).toBeTruthy();
-            expect(ld.isArray(g.users) && ld.isEmpty(g.users)).toBeTruthy();
-            expect(ld.isArray(g.pads) && ld.isEmpty(g.pads)).toBeTruthy();
-            expect(ld.first(g.admins)).toBe(gadm._id);
+            expect(und.isArray(g.admins)).toBeTruthy();
+            expect(und.isArray(g.users) && und.isEmpty(g.users)).toBeTruthy();
+            expect(und.isArray(g.pads) && und.isEmpty(g.pads)).toBeTruthy();
+            expect(und.first(g.admins)).toBe(gadm._id);
             expect(g.visibility).toBe('restricted');
             expect(g.password).toBeNull();
-            expect(ld.readonly).toBeFalsy();
+            expect(und.readonly).toBeFalsy();
 
             params = {
               name: 'college',
@@ -158,16 +158,16 @@
             };
             group.set(params, function (err, g) {
               expect(err).toBeNull();
-              expect(ld.isString(g._id)).toBeTruthy();
+              expect(und.isString(g._id)).toBeTruthy();
               expect(g._id).not.toBe('will not be given');
               expect(g.name).toBe('college');
-              expect(ld.isArray(g.admins)).toBeTruthy();
-              expect(ld.first(g.admins)).toBe(gadm._id);
-              expect(ld.size(g.admins)).toBe(1);
-              expect(ld.isArray(g.users) && ld.isEmpty(g.users)).toBeTruthy();
-              expect(ld.isArray(g.pads) && ld.isEmpty(g.pads)).toBeTruthy();
+              expect(und.isArray(g.admins)).toBeTruthy();
+              expect(und.first(g.admins)).toBe(gadm._id);
+              expect(und.size(g.admins)).toBe(1);
+              expect(und.isArray(g.users) && und.isEmpty(g.users)).toBeTruthy();
+              expect(und.isArray(g.pads) && und.isEmpty(g.pads)).toBeTruthy();
               expect(g.visibility).toBe('restricted');
-              expect(ld.isEmpty(g.password)).toBeTruthy();
+              expect(und.isEmpty(g.password)).toBeTruthy();
               expect(g.readonly).toBeFalsy();
               done();
             });
@@ -179,31 +179,32 @@
         var params = {
           name: 'college2',
           admin: gadm._id,
-          admins: ld.take(gusers, 2),
-          users: ld.takeRight(gusers, 3),
+          admins: und.take(gusers, 2),
+          users: gusers.slice(-3),
           visibility: 'private',
           password: 'aGoodOne',
           readonly: true
         };
         group.set(params, function (err, g) {
           expect(err).toBeNull();
-          expect(ld.isString(g._id)).toBeTruthy();
+          expect(und.isString(g._id)).toBeTruthy();
           expect(g.name).toBe('college2');
-          expect(ld.isArray(g.admins)).toBeTruthy();
-          expect(ld.first(g.admins)).toBe(gadm._id);
-          var contained = (ld.size(ld.intersection(g.admins, gusers)) ===
-            ld.size(g.admins));
+          expect(und.isArray(g.admins)).toBeTruthy();
+          expect(und.first(g.admins)).toBe(gadm._id);
+          var contained = (und.size(und.intersection(g.admins, gusers)) ===
+            und.size(g.admins));
           expect(contained).toBeTruthy();
-          expect(ld.isEmpty(ld.xor(g.users, params.users))).toBeTruthy();
+          expect(und.isEmpty(und.difference(g.users, params.users)))
+            .toBeTruthy();
           expect(g.visibility).toBe('private');
           expect(g.password).toBeDefined();
-          expect(ld.isEmpty(g.password)).toBeFalsy();
+          expect(und.isEmpty(g.password)).toBeFalsy();
           expect(g.readonly).toBeTruthy();
           user.get(gadm.login, function (err, u) {
             expect(err).toBeNull();
             expect(u.login).toBe(gadm.login);
-            expect(ld.isArray(u.groups)).toBeTruthy();
-            expect(ld.size(u.groups)).toBe(2);
+            expect(und.isArray(u.groups)).toBeTruthy();
+            expect(und.size(u.groups)).toBe(2);
             expect(u.groups[1]).toBe(g._id);
             done();
           });
@@ -218,23 +219,23 @@
       it('should throws errors if params._id|name|admin, callback or edit ' +
         'aren`t correct', function () {
           expect(group.set).toThrow();
-          expect(ld.partial(group.set, [])).toThrow();
+          expect(und.partial(group.set, [])).toThrow();
           var params = { name: 123, noadmin: true };
-          expect(ld.partial(group.set, params, ld.noop)).toThrow();
+          expect(und.partial(group.set, params, und.noop)).toThrow();
           params = { name: 'ok', admin: false };
-          expect(ld.partial(group.set, params, ld.noop)).toThrow();
+          expect(und.partial(group.set, params, und.noop)).toThrow();
           params.name = 'ok';
           params.admin = 'ok';
-          expect(ld.partial(group.set, params, false)).toThrow();
+          expect(und.partial(group.set, params, false)).toThrow();
           params._id = 123;
-          expect(ld.partial(group.set, params, ld.noop)).toThrow();
+          expect(und.partial(group.set, params, und.noop)).toThrow();
         }
       );
 
       it('should return an error if admin user is not found', function (done) {
         group.set({ _id: gparams._id, name: 'college', admin: 'inexist' },
           function (err, g) {
-            expect(ld.isError(err)).toBeTruthy();
+            expect(und.isError(err)).toBeTruthy();
             expect(err).toMatch('Some users, admins');
             expect(g).toBeUndefined();
             done();
@@ -244,7 +245,7 @@
 
       it('should return an error if group _id is not found', function (done) {
         group.set({ _id: 'i', name: 'g', admin: gadm._id }, function (err, g) {
-          expect(ld.isError(err)).toBeTruthy();
+          expect(und.isError(err)).toBeTruthy();
           expect(err).toMatch('group does not exist');
           expect(g).toBeUndefined();
           done();
@@ -256,47 +257,49 @@
           _id: gparams._id,
           name: 'college2',
           admin: gadm._id,
-          admins: ld.takeRight(gusers, 2),
-          users: ld.take(gusers, 3),
+          admins: gusers.slice(-2),
+          users: und.take(gusers, 3),
           visibility: 'private',
           password: 'aGoodOne',
           readonly: true
         };
         group.set(params, function (err, g) {
           expect(err).toBeNull();
-          expect(ld.isString(g._id)).toBeTruthy();
+          expect(und.isString(g._id)).toBeTruthy();
           expect(g.name).toBe('college2');
-          expect(ld.isArray(g.admins)).toBeTruthy();
-          expect(ld.first(g.admins)).toBe(gadm._id);
-          var contained = (ld.size(ld.intersection(g.admins, gusers)) ===
-            ld.size(g.admins));
+          expect(und.isArray(g.admins)).toBeTruthy();
+          expect(und.first(g.admins)).toBe(gadm._id);
+          var contained = (und.size(und.intersection(g.admins, gusers)) ===
+            und.size(g.admins));
           expect(contained).toBeTruthy();
-          expect(ld.isEmpty(ld.xor(g.users, params.users))).toBeTruthy();
-          expect(ld.includes(gpads, ld.first(g.pads))).toBeTruthy();
+          expect(und.isEmpty(und.difference(g.users, params.users)))
+            .toBeTruthy();
+          expect(und.includes(gpads, und.first(g.pads))).toBeTruthy();
           expect(g.visibility).toBe('private');
           expect(g.password).toBeDefined();
-          expect(ld.isEmpty(g.password)).toBeFalsy();
+          expect(und.isEmpty(g.password)).toBeFalsy();
           expect(g.readonly).toBeTruthy();
           group.get(g._id, function (err, g) {
             expect(err).toBeNull();
-            expect(ld.isString(g._id)).toBeTruthy();
+            expect(und.isString(g._id)).toBeTruthy();
             expect(g.name).toBe('college2');
-            expect(ld.isArray(g.admins)).toBeTruthy();
-            expect(ld.first(g.admins)).toBe(gadm._id);
-            contained = (ld.size(ld.intersection(g.admins, gusers)) ===
-              ld.size(g.admins));
+            expect(und.isArray(g.admins)).toBeTruthy();
+            expect(und.first(g.admins)).toBe(gadm._id);
+            contained = (und.size(und.intersection(g.admins, gusers)) ===
+              und.size(g.admins));
             expect(contained).toBeTruthy();
-            expect(ld.isEmpty(ld.xor(g.users, params.users))).toBeTruthy();
-            expect(ld.includes(gpads, ld.first(g.pads))).toBeTruthy();
+            expect(und.isEmpty(und.difference(g.users, params.users)))
+              .toBeTruthy();
+            expect(und.includes(gpads, und.first(g.pads))).toBeTruthy();
             expect(g.visibility).toBe('private');
             expect(g.password).toBeDefined();
-            expect(ld.isEmpty(g.password)).toBeFalsy();
+            expect(und.isEmpty(g.password)).toBeFalsy();
             expect(g.readonly).toBeTruthy();
             user.get(gadm.login, function (err, u) {
               expect(err).toBeNull();
               expect(u.login).toBe(gadm.login);
-              expect(ld.isArray(u.groups)).toBeTruthy();
-              expect(ld.size(u.groups)).toBe(1);
+              expect(und.isArray(u.groups)).toBeTruthy();
+              expect(und.size(u.groups)).toBe(1);
               expect(u.groups[0]).toBe(g._id);
               done();
             });
@@ -313,15 +316,15 @@
       it('should throw errors if arguments are not provided as expected',
         function () {
           expect(group.get).toThrow();
-          expect(ld.partial(group.get, 123)).toThrow();
-          expect(ld.partial(group.get, 'key')).toThrow();
-          expect(ld.partial(group.get, 'key', 'notAFunc')).toThrow();
+          expect(und.partial(group.get, 123)).toThrow();
+          expect(und.partial(group.get, 'key')).toThrow();
+          expect(und.partial(group.get, 'key', 'notAFunc')).toThrow();
         }
       );
 
       it('should return an Error if the key is not found', function (done) {
         group.get('inexistent', function (err, g) {
-          expect(ld.isError(err)).toBeTruthy();
+          expect(und.isError(err)).toBeTruthy();
           expect(g).toBeUndefined();
           done();
         });
@@ -330,18 +333,19 @@
       it('should return the group otherwise', function (done) {
         group.get(gparams._id, function (err, g) {
           expect(err).toBeNull();
-          expect(ld.isString(g._id)).toBeTruthy();
+          expect(und.isString(g._id)).toBeTruthy();
           expect(g.name).toBe('college');
-          expect(ld.isArray(g.admins)).toBeTruthy();
-          expect(ld.first(g.admins)).toBe(gadm._id);
-          var contained = (ld.size(ld.intersection(g.admins, gusers)) ===
-            ld.size(g.admins));
+          expect(und.isArray(g.admins)).toBeTruthy();
+          expect(und.first(g.admins)).toBe(gadm._id);
+          var contained = (und.size(und.intersection(g.admins, gusers)) ===
+            und.size(g.admins));
           expect(contained).toBeTruthy();
-          expect(ld.isEmpty(ld.xor(g.users, gparams.users))).toBeTruthy();
-          expect(ld.includes(gpads, ld.first(g.pads))).toBeTruthy();
+          expect(und.isEmpty(und.difference(g.users, gparams.users)))
+            .toBeTruthy();
+          expect(und.includes(gpads, und.first(g.pads))).toBeTruthy();
           expect(g.visibility).toBe('private');
           expect(g.password).toBeDefined();
-          expect(ld.isEmpty(g.password)).toBeFalsy();
+          expect(und.isEmpty(g.password)).toBeFalsy();
           expect(g.readonly).toBeTruthy();
           done();
         });
@@ -357,15 +361,15 @@
       it('should throw errors if arguments are not provided as expected',
         function () {
           expect(group.del).toThrow();
-          expect(ld.partial(group.del, 123)).toThrow();
-          expect(ld.partial(group.del, 'key')).toThrow();
-          expect(ld.partial(group.del, 'key', 'notAFunc')).toThrow();
+          expect(und.partial(group.del, 123)).toThrow();
+          expect(und.partial(group.del, 'key')).toThrow();
+          expect(und.partial(group.del, 'key', 'notAFunc')).toThrow();
         }
       );
 
       it('should return an Error if the key is not found', function (done) {
         group.del('inexistent', function (err, g) {
-          expect(ld.isError(err)).toBeTruthy();
+          expect(und.isError(err)).toBeTruthy();
           expect(g).toBeUndefined();
           done();
         });
@@ -378,14 +382,14 @@
             user.get(gadm.login, function (err, u) {
               expect(err).toBeNull();
               expect(u.login).toBe(gadm.login);
-              expect(ld.isArray(u.groups)).toBeTruthy();
-              expect(ld.includes(u.groups, gparams._id)).toBeFalsy();
+              expect(und.isArray(u.groups)).toBeTruthy();
+              expect(und.includes(u.groups, gparams._id)).toBeFalsy();
               var PFX = storage.DBPREFIX.PAD;
-              var pads = ld.map(gpads, function (p) { return PFX + p; });
+              var pads = und.map(gpads, function (p) { return PFX + p; });
               storage.fn.getKeys(pads, function (err, res) {
                 expect(err).toBeNull();
-                expect(ld.isObject(res)).toBeTruthy();
-                expect(ld.every(res, ld.isUndefined)).toBeTruthy();
+                expect(und.isObject(res)).toBeTruthy();
+                expect(und.every(res, und.isUndefined)).toBeTruthy();
                 done();
               });
             });

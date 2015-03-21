@@ -21,7 +21,7 @@
   'use strict';
 
   // Dependencies
-  var ld = require('lodash');
+  var und = require('underscore');
   var specCommon = require('../common.js');
   var pad = require('../../../model/pad.js');
   var user = require('../../../model/user.js');
@@ -57,20 +57,20 @@
 
       it('should return errors if arguments are not as expected', function () {
           expect(pad.set).toThrow();
-          expect(ld.partial(pad.set, {})).toThrow();
-          expect(ld.partial(pad.set, 'str', ld.noop)).toThrow();
-          expect(ld.partial(pad.set, {}, ld.noop)).toThrow();
+          expect(und.partial(pad.set, {})).toThrow();
+          expect(und.partial(pad.set, 'str', und.noop)).toThrow();
+          expect(und.partial(pad.set, {}, und.noop)).toThrow();
           var props = { name: 'name', group: 'gId'};
-          expect(ld.partial(pad.set, props, false)).toThrow();
+          expect(und.partial(pad.set, props, false)).toThrow();
           props.group = 123;
-          expect(ld.partial(pad.set, props, ld.noop)).toThrow();
+          expect(und.partial(pad.set, props, und.noop)).toThrow();
         }
       );
 
       it('should return an Error if pad is not found', function (done) {
         var params = { name: 'name', group: 'group1', _id: 'inexistent' };
         pad.set(params, function (err, p) {
-          expect(ld.isError(err)).toBeTruthy();
+          expect(und.isError(err)).toBeTruthy();
           expect(err).toMatch('pad does not exist');
           expect(p).toBeUndefined();
           done();
@@ -80,7 +80,7 @@
       it('should return an Error if group is not found', function (done) {
         var params = { name: 'name', group: 'inexistent' };
         pad.set(params, function (err, p) {
-          expect(ld.isError(err)).toBeTruthy();
+          expect(und.isError(err)).toBeTruthy();
           expect(err).toMatch('pad group');
           expect(p).toBeUndefined();
           done();
@@ -96,7 +96,7 @@
             users: ['inexistent']
           };
           pad.set(params, function (err, p) {
-            expect(ld.isError(err)).toBeTruthy();
+            expect(und.isError(err)).toBeTruthy();
             expect(err).toMatch('users are not found');
             expect(p).toBeUndefined();
             done();
@@ -112,7 +112,7 @@
             _id: 'notAPad'
           };
           pad.set(params, function (err, p) {
-            expect(ld.isError(err)).toBeTruthy();
+            expect(und.isError(err)).toBeTruthy();
             expect(err).toMatch('pad does not exist');
             expect(p).toBeUndefined();
             done();
@@ -128,33 +128,33 @@
           };
           pad.set(params, function (err, p) {
             expect(err).toBeNull();
-            expect(ld.isObject(p)).toBeTruthy();
+            expect(und.isObject(p)).toBeTruthy();
             expect(p._id).toBeDefined();
             expect(p.name).toBe('conqueringTheWorld');
             expect(p.group).toBe(ggroup._id);
             expect(p.visibility).toBeNull();
             expect(p.password).toBeNull();
             expect(p.readonly).toBeNull();
-            expect(ld.isArray(p.users)).toBeTruthy();
-            expect(ld.isEmpty(p.users)).toBeTruthy();
+            expect(und.isArray(p.users)).toBeTruthy();
+            expect(und.isEmpty(p.users)).toBeTruthy();
             params.users = 'notAnArray';
             params.visibility = 121;
             params.password = true;
             params.readonly = 'shouldBeABoolean';
             pad.set(params, function (err, p) {
               expect(err).toBeNull();
-              expect(ld.isObject(p)).toBeTruthy();
+              expect(und.isObject(p)).toBeTruthy();
               expect(p._id).toBeDefined();
               expect(p.name).toBe('conqueringTheWorld');
               expect(p.group).toBe(ggroup._id);
               expect(p.visibility).toBeNull();
               expect(p.password).toBeNull();
               expect(p.readonly).toBeNull();
-              expect(ld.isArray(p.users)).toBeTruthy();
-              expect(ld.isEmpty(p.users)).toBeTruthy();
+              expect(und.isArray(p.users)).toBeTruthy();
+              expect(und.isEmpty(p.users)).toBeTruthy();
               group.get(p.group, function (err, g) {
                 expect(err).toBeNull();
-                expect(ld.includes(g.pads, p._id)).toBeTruthy();
+                expect(und.includes(g.pads, p._id)).toBeTruthy();
                 done();
               });
             });
@@ -172,15 +172,15 @@
         };
         pad.set(params, function (err, p) {
           expect(err).toBeNull();
-          expect(ld.isObject(p)).toBeTruthy();
+          expect(und.isObject(p)).toBeTruthy();
           expect(p._id).toBeDefined();
           expect(p.name).toBe('trapFrank');
           expect(p.group).toBe(ggroup._id);
           expect(p.visibility).toBe('restricted');
           expect(p.password).toBeNull();
           expect(p.readonly).toBeFalsy();
-          expect(ld.isArray(p.users)).toBeTruthy();
-          expect(ld.first(p.users)).toBe(guser._id);
+          expect(und.isArray(p.users)).toBeTruthy();
+          expect(und.first(p.users)).toBe(guser._id);
           p.visibility = 'private';
           p.password = 'GraceHasFever';
           pad.set(p, function (err, p) {
@@ -200,18 +200,18 @@
         gpad.users.push(guser._id);
         pad.set(gpad, function (err, p) {
           expect(err).toBeNull();
-          expect(ld.isObject(p)).toBeTruthy();
+          expect(und.isObject(p)).toBeTruthy();
           expect(p._id).toBe(gpad._id);
           expect(p.name).toBe('shellyNator');
           expect(p.group).toBe(gpad.group);
           expect(p.visibility).toBe('restricted');
           expect(p.password).toBeNull();
           expect(p.readonly).toBeNull();
-          expect(ld.isArray(p.users)).toBeTruthy();
-          expect(ld.first(p.users)).toBe(guser._id);
+          expect(und.isArray(p.users)).toBeTruthy();
+          expect(und.first(p.users)).toBe(guser._id);
           group.get(p.group, function (err, g) {
             expect(err).toBeNull();
-            expect(ld.includes(g.pads, p._id)).toBeTruthy();
+            expect(und.includes(g.pads, p._id)).toBeTruthy();
             done();
           });
         });
@@ -226,15 +226,15 @@
       it('should throw errors if arguments are not provided as expected',
         function () {
           expect(pad.get).toThrow();
-          expect(ld.partial(pad.get, 123)).toThrow();
-          expect(ld.partial(pad.get, 'key')).toThrow();
-          expect(ld.partial(pad.get, 'key', 'notAFunc')).toThrow();
+          expect(und.partial(pad.get, 123)).toThrow();
+          expect(und.partial(pad.get, 'key')).toThrow();
+          expect(und.partial(pad.get, 'key', 'notAFunc')).toThrow();
         }
       );
 
       it('should return an Error if the key is not found', function (done) {
         pad.get('inexistent', function (err, p) {
-          expect(ld.isError(err)).toBeTruthy();
+          expect(und.isError(err)).toBeTruthy();
           expect(p).toBeUndefined();
           done();
         });
@@ -243,15 +243,15 @@
       it('should return the pad otherwise', function (done) {
         pad.get(gpad._id, function (err, p) {
           expect(err).toBeNull();
-          expect(ld.isObject(p)).toBeTruthy();
+          expect(und.isObject(p)).toBeTruthy();
           expect(p._id).toBeDefined();
           expect(p.name).toBe('exam1');
           expect(p.group).toBe(ggroup._id);
           expect(p.visibility).toBeNull();
           expect(p.password).toBeNull();
           expect(p.readonly).toBeNull();
-          expect(ld.isArray(p.users)).toBeTruthy();
-          expect(ld.isEmpty(p.users)).toBeTruthy();
+          expect(und.isArray(p.users)).toBeTruthy();
+          expect(und.isEmpty(p.users)).toBeTruthy();
           done();
         });
       });
@@ -266,15 +266,15 @@
       it('should throw errors if arguments are not provided as expected',
         function () {
           expect(pad.del).toThrow();
-          expect(ld.partial(pad.del, 123)).toThrow();
-          expect(ld.partial(pad.del, 'key')).toThrow();
-          expect(ld.partial(pad.del, 'key', 'notAFunc')).toThrow();
+          expect(und.partial(pad.del, 123)).toThrow();
+          expect(und.partial(pad.del, 'key')).toThrow();
+          expect(und.partial(pad.del, 'key', 'notAFunc')).toThrow();
         }
       );
 
       it('should return an Error if the key is not found', function (done) {
         pad.del('inexistent', function (err, p) {
-          expect(ld.isError(err)).toBeTruthy();
+          expect(und.isError(err)).toBeTruthy();
           expect(p).toBeUndefined();
           done();
         });
@@ -286,11 +286,11 @@
             expect(err).toBeNull();
             expect(p).toBeUndefined();
             pad.get(gpad._id, function (err, p) {
-              expect(ld.isError(err)).toBeTruthy();
+              expect(und.isError(err)).toBeTruthy();
               expect(p).toBeUndefined();
               group.get(gpad.group, function (err, g) {
                 expect(err).toBeNull();
-                expect(ld.includes(g.pads, gpad._id)).toBeFalsy();
+                expect(und.includes(g.pads, gpad._id)).toBeFalsy();
                 done();
               });
             });

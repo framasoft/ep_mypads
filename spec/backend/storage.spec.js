@@ -26,7 +26,7 @@
 (function () {
   'use strict';
 
-  var ld = require('lodash');
+  var und = require('underscore');
   var storage = require('../../storage.js');
   var specCommon = require('./common.js');
 
@@ -60,7 +60,7 @@
             expect(results.key1).toBe('value1');
             storage.fn.getKeys(['key2', 'key1'], function (err, results) {
               expect(err).toBeNull();
-              expect(ld.isObject(results)).toBeTruthy();
+              expect(und.isObject(results)).toBeTruthy();
               expect(results.key1).toBe('value1');
               expect(results.key2).toBe('value2');
               done();
@@ -110,10 +110,10 @@
           function (done) {
             var kv = { 'JS': 'JavaScript', 'PL': 'Perl', 'existent': [2, 4] };
             storage.fn.setKeys(kv, function () {
-              storage.fn.getKeys(ld.keys(kv), function (err, results) {
+              storage.fn.getKeys(und.keys(kv), function (err, results) {
                 expect(results.JS).toBe('JavaScript');
                 expect(results.PL).toBe('Perl');
-                expect(ld.isArray(results.existent)).toBeTruthy();
+                expect(und.isArray(results.existent)).toBeTruthy();
                 expect(results.existent[1]).toBe(4);
                 done();
               });

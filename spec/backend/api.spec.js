@@ -20,7 +20,7 @@
 (function () {
   'use strict';
 
-  var ld = require('lodash');
+  var und = require('underscore');
   var request = require('request');
   var api = require('../../api.js');
   var storage = require('../../storage.js');
@@ -166,8 +166,10 @@
 
         beforeAll(function (done) {
           var kv = { title: 'Amigo', field: 3 };
-          storage.fn.setKeys(ld.transform(kv, function (memo, val, key) {
-            memo[CPREFIX + key] = val; }), done);
+          storage.fn.setKeys(und.reduce(kv, function (memo, val, key) {
+            memo[CPREFIX + key] = val;
+            return memo;
+          }, {}), done);
         });
 
         afterAll(specCommon.reInitDatabase);
@@ -177,7 +179,7 @@
             rq.get(confRoute, function (err, resp, body) {
               expect(err).toBeNull();
               expect(resp.statusCode).toBe(200);
-              expect(ld.isObject(body.value)).toBeTruthy();
+              expect(und.isObject(body.value)).toBeTruthy();
               expect(body.value.title).toBe('Amigo');
               expect(body.value.field).toBeUndefined();
               done();
@@ -192,8 +194,10 @@
 
       beforeAll(function (done) {
         var kv = { field1: 8, field2: 3, field3: ['a', 'b'] };
-        storage.fn.setKeys(ld.transform(kv, function (memo, val, key) {
-          memo[CPREFIX + key] = val; }), function () {
+        storage.fn.setKeys(und.reduce(kv, function (memo, val, key) {
+          memo[CPREFIX + key] = val; 
+          return memo;
+        }, {}), function () {
             var u = { login: 'guest', password: 'willnotlivelong' };
             user.set(u, function () {
               rq.post(route + 'auth/login', { body: u }, done);
@@ -219,10 +223,10 @@
           rq.get(confRoute, function (err, resp, body) {
             expect(err).toBeNull();
             expect(resp.statusCode).toBe(200);
-            expect(ld.isObject(body.value)).toBeTruthy();
+            expect(und.isObject(body.value)).toBeTruthy();
             expect(body.value.field1).toBe(8);
             expect(body.value.field2).toBe(3);
-            expect(ld.size(body.value.field3)).toBe(2);
+            expect(und.size(body.value.field3)).toBe(2);
             //expect(body.value.field3[1]).toBe('b');
             done();
           });
@@ -421,7 +425,7 @@
               expect(resp.statusCode).toBe(200);
               expect(body.value.login).toBe('parker');
               expect(body.value.firstname).toBe('Parker');
-              expect(ld.isArray(body.value.groups)).toBeTruthy();
+              expect(und.isArray(body.value.groups)).toBeTruthy();
               done();
             });
           });
@@ -494,7 +498,7 @@
               expect(resp.statusCode).toBe(200);
               expect(body.value.login).toBe('parker');
               expect(body.value.firstname).toBe('Parker');
-              expect(ld.isArray(body.value.groups)).toBeTruthy();
+              expect(und.isArray(body.value.groups)).toBeTruthy();
               done();
             });
           });
@@ -539,7 +543,7 @@
               expect(resp.statusCode).toBe(200);
               expect(body.value.login).toBe('parker');
               expect(body.value.firstname).toBe('Parker');
-              expect(ld.isArray(body.value.groups)).toBeTruthy();
+              expect(und.isArray(body.value.groups)).toBeTruthy();
               done();
             });
           }
@@ -625,11 +629,11 @@
               expect(body.value._id).toBe(gid);
               expect(body.value.name).toBe('g1');
               expect(body.value.visibility).toBe('restricted');
-              expect(ld.isArray(body.value.users)).toBeTruthy();
-              expect(ld.isArray(body.value.pads)).toBeTruthy();
+              expect(und.isArray(body.value.users)).toBeTruthy();
+              expect(und.isArray(body.value.pads)).toBeTruthy();
               expect(body.value.password).toBeNull();
               expect(body.value.readonly).toBeFalsy();
-              expect(ld.size(body.value.admins)).toBe(1);
+              expect(und.size(body.value.admins)).toBe(1);
               expect(body.value.admins[0]).toBe(uid);
               done();
             });
@@ -690,10 +694,10 @@
                 expect(body.value.name).toBe('groupOk');
                 expect(body.value.visibility).toBe('private');
                 expect(body.value.password).toBeDefined();
-                expect(ld.isArray(body.value.users)).toBeTruthy();
-                expect(ld.isArray(body.value.pads)).toBeTruthy();
+                expect(und.isArray(body.value.users)).toBeTruthy();
+                expect(und.isArray(body.value.pads)).toBeTruthy();
                 expect(body.value.readonly).toBeFalsy();
-                expect(ld.size(body.value.admins)).toBe(1);
+                expect(und.size(body.value.admins)).toBe(1);
                 expect(body.value.admins[0]).toBe(uid);
                 done();
               }
@@ -748,10 +752,10 @@
                 expect(body.value._id).toBe(gid);
                 expect(body.value.name).toBe('gUpdated');
                 expect(body.value.visibility).toBe('public');
-                expect(ld.isArray(body.value.users)).toBeTruthy();
-                expect(ld.isArray(body.value.pads)).toBeTruthy();
+                expect(und.isArray(body.value.users)).toBeTruthy();
+                expect(und.isArray(body.value.pads)).toBeTruthy();
                 expect(body.value.readonly).toBeTruthy();
-                expect(ld.size(body.value.admins)).toBe(1);
+                expect(und.size(body.value.admins)).toBe(1);
                 expect(body.value.admins[0]).toBe(uid);
                 done();
               }
@@ -782,10 +786,10 @@
                 expect(body.value._id).toBe(key);
                 expect(body.value.name).toBe('gCreated');
                 expect(body.value.visibility).toBe('public');
-                expect(ld.isArray(body.value.users)).toBeTruthy();
-                expect(ld.isArray(body.value.pads)).toBeTruthy();
+                expect(und.isArray(body.value.users)).toBeTruthy();
+                expect(und.isArray(body.value.pads)).toBeTruthy();
                 expect(body.value.readonly).toBeTruthy();
-                expect(ld.size(body.value.admins)).toBe(1);
+                expect(und.size(body.value.admins)).toBe(1);
                 expect(body.value.admins[0]).toBe(uid);
                 done();
               }
@@ -876,7 +880,7 @@
               expect(body.value.visibility).toBeNull();
               expect(body.value.password).toBeNull();
               expect(body.value.readonly).toBeNull();
-              expect(ld.isArray(body.value.users)).toBeTruthy();
+              expect(und.isArray(body.value.users)).toBeTruthy();
               done();
             });
           }
@@ -965,7 +969,7 @@
                 expect(body.value.name).toBe('padOk');
                 expect(body.value.visibility).toBe('private');
                 expect(body.value.password).toBeDefined();
-                expect(ld.isArray(body.value.users)).toBeTruthy();
+                expect(und.isArray(body.value.users)).toBeTruthy();
                 expect(body.value.readonly).toBeNull();
                 done();
               }
@@ -1015,7 +1019,7 @@
                 expect(body.value.group).toBe(gid);
                 expect(body.value.name).toBe('pUpdated');
                 expect(body.value.visibility).toBe('public');
-                expect(ld.isArray(body.value.users)).toBeTruthy();
+                expect(und.isArray(body.value.users)).toBeTruthy();
                 done();
               }
             );
@@ -1045,7 +1049,7 @@
                 expect(body.value.group).toBe(gid);
                 expect(body.value.name).toBe('pUpdated');
                 expect(body.value.visibility).toBe('public');
-                expect(ld.isArray(body.value.users)).toBeTruthy();
+                expect(und.isArray(body.value.users)).toBeTruthy();
                 done();
               }
             );

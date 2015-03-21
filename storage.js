@@ -28,7 +28,7 @@
 module.exports = (function () {
   'use strict';
   // Dependencies
-  var ld = require('lodash');
+  var und = require('underscore');
 
   var storage = {};
 
@@ -111,7 +111,7 @@ module.exports = (function () {
   * to *false*.
   */
 
-  storage.fn.getKeys = ld.partial(storage.fn.getDelKeys, false);
+  storage.fn.getKeys = und.partial(storage.fn.getDelKeys, false);
 
   /**
   * ### delKeys
@@ -120,7 +120,7 @@ module.exports = (function () {
   * to *true*.
   */
 
-  storage.fn.delKeys = ld.partial(storage.fn.getDelKeys, true);
+  storage.fn.delKeys = und.partial(storage.fn.getDelKeys, true);
 
   /**
   * `setKeys` is a function for multiple asynchronous sets, taking :
@@ -131,7 +131,7 @@ module.exports = (function () {
   */
 
   storage.fn.setKeys = function (kv, callback) {
-    var pairs = ld.pairs(kv);
+    var pairs = und.pairs(kv);
     var set = function (k, v) { storage.db.set(k, v, done); };
     var done = function (err) {
       if (err) { return callback(err); }

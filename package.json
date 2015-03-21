@@ -22,9 +22,9 @@
   "license": "Apache 2",
   "dependencies": {
     "cuid": "^1.2.4",
-    "lodash": "^3.1.0",
     "passport": "^0.2.1",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "underscore": "~1.8.2"
   },
   "devDependencies": {
     "browserify": "^9.0.3",
@@ -32,14 +32,12 @@
     "express": "^3.19.2",
     "jasmine": "^2.2.0",
     "jshint": "^2.6.0",
-    "jss": "^1.0.7",
-    "jss-nested": "^0.1.7",
-    "mithril": "^0.1.30",
-    "normalize.css": "^3.0.2",
     "request": "^2.53.0",
     "tough-cookie": "^0.12.1",
     "ueberDB": "^0.2.11",
-    "watchify": "^2.4.0"
+    "watchify": "^2.4.0",
+    "backbone": "~1.1.2",
+    "backbone.containerview": "~0.1.0"
   },
   "scripts": {
     "frontend:build": "./node_modules/browserify/bin/cmd.js -o static/js/mypads.js frontend.js",

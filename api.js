@@ -27,7 +27,7 @@
 */
 
 // External dependencies
-var ld = require('lodash');
+var und = require('underscore');
 var passport = require('passport');
 // Local dependencies
 var conf = require('./configuration.js');
@@ -157,7 +157,7 @@ module.exports = (function () {
         req.login(user, function (err) {
           req.session.login = user.login;
           if (err) { return res.send(400, { error: err }); }
-          res.send(200, { success: true, user: ld.omit(user, 'password') });
+          res.send(200, { success: true, user: und.omit(user, 'password') });
         });
       })(req, res, next);
     });
@@ -235,7 +235,7 @@ module.exports = (function () {
     var _set = function (req, res) {
       var key = (req.method === 'POST') ? req.body.key : req.params.key;
       var value = req.body.value;
-      var setFn = ld.partial(conf.set, key, value);
+      var setFn = und.partial(conf.set, key, value);
       fn.set(setFn, key, value, req, res);
     };
 
@@ -250,7 +250,7 @@ module.exports = (function () {
     */
 
     app.delete(confRoute + '/:key', fn.ensureAuthentificated,
-      ld.partial(fn.del, conf.del));
+      und.partial(fn.del, conf.del));
   };
 
   /**
@@ -270,7 +270,7 @@ module.exports = (function () {
     */
 
     app.get(userRoute + '/:key', fn.ensureAuthentificated,
-      ld.partial(fn.get, user));
+      und.partial(fn.get, user));
 
     // `set` for POST and PUT, see below
     var _set = function (req, res) {
@@ -283,7 +283,7 @@ module.exports = (function () {
         value.login = key;
         value._id = user.ids[key];
       }
-      var setFn = ld.partial(user.set, value);
+      var setFn = und.partial(user.set, value);
       fn.set(setFn, key, value, req, res);
     };
 
@@ -313,7 +313,7 @@ module.exports = (function () {
     */
 
     app.delete(userRoute + '/:key', fn.ensureAuthentificated,
-      ld.partial(fn.del, user.del));
+      und.partial(fn.del, user.del));
   };
 
   /**
@@ -333,11 +333,11 @@ module.exports = (function () {
     */
 
     app.get(groupRoute + '/:key', fn.ensureAuthentificated,
-      ld.partial(fn.get, group));
+      und.partial(fn.get, group));
 
     // `set` for POST and PUT, see below
     var _set = function (req, res) {
-      var setFn = ld.partial(group.set, req.body);
+      var setFn = und.partial(group.set, req.body);
       fn.set(setFn, req.body._id, req.body, req, res);
     };
 
@@ -367,7 +367,7 @@ module.exports = (function () {
     */
 
     app.delete(groupRoute + '/:key', fn.ensureAuthentificated,
-      ld.partial(fn.del, group.del));
+      und.partial(fn.del, group.del));
 
   };
 
@@ -388,11 +388,11 @@ module.exports = (function () {
     */
 
     app.get(padRoute + '/:key', fn.ensureAuthentificated,
-      ld.partial(fn.get, pad));
+      und.partial(fn.get, pad));
 
     // `set` for POST and PUT, see below
     var _set = function (req, res) {
-      var setFn = ld.partial(pad.set, req.body);
+      var setFn = und.partial(pad.set, req.body);
       fn.set(setFn, req.body._id, req.body, req, res);
     };
 
@@ -422,7 +422,7 @@ module.exports = (function () {
     */
 
     app.delete(padRoute + '/:key', fn.ensureAuthentificated,
-      ld.partial(fn.del, pad.del));
+      und.partial(fn.del, pad.del));
 
   };
 

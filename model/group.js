@@ -25,7 +25,7 @@ module.exports = (function () {
   'use strict';
 
   // Dependencies
-  var ld = require('lodash');
+  var und = require('underscore');
   var cuid = require('cuid');
   var storage = require('../storage.js');
   var common = require('./common.js');
@@ -67,7 +67,7 @@ module.exports = (function () {
   *  `common.getDel` for documentation.
   */
 
-  group.get = ld.partial(common.getDel, false, GPREFIX);
+  group.get = und.partial(common.getDel, false, GPREFIX);
 
   /**
   * ### set
@@ -133,7 +133,7 @@ module.exports = (function () {
   */
 
   group.del = function (key, callback) {
-    if (!ld.isFunction(callback)) {
+    if (!und.isFunction(callback)) {
       throw new TypeError('callback must be a function');
     }
     common.getDel(true, GPREFIX, key, function (err, g) {
@@ -165,44 +165,44 @@ module.exports = (function () {
   *  - `add`, a string for only one addition, an array for multiple adds.
   */
 
-  group.helper.linkPads = ld.noop;
+  group.helper.linkPads = und.noop;
 
-  group.helper.unlinkPads = ld.noop;
+  group.helper.unlinkPads = und.noop;
 
   /**
   * ### inviteUsers
   * string or array
   */
 
-  group.helper.inviteUsers = ld.noop;
+  group.helper.inviteUsers = und.noop;
 
   /**
   * ### setAdmins
   * string or array
   */
 
-  group.helper.setAdmins = ld.noop;
+  group.helper.setAdmins = und.noop;
 
   /**
   * ### setPassword
   * string of false
   */
 
-  group.helper.setPassword = ld.noop;
+  group.helper.setPassword = und.noop;
 
   /**
   * ### setPublic
   * boolean
   */
 
-  group.helper.setPublic = ld.noop;
+  group.helper.setPublic = und.noop;
 
   /**
   * ### archive
   * boolean
   */
 
-  group.helper.archive = ld.noop;
+  group.helper.archive = und.noop;
 
   /**
   *  ## Internal Functions
@@ -234,14 +234,14 @@ module.exports = (function () {
   group.fn.assignProps = function (params) {
     var p = params;
     var g = { name: p.name };
-    p.admins = ld.isArray(p.admins) ? ld.filter(p.admins, ld.isString) : [];
-    g.admins = ld.union([ p.admin ], p.admins);
-    g.users = ld.uniq(p.users);
+    p.admins = und.isArray(p.admins) ? und.filter(p.admins, und.isString) : [];
+    g.admins = und.union([ p.admin ], p.admins);
+    g.users = und.uniq(p.users);
     var v = p.visibility;
-    var vVal = ['restricted', 'private', 'public'];
-    g.visibility = (ld.isString(v) && ld.includes(vVal, v)) ? v : 'restricted';
-    g.password = ld.isString(p.password) ? p.password : null;
-    g.readonly = ld.isBoolean(p.readonly) ? p.readonly : false;
+    var vVl = ['restricted', 'private', 'public'];
+    g.visibility = (und.isString(v) && und.includes(vVl, v)) ? v : 'restricted';
+    g.password = und.isString(p.password) ? p.password : null;
+    g.readonly = und.isBoolean(p.readonly) ? p.readonly : false;
     return g;
   };
 
@@ -257,8 +257,8 @@ module.exports = (function () {
   */
 
   group.fn.cascadePads = function (group, callback) {
-    if (!ld.isEmpty(group.pads)) {
-      var padsKeys = ld.map(group.pads, function (p) { return PPREFIX + p; });
+    if (!und.isEmpty(group.pads)) {
+      var padsKeys = und.map(group.pads, function (p) { return PPREFIX + p; });
       storage.fn.delKeys(padsKeys, function (err, res) {
         if (err) { return callback(err); }
         var e = 'something goes wrong with cascade pads removal';
@@ -282,15 +282,15 @@ module.exports = (function () {
   */
 
   group.fn.indexUsers = function (del, group, callback) {
-    var usersKeys = ld.map(ld.union(group.admins, group.users),
+    var usersKeys = und.map(und.union(group.admins, group.users),
       function (u) { return UPREFIX + u; });
     storage.fn.getKeys(usersKeys, function (err, users) {
       if (err) { return callback(err); }
-      ld.forIn(users, function (u, k) {
+      und.each(users, function (u, k) {
         if (del) {
-          ld.pull(u.groups, group._id);
+          u.groups = und.without(u.groups, group._id);
         } else {
-          if (!ld.includes(u.groups, group._id)) {
+          if (!und.includes(u.groups, group._id)) {
             u.groups.push(group._id);
           }
         }
@@ -338,11 +338,11 @@ module.exports = (function () {
   */
 
   group.fn.checkSet = function (g, callback) {
-    var pre = ld.curry(function (pre, val) { return pre + val; });
-    var admins = ld.map(g.admins, pre(UPREFIX));
-    var users = ld.map(g.users, pre(UPREFIX));
-    var pads = ld.map(g.pads, pre(PPREFIX));
-    var allKeys = ld.union(admins, users, pads);
+    var pre = function (pre, val) { return pre + val; };
+    var admins = und.map(g.admins, und.partial(pre, UPREFIX));
+    var users = und.map(g.users, und.partial(pre, UPREFIX));
+    var pads = und.map(g.pads, und.partial(pre, PPREFIX));
+    var allKeys = und.union(admins, users, pads);
     common.checkMultiExist(allKeys, function (err, res) {
       if (err) { return callback(err); }
       if (!res) {

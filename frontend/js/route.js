@@ -28,42 +28,47 @@
 
 module.exports = (function () {
   // Global dependencies
-  var m = require('mithril');
-  var ld = require('lodash');
+  var und = require('underscore');
+  var Backbone = require('backbone');
   // Local dependencies
   var auth = require('./auth.js');
-  // Modules
-  var home = require('./modules/home.js');
-  var login = require('./modules/login.js');
-  var logout = require('./modules/logout.js');
-  var subscribe = require('./modules/subscribe.js');
-  var admin = require('./modules/admin.js');
 
-  var route = { model: {} };
+  var route = {};
 
   /*
-  * ## Model
+  * ## Routes
   *
-  * `routes` contains all routes, minus login and logout.
+  * `routes` contains all routes, minus public routes.
   * This will helps to have a clear view on routes, even if we need
   * authentification in most of them.
   */
 
-  route.model.routes = {
-    '/admin': admin
+  route.routes = {
+    'admin': 'admin'
   };
 
   route.init = function () {
-    var authRoutes = ld.transform(route.model.routes, function (memo, mod, r) {
-      memo[r] = auth.isAuthenticated() ? mod : login;
+    var authRoutes = und.mapObject(route.routes, function (v, k) {
+      return auth.isAuthenticated ? v : 'login';
     });
-    m.route(document.body, '/', ld.defaults({
-      '/': home,
-      '/login': login,
-      '/logout': logout,
-      '/subscribe': subscribe
-    }, authRoutes));
+    route.routes = und.extend({
+      'login': 'login',
+      'logout': 'logout',
+      'subscribe': 'subscribe'
+    }, authRoutes);
+
+    var Router = Backbone.Router.extend({
+      routes: route.routes,
+      login: function () { console.log('login'); },
+      logout: function () { console.log('logout'); },
+      subscribe: function () { console.log('subscribe'); },
+      admin: function () {}
+    });
+
+    route.router = new Router();
+    Backbone.history.start();
   };
+
 
   return route;
 }).call(this);

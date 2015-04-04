@@ -27,7 +27,12 @@
 
 module.exports = (function () {
   // Dependencies
-  var m = require('mithril');
+  var Backbone = require('backbone');
+  Backbone.$ = window.jQuery || window.Zepto || window.ender || window.$;
+  var ContainerView = require(
+    '../../node_modules/backbone.containerview/backbone.containerview.js'
+  );
+  ContainerView.install();
 
   var config = {};
   config.URLS = { BASE: '/mypads/api' };
@@ -35,20 +40,37 @@ module.exports = (function () {
   config.URLS.AUTH = config.URLS.BASE + '/auth';
   config.URLS.LOGIN = config.URLS.AUTH + '/login';
   config.URLS.LOGOUT = config.URLS.AUTH + '/logout';
-  config.SERVER = m.prop();
   // FIXME : tmp to EN only
   config.LANG = require('../l10n/en.js');
+
+  /**
+  * `serverCollection` is a `Backbone` `Collection` intended to gather the
+  * server configuration and pass it to other modules.
+  */
+
+  var serverCollection = Backbone.Collection.extend({
+    url: config.URLS.CONF,
+    parse: function (data) { return data.value; }
+  });
+  var server = new serverCollection();
 
   /**
   * ## init
   *
   * `init` is an asynchronous function that calls for the public configuration
-  * of MyPads and push them to the `SERVER` field.
+  * of MyPads and push them to the `server` field.
+  * It takes a callback function to be called after configuration
+  * initialization.
   */
 
-  config.init = function () {
-    m.request({ method: 'GET', url: config.URLS.CONF })
-      .then(function (settings) { config.SERVER = settings.value; });
+  config.init = function (cb) {
+    server.fetch({
+      success: function () {
+        config.server = server.at(0); 
+        cb();
+      },
+      failure: function () { /* TODO */ return null; }
+    });
   };
 
   return config;

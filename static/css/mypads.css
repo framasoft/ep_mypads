@@ -1,5 +1,5 @@
 /**
-*  # Frontend Entry Point
+*  # Global CSS Style
 *
 *  ## License
 *
@@ -20,16 +20,20 @@
 *  specific language governing permissions and limitations
 *  under the License.
 *
-*  ## Description
-*
-*  This module is the entry point for front JavaScript programming. It requires
-*  global dependencies and main client-side file.
 */
 
-(function () {
-  var conf = require('./frontend/js/configuration.js');
-  var layout = require('./frontend/js/modules/layout.js');
-  var route = require('./frontend/js/route.js');
-  conf.init(layout.init);
-  route.init();
-}).call(this);
+body {
+  padding-top: 5em;
+  background: #333333;
+}
+
+header, footer {
+  color: #f5f5f5;
+  background-color: #333333;
+}
+
+header h1 { padding-left: 1%; }
+
+footer { text-align: center; }
+
+main, aside { background-color: #fafafa; }

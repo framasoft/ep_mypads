@@ -27,34 +27,108 @@
 
 module.exports = (function () {
   // Dependencies
-  var m = require('mithril');
-  var ld = require('lodash');
+  var und = require('underscore');
+  var Backbone = require('backbone');
   var conf = require('../configuration.js');
-  var menuStyle = require('../../style/modules/menu-main.js');
-  menuStyle.attach();
-  var classes = menuStyle.sheet.main.classes;
-  var notifStyle = require('../../style/notification.js');
-  var notifCls = notifStyle.sheet.main.classes;
-  var LANG = conf.LANG;
   var auth = require('../auth.js');
-  var notif = require('./notification.js');
+  var LANG = conf.LANG;
 
   var layout = {};
 
-  /**
-  * ## Controller
-  *
-  * For styling only
-  */
+  var menuItems = {};
 
-  /* Sample, not pertinent here */
-  layout.controller = function () {
-    menuStyle.attach();
-    this.onunload(menuStyle.detach);
-    return { classes: menuStyle.sheet.main.classes };
-  };
+  menuItems.auth = new Backbone.Collection([
+    {
+      route:'mypads',
+      cls: 'doc-text',
+      txt: LANG.MENU.PAD
+    }, {
+      route:'mybookmarks',
+      icon: 'bookmarks',
+      txt: LANG.MENU.BOOKMARK
+    }, {
+      route:'myprofile',
+      icon: 'user',
+      txt: LANG.MENU.PROFILE
+    }, {
+      route:'admin',
+      icon: 'tools',
+      txt: LANG.MENU.ADMIN
+    }, {
+      route:'logout',
+      icon: 'logout',
+      txt: LANG.MENU.LOGOUT
+    }
+  ]);
+  menuItems.unauth = new Backbone.Collection([
+    {
+      route:'login',
+      icon: 'login',
+      txt: LANG.USER.LOGIN
+    }, {
+      route:'subscribe',
+      icon: 'thumbs-up',
+      txt: LANG.USER.SUBSCRIBE
+    }
+  ]);
 
   var views = {};
+
+  views.menuMain = {};
+  views.menuMain.container = Backbone.ContainerView.extend({
+    el: '#menu-main',
+    initialize: function () {
+      //this.$el.html()
+      this.append(new views.menuMain.header(), '#menu-main-header');
+      this.append(new views.menuMain.body(), '#menu-main-body');
+    }
+  });
+  views.menuMain.header = Backbone.View.extend({
+    tagName: 'div',
+    template: und.template($('#menu-main-header-tpl').html()),
+    initialize: function () { this.render(); },
+    render: function () {
+      var html = this.template({
+        title: conf.server.get('title'),
+        menuToggle: LANG.MENU.TOGGLE
+      });
+      this.$el.html(html);
+      return this;
+      }
+  });
+  views.menuMain.body = Backbone.View.extend({
+    tagName: 'ul',
+    className: 'nav navbar-nav',
+    template: und.template($('#menu-main-item-tpl').html()),
+    initialize: function () { this.render(); },
+    render: function () {
+      var me = this;
+      var items = (auth.isAuthenticated) ? menuItems.auth : menuItems.unauth;
+      var html = items.map(function (item) {
+        //var isActive = (Backbone.History.getFragment() === r.route);
+        var isActive = false;
+        return me.template({ isActive: isActive, item: item });
+      });
+      this.$el.html(html.join(''));
+      return this;
+    }
+  });
+
+  views.footer = Backbone.View.extend({
+    el: 'footer',
+    template: und.template($('#footer-body').html()),
+    initialize: function () { this.render(); },
+    render: function () {
+      var html = this.template({ footer: LANG.GLOBAL.FOOTER });
+      this.$el.html(html);
+      return this;
+    }
+  });
+
+  layout.init = function () {
+    new views.menuMain.container();
+    new views.footer();
+  };
 
   /**
   * ## Internal views
@@ -62,46 +136,44 @@ module.exports = (function () {
   * ### menuMain
   *
   * Returns views for auth and unauth.
-  */
 
-  views = {};
   views.menuMain = function () {
     var _routes = {
       auth: [
         {
-          route: '/mypads',
+          route:'mypads',
           cls: 'doc-text',
           txt: LANG.MENU.PAD
         },
         {
-          route: '/mybookmarks',
+          route:'mybookmarks',
           icon: 'bookmarks',
           txt: LANG.MENU.BOOKMARK
         },
         {
-          route: '/myprofile',
+          route:'myprofile',
           icon: 'user',
           txt: LANG.MENU.PROFILE
         },
         {
-          route: '/admin',
+          route:'admin',
           icon: 'tools',
           txt: LANG.MENU.ADMIN
         },
         {
-          route: '/logout',
+          route:'logout',
           icon: 'logout',
           txt: LANG.MENU.LOGOUT
         }
       ],
       unauth: [
         {
-          route: '/login',
+          route:'login',
           icon: 'login',
           txt: LANG.USER.LOGIN
         },
         {
-          route: '/subscribe',
+          route:'subscribe',
           icon: 'thumbs-up',
           txt: LANG.USER.SUBSCRIBE
         }
@@ -127,32 +199,7 @@ module.exports = (function () {
       return ld.map(_routes.unauth, activeRoute);
     }
   };
-  /*
-  * ## Layout View
-  *
-  * The main function, used by nearly all others, that fixes the layout DOM.
-  * It takes optional :
-  *
-  * - `main` vdom content;
-  * - `aside` vdom content.
   */
-
-  layout.view = function (main, aside) {
-    return [
-      m('header.block', [
-        m('h1', conf.SERVER.title),
-        m('nav', { class: classes.nav }, [
-          m('ul', { class: classes.ul }, views.menuMain())
-        ])
-      ]),
-      m('main.block', [
-        m('section.block', main || ''),
-        m('aside.block', aside || '')
-      ]),
-      m('section', { class: notifCls.section }, notif.view(notif.controller())),
-      m('footer.block', m('p', m.trust(LANG.GLOBAL.FOOTER)))
-    ];
-  };
 
   return layout;
 

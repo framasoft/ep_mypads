@@ -26,10 +26,8 @@
 */
 
 module.exports = (function () {
-  var m = require('mithril');
-
-  var auth = {};
-  auth.isAuthenticated = m.prop(false);
-  auth.userInfo = m.prop();
-  return auth;
+  return {
+    isAuthenticated: false,
+    userInfo: {}
+  };
 }).call(this);

@@ -2,12 +2,49 @@
 <html>
   <head>
     <title>MyPads</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link href="css/mypadsfont.css" rel="stylesheet">
-    <link href="css/vendor/pocketgrid.css" rel="stylesheet">
-    <link href="css/vendor/normalize.css" rel="stylesheet">
+    <link href="css/vendor/bootstrap.min.css" rel="stylesheet">
+    <link href="css/vendor/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="css/mypads.css" rel="stylesheet">
+    <script src="js/vendor/jquery.min.js"></script>
+    <script src="js/vendor/bootstrap.min.js"></script>
   </head>
-  <body class="block-group">
+  <body>
+    <header>
+      <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container" id="menu-main">
+          <div class="navbar-header" id="menu-main-header"></div>
+          <div class="collapse navbar-collapse" id="menu-main-body"></div>
+        </div>
+      </nav>
+    </header>
+    <main class="container-fluid">Main content</main>
+    <footer class="container-fluid">
+    </footer>
+    <!-- Layout templates -->
+    <!-- Menu Main : Header -->
+    <script type="text/template" id="menu-main-header-tpl">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#menu-main-body">
+        <span class="sr-only"><%= menuToggle %></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <span class="navbar-brand"><%= title %></span>
+    </script>
+    <!-- Menu Main : Body -->
+    <script type="text/template" id="menu-main-item-tpl">
+      <li <% if (isActive) { %> class="active"<% } %>>
+        <a href="#<%= item.get('route') %>">
+          <i class="icon-<% item.get('icon') %>" title="<%= item.get('txt') %>"></i>
+          <span><%= item.get('txt') %></span>
+        </a>
+      </li>
+    </script>
+    <!-- Footer -->
+    <script type="text/template" id="footer-body">
+      <p><%= footer %></p>
+    </script>
     <script src="js/mypads.js"></script>
   </body>
 </html>

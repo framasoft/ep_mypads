@@ -17,5 +17,6 @@
   "browser": true,
   "browserify": true,
   "node": true,
-  "jasmine": true
+  "jasmine": true,
+  "jquery": true
 }

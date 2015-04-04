@@ -9,6 +9,7 @@ module.exports = {
     CANCEL: 'Cancel'
   },
   MENU: {
+    TOGGLE: 'Voir le menu',
     PAD: 'My Pads',
     BOOKMARK: 'My Bookmarks',
     PROFILE: 'My Profile',

@@ -28,8 +28,7 @@
 
 (function () {
   var conf = require('./frontend/js/configuration.js');
-  var layout = require('./frontend/js/modules/layout.js');
   var route = require('./frontend/js/route.js');
-  conf.init(layout.init);
-  route.init();
+  var layout = require('./frontend/js/modules/layout.js');
+  conf.init(route.init.bind(null, layout.init));
 }).call(this);

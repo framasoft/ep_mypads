@@ -32,6 +32,7 @@ module.exports = (function () {
   var Backbone = require('backbone');
   // Local dependencies
   var auth = require('./auth.js');
+  var layout = require('./modules/layout.js');
 
   var route = {};
 
@@ -47,7 +48,7 @@ module.exports = (function () {
     'admin': 'admin'
   };
 
-  route.init = function () {
+  route.init = function (cb) {
     var authRoutes = und.mapObject(route.routes, function (v, k) {
       return auth.isAuthenticated ? v : 'login';
     });
@@ -59,14 +60,20 @@ module.exports = (function () {
 
     var Router = Backbone.Router.extend({
       routes: route.routes,
-      login: function () { console.log('login'); },
+      login: function () {
+        var login = require('./modules/login.js');
+        layout.view.main.open(login.view());
+      },
       logout: function () { console.log('logout'); },
-      subscribe: function () { console.log('subscribe'); },
+      subscribe: function () {
+        layout.view.main.open(new Backbone.View());
+      },
       admin: function () {}
     });
 
     route.router = new Router();
     Backbone.history.start();
+    cb();
   };
 
 

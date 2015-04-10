@@ -26,54 +26,11 @@
 */
 
 module.exports = (function () {
-  // Global dependencies
-  var m = require('mithril');
-  // Local dependencies
+  var und = require('underscore');
+  var Backbone = require('backbone');
   var conf = require('../configuration.js');
-  var USER = conf.LANG.USER;
-  var auth = require('../auth.js');
-  var form = require('../helpers/form.js');
-  var notif = require('./notification.js');
-  var layout = require('./layout.js');
-  var user = require('./user.js');
 
   var login = {};
-
-  /**
-  * ## Controller
-  *
-  * Used for module state and actions.
-  * And user submission.
-  *
-  */
-
-  login.controller = function () {
-    var c = user.controller();
-    form.initFields(c, ['login', 'password']);
-
-    /**
-    * `submit` internal calls the public API to login with given login and
-    * password. It displays errors if needed or success and fixes local cached
-    * data for the user.
-    */
-
-    c.submit = function (e) {
-      e.preventDefault();
-      m.request({
-        method: 'POST',
-        url: conf.URLS.LOGIN,
-        data: c.data
-      }).then(function (resp) {
-        auth.isAuthenticated(true);
-        auth.userInfo(resp.user);
-        notif.success({ body: USER.AUTH.SUCCESS });
-        m.route('/');
-      }, function (err) {
-        notif.error({ body: err.error });
-      });
-    };
-    return c;
-  };
 
   /**
   * ## Views
@@ -84,43 +41,41 @@ module.exports = (function () {
 
   var view = {};
 
-  view.form = function (c) {
-    var login = user.view.field.login(c);
-    var password = user.view.field.password(c);
-    return m('form', {
-      id: 'login-form',
-      class: 'block ' + c.classes.user.form,
-      onsubmit: c.submit
-      }, [
-      m('fieldset.block-group', [
-        m('legend', { class: c.classes.user.legend }, USER.MYPADS_ACCOUNT),
-        login.label, login.input, login.icon,
-        password.label, password.input, password.icon,
-        m('input', {
-          class: 'block ' + c.classes.user.inputSubmit,
-          form: 'login-form',
-          type: 'submit',
-          value: USER.LOGIN
-        })
-      ]),
-    ]);
+  var form = Backbone.View.extend({
+    tagName: 'section',
+    template: und.template($('#login-form').html()),
+    initialize: function () { return this; },
+    render: function () {
+      var html = this.template({ USER: conf.LANG.USER });
+      this.$el.html(html);
+      this.popov = this.$el.find('i[data-toggle="popover"]');
+      this.popov.popover();
+      return this;
+    },
+    remove: function () { this.popov.popover('destroy'); }
+  });
+
+  var main = Backbone.ContainerView.extend({
+    tagName: 'div',
+    className: 'row',
+    template: und.template($('#login-layout').html()),
+    initialize: function () {
+      var html = this.template({ title: conf.server.get('title'), descr: conf.server.get('descr') });
+      this.$el.html(html);
+      this.append(view.form, '#login-form-container');
+    },
+    render: function () {
+      view.form.render();
+      return this;
+    }
+  });
+
+  login.view = function () {
+    view.form = new form();
+    //return new main();
+    return view.form;
   };
 
-  view.main = function (c) {
-    return m('section', { class: 'block-group ' + c.classes.user.section }, [
-      m('h2', { class: 'block ' + c.classes.user.h2 }, [
-        m('span', USER.FORM),
-        m('a', {
-          class: c.classes.user.a,
-          href: '/subscribe', config: m.route
-        }, USER.ORSUB)
-      ]),
-      view.form(c)
-    ]);
-  };
-
-  login.view = function (c) {
-    return layout.view(view.main(c), user.view.aside(c));
-  };
   return login;
+
 }).call(this);

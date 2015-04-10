@@ -72,18 +72,30 @@ module.exports = (function () {
     }
   ]);
 
-  var views = {};
+  /**
+  * ## Internal views
+  *
+  * ### menuMain
+  *
+  * Returns views for auth and unauth.
+  */
 
-  views.menuMain = {};
-  views.menuMain.container = Backbone.ContainerView.extend({
+  layout.view = {};
+
+  layout.view.menuMain = {};
+
+  layout.view.menuMain.container = Backbone.ContainerView.extend({
     el: '#menu-main',
     initialize: function () {
-      //this.$el.html()
-      this.append(new views.menuMain.header(), '#menu-main-header');
-      this.append(new views.menuMain.body(), '#menu-main-body');
+      this.append(layout.view.menuMain.header, '#menu-main-header');
+      this.append(layout.view.menuMain.body, '#menu-main-body');
+    },
+    render: function () {
+      layout.view.menuMain.body.render();
     }
   });
-  views.menuMain.header = Backbone.View.extend({
+
+  var menuMainHeader = Backbone.View.extend({
     tagName: 'div',
     template: und.template($('#menu-main-header-tpl').html()),
     initialize: function () { this.render(); },
@@ -96,7 +108,8 @@ module.exports = (function () {
       return this;
       }
   });
-  views.menuMain.body = Backbone.View.extend({
+
+  var menuMainBody = Backbone.View.extend({
     tagName: 'ul',
     className: 'nav navbar-nav',
     template: und.template($('#menu-main-item-tpl').html()),
@@ -105,8 +118,7 @@ module.exports = (function () {
       var me = this;
       var items = (auth.isAuthenticated) ? menuItems.auth : menuItems.unauth;
       var html = items.map(function (item) {
-        //var isActive = (Backbone.History.getFragment() === r.route);
-        var isActive = false;
+        var isActive = (Backbone.history.getFragment() === item.get('route'));
         return me.template({ isActive: isActive, item: item });
       });
       this.$el.html(html.join(''));
@@ -114,7 +126,17 @@ module.exports = (function () {
     }
   });
 
-  views.footer = Backbone.View.extend({
+  /**
+  * ### main
+  */
+
+  layout.view.main = Backbone.ContainerView.create('main');
+
+  /**
+  * ### footer
+  */
+
+  layout.view.footer = Backbone.View.extend({
     el: 'footer',
     template: und.template($('#footer-body').html()),
     initialize: function () { this.render(); },
@@ -125,81 +147,21 @@ module.exports = (function () {
     }
   });
 
-  layout.init = function () {
-    new views.menuMain.container();
-    new views.footer();
-  };
-
   /**
-  * ## Internal views
+  * ## Initialization
   *
-  * ### menuMain
-  *
-  * Returns views for auth and unauth.
-
-  views.menuMain = function () {
-    var _routes = {
-      auth: [
-        {
-          route:'mypads',
-          cls: 'doc-text',
-          txt: LANG.MENU.PAD
-        },
-        {
-          route:'mybookmarks',
-          icon: 'bookmarks',
-          txt: LANG.MENU.BOOKMARK
-        },
-        {
-          route:'myprofile',
-          icon: 'user',
-          txt: LANG.MENU.PROFILE
-        },
-        {
-          route:'admin',
-          icon: 'tools',
-          txt: LANG.MENU.ADMIN
-        },
-        {
-          route:'logout',
-          icon: 'logout',
-          txt: LANG.MENU.LOGOUT
-        }
-      ],
-      unauth: [
-        {
-          route:'login',
-          icon: 'login',
-          txt: LANG.USER.LOGIN
-        },
-        {
-          route:'subscribe',
-          icon: 'thumbs-up',
-          txt: LANG.USER.SUBSCRIBE
-        }
-      ]
-    };
-    var activeRoute = function (r) {
-      var liCls = (m.route() === r.route) ? classes.itemActive + ' ' : '';
-      liCls += classes.li;
-      return m('li', { class: liCls }, [
-        m('a', {
-          class: classes.a,
-          href: r.route,
-          config: m.route
-        }, [
-          m('i', { class: 'icon-' + r.icon, title: r.txt }),
-          m('span', { class: classes.span }, r.txt)
-        ])
-      ]);
-    };
-    if (auth.isAuthenticated()) {
-      return ld.map(_routes.auth, activeRoute);
-    } else {
-      return ld.map(_routes.unauth, activeRoute);
-    }
-  };
+  * `init` function creates the `menumain` and `footer` components. it also
+  * use the global `router` to re-render the `mainMenu` when needed.
   */
+
+  layout.init = function () {
+    layout.view.menuMain.header = new menuMainHeader();
+    layout.view.menuMain.body = new menuMainBody();
+    var menuMain = new layout.view.menuMain.container();
+    new layout.view.footer();
+    var route = require('../route.js');
+    route.router.on('route', function () { menuMain.render(); });
+  };
 
   return layout;
 

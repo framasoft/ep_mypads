@@ -19,9 +19,8 @@
         </div>
       </nav>
     </header>
-    <main class="container-fluid">Main content</main>
-    <footer class="container-fluid">
-    </footer>
+    <main class="container-fluid"></main>
+    <footer class="container-fluid"></footer>
     <!-- Layout templates -->
     <!-- Menu Main : Header -->
     <script type="text/template" id="menu-main-header-tpl">
@@ -36,7 +35,7 @@
     <script type="text/template" id="menu-main-item-tpl">
       <li <% if (isActive) { %> class="active"<% } %>>
         <a href="#<%= item.get('route') %>">
-          <i class="icon-<% item.get('icon') %>" title="<%= item.get('txt') %>"></i>
+          <i class="icon-<%= item.get('icon') %>" title="<%= item.get('txt') %>"></i>
           <span><%= item.get('txt') %></span>
         </a>
       </li>
@@ -44,6 +43,42 @@
     <!-- Footer -->
     <script type="text/template" id="footer-body">
       <p><%= footer %></p>
+    </script>
+    <!-- Login templates -->
+    <!-- Login layout -->
+    <script type="text/template" id="login-layout">
+      <div class="col-sm-6" id="login-form-container"></div>
+      <aside class="col-sm-6">
+        <section class="panel panel-default">
+          <div class="panel-body">
+            <h2><%= title %></h2>
+            <article><%= descr %></article>
+          </div>
+        </section>
+      </aside>
+    </script>
+    <!-- Login form -->
+    <script type="text/template" id="login-form">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <form class="form-horizontal">
+            <fieldset>
+              <legend><%= USER.MYPADS_ACCOUNT %></legend>
+              <div class="form-group">
+                <label class="col-sm-5 control-label" for="login"><%= USER.USERNAME %></label>
+                <div class="col-sm-7">
+                  <div class="input-group">
+                    <input class="form-control" type="text" name="login" placeholder<%= USER.LOGIN %> required />
+                    <div class="input-group-addon btn btn-info">
+                      <i class="icon-info-circled" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover focus" data-content="<%= USER.INFO.LOGIN %>"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+          </form>
+        </div>
+      </div>
     </script>
     <script src="js/mypads.js"></script>
   </body>

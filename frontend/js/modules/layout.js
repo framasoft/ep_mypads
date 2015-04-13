@@ -70,7 +70,7 @@ module.exports = (function () {
       auth: [
         {
           route: '/mypads',
-          cls: 'doc-text',
+          icon: 'doc-text',
           txt: LANG.MENU.PAD
         },
         {

@@ -54,14 +54,27 @@ module.exports = (function () {
   * `handleField` function takes
   *
   * - a `c` controller instance, used to set validity and fix value
-  * - and a DOM Event, which use HTML5 Validation API to ensure input is valid
-  *   or not.
+  * - an `extra` optional function that can be used to add another test to HTML5
+  *   validity, that takes itself `c` controller and `e` event
+  * - a DOM Event, which use HTML5 Validation API to ensure input is valid or
+  *   not.
   */
 
-  form.handleField = function (c, e) {
+  form.handleField = function (c, extra, e) {
+    if (!e) {
+      e = extra;
+      extra = undefined;
+    }
     var field = e.target.getAttribute('name');
-    c.valid[field](e.target.checkValidity());
+    var isValid = function () {
+      if (extra) {
+        return (e.target.checkValidity() && extra(c, e));
+      } else {
+        return e.target.checkValidity();
+      }
+    };
     c.data[field](e.target.value);
+    c.valid[field](isValid());
   };
 
   return form;

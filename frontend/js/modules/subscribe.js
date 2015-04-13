@@ -27,6 +27,7 @@
 
 module.exports = (function () {
   // Dependencies
+  var ld = require('lodash');
   var m = require('mithril');
   // Local Dependencies
   var conf = require('../configuration.js');
@@ -46,7 +47,8 @@ module.exports = (function () {
   */
   subscribe.controller = function () {
     var c = user.controller();
-    form.initFields(c, ['login', 'password']);
+    form.initFields(c, ['login', 'password', 'passwordCheck', 'email',
+      'firstname', 'lastname', 'org']);
     return c;
   };
 
@@ -59,24 +61,28 @@ module.exports = (function () {
   var view = {};
 
   view.form = function (c) {
-    var login = user.view.field.login(c);
-    var password = user.view.field.password(c);
+    var fields = ['login', 'password', 'email', 'firstname', 'lastname', 'org'];
+    fields = ld.reduce(fields, function (memo, f) {
+      memo[f] = user.view.field[f](c); 
+      return memo;
+    }, {});
+    fields.passCheck = user.view.field.password(c, true);
     return m('form', {
       id: 'subscribe-form',
       class: 'block ' + c.classes.user.form
       }, [
       m('fieldset.block-group', [
         m('legend', { class: c.classes.user.legend }, USER.MANDATORY_FIELDS),
-        login.label, login.input, login.icon,
-        password.label, password.input, password.icon,
-        m('p', 'passwordConfirm')
+        fields.login.label, fields.login.input, fields.login.icon,
+        fields.password.label, fields.password.input, fields.password.icon,
+        fields.passCheck.label, fields.passCheck.input, fields.passCheck.icon,
+        fields.email.label, fields.email.input, fields.email.icon
       ]),
       m('fieldset.block-group', [
         m('legend', { class: c.classes.user.legendopt }, USER.OPTIONAL_FIELDS),
-        m('p', 'email'),
-        m('p', 'firstname'),
-        m('p', 'lastname'),
-        m('p', 'organization')
+        fields.firstname.label, fields.firstname.input, fields.firstname.icon,
+        fields.lastname.label, fields.lastname.input, fields.lastname.icon,
+        fields.org.label, fields.org.input, fields.org.icon
       ]),
       m('input', {
         class: 'block ' + c.classes.user.inputSubmit,

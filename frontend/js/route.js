@@ -61,7 +61,8 @@ module.exports = (function () {
       '/': home,
       '/login': login,
       '/logout': logout,
-      '/subscribe': subscribe
+      '/subscribe': subscribe,
+      '/myprofile': subscribe
     }, authRoutes));
   };
 

@@ -294,7 +294,7 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/user
     */
 
-    app.post(userRoute, fn.ensureAuthentificated, _set);
+    app.post(userRoute, _set);
 
     /**
     * PUT method : `user.set` with user key/login plus value for existing user

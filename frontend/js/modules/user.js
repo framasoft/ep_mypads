@@ -109,22 +109,20 @@ module.exports = (function () {
   };
 
   user.view.icon.password = function (c, name) {
-    var infoPass = (function () {
-      if (name === 'password') {
-        return USER.INFO.PASSWORD_BEGIN + conf.SERVER.passwordMin +
-          ' ' + conf.LANG.GLOBAL.AND + ' ' + conf.SERVER.passwordMax +
-          USER.INFO.PASSWORD_END;
-      } else {
-        return USER.INFO.PASSWORD_CHECK;
-      }
-    })();
+    var infos = {
+      password: USER.INFO.PASSWORD_BEGIN + conf.SERVER.passwordMin +
+        ' ' + conf.LANG.GLOBAL.AND + ' ' + conf.SERVER.passwordMax +
+        USER.INFO.PASSWORD_END,
+      passwordConfirm: USER.INFO.PASSWORD_CHECK,
+      passwordCurrent: USER.INFO.PASSWORD_CURRENT
+    };
     var icls = c.valid[name]() ? ['icon-info-circled'] : ['icon-alert'];
     icls.push(c.classes.tooltip.global);
     icls.push(c.classes.user.i);
     icls.push('block');
     return m('i', {
       class: icls.join(' '),
-      'data-msg': infoPass
+      'data-msg': infos[name]
     });
   };
 
@@ -162,6 +160,7 @@ module.exports = (function () {
       input: m('input', {
         class: 'block ' + c.classes.user.input,
         name: name,
+        value: c.data[name]() || '',
         oninput: form.handleField.bind(null, c)
       }),
       icon: user.view.icon[name](c)
@@ -179,35 +178,32 @@ module.exports = (function () {
   };
 
   /**
-  * #### password
+  * #### _pass
   *
-  * `password` is a field taking an optional `check` boolean, default to
-  * *false* that changes label and messages.
+  * `_pass` common helper that takes
+  *
+  * - the `c` controller,
+  * - the `name` of the field,
+  * - the `label` locale,
+  * - an `extraValid` function for performing extra HTML5 validation
+  *
+  * It returns the classic triplet `label`, `input` and `icon`.
   */
 
-  user.view.field.password = function (c, check) {
-    check = !!check;
+  user.view.field._pass = function (c, name, label, extraValid) {
     var passMin = conf.SERVER.passwordMin;
     var passMax = conf.SERVER.passwordMax;
-    var name = check ? 'passwordCheck' : 'password';
-    var extraValid = (function () {
-      if (check) {
-        return function (c) {
-          return (c.data.password() === c.data.passwordCheck());
-        };
-      }
-    })();
     return {
       label: m('label', {
         class: 'block ' + c.classes.user.label,
         for: name
-      }, (check ? USER.PASSCHECK : USER.PASSWORD)),
+      }, label),
       input: m('input', {
         class: 'block ' + c.classes.user.input,
         type: 'password',
         name: name,
         placeholder: USER.UNDEF,
-        required: true,
+        required: (!c.profileView || !c.profileView()),
         minlength: passMin,
         maxlength: passMax,
         pattern: '.{' + passMin + ',' + passMax + '}',
@@ -217,12 +213,35 @@ module.exports = (function () {
     };
   };
 
+  user.view.field.password = function (c) {
+    var vdom = user.view.field._pass(c, 'password', USER.PASSWORD);
+    ld.assign(vdom.input.attrs, {});
+    return vdom;
+  };
+
+  user.view.field.passwordConfirm = function (c) {
+    var extraValid = function (c) {
+      return (c.data.password() === c.data.passwordConfirm());
+    };
+    var vdom = user.view.field._pass(c, 'passwordConfirm', USER.PASSCHECK,
+      extraValid);
+    return vdom;
+  };
+
+  user.view.field.passwordCurrent = function (c) {
+    var vdom = user.view.field._pass(c, 'passwordCurrent', USER.PASSCURRENT);
+    ld.assign(vdom.label.attrs, { style: { fontWeight: 'bold' } });
+    ld.assign(vdom.input.attrs, { required: true });
+    return vdom;
+  };
+
   user.view.field.email = function (c) {
     var fields = user.view.field.common(c, 'email', USER.EMAIL);
     ld.assign(fields.input.attrs, {
         type: 'email',
         placeholder: USER.EMAIL_SAMPLE,
-        required: true
+        required: true,
+        value: c.data.email() || '',
     });
     return fields;
   };

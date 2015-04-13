@@ -33,6 +33,8 @@ module.exports = (function () {
   var conf = require('../configuration.js');
   var form = require('../helpers/form.js');
   var USER = conf.LANG.USER;
+  var notif = require('./notification.js');
+  var auth = require('../auth.js');
   var layout = require('./layout.js');
   var user = require('./user.js');
 
@@ -45,10 +47,55 @@ module.exports = (function () {
   * And user submission.
   *
   */
+
   subscribe.controller = function () {
     var c = user.controller();
-    form.initFields(c, ['login', 'password', 'passwordCheck', 'email',
-      'firstname', 'lastname', 'org']);
+    c.profileView = m.prop((m.route() === '/myprofile'));
+    if (c.profileView() && !auth.isAuthenticated()) {
+      return m.route('/login');
+    }
+    c.fields = ['login', 'password', 'passwordConfirm', 'email', 'firstname',
+      'lastname', 'org'];
+    if (c.profileView()) { c.fields.push('passwordCurrent'); }
+    form.initFields(c, c.fields);
+    if (c.profileView()) {
+      ld.map(c.fields, function (f) {
+        if (!ld.startsWith(f, 'password')) {
+          c.data[f] = m.prop(auth.userInfo()[f]);
+        }
+      });
+    }
+
+    /**
+    * `submit` internal calls the public API to subscribe with given data.
+    * It ensures that additionnal validity check is done.
+    * It displays errors if needed or success and fixes local cached data for
+    * the user. Finally, it authenticates new created user.
+    */
+
+    c.submit = function (e) {
+      var errfn = function (err) { return notif.error({ body: err.error }); };
+      e.preventDefault();
+      if (c.data.password() !== c.data.passwordConfirm()) {
+        notif.warning({ body: USER.ERR.PASSWORD_MISMATCH });
+        document.querySelector('input[name="passwordConfirm"]').focus();
+      } else {
+        m.request({
+          method: 'POST',
+          url: conf.URLS.USER,
+          data: c.data
+        }).then(function (resp) {
+          auth.isAuthenticated(true);
+          auth.userInfo(resp.value);
+          notif.success({ body: USER.SUBS.SUCCESS });
+          m.request({
+            method: 'POST',
+            url: conf.URLS.LOGIN,
+            data: c.data
+          }).then(m.route.bind(null, '/'), errfn);
+        }, errfn);
+      }
+    };
     return c;
   };
 
@@ -61,22 +108,29 @@ module.exports = (function () {
   var view = {};
 
   view.form = function (c) {
-    var fields = ['login', 'password', 'email', 'firstname', 'lastname', 'org'];
-    fields = ld.reduce(fields, function (memo, f) {
+    var fields = ld.reduce(c.fields, function (memo, f) {
       memo[f] = user.view.field[f](c); 
       return memo;
     }, {});
-    fields.passCheck = user.view.field.password(c, true);
+    var requiredFields = [
+        fields.login.label, fields.login.input, fields.login.icon,
+        fields.password.label, fields.password.input, fields.password.icon,
+        fields.passwordConfirm.label, fields.passwordConfirm.input,
+        fields.passwordConfirm.icon,
+        fields.email.label, fields.email.input, fields.email.icon
+    ];
+    if (c.profileView()) {
+      var passC = user.view.field.passwordCurrent(c);
+      requiredFields.splice(0, 0, passC.label, passC.input, passC.icon);
+    }
     return m('form', {
       id: 'subscribe-form',
-      class: 'block ' + c.classes.user.form
+      class: 'block ' + c.classes.user.form,
+      onsubmit: c.submit
       }, [
       m('fieldset.block-group', [
         m('legend', { class: c.classes.user.legend }, USER.MANDATORY_FIELDS),
-        fields.login.label, fields.login.input, fields.login.icon,
-        fields.password.label, fields.password.input, fields.password.icon,
-        fields.passCheck.label, fields.passCheck.input, fields.passCheck.icon,
-        fields.email.label, fields.email.input, fields.email.icon
+        m('div', requiredFields)
       ]),
       m('fieldset.block-group', [
         m('legend', { class: c.classes.user.legendopt }, USER.OPTIONAL_FIELDS),
@@ -88,14 +142,16 @@ module.exports = (function () {
         class: 'block ' + c.classes.user.inputSubmit,
         form: 'subscribe-form',
         type: 'submit',
-        value: USER.REGISTER
+        value: c.profileView() ? conf.LANG.ACTIONS.SAVE : USER.REGISTER
       })
     ]);
   };
 
   view.main = function (c) {
     return m('section', { class: 'block-group ' + c.classes.user.section }, [
-      m('h2', { class: 'block ' + c.classes.user.h2 }, USER.SUBSCRIBE),
+      m('h2', {
+        class: 'block ' + c.classes.user.h2
+      }, c.profileView() ? USER.PROFILE : USER.SUBSCRIBE),
       view.form(c)
     ]);
   };

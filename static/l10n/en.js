@@ -33,10 +33,12 @@ module.exports = {
     OPTIONAL_FIELDS: 'Optional fields',
     MYPADS_ACCOUNT: 'MyPads account',
     SUBSCRIBE: 'Subscribe',
+    PROFILE: 'Profile',
     USERNAME: 'Username',
     LOGIN: 'Login',
     PASSWORD: 'Password',
     PASSCHECK: 'Password Confirmation',
+    PASSCURRENT: 'Current password',
     EMAIL: 'Email',
     EMAIL_SAMPLE: 'username@example.org',
     FIRSTNAME: 'Firstname',
@@ -51,16 +53,21 @@ module.exports = {
       PASSWORD_BEGIN: 'Must be between ',
       PASSWORD_END: ' characters',
       PASSWORD_CHECK: 'For verification : must be the same as password',
+      PASSWORD_CURRENT: 'Security check : required for all profile changes',
       OPTIONAL: 'Optional field'
     },
     ERR: {
       LOGIN: 'Login is required',
       EMAIL: 'The email is required and shoule be valid',
-      LOGOUT: 'Log out error : you wasn\'t authenticated.'
+      LOGOUT: 'Log out error : you wasn\'t authenticated.',
+      PASSWORD_MISMATCH: 'The entered passwords do not match.'
     },
     AUTH: {
       SUCCESS: 'Successfull authentication ! Welcome.',
       SUCCESS_OUT: 'You have been successfully disconnected.'
+    },
+    SUBS: {
+      SUCCESS: 'Successfull subscription ! Welcome.'
     }
   }
 };

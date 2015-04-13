@@ -83,7 +83,7 @@ module.exports = (function () {
       'color': vars.color.dark,
       'background': vars.color.lightest
     },
-    'input[type=text]:focus, input[type=password]:focus': {
+    'input:focus': {
       'border-color': vars.color.grey,
       'border-left-width': '0.3em',
       'border-right-width': '0.3em'

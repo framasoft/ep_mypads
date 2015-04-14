@@ -55,7 +55,7 @@ module.exports = (function () {
       return m.route('/login');
     }
     c.fields = ['login', 'password', 'passwordConfirm', 'email', 'firstname',
-      'lastname', 'org'];
+      'lastname', 'organization'];
     if (c.profileView()) { c.fields.push('passwordCurrent'); }
     form.initFields(c, c.fields);
     if (c.profileView()) {
@@ -73,8 +73,9 @@ module.exports = (function () {
     * the user. Finally, it authenticates new created user.
     */
 
-    c.submit = function (e) {
-      var errfn = function (err) { return notif.error({ body: err.error }); };
+    c.submit = {};
+    var errfn = function (err) { return notif.error({ body: err.error }); };
+    c.submit.subscribe = function (e) {
       e.preventDefault();
       if (c.data.password() !== c.data.passwordConfirm()) {
         notif.warning({ body: USER.ERR.PASSWORD_MISMATCH });
@@ -87,7 +88,7 @@ module.exports = (function () {
         }).then(function (resp) {
           auth.isAuthenticated(true);
           auth.userInfo(resp.value);
-          notif.success({ body: USER.SUBS.SUCCESS });
+          notif.success({ body: USER.AUTH.SUBSCRIBE_SUCCESS });
           m.request({
             method: 'POST',
             url: conf.URLS.LOGIN,
@@ -95,6 +96,32 @@ module.exports = (function () {
           }).then(m.route.bind(null, '/'), errfn);
         }, errfn);
       }
+    };
+    var passwordUpdate = function () {
+      var pass = c.data.password();
+      if (!pass || (pass !== c.data.passwordConfirm())) {
+        c.data.password(c.data.passwordCurrent());
+      }
+    };
+    window.cdata = c.data;
+    window.userInfo = auth.userInfo;
+    c.submit.profileSave = function (e) {
+      e.preventDefault();
+      m.request({
+        method: 'POST',
+        url: conf.URLS.CHECK,
+        data: { login: auth.userInfo().login, password: c.data.passwordCurrent }
+      }).then(function () {
+        passwordUpdate();
+        m.request({
+          method: 'PUT',
+          url: conf.URLS.USER + '/' + auth.userInfo().login,
+          data: c.data
+        }).then(function (resp) {
+          auth.userInfo(resp.value);
+          notif.success({ body: USER.AUTH.PROFILE_SUCCESS });
+        }, errfn);
+      }, errfn);
     };
     return c;
   };
@@ -113,7 +140,6 @@ module.exports = (function () {
       return memo;
     }, {});
     var requiredFields = [
-        fields.login.label, fields.login.input, fields.login.icon,
         fields.password.label, fields.password.input, fields.password.icon,
         fields.passwordConfirm.label, fields.passwordConfirm.input,
         fields.passwordConfirm.icon,
@@ -122,11 +148,14 @@ module.exports = (function () {
     if (c.profileView()) {
       var passC = user.view.field.passwordCurrent(c);
       requiredFields.splice(0, 0, passC.label, passC.input, passC.icon);
+    } else {
+      var log = fields.login;
+      requiredFields.splice(0, 0, log.label, log.input, log.icon);
     }
     return m('form', {
       id: 'subscribe-form',
       class: 'block ' + c.classes.user.form,
-      onsubmit: c.submit
+      onsubmit: c.profileView() ? c.submit.profileSave : c.submit.subscribe
       }, [
       m('fieldset.block-group', [
         m('legend', { class: c.classes.user.legend }, USER.MANDATORY_FIELDS),
@@ -136,7 +165,8 @@ module.exports = (function () {
         m('legend', { class: c.classes.user.legendopt }, USER.OPTIONAL_FIELDS),
         fields.firstname.label, fields.firstname.input, fields.firstname.icon,
         fields.lastname.label, fields.lastname.input, fields.lastname.icon,
-        fields.org.label, fields.org.input, fields.org.icon
+        fields.organization.label, fields.organization.input,
+        fields.organization.icon
       ]),
       m('input', {
         class: 'block ' + c.classes.user.inputSubmit,

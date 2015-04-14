@@ -66,6 +66,57 @@
       });
       afterAll(specCommon.reInitDatabase);
 
+      describe('auth.check POST', function () {
+
+        beforeAll(function (done) {
+          var params = {
+            body: { login: 'guest', password: 'willnotlivelong' }
+          };
+          rq.post(authRoute + '/login', params, done);
+        });
+        afterAll(function (done) { rq.get(authRoute + '/logout', done); });
+
+        it('should return an error if params are inexistent', function (done) {
+          rq.post(authRoute + '/check', {}, function (err, resp, body) {
+            expect(resp.statusCode).toBe(400);
+            expect(body.error).toBe('login must be a string');
+            done();
+          });
+        });
+
+        it('should return an error if user does not exist', function (done) {
+          var params = { body: { login: 'inexistent', password: 'pass' } };
+          rq.post(authRoute + '/check', params, function (err, resp, body) {
+            expect(resp.statusCode).toBe(400);
+            expect(body.error).toBe('user not found');
+            done();
+          });
+        });
+
+        it('should not auth if user exists but pasword does not match',
+          function (done) {
+            var params = { body: { login: 'guest', password: 'pass' } };
+            rq.post(authRoute + '/check', params, function (err, resp, body) {
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toBe('password is not correct');
+              done();
+            });
+          }
+        );
+
+        it('should return success otherwise', function (done) {
+          var params = {
+            body: { login: 'guest', password: 'willnotlivelong' }
+          };
+          rq.post(authRoute + '/check', params, function (err, resp, body) {
+            expect(resp.statusCode).toBe(200);
+            expect(body.success).toBeTruthy();
+            done();
+          });
+        });
+
+      });
+
       describe('auth.login POST', function () {
 
         it('should not auth if params are inexistent', function (done) {
@@ -510,6 +561,23 @@
                 expect(body.success).toBeTruthy();
                 expect(body.key).toBe('mikey');
                 expect(body.value.email).toBe('mikey@randall.com');
+                done();
+              });
+            });
+          }
+        );
+
+        xit('should accept login change',
+          function (done) {
+            var b = { body: { password: 'missMusso', } };
+            rq.put(userRoute + '/mikey', b, function () {
+              b.body.login = 'mike';
+              rq.put(userRoute + '/mikey', b, function (err, resp, body) {
+                console.log(body);
+                expect(resp.statusCode).toBe(200);
+                expect(body.success).toBeTruthy();
+                expect(body.key).toBe('mikey');
+                expect(body.value.login).toBe('mike');
                 done();
               });
             });

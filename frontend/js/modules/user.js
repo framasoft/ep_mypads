@@ -102,7 +102,7 @@ module.exports = (function () {
   };
   user.view.icon.firstname = user.view.icon.optional;
   user.view.icon.lastname = user.view.icon.optional;
-  user.view.icon.org = user.view.icon.optional;
+  user.view.icon.organization = user.view.icon.optional;
 
   user.view.icon.login = function (c) {
     return user.view.icon.common(c, 'login', USER.INFO.LOGIN, USER.ERR.LOGIN);
@@ -264,8 +264,8 @@ module.exports = (function () {
     return fields;
   };
 
-  user.view.field.org = function (c) {
-    var fields = user.view.field.common(c, 'org', USER.ORGANIZATION);
+  user.view.field.organization = function (c) {
+    var fields = user.view.field.common(c, 'organization', USER.ORGANIZATION);
     ld.assign(fields.input.attrs, {
         type: 'text',
         placeholder: USER.ORGANIZATION

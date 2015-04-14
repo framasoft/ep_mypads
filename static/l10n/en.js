@@ -64,10 +64,9 @@ module.exports = {
     },
     AUTH: {
       SUCCESS: 'Successfull authentication ! Welcome.',
-      SUCCESS_OUT: 'You have been successfully disconnected.'
-    },
-    SUBS: {
-      SUCCESS: 'Successfull subscription ! Welcome.'
+      SUCCESS_OUT: 'You have been successfully disconnected.',
+      SUBSCRIBE_SUCCESS: 'Successfull subscription ! Welcome.',
+      PROFILE_SUCCESS: 'Profile successfully updated.'
     }
   }
 };

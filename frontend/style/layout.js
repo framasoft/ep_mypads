@@ -97,6 +97,7 @@ module.exports = (function () {
     'input[type=submit]:hover, input[type=submit]:focus': {
       'background': vars.color.yellowdark
     },
+    'input[disabled]': { 'color': vars.color.grey },
     'i.icon-alert': { 'color': vars.color.red }
   };
 

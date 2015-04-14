@@ -143,6 +143,30 @@ module.exports = (function () {
     var authRoute = api.initialRoute + 'auth';
 
     /**
+    * POST method : check, method returning success or error if given *login*
+    * and *password* do not match to what is stored into database
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/auth/check
+    */
+
+    app.post(authRoute + '/check', fn.ensureAuthentificated,
+      function (req, res) {
+        try {
+          auth.fn.localFn(req.body.login, req.body.password,
+            function (err) {
+              if (err) { return res.send(400, { error: err.message }); }
+              res.send(200, { success: true });
+            }
+          );
+        }
+        catch (e) {
+          res.send(400, { error: e.message });
+        }
+      }
+    );
+
+    /**
     * POST method : login, method returning user object minus password if auth
     * is a success, plus fixes a `login` session.
     *
@@ -280,7 +304,7 @@ module.exports = (function () {
         key = req.body.login;
       } else {
         key = req.params.key;
-        value.login = key;
+        value.login = req.body.login || key;
         value._id = user.ids[key];
       }
       var setFn = ld.partial(user.set, value);

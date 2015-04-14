@@ -206,6 +206,9 @@ module.exports = (function () {
   *
   * It returns, through the callback, an *Error* if the user or login are
   * already here, *null* otherwise.
+  *
+  * TODO: split in two functions to allow login change (used in cunjunction
+  * with getDel by login)
   */
 
   user.fn.checkLogin = function (_id, u, callback) {

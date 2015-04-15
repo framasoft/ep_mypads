@@ -33,22 +33,26 @@ module.exports = (function () {
     el.dispatchEvent(new window.KeyboardEvent('input'));
   };
   var login = {};
+
+  var first;
+  var $el;
+  login.beforeAll = function (app) {
+    // Go to login page
+    app.document.querySelector('header > nav a:first-child').click();
+    first = function (sel) { return app.document.querySelector(sel); };
+    $el = {
+      form: first('form'),
+      login: first('input[name=login]'),
+      password: first('input[name=password]'),
+      submit: first('input[type=submit]')
+    };
+  };
+
   login.run = function (app) {
 
     describe('login module testing', function () {
-      var first;
-      var $el;
-      beforeAll(function () {
-        // Go to login page
-        app.document.querySelector('header > nav a:first-child').click();
-        first = function (sel) { return app.document.querySelector(sel); };
-        $el = {
-          form: first('form'),
-          login: first('input[name=login]'),
-          password: first('input[name=password]'),
-          submit: first('input[type=submit]')
-        };
-      });
+
+      beforeAll(login.beforeAll.bind(null, app));
 
       afterEach(function (done) {
         $el.login.value = '';
@@ -99,19 +103,41 @@ module.exports = (function () {
       );
 
       it('should login if user and pass are ok', function (done) {
-          fill($el.login, 'parker');
-          fill($el.password, 'lovesKubiak');
-          expect($el.form.checkValidity()).toBeTruthy();
-          $el.submit.click();
+        fill($el.login, 'parker');
+        fill($el.password, 'lovesKubiak');
+        expect($el.form.checkValidity()).toBeTruthy();
+        $el.submit.click();
+        window.setTimeout(function () {
+          var $success = first('body > section p');
+          expect($success.innerHTML).toMatch('Success');
+          $success.click();
           window.setTimeout(function () {
-            var $err = first('body > section p');
-            expect($err.innerHTML).toMatch('Success');
-            $err.click();
             expect(app.location.search).toBe('?/');
+            first('.icon-logout').parentNode.click();
+            window.setTimeout(done, 100);
+          }, 100);
+        }, 100); // Too low ?
+      });
+
+    describe('logout module testing', function () {
+
+      beforeAll(login.beforeAll.bind(null, app));
+
+      it('should logout after login', function (done) {
+        fill($el.login, 'parker');
+        fill($el.password, 'lovesKubiak');
+        $el.submit.click();
+        window.setTimeout(function () {
+          first('body > section p').click();
+          first('.icon-logout').parentNode.click();
+          window.setTimeout(function () {
+            expect(first('.icon-login')).toBeTruthy();
             done();
-          }, 100); // Too low ?
-        }
-      );
+          }, 100);
+        }, 100);
+      });
+    });
+
     });
   };
   return login;

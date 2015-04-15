@@ -3,3 +3,5 @@ doc*
 static/js/*
 static/l10n/*
 frontend/l10n/*
+spec/frontend/mypads.js
+spec/frontend/jasmine-core/*

@@ -27,16 +27,22 @@
 */
 
 module.exports = (function () {
+  // To use mithril oninput...
+  var fill = function (el, val) {
+    el.value = val;
+    el.dispatchEvent(new window.KeyboardEvent('input'));
+  };
   var login = {};
   login.run = function (app) {
 
     describe('login module testing', function () {
-      var $elements;
+      var first;
+      var $el;
       beforeAll(function () {
         // Go to login page
         app.document.querySelector('header > nav a:first-child').click();
-        var first = function (sel) { return app.document.querySelector(sel); };
-        $elements = {
+        first = function (sel) { return app.document.querySelector(sel); };
+        $el = {
           form: first('form'),
           login: first('input[name=login]'),
           password: first('input[name=password]'),
@@ -44,12 +50,68 @@ module.exports = (function () {
         };
       });
 
-      it('should not reroute whith no login/pass fill', function (done) {
-        var hash = app.location.search;
-        $elements.submit.click();
-        expect(app.location.search).toBe(hash);
+      afterEach(function (done) {
+        $el.login.value = '';
+        $el.password.value = '';
         done();
       });
+
+      it('should forbid submision whith no login/pass fill', function (done) {
+        $el.submit.click();
+        expect($el.form.checkValidity()).toBeFalsy();
+        done();
+      });
+
+      it('should forbid submission whith incorrect log/pass', function (done) {
+        $el.login.value = 'a login';
+        expect($el.form.checkValidity()).toBeFalsy();
+        expect($el.login.checkValidity()).toBeTruthy();
+        expect($el.password.checkValidity()).toBeFalsy();
+        $el.password.value = 'short';
+        expect($el.form.checkValidity()).toBeFalsy();
+        expect($el.login.checkValidity()).toBeTruthy();
+        expect($el.password.checkValidity()).toBeFalsy();
+        done();
+      });
+
+      it('should allow submission with conform login and password',
+        function (done) {
+          $el.login.value = 'mikey';
+          $el.password.value = 'goodSizeForPass';
+          expect($el.form.checkValidity()).toBeTruthy();
+          done();
+        }
+      );
+
+      it('should return an error if user does not exist or password is bad',
+        function (done) {
+          fill($el.login, 'fakeMikey');
+          fill($el.password, 'goodSizeForPass');
+          expect($el.form.checkValidity()).toBeTruthy();
+          $el.submit.click();
+          window.setTimeout(function () {
+            var $err = first('body > section p');
+            expect($err.innerHTML).toMatch('not found');
+            $err.click();
+            done();
+          }, 100); // Too low ?
+        }
+      );
+
+      it('should login if user and pass are ok', function (done) {
+          fill($el.login, 'parker');
+          fill($el.password, 'lovesKubiak');
+          expect($el.form.checkValidity()).toBeTruthy();
+          $el.submit.click();
+          window.setTimeout(function () {
+            var $err = first('body > section p');
+            expect($err.innerHTML).toMatch('Success');
+            $err.click();
+            expect(app.location.search).toBe('?/');
+            done();
+          }, 100); // Too low ?
+        }
+      );
     });
   };
   return login;

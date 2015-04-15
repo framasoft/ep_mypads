@@ -78,8 +78,7 @@ module.exports = (function () {
   /**
   * ## Views
   *
-  * `main`, `aside` views.
-  * `form`, `field` and `icon` views.
+  * Nothing special here, just simple `main` and `form` views.
   */
 
   var view = {};
@@ -120,7 +119,7 @@ module.exports = (function () {
   };
 
   login.view = function (c) {
-    return layout.view(view.main(c), user.view.aside(c));
+    return layout.view(view.main(c), user.view.aside.common(c));
   };
   return login;
 }).call(this);

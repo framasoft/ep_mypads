@@ -43,6 +43,8 @@ module.exports = (function () {
 
   /**
   * ## Controller
+  *
+  * Used for common state, only style here.
   */
 
   user.controller = function () {
@@ -95,6 +97,12 @@ module.exports = (function () {
     });
   };
 
+  /**
+  * #### optional icon
+  *
+  * `optional` icon is the base icon for all optional fields
+  */
+
   user.view.icon.optional = function (c) {
     var icls = ['block icon-info-circled', c.classes.tooltip.global,
       c.classes.user.i];
@@ -104,9 +112,20 @@ module.exports = (function () {
   user.view.icon.lastname = user.view.icon.optional;
   user.view.icon.organization = user.view.icon.optional;
 
+  /**
+  * ### login icon
+  */
+
   user.view.icon.login = function (c) {
     return user.view.icon.common(c, 'login', USER.INFO.LOGIN, USER.ERR.LOGIN);
   };
+
+  /**
+  * #### password icon
+  *
+  * `password` icon gathers all password types and only change the message
+  * according to the given `name`
+  */
 
   user.view.icon.password = function (c, name) {
     var infos = {
@@ -126,6 +145,10 @@ module.exports = (function () {
     });
   };
 
+  /**
+  * #### email icon
+  */
+
   user.view.icon.email = function (c) {
     return user.view.icon.common(c, 'email', USER.INFO.EMAIL, USER.ERR.EMAIL);
   };
@@ -133,11 +156,11 @@ module.exports = (function () {
   /**
   * ### Fields
   *
-  * Each `field` is a view returning three elements :
+  * Each `field` is a view returning three vdom elements :
   *
-  * - a `łabel`
+  * - a `label`
   * - an `input`
-  * - the helper `icon`
+  * - the `icon`
   */
 
   user.view.field = {};
@@ -145,7 +168,7 @@ module.exports = (function () {
   /**
   * #### common
   *
-  * `common` is an helper that returns the triplet quoted before, by taking
+  * `common` is an helper that returns the triplet of vdoms, by taking
   *
   * - the `name` of the field,
   * - the `label` locale
@@ -167,6 +190,10 @@ module.exports = (function () {
     };
   };
 
+  /**
+  * #### login
+  */
+
   user.view.field.login = function (c) {
     var fields = user.view.field.common(c, 'login', USER.USERNAME);
     ld.assign(fields.input.attrs, {
@@ -185,9 +212,9 @@ module.exports = (function () {
   * - the `c` controller,
   * - the `name` of the field,
   * - the `label` locale,
-  * - an `extraValid` function for performing extra HTML5 validation
+  * - an `extraValid` optional function for performing extra HTML5 validation
   *
-  * It returns the classic triplet `label`, `input` and `icon`.
+  * It returns the classic triplet `label`, `input` and `icon` vdoms.
   */
 
   user.view.field._pass = function (c, name, label, extraValid) {
@@ -213,11 +240,23 @@ module.exports = (function () {
     };
   };
 
+  /**
+  * #### password field
+  *
+  * Classic `password` field
+  */
+
   user.view.field.password = function (c) {
-    var vdom = user.view.field._pass(c, 'password', USER.PASSWORD);
-    ld.assign(vdom.input.attrs, {});
-    return vdom;
+    return user.view.field._pass(c, 'password', USER.PASSWORD);
   };
+
+  /**
+  * #### passwordConfirm field
+  *
+  * Special password field for password change, with extra HTML5 validation :
+  * must be the same as password.
+  *
+  */
 
   user.view.field.passwordConfirm = function (c) {
     var extraValid = function (c) {
@@ -228,12 +267,23 @@ module.exports = (function () {
     return vdom;
   };
 
+  /**
+  * #### passwordCurrent field
+  *
+  * `passwordCurrent` is a password field used into the user profile, required
+  * to validate each change.
+  */
+
   user.view.field.passwordCurrent = function (c) {
     var vdom = user.view.field._pass(c, 'passwordCurrent', USER.PASSCURRENT);
     ld.assign(vdom.label.attrs, { style: { fontWeight: 'bold' } });
     ld.assign(vdom.input.attrs, { required: true });
     return vdom;
   };
+
+  /**
+  * #### email field
+  */
 
   user.view.field.email = function (c) {
     var fields = user.view.field.common(c, 'email', USER.EMAIL);
@@ -246,6 +296,10 @@ module.exports = (function () {
     return fields;
   };
 
+  /**
+  * #### firstname field
+  */
+
   user.view.field.firstname = function (c) {
     var fields = user.view.field.common(c, 'firstname', USER.FIRSTNAME);
     ld.assign(fields.input.attrs, {
@@ -254,6 +308,10 @@ module.exports = (function () {
     });
     return fields;
   };
+
+  /**
+  * #### lastname field
+  */
 
   user.view.field.lastname = function (c) {
     var fields = user.view.field.common(c, 'lastname', USER.LASTNAME);
@@ -264,6 +322,10 @@ module.exports = (function () {
     return fields;
   };
 
+  /**
+  * #### organization field
+  */
+
   user.view.field.organization = function (c) {
     var fields = user.view.field.common(c, 'organization', USER.ORGANIZATION);
     ld.assign(fields.input.attrs, {
@@ -273,14 +335,32 @@ module.exports = (function () {
     return fields;
   };
 
+  /**
+  * ### aside view
+  *
+  * `aisde` views :
+  *
+  * - `common`, used for login and subscription pages
+  * - `profile`, as expected for profile page.
+  */
 
-  user.view.aside = function (c) {
-    return m('section', { class: c.classes.user.sectionAside }, [
-      m('h2', { class: c.classes.user.h2Aside }, conf.SERVER.title),
-      m('article',
-        { class: c.classes.user.articleAside },
-        m.trust(conf.SERVER.descr))
-    ]);
+  user.view.aside = {
+    common: function (c) {
+      return m('section', { class: c.classes.user.sectionAside }, [
+        m('h2', { class: c.classes.user.h2Aside }, conf.SERVER.title),
+        m('article',
+          { class: c.classes.user.articleAside },
+          m.trust(conf.SERVER.descr))
+      ]);
+    },
+    profile: function (c) {
+      return m('section', { class: c.classes.user.sectionAside }, [
+        m('h2', { class: c.classes.user.h2Aside }, conf.LANG.ACTIONS.HELP),
+        m('article',
+          { class: c.classes.user.articleAside },
+          m.trust(USER.HELP.PROFILE))
+      ]);
+    }
   };
 
   return user;

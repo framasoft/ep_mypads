@@ -43,9 +43,10 @@ module.exports = (function () {
   /**
   * ## Controller
   *
-  * Used for module state and actions.
-  * And user submission.
-  *
+  * Used for module state and actions and form submission.
+  * `initFields` is called to track the status of all fields.
+  * According to `profileView` getter-setter, we add or remove fields and
+  * populate values with local values.
   */
 
   subscribe.controller = function () {
@@ -67,14 +68,26 @@ module.exports = (function () {
     }
 
     /**
-    * `submit` internal calls the public API to subscribe with given data.
-    * It ensures that additionnal validity check is done.
-    * It displays errors if needed or success and fixes local cached data for
-    * the user. Finally, it authenticates new created user.
+    * ### submit
+    *
+    * Submissions of forms.
     */
 
     c.submit = {};
     var errfn = function (err) { return notif.error({ body: err.error }); };
+
+    /**
+    * #### submit.subscribe
+    *
+    * `submit.subscribe` internal calls the public API to subscribe with given
+    * data :
+    *
+    * - it ensures that additionnal validity check is done;
+    * - it displays errors if needed or success and fixes local cached data for
+    * the user;
+    * - finally, it authenticates new created user.
+    */
+
     c.submit.subscribe = function (e) {
       e.preventDefault();
       if (c.data.password() !== c.data.passwordConfirm()) {
@@ -97,16 +110,27 @@ module.exports = (function () {
         }, errfn);
       }
     };
-    var passwordUpdate = function () {
-      var pass = c.data.password();
-      if (!pass || (pass !== c.data.passwordConfirm())) {
-        c.data.password(c.data.passwordCurrent());
-      }
-    };
-    window.cdata = c.data;
-    window.userInfo = auth.userInfo;
+
+    /**
+    * #### submit.profileSave
+    *
+    * This function :
+    *
+    * - uses the public API to check if given `passwordCurrent` is valid;
+    * - then updates data as filled, taking care of password change with the
+    *   help of the `passwordUpdate` function;
+    * - notifies *errors* and *success*;
+    * - updates the local cache of `auth.userInfo`.
+    */
+
     c.submit.profileSave = function (e) {
       e.preventDefault();
+      var passwordUpdate = function () {
+        var pass = c.data.password();
+        if (!pass || (pass !== c.data.passwordConfirm())) {
+          c.data.password(c.data.passwordCurrent());
+        }
+      };
       m.request({
         method: 'POST',
         url: conf.URLS.CHECK,
@@ -123,16 +147,21 @@ module.exports = (function () {
         }, errfn);
       }, errfn);
     };
+
     return c;
   };
 
   /**
   * ## Views
-  *
-  * `main` and `aside`, used with layout.
   */
 
   var view = {};
+
+  /**
+  * ### form view
+  *
+  * Classic view with all fields and changes according to the view.
+  */
 
   view.form = function (c) {
     var fields = ld.reduce(c.fields, function (memo, f) {
@@ -177,6 +206,12 @@ module.exports = (function () {
     ]);
   };
 
+  /**
+  * ### main and global view
+  *
+  * Views with cosmetic and help changes according to the current page.
+  */
+
   view.main = function (c) {
     return m('section', { class: 'block-group ' + c.classes.user.section }, [
       m('h2', {
@@ -187,7 +222,10 @@ module.exports = (function () {
   };
 
   subscribe.view = function (c) {
-    return layout.view(view.main(c), user.view.aside(c));
+    return layout.view(
+      view.main(c),
+      c.profileView() ? user.view.aside.profile(c) : user.view.aside.common(c)
+    );
   };
 
   return subscribe;

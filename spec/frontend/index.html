@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>MyPads functional tests</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" type="text/css" href="jasmine-core/jasmine.css" />
+		<style>
+			iframe {
+				border: 0;
+				width: 90%;
+        height: 500px;
+				margin:1% auto 1% auto;
+        display: block;
+			}
+		</style>
+    <!-- Global dependencies and jasmine bootstrapping -->
+    <script src="jasmine-core/jasmine.js"></script>
+    <script src="jasmine-core/jasmine-html.js"></script>
+    <script src="jasmine-core/boot.js"></script>
+  </head>
+  <body>
+		<iframe src="/index.html" id="mypads-app"></iframe>
+    <script src="mypads.js"></script>
+  </body>
+</html>

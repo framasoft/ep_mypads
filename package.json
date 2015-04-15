@@ -44,6 +44,8 @@
   "scripts": {
     "frontend:build": "./node_modules/browserify/bin/cmd.js -o static/js/mypads.js frontend.js",
     "frontend:watch": "./node_modules/watchify/bin/cmd.js -o static/js/mypads.js frontend.js",
+    "functest:build": "./node_modules/browserify/bin/cmd.js -o spec/frontend/mypads.js spec/frontend/entry.js",
+    "functest:watch": "./node_modules/watchify/bin/cmd.js -o spec/frontend/mypads.js spec/frontend/entry.js",
     "mockupserver": "node mockupserver.js",
     "doc": "./node_modules/docker/docker -I -x node_modules,doc -i . -o doc",
     "lint": "./node_modules/jshint/bin/jshint ./",

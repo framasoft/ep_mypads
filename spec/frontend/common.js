@@ -61,8 +61,11 @@ module.exports = (function () {
   *
   * `beforeAll` takes the iframe `app`, `nSel` navigation selector and a
   * `callback` function.
-  * It simulates a click on the navigation element and returns generated
-  * elements as a JS Object via the callback function.
+  * It simulates a click on the navigation element and returns an object with
+  *
+  * - local query `first` function,
+  * - `hash` shortcut,
+  * - generated `$el` elements as a JS Object via the callback function.
   */
 
   common.user.beforeAll = function (app, nSel, callback) {
@@ -70,14 +73,18 @@ module.exports = (function () {
     window.setTimeout(function () {
       var first = function (sel) { return app.document.querySelector(sel); };
       callback({
-        form: first('form'),
-        password: first('input[name=password]'),
-        passwordConfirm: first('input[name=passwordConfirm]'),
-        email: first('input[name=email]'),
-        firstname: first('input[name=firstname]'),
-        lastname: first('input[name=lastname]'),
-        organization: first('input[name=organization]'),
-        submit: first('input[type=submit]')
+        hash: app.location.search,
+        first: first,
+        $el: {
+          form: first('form'),
+          password: first('input[name=password]'),
+          passwordConfirm: first('input[name=passwordConfirm]'),
+          email: first('input[name=email]'),
+          firstname: first('input[name=firstname]'),
+          lastname: first('input[name=lastname]'),
+          organization: first('input[name=organization]'),
+          submit: first('input[type=submit]')
+        }
       });
     }, 200);
   };

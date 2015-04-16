@@ -38,10 +38,8 @@ module.exports = (function () {
   subscribe.beforeAll = function (app, done) {
     // Go to subscription page
     common.user.beforeAll(app, 'header > nav > ul > li:last-child > a',
-      function (el) {
-        $el = el;
-        first = function (sel) { return app.document.querySelector(sel); };
-        hash = app.location.search;
+      function (res) {
+        $el = res.$el; first = res.first; hash = res.hash;
         ld.assign($el, { login: first('input[name=login]') });
         done();
       }
@@ -152,5 +150,5 @@ module.exports = (function () {
   };
 
   return subscribe;
-  
+
 }).call(this);

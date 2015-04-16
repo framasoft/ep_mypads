@@ -44,7 +44,7 @@ module.exports = (function() {
     descr: 'MyPads is an Etherpad plugin which have been founded in 2014 by ' +
     'an Ulule campaign. It handles :<ul><li>users and their authentication;' +
     '</li><li>groups of pads per user, unlimited, sharable;</li><li>attached ' +
-    'pads, with choice between invite known users to use them, making them '+ 
+    'pads, with choice between invite known users to use them, making them '+
     'private with password or letting them public.</li></ul>',
     passwordMin: 8,
     passwordMax: 30,

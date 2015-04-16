@@ -165,7 +165,7 @@ module.exports = (function () {
 
   view.form = function (c) {
     var fields = ld.reduce(c.fields, function (memo, f) {
-      memo[f] = user.view.field[f](c); 
+      memo[f] = user.view.field[f](c);
       return memo;
     }, {});
     var requiredFields = [

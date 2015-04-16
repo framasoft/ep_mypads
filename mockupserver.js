@@ -39,7 +39,8 @@
           login: 'parker',
           password: 'lovesKubiak',
           firstname: 'Parker',
-          lastname: 'Lewis'
+          lastname: 'Lewis',
+          email: 'parker@lewis.me'
         }, function () {
           api.init(specCommon.express.app);
           console.log('Mockup Server runs on port 8042');

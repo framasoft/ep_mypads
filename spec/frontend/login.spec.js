@@ -60,11 +60,11 @@ module.exports = (function () {
       });
 
       it('should forbid submission whith incorrect log/pass', function (done) {
-        $el.login.value = 'a login';
+        fill($el.login,'a login');
         expect($el.form.checkValidity()).toBeFalsy();
         expect($el.login.checkValidity()).toBeTruthy();
         expect($el.password.checkValidity()).toBeFalsy();
-        $el.password.value = 'short';
+        fill($el.password, 'short');
         expect($el.form.checkValidity()).toBeFalsy();
         expect($el.login.checkValidity()).toBeTruthy();
         expect($el.password.checkValidity()).toBeFalsy();
@@ -107,7 +107,10 @@ module.exports = (function () {
           window.setTimeout(function () {
             expect(app.location.search).toBe('?/');
             first('.icon-logout').parentNode.click();
-            window.setTimeout(done, 100);
+            window.setTimeout(function () {
+              first('body > section > div p').click();
+              window.setTimeout(done, 100);
+            }, 100);
           }, 100);
         }, 100); // Too low ?
       });
@@ -125,6 +128,7 @@ module.exports = (function () {
           first('.icon-logout').parentNode.click();
           window.setTimeout(function () {
             expect(first('.icon-login')).toBeTruthy();
+            first('body > section p').click();
             done();
           }, 100);
         }, 100);

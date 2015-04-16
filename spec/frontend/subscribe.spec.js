@@ -24,7 +24,9 @@
 
 module.exports = (function () {
   // Dependencies
-  var fill = require('./common.js').fill;
+  var ld = require('lodash');
+  var common = require('./common.js');
+  var fill = common.helper.fill;
 
   var subscribe = {};
 
@@ -35,23 +37,15 @@ module.exports = (function () {
 
   subscribe.beforeAll = function (app, done) {
     // Go to subscription page
-    app.document.querySelector('header > nav > ul > li:last-child > a').click();
-    first = function (sel) { return app.document.querySelector(sel); };
-    window.setTimeout(function () {
-      hash = app.location.search;
-      $el = {
-        form: first('form'),
-        login: first('input[name=login]'),
-        password: first('input[name=password]'),
-        passwordConfirm: first('input[name=passwordConfirm]'),
-        email: first('input[name=email]'),
-        firstname: first('input[name=firstname]'),
-        lastname: first('input[name=lastname]'),
-        organization: first('input[name=organization]'),
-        submit: first('input[type=submit]')
-      };
-      done();
-    }, 200);
+    common.user.beforeAll(app, 'header > nav > ul > li:last-child > a',
+      function (el) {
+        $el = el;
+        first = function (sel) { return app.document.querySelector(sel); };
+        hash = app.location.search;
+        ld.assign($el, { login: first('input[name=login]') });
+        done();
+      }
+    );
   };
 
   subscribe.run = function (app) {
@@ -83,27 +77,31 @@ module.exports = (function () {
         done();
       });
 
-      it('should forbid subscription with unmatched passwords', function (done) {
-        fill($el.login, 'mikey');
-        fill($el.password, 'betterPassword');
-        fill($el.passwordConfirm, 'betterPassword123');
-        fill($el.email, 'mikey@randall.me');
-        expect($el.form.checkValidity()).toBeTruthy();
-        expect($el.login.checkValidity()).toBeTruthy();
-        expect($el.password.checkValidity()).toBeTruthy();
-        expect($el.email.checkValidity()).toBeTruthy();
-        $el.submit.click();
-        window.setTimeout(function () {
-          expect(app.location.search).toBe(hash);
-          var $ialert = first('.icon-alert');
-          expect($ialert.getAttribute('data-msg')).toMatch('For verification');
-          var $warning = app.document.querySelectorAll('body > section p');
-          $warning = $warning[$warning.length - 1];
-          expect($warning.textContent).toMatch('The entered passwords do not match');
-          $warning.click();
-          done();
-        }, 100);
-      });
+      it('should forbid subscription with unmatched passwords',
+        function (done) {
+          fill($el.login, 'mikey');
+          fill($el.password, 'betterPassword');
+          fill($el.passwordConfirm, 'betterPassword123');
+          fill($el.email, 'mikey@randall.me');
+          expect($el.form.checkValidity()).toBeTruthy();
+          expect($el.login.checkValidity()).toBeTruthy();
+          expect($el.password.checkValidity()).toBeTruthy();
+          expect($el.email.checkValidity()).toBeTruthy();
+          $el.submit.click();
+          window.setTimeout(function () {
+            expect(app.location.search).toBe(hash);
+            var $ialert = first('.icon-alert');
+            expect($ialert.getAttribute('data-msg'))
+              .toMatch('For verification');
+            var $warning = app.document.querySelectorAll('body > section p');
+            $warning = $warning[$warning.length - 1];
+            expect($warning.textContent)
+              .toMatch('The entered passwords do not match');
+            $warning.click();
+            done();
+          }, 100);
+        }
+      );
 
       it('should disallow subscription for existing user', function (done) {
         fill($el.login, 'parker');

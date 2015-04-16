@@ -24,7 +24,8 @@
 
 module.exports = (function () {
   // Dependencies
-  var fill = require('./common.js').fill;
+  var common = require('./common.js');
+  var fill = common.helper.fill;
   var login = {};
 
   var first;

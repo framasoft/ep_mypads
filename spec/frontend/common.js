@@ -27,10 +27,60 @@
 
 module.exports = (function () {
   var common = {};
-  // To use mithril oninput...
-  common.fill = function (el, val) {
+  /*
+  * ## Helpers
+  *
+  * Functions helpers for functional testing.
+  */
+
+  common.helper = {};
+
+  /**
+  * ### fill
+  *
+  * `fill` is a function, taking an HTML input `el` *Element* and a string
+  * `val`ue, that fixes the `val` to the *Element* and dispatches an *input*
+  * *KeyboardEvent*. Then mithril *oninput* usage is filled.
+  */
+
+  common.helper.fill = function (el, val) {
     el.value = val;
     el.dispatchEvent(new window.KeyboardEvent('input'));
   };
+
+  /**
+  * ## user
+  *
+  * Helpers for `user` testing : profile, login, subscription...
+  */
+
+  common.user = {};
+
+  /**
+  * ### beforeAll
+  *
+  * `beforeAll` takes the iframe `app`, `nSel` navigation selector and a
+  * `callback` function.
+  * It simulates a click on the navigation element and returns generated
+  * elements as a JS Object via the callback function.
+  */
+
+  common.user.beforeAll = function (app, nSel, callback) {
+    app.document.querySelector(nSel).click();
+    window.setTimeout(function () {
+      var first = function (sel) { return app.document.querySelector(sel); };
+      callback({
+        form: first('form'),
+        password: first('input[name=password]'),
+        passwordConfirm: first('input[name=passwordConfirm]'),
+        email: first('input[name=email]'),
+        firstname: first('input[name=firstname]'),
+        lastname: first('input[name=lastname]'),
+        organization: first('input[name=organization]'),
+        submit: first('input[type=submit]')
+      });
+    }, 200);
+  };
+
   return common;
 }).call(this);

@@ -28,6 +28,8 @@
 
 (function () {
   var login = require('./login.spec.js');
+  var subscribe = require('./subscribe.spec.js');
+
   describe('MyPads testing', function () {
     var app = frames[0];
     beforeAll(function(done) {
@@ -35,5 +37,6 @@
       window.setTimeout(done, 1000);
     });
     login.run(app);
+    subscribe.run(app);
   });
 }).call(this);

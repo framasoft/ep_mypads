@@ -20,18 +20,11 @@
 *  specific language governing permissions and limitations
 *  under the License.
 *
-*  ## Description
-*
-*  This module is the entry point for front JavaScript programming. It requires
-*  global dependencies and main client-side file.
 */
 
 module.exports = (function () {
-  // To use mithril oninput...
-  var fill = function (el, val) {
-    el.value = val;
-    el.dispatchEvent(new window.KeyboardEvent('input'));
-  };
+  // Dependencies
+  var fill = require('./common.js').fill;
   var login = {};
 
   var first;

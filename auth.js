@@ -30,9 +30,18 @@
 
 // External dependencies
 var ld = require('lodash');
-var express = require('express');
-var session = require('express-session');
-var cookieParser = require('cookie-parser');
+var session;
+var cookieParser;
+try {
+  // Normal case : when installed as a plugin
+  session = require('../ep_etherpad-lite/node_modules/express-session');
+  cookieParser = require('../ep_etherpad-lite/node_modules/cookie-parser');
+}
+catch (e) {
+  // Testing case : we need to mock the express dependency
+  session = require('express-session');
+  cookieParser = require('cookie-parser');
+}
 var passport = require('passport');
 var localStrategy = require('passport-local').Strategy;
 

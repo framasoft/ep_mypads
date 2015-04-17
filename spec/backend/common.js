@@ -48,10 +48,6 @@ module.exports = (function () {
     var express = require('express');
     common.express = {};
     common.express.app = express();
-    common.express.app.use(express.static(__dirname + '/../../static'));
-    common.express.app.use('/functest',
-      express.static(__dirname + '/../frontend'));
-    common.express.app.use(express.bodyParser());
     common.express.server = common.express.app.listen(8042);
   };
 

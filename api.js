@@ -29,6 +29,16 @@
 // External dependencies
 var ld = require('lodash');
 var passport = require('passport');
+var express;
+try {
+  // Normal case : when installed as a plugin
+  express = require('../ep_etherpad-lite/node_modules/express');
+}
+catch (e) {
+  // Testing case : we need to mock the express dependency
+  express = require('express');
+}
+var bodyParser = require('body-parser');
 // Local dependencies
 var conf = require('./configuration.js');
 var user = require('./model/user.js');
@@ -48,6 +58,9 @@ module.exports = (function () {
   */
 
   api.init = function (app) {
+    app.use(bodyParser.json());
+    app.use('/mypads/web', express.static(__dirname + '/static'));
+    app.use('/mypads/functest', express.static(__dirname + '/spec/frontend'));
     auth.init(app);
     authAPI(app);
     configurationAPI(app);
@@ -74,13 +87,16 @@ module.exports = (function () {
     try {
       module.get(req.params.key, function (err, val) {
         if (err) {
-          return res.send(404, { error: err.message, key: req.params.key });
+          return res.status(404).send({
+            error: err.message,
+            key: req.params.key
+          });
         }
         res.send({ key: req.params.key, value: val });
       });
     }
     catch (e) {
-      res.send(400, { error: e.message });
+      res.status(400).send({ error: e.message });
     }
   };
 
@@ -96,12 +112,12 @@ module.exports = (function () {
   fn.set = function (setFn, key, value, req, res) {
     try {
       setFn(function (err, data) {
-        if (err) { return res.send(400, { error: err.message }); }
+        if (err) { return res.status(400).send({ error: err.message }); }
         res.send({ success: true, key: key || data._id, value: data || value });
       });
     }
     catch (e) {
-      res.send(400, { error: e.message });
+      res.status(400).send({ error: e.message });
     }
   };
 
@@ -117,7 +133,7 @@ module.exports = (function () {
   fn.del = function (delFn, req, res) {
     var key = req.params.key;
     delFn(key, function (err) {
-      if (err) { return res.send(404, { error: err.message }); }
+      if (err) { return res.status(404).send({ error: err.message }); }
       res.send({ success: true, key: key });
     });
   };
@@ -129,7 +145,7 @@ module.exports = (function () {
 
   fn.ensureAuthentificated = function (req, res, next) {
     if (!req.isAuthenticated() && !req.session.login) {
-      res.send(401, { error: 'you must be authenticated' });
+      res.status(401).send({ error: 'you must be authenticated' });
     } else {
       return next();
     }
@@ -155,13 +171,13 @@ module.exports = (function () {
         try {
           auth.fn.localFn(req.body.login, req.body.password,
             function (err) {
-              if (err) { return res.send(400, { error: err.message }); }
-              res.send(200, { success: true });
+              if (err) { return res.status(400).send({ error: err.message }); }
+              res.status(200).send({ success: true });
             }
           );
         }
         catch (e) {
-          res.send(400, { error: e.message });
+          res.status(400).send({ error: e.message });
         }
       }
     );
@@ -176,12 +192,15 @@ module.exports = (function () {
 
     app.post(authRoute + '/login', function (req, res, next) {
       passport.authenticate('local', function (err, user, info) {
-        if (err) { return res.send(400, { error: err.message }); }
-        if (!user) { return res.send(400, { error: info.message }); }
+        if (err) { return res.status(400).send({ error: err.message }); }
+        if (!user) { return res.status(400).send({ error: info.message }); }
         req.login(user, function (err) {
           req.session.login = user.login;
-          if (err) { return res.send(400, { error: err }); }
-          res.send(200, { success: true, user: ld.omit(user, 'password') });
+          if (err) { return res.status(400).send({ error: err }); }
+          res.status(200).send({
+            success: true,
+            user: ld.omit(user, 'password')
+          });
         });
       })(req, res, next);
     });
@@ -198,9 +217,9 @@ module.exports = (function () {
       if (req.isAuthenticated() || req.session.login) {
         req.logout();
         req.session.destroy();
-        res.send(200, { success: true });
+        res.status(200).send({ success: true });
       } else {
-        res.send(400, { error: 'not authenticated' });
+        res.status(400).send({ error: 'not authenticated' });
       }
     });
 
@@ -226,7 +245,7 @@ module.exports = (function () {
       var isAuth = (req.isAuthenticated() || req.session.login);
       var action = isAuth ? 'all' : 'public';
       conf[action](function (err, value) {
-        if (err) { return res.send(400, { error: err }); }
+        if (err) { return res.status(400).send({ error: err }); }
         res.send({ value: value });
       });
     });
@@ -241,7 +260,10 @@ module.exports = (function () {
     app.get(confRoute + '/:key', fn.ensureAuthentificated, function (req, res) {
       conf.get(req.params.key, function (err, value) {
         if (err) {
-          return res.send(404, { error: err.message, key: req.params.key });
+          return res.status(404).send({
+            error: err.message,
+            key: req.params.key 
+          });
         }
         res.send({ key: req.params.key, value: value });
       });

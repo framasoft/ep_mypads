@@ -20,7 +20,8 @@ At the moment, MyPads is not publicly available on NPM. That said, you can insta
 * clone this git repository where you want to;
 * go into the directory of your Etherpad instance;
 * type the command `npm install /path/of/your/clone/of/ep_mypads`
-* restart your Etherpad instance and you should see *ep_mypads* listed into your administration back-end.
+* restart your Etherpad instance and you should see *ep_mypads* listed into your administration back-end
+* homepage is available at http://youretherpad/mypads/index.html
 
 ## Roadmap
 

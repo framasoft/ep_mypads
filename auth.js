@@ -31,6 +31,8 @@
 // External dependencies
 var ld = require('lodash');
 var express = require('express');
+var session = require('express-session');
+var cookieParser = require('cookie-parser');
 var passport = require('passport');
 var localStrategy = require('passport-local').Strategy;
 
@@ -150,12 +152,16 @@ module.exports = (function () {
 
   auth.init = function (app) {
     auth.fn.local();
-    app.use(express.cookieParser());
+    app.use(cookieParser());
     app.use(passport.initialize());
     app.use(passport.session());
     conf.get('sessionSecret', function (err, res) {
       if (err) { throw new Error(err); }
-      app.use(express.session({ secret: res }));
+      app.use(session({
+        secret: res,
+        resave: false,
+        saveUninitialized: true
+      }));
     });
   };
 

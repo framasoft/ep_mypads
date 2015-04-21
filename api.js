@@ -59,7 +59,7 @@ module.exports = (function () {
 
   api.init = function (app) {
     app.use(bodyParser.json());
-    app.use('/mypads/web', express.static(__dirname + '/static'));
+    app.use('/mypads', express.static(__dirname + '/static'));
     app.use('/mypads/functest', express.static(__dirname + '/spec/frontend'));
     auth.init(app);
     authAPI(app);

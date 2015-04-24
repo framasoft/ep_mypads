@@ -574,7 +574,6 @@
             rq.put(userRoute + '/mikey', b, function () {
               b.body.login = 'mike';
               rq.put(userRoute + '/mikey', b, function (err, resp, body) {
-                console.log(body);
                 expect(resp.statusCode).toBe(200);
                 expect(body.success).toBeTruthy();
                 expect(body.key).toBe('mikey');

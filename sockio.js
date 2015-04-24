@@ -125,9 +125,7 @@ module.exports = (function () {
 
     var loginPath = pre + 'login';
     socket.on(loginPath, function (data) {
-      console.log(data);
       passport.authenticate('jwt', function () {
-        console.log('here');
         if (err) { return socket.emit({ error: err.message }); }
         if (!user) { return socket.emit({ error: info.message }); }
         socket.emit({

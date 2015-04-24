@@ -61,6 +61,16 @@ module.exports = (function () {
     });
   };
 
+  /**
+  * `socketio` hook uses args.io websocket server instance to initialize all
+  * MyPads inner routes, replacing problematic HTTP REST API (due to yajsml
+  * middleware). It also set up local in memory indexes from storage.
+  */
+
+  hooks.socketio = function (name, args, callback) {
+    var io = args.io;
+  };
+
   return hooks;
 
 }).call(this);

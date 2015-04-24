@@ -30,7 +30,8 @@
   var specCommon = require('./common.js');
   var CPREFIX = storage.DBPREFIX.CONF;
 
-  describe('MyPads API', function () {
+  xdescribe('MyPads API', function () {
+    pending('HTTP REST API suspended, due to problems with yajsml middleware');
     /**
     * For standalone backend testing : mocking a fresh Express app and
     * initializate API routes.

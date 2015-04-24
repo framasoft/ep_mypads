@@ -29,21 +29,8 @@
 */
 
 // External dependencies
-var ld = require('lodash');
-var session;
-var cookieParser;
-try {
-  // Normal case : when installed as a plugin
-  session = require('../ep_etherpad-lite/node_modules/express-session');
-  cookieParser = require('../ep_etherpad-lite/node_modules/cookie-parser');
-}
-catch (e) {
-  // Testing case : we need to mock the express dependency
-  session = require('express-session');
-  cookieParser = require('cookie-parser');
-}
 var passport = require('passport');
-var localStrategy = require('passport-local').Strategy;
+var JwtStrategy = require('passport-jwt').Strategy;
 
 // Local dependencies
 var conf = require('./configuration.js');
@@ -73,7 +60,14 @@ module.exports = (function () {
   * `local` is a synchronous function used to set up local strategy.
   */
 
-  auth.fn.local = function () {
+  auth.fn.local = function (secret) {
+    passport.use(new JwtStrategy({ secretOrKey: secret },
+      function (jwtPayload, done) {
+        console.log(jwtPayload);
+        done();
+      })
+    );
+    /*
     passport.serializeUser(function(user, done) {
       done(null, user._id);
     });
@@ -92,6 +86,7 @@ module.exports = (function () {
       }
       auth.fn.localFn.apply(this, arguments);
     }));
+    */
   };
 
 
@@ -159,18 +154,10 @@ module.exports = (function () {
   *   in database
   */
 
-  auth.init = function (app) {
-    auth.fn.local();
-    app.use(cookieParser());
-    app.use(passport.initialize());
-    app.use(passport.session());
+  auth.init = function () {
     conf.get('sessionSecret', function (err, res) {
       if (err) { throw new Error(err); }
-      app.use(session({
-        secret: res,
-        resave: false,
-        saveUninitialized: true
-      }));
+      auth.fn.local(res);
     });
   };
 

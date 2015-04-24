@@ -49,6 +49,7 @@ module.exports = (function () {
     common.express = {};
     common.express.app = express();
     common.express.server = common.express.app.listen(8042);
+    common.express.io = require('socket.io')(common.express.server);
   };
 
   /**

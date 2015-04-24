@@ -1,6 +1,9 @@
 /**
 *  # API Module
 *
+*  **WARNING** : deprecated module, in favor of Socket.io one, due to
+*  inconsistencies in HTTP REST VERBS with yajsml middleware
+*
 *  ## License
 *
 *  Licensed to the Apache Software Foundation (ASF) under one

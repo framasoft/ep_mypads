@@ -27,7 +27,7 @@
 
   var hooks = require('./hooks.js');
   var storage = require('./storage.js');
-  var api = require('./api.js');
+  var sockio = require('./sockio.js');
   var user = require('./model/user.js');
   var specCommon = require('./spec/backend/common.js');
 
@@ -42,7 +42,7 @@
           lastname: 'Lewis',
           email: 'parker@lewis.me'
         }, function () {
-          api.init(specCommon.express.app);
+          sockio.init(specCommon.express.app, specCommon.express.io);
           console.log('Mockup Server runs on port 8042');
         });
       });

@@ -4,6 +4,7 @@
       "name": "ep_mypads",
       "hooks": {
         "expressCreateServer": "ep_mypads/hooks:expressCreateServer",
+        "socketio": "ep_mypads/hooks:socketio",
         "init_ep_mypads": "ep_mypads/hooks:init"
       },
       "client_hooks": {}

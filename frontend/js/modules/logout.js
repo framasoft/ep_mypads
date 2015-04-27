@@ -42,6 +42,7 @@ module.exports = (function () {
     */
 
     controller: function () {
+      if (!auth.isAuthenticated()) { return m.route('/login'); }
       m.request({ method: 'GET', url: conf.URLS.LOGOUT })
       .then(function () {
         auth.isAuthenticated(false);

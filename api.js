@@ -30,12 +30,14 @@
 var ld = require('lodash');
 var passport = require('passport');
 var express;
+var testMode = false;
 try {
   // Normal case : when installed as a plugin
   express = require('../ep_etherpad-lite/node_modules/express');
 }
 catch (e) {
   // Testing case : we need to mock the express dependency
+  testMode = true;
   express = require('express');
 }
 var bodyParser = require('body-parser');
@@ -60,7 +62,10 @@ module.exports = (function () {
   api.init = function (app) {
     app.use(bodyParser.json());
     app.use('/mypads', express.static(__dirname + '/static'));
-    app.use('/mypads/functest', express.static(__dirname + '/spec/frontend'));
+    if (testMode) {
+      // Only allow functional testing in testing mode
+      app.use('/mypads/functest', express.static(__dirname + '/spec/frontend'));
+    }
     auth.init(app);
     authAPI(app);
     configurationAPI(app);

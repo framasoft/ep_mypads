@@ -37,7 +37,7 @@ module.exports = (function () {
   /**
   * ## rules
   *
-  * Local rules for notifs
+  * Local rules for user
   */
 
   user.rules = {};

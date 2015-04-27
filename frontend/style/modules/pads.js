@@ -1,5 +1,5 @@
 /**
-*  # Routing module
+*  # Pads style
 *
 *  ## License
 *
@@ -22,40 +22,40 @@
 *
 *  ## Description
 *
-*  This module contains all MyPads client-side routing using Mithril included
-*  router. It initializes all in search mode.
+*  This module contains styles for main module : `pads`.
 */
 
 module.exports = (function () {
-  // Global dependencies
-  var m = require('mithril');
-  // Modules
-  var home = require('./modules/home.js');
-  var login = require('./modules/login.js');
-  var logout = require('./modules/logout.js');
-  var subscribe = require('./modules/subscribe.js');
-  var pads = require('./modules/pads.js');
-  var admin = require('./modules/admin.js');
 
-  var route = { model: {} };
+  // Dependencies
+  var utils = require('../utils.js');
+  var vars = require('../vars.js');
 
-  /*
-  * ## Model
+  var pads = {};
+
+  /**
+  * ## rules
   *
-  * `routes` contains all routes and called modules.
+  * Local rules
   */
 
-  route.model.routes = {
-    '/': home,
-    '/login': login,
-    '/logout': logout,
-    '/subscribe': subscribe,
-    '/myprofile': subscribe,
-    '/mypads': pads,
-    '/admin': admin
+  pads.rules = {};
+  pads.rules.section = {};
+  pads.rules.h2 = {};
+  pads.rules.a = {};
+  pads.rules.sectionAside = {};
+
+  pads.responsive = {};
+
+  /**
+  * ## attach
+  *
+  * Attach the local styles, plus all responsives variants
+  */
+
+  pads.attach = function () {
+    pads.sheet = utils.fn.attach(pads.rules, pads.responsive);
   };
 
-  route.init = function () { m.route(document.body, '/', route.model.routes); };
-
-  return route;
+  return pads;
 }).call(this);

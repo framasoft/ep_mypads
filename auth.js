@@ -166,10 +166,12 @@ module.exports = (function () {
     app.use(passport.session());
     conf.get('sessionSecret', function (err, res) {
       if (err) { throw new Error(err); }
+      var hour = 3600000;
       app.use(session({
         secret: res,
         resave: false,
-        saveUninitialized: true
+        saveUninitialized: false,
+        cookie: { maxAge: hour, expires: new Date(Date.now() + hour) }
       }));
     });
   };

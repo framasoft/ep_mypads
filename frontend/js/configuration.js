@@ -28,6 +28,7 @@
 module.exports = (function () {
   // Dependencies
   var m = require('mithril');
+  var auth = require('./auth.js');
 
   var config = {};
   config.URLS = { BASE: '/mypads/api' };
@@ -45,12 +46,17 @@ module.exports = (function () {
   * ## init
   *
   * `init` is an asynchronous function that calls for the public configuration
-  * of MyPads and push them to the `SERVER` field.
+  * of MyPads and push them to the `SERVER` field. It also populates `auth`
+  * m.props with proper  data, when there is already a valid cookie fixed.
   */
 
   config.init = function () {
     m.request({ method: 'GET', url: config.URLS.CONF })
-      .then(function (settings) { config.SERVER = settings.value; });
+    .then(function (settings) {
+      config.SERVER = settings.value; 
+      auth.isAuthenticated(settings.auth);
+      auth.userInfo(settings.user);
+    });
   };
 
   return config;

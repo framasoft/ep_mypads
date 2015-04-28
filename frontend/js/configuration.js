@@ -48,14 +48,17 @@ module.exports = (function () {
   * `init` is an asynchronous function that calls for the public configuration
   * of MyPads and push them to the `SERVER` field. It also populates `auth`
   * m.props with proper  data, when there is already a valid cookie fixed.
+  *
+  * It takes a `callback` function to execute when initialization is finished.
   */
 
-  config.init = function () {
+  config.init = function (callback) {
     m.request({ method: 'GET', url: config.URLS.CONF })
     .then(function (settings) {
       config.SERVER = settings.value; 
       auth.isAuthenticated(settings.auth);
       auth.userInfo(settings.user);
+      callback();
     });
   };
 

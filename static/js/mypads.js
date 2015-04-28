@@ -32,8 +32,7 @@
   layoutStyle.attach();
   var conf = require('./frontend/js/configuration.js');
   var route = require('./frontend/js/route.js');
-  conf.init();
-  route.init();
+  conf.init(route.init);
 }).call(this);
 
 },{"./frontend/js/configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","./frontend/js/route.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/route.js","./frontend/style/layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/layout.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js":[function(require,module,exports){
@@ -124,14 +123,17 @@ module.exports = (function () {
   * `init` is an asynchronous function that calls for the public configuration
   * of MyPads and push them to the `SERVER` field. It also populates `auth`
   * m.props with proper  data, when there is already a valid cookie fixed.
+  *
+  * It takes a `callback` function to execute when initialization is finished.
   */
 
-  config.init = function () {
+  config.init = function (callback) {
     m.request({ method: 'GET', url: config.URLS.CONF })
     .then(function (settings) {
       config.SERVER = settings.value; 
       auth.isAuthenticated(settings.auth);
       auth.userInfo(settings.user);
+      callback();
     });
   };
 

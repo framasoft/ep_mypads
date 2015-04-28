@@ -31,6 +31,5 @@
   layoutStyle.attach();
   var conf = require('./frontend/js/configuration.js');
   var route = require('./frontend/js/route.js');
-  conf.init();
-  route.init();
+  conf.init(route.init);
 }).call(this);

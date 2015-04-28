@@ -29,9 +29,17 @@ module.exports = (function () {
   // Global dependencies
   var m = require('mithril');
   // Local dependencies
+  var auth = require('../auth.js');
   var layout = require('./layout.js');
 
   var home = {
+    controller: function () {
+      if (auth.isAuthenticated()) {
+        m.route('/mypads');
+      } else {
+        m.route('/login');
+      }
+    },
     view: function () {
       return layout.view(m('p', 'empty home'), m('p', 'empty aside'));
     }

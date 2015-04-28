@@ -286,9 +286,17 @@ module.exports = (function () {
   // Global dependencies
   var m = require('mithril');
   // Local dependencies
+  var auth = require('../auth.js');
   var layout = require('./layout.js');
 
   var home = {
+    controller: function () {
+      if (auth.isAuthenticated()) {
+        m.route('/mypads');
+      } else {
+        m.route('/login');
+      }
+    },
     view: function () {
       return layout.view(m('p', 'empty home'), m('p', 'empty aside'));
     }
@@ -297,7 +305,7 @@ module.exports = (function () {
   return home;
 }).call(this);
 
-},{"./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js":[function(require,module,exports){
 /**
 *  # Layout
 *

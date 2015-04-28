@@ -141,10 +141,10 @@ module.exports = (function () {
 
   view.main = function (c) {
     return m('section', { class: 'block-group' + c.classes.pads.section }, [
-      m('h2', { class: 'block ' + c.classes.pads.h2 }, [
+      m('h2', { class: 'block ' + c.classes.pads.headerH2 }, [
         m('span', PADS.MYGROUPS),
         m('a', {
-          class: c.classes.pads.a,
+          class: c.classes.pads.headerA,
           href: '/mypads/add',
           config: m.route
         }, PADS.GROUP.ADD)

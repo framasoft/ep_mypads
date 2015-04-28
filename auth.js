@@ -171,7 +171,7 @@ module.exports = (function () {
         secret: res,
         resave: false,
         saveUninitialized: false,
-        cookie: { maxAge: hour, expires: new Date(Date.now() + hour) }
+        cookie: { maxAge: hour }
       }));
     });
   };

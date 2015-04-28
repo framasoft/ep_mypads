@@ -967,10 +967,10 @@ module.exports = (function () {
 
   view.main = function (c) {
     return m('section', { class: 'block-group' + c.classes.pads.section }, [
-      m('h2', { class: 'block ' + c.classes.pads.h2 }, [
+      m('h2', { class: 'block ' + c.classes.pads.headerH2 }, [
         m('span', PADS.MYGROUPS),
         m('a', {
-          class: c.classes.pads.a,
+          class: c.classes.pads.headerA,
           href: '/mypads/add',
           config: m.route
         }, PADS.GROUP.ADD)
@@ -2052,10 +2052,17 @@ module.exports = (function () {
   */
 
   pads.rules = {};
-  pads.rules.section = {};
-  pads.rules.h2 = {};
-  pads.rules.a = {};
-  pads.rules.sectionAside = {};
+  pads.rules.section = {
+    'width': '100%',
+    'margin': '0 auto 0 auto'
+  };
+  pads.rules.headerH2 = { 'color': vars.color.dark };
+  pads.rules.headerA = {
+    'color': vars.color.grey,
+    'background': 'none',
+    'font-size': 'smaller'
+  };
+  pads.rules.sectionAside = { 'margin': '1em' };
 
   pads.responsive = {};
 

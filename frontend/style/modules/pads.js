@@ -40,10 +40,17 @@ module.exports = (function () {
   */
 
   pads.rules = {};
-  pads.rules.section = {};
-  pads.rules.h2 = {};
-  pads.rules.a = {};
-  pads.rules.sectionAside = {};
+  pads.rules.section = {
+    'width': '100%',
+    'margin': '0 auto 0 auto'
+  };
+  pads.rules.headerH2 = { 'color': vars.color.dark };
+  pads.rules.headerA = {
+    'color': vars.color.grey,
+    'background': 'none',
+    'font-size': 'smaller'
+  };
+  pads.rules.sectionAside = { 'margin': '1em' };
 
   pads.responsive = {};
 

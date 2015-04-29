@@ -106,7 +106,7 @@ module.exports = (function () {
           expect($success.innerHTML).toMatch('Success');
           $success.click();
           window.setTimeout(function () {
-            expect(app.location.search).toBe('?/');
+            expect(app.location.search).toBe('?/mypads');
             first('.icon-logout').parentNode.click();
             window.setTimeout(function () {
               first('body > section > div p').click();

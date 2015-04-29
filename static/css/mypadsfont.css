@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'mypadsfont';
-  src: url('../font/mypadsfont.eot?60139023');
-  src: url('../font/mypadsfont.eot?60139023#iefix') format('embedded-opentype'),
-       url('../font/mypadsfont.woff?60139023') format('woff'),
-       url('../font/mypadsfont.ttf?60139023') format('truetype'),
-       url('../font/mypadsfont.svg?60139023#mypadsfont') format('svg');
+  src: url('../font/mypadsfont.eot?29181894');
+  src: url('../font/mypadsfont.eot?29181894#iefix') format('embedded-opentype'),
+       url('../font/mypadsfont.woff?29181894') format('woff'),
+       url('../font/mypadsfont.ttf?29181894') format('truetype'),
+       url('../font/mypadsfont.svg?29181894#mypadsfont') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -14,7 +14,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'mypadsfont';
-    src: url('../font/mypadsfont.svg?60139023#mypadsfont') format('svg');
+    src: url('../font/mypadsfont.svg?29181894#mypadsfont') format('svg');
   }
 }
 */
@@ -35,7 +35,7 @@
   /* For safety - reset parent styles, that can break glyph codes*/
   font-variant: normal;
   text-transform: none;
-     
+ 
   /* fix buttons height, for twitter bootstrap */
   line-height: 1em;
  
@@ -45,6 +45,10 @@
  
   /* you can be more comfortable with increased icons size */
   /* font-size: 120%; */
+ 
+  /* Font smoothing. That was taken from TWBS */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
  
   /* Uncomment for 3D effect */
   /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
@@ -63,3 +67,7 @@
 .icon-cancel-circled:before { content: '\e80a'; } /* '' */
 .icon-cancel:before { content: '\e80b'; } /* '' */
 .icon-check:before { content: '\e80c'; } /* '' */
+.icon-pencil:before { content: '\e80d'; } /* '' */
+.icon-trash:before { content: '\e80e'; } /* '' */
+.icon-book-open:before { content: '\e80f'; } /* '' */
+.icon-plus-squared:before { content: '\e810'; } /* '' */

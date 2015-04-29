@@ -34,9 +34,6 @@ module.exports = (function () {
   var auth = require('../auth.js');
   var notif = require('./notification.js');
   var layout = require('./layout.js');
-  // Style dependencies
-  var padsStyle = require('../../style/modules/pads.js');
-  var stylesDetach = require('../../style/utils.js').fn.detach;
 
   var pads = {};
 
@@ -47,14 +44,7 @@ module.exports = (function () {
   *
   */
 
-  pads.controller = function () {
-    if (!auth.isAuthenticated()) { return m.route('/login'); }
-    padsStyle.attach();
-    var c = {};
-    c.classes = { pads: padsStyle.sheet.main.classes };
-    c.onunload = stylesDetach.bind(null, padsStyle.sheet);
-    return c;
-  };
+  pads.controller = function () {};
 
   /**
   * ## Views
@@ -97,31 +87,44 @@ module.exports = (function () {
   };
 
   view.aside = function (c) {
-    return m('section', { class: c.classes.sectionAside }, [
+    return m('section.pads-aside', [
       view.search(c), view.filters(c), view.tags(c)
     ]);
   };
 
   view.group = function (c) {
-    return m('li', [
-      m('header', [
-        m('a', { href: '/mypads/group/view', config: m.route }, PADS.GROUP.VIEW),
-        m('a', { href: '/mypads/group/edit', config: m.route }, PADS.GROUP.EDIT),
-        m('a', { href: '/mypads/group/remove', config: m.route }, PADS.GROUP.REMOVE)
+    return m('li.block', [
+      m('header.pads-group.block-group', [
+        m('h4.block', 'SampleName'),
+        m('section.block', [
+          m('a', {
+            href: '/mypads/group/view',
+            config: m.route,
+            title: PADS.GROUP.VIEW
+          }, [ m('i.icon-book-open') ]),
+          m('a', {
+            href: '/mypads/group/edit',
+            config: m.route,
+            title: PADS.GROUP.EDIT
+          }, [ m('i.icon-pencil') ]),
+          m('a', {
+            href: '/mypads/group/remove',
+            config: m.route,
+            title: PADS.GROUP.REMOVE
+          }, [ m('i.icon-trash') ])
+        ])
       ]),
-      m('dl', [
-        m('dt', PADS.PAD.TITLE),
-        m('dd', 'Sample'),
-        m('dt', PADS.PAD.ADMINS),
-        m('dd', 'xx, yy'),
-        m('dt', PADS.PAD.VISIBILITY),
-        m('dd', 'private'),
-        m('dt', PADS.PAD.PADS),
-        m('dd', '22')
+      m('dl.block-group.pads-group', [
+        m('dt.block', PADS.PAD.ADMINS),
+        m('dd.block', 'xx, yy'),
+        m('dt.block', PADS.PAD.VISIBILITY),
+        m('dd.block', 'private'),
+        m('dt.block', PADS.PAD.PADS),
+        m('dd.block', '22')
       ]),
-      m('footer', [
-        m('button', PADS.GROUP.BOOKMARK),
-        m('ul', [
+      m('footer.pads-group.block-group', [
+        m('button.block', PADS.GROUP.BOOKMARK),
+        m('ul.block', [
           m('li', 'tag4'),
           m('li', 'tag3')
         ])
@@ -130,7 +133,11 @@ module.exports = (function () {
   };
 
   view.groups = function (c) {
-    return m('ul', [
+    return m('ul.pads-group', [
+      view.group(c),
+      view.group(c),
+      view.group(c),
+      view.group(c),
       view.group(c),
       view.group(c)
     ]);
@@ -140,25 +147,27 @@ module.exports = (function () {
   view.archived = view.groups;
 
   view.main = function (c) {
-    return m('section', { class: 'block-group' + c.classes.pads.section }, [
-      m('h2', { class: 'block ' + c.classes.pads.headerH2 }, [
+    return m('section', { class: 'block-group pads' }, [
+      m('h2.block', [
         m('span', PADS.MYGROUPS),
         m('a', {
-          class: c.classes.pads.headerA,
           href: '/mypads/add',
           config: m.route
-        }, PADS.GROUP.ADD)
+        }, [
+          m('i.icon-plus-squared'),
+          m('span', PADS.GROUP.ADD)
+        ])
       ]),
-      m('section', [
-        m('h3', PADS.BOOKMARKED),
+      m('section.block', [
+        m('h3.title.bookmark', PADS.BOOKMARKED),
         view.bookmarked(c)
       ]),
-      m('section', [
-        m('h3', PADS.GROUPS),
+      m('section.block', [
+        m('h3.title.group', PADS.GROUPS),
         view.groups(c)
       ]),
-      m('section', [
-        m('h3', PADS.ARCHIVED),
+      m('section.block', [
+        m('h3.title.archive', PADS.ARCHIVED),
         view.archived(c)
       ])
     ]);

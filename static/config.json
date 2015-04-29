@@ -31,6 +31,12 @@
       "src": "entypo"
     },
     {
+      "uid": "9e1c33b6849ceb08db8acfaf02188b7d",
+      "css": "plus-squared",
+      "code": 59408,
+      "src": "entypo"
+    },
+    {
       "uid": "7e4164950ffa4990961958b2d6318658",
       "css": "info-circled",
       "code": 59399,
@@ -49,6 +55,12 @@
       "src": "entypo"
     },
     {
+      "uid": "c77fd2fd065b5fe16d6f2b41e190b266",
+      "css": "pencil",
+      "code": 59405,
+      "src": "entypo"
+    },
+    {
       "uid": "97902f87200ce74d181044df02a0458d",
       "css": "attention",
       "code": 59401,
@@ -61,9 +73,21 @@
       "src": "entypo"
     },
     {
+      "uid": "2626e3a1bbcd90e45849af3b58a1d594",
+      "css": "trash",
+      "code": 59406,
+      "src": "entypo"
+    },
+    {
       "uid": "1189604bf305b6b03a74685ce60e6632",
       "css": "doc-text",
       "code": 59393,
+      "src": "entypo"
+    },
+    {
+      "uid": "51727ca007aa35ceabcaffc28934faee",
+      "css": "book-open",
+      "code": 59407,
       "src": "entypo"
     },
     {

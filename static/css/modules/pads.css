@@ -1,0 +1,132 @@
+/* Pads Module */
+/* Main */
+
+section.pads {
+  width: 100%;
+  margin: 0 auto 0 auto;
+}
+
+section.pads > h2 { color: #333333; }
+section.pads h2 a {
+  font-size: smaller;
+  color: #949494;
+  background: none;
+  margin-left: 1em;
+}
+
+section.pads h3.title {
+  color: #fafafa;
+  text-align: center;
+  padding: 0.25em;
+}
+
+section.pads h3.title.bookmark { background-color: #52632a; }
+section.pads h3.title.group { background-color: #3e3363; }
+section.pads h3.title.archive { background-color: #666666; }
+
+/* Groups */
+
+ul.pads-group {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+ul.pads-group > li {
+  width: 95%;
+  border: 0.2em solid #e0e0e0;
+  border-radius: 0.5em;
+  padding: 0.2em;
+  margin: 0.5em 0.1em;
+}
+
+header.pads-group { background: transparent; }
+
+header.pads-group > h4 {
+  color: #333333;
+  width: 70%;
+  margin: 0;
+}
+header.pads-group > section {
+  width: 30%;
+  text-align: right;
+}
+
+header.pads-group a, footer.pads-group > a, footer.pads-group > button {
+  color: #3e3363;
+  font-weight: bold;
+  text-decoration: none;
+  padding: 0.1em;
+}
+
+header.pads-group a {
+  background: none;
+}
+header.pads-group > a:focus, header.pads-group a:hover {
+  background-color: #3e3363;
+  color: #e0e0e0;
+}
+
+dl.pads-group {
+  margin: 1em 0;
+}
+dl.pads-group > dt.block, dl.pads-group > dd.block {
+  width: 50%;
+  margin: 0;
+  padding: 0.1em 0.3em;
+  font-size: smaller;
+}
+
+dl.pads-group > dt.block {
+  color: #6a5687;
+}
+
+footer.pads-group { background: transparent; }
+footer.pads-group > button {
+  width: 30%; 
+  color: #304219;
+}
+footer.pads-group > button:focus {
+  background-color: #304219;
+  color: #e0e0e0;
+}
+footer.pads-group > ul {
+  width: 70%; 
+  text-align: right;
+  list-style-type : none;
+}
+footer.pads-group > ul > li {
+  color:#e0e0e0;
+  background: #9876cc;
+  display: inline;
+  padding: 0.5em;
+  margin: 0.2em;
+  border-radius: 0.4em;
+}
+
+/* Pads Aside */
+
+section.pads-aside {
+  margin: 1em;
+}
+
+section.pads-aside h3 {
+  text-align: center;
+}
+
+/* Tablet and Up */
+@media (min-width: 40em) {
+  ul.pads-group > li {
+    width: 48%;
+    padding: 0.5em;
+    margin: 0.3em;
+  }
+}
+/* Desktop and Up */
+@media (min-width: 60em) {
+  ul.pads-group > li {
+    width: 31%;
+    padding: 0.5em;
+    margin: 0.5em 0.3em;
+  }
+}

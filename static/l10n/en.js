@@ -87,15 +87,18 @@ module.exports = {
     },
     SEARCH: {
       TITLE: 'Search',
-      TYPE: 'Type here'
+      TYPE: 'Type here',
+      HELP: 'Search on common fields with at least 2 characters'
     },
     FILTERS: {
       TITLE: 'Filters',
       ADMIN: 'Groups I am admin',
-      USER: 'Groups I am user'
+      USER: 'Groups I am user',
+      HELP: 'You can select one or several filters, click again on it to deactivate'
     },
     TAGS: {
-      TITLE: 'Tags'
+      TITLE: 'Tags',
+      HELP: 'You can filter by one or more tags. Click again to deactivate if wanted'
     },
     PAD: {
       TITLE: 'Title',

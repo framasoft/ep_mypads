@@ -48,7 +48,7 @@ module.exports = (function () {
   */
 
   login.controller = function () {
-    var c = {}
+    var c = {};
     form.initFields(c, ['login', 'password']);
 
     /**

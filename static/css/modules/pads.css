@@ -86,7 +86,7 @@ footer.pads-group > button {
   width: 30%; 
   color: #304219;
 }
-footer.pads-group > button:focus {
+footer.pads-group > button:focus, footer.pads-group > button:hover {
   background-color: #304219;
   color: #e0e0e0;
 }
@@ -107,11 +107,68 @@ footer.pads-group > ul > li {
 /* Pads Aside */
 
 section.pads-aside {
+  background-color: #ede6f5;
+  border-radius: 0.4em;
   margin: 1em;
+  padding: 1em;
 }
 
 section.pads-aside h3 {
+  margin: 0 1em;
+}
+
+section.pads-aside input[type=search]:focus {
+  border-color: #8157c2;
+}
+
+section.pads-aside section.search h3 { width: 100%; }
+section.pads-aside section.search input { width: 70%; }
+section.pads-aside section.search button {
+  font-weight: bold;
+  width: 15%;
+  padding: 0.6em;
+  margin: 0.5em 0;
+}
+
+section.pads-aside section.filter ul {
+  list-style-type: none;
+  padding: 0;
+}
+section.pads-aside section.filter ul li > button.admin {
+  background-color: #de6933;
+}
+section.pads-aside section.filter ul li > button.user {
+  background-color: #616161;
+}
+
+section.pads-aside section.filter ul li > button {
+  color: #e0e0e0;
   text-align: center;
+  background: #6a5687;
+  border: 0.1em solid #3e3363;
+  padding: 0.6em;
+  margin: 0.2em;
+  width: 100%;
+}
+
+section.pads-aside section.filter ul li > button:focus, section.pads-aside section.filter ul li > button:hover {
+  font-weight: bold;
+  background-color: #8157c2;
+}
+
+section.pads-aside section.tag ul { list-style-type : none; padding: 0; }
+section.pads-aside section.tag li { display: inline; }
+section.pads-aside section.tag li button {
+  color:#e0e0e0;
+  font-size: smaller;
+  background: #333333;
+  padding: 0.5em;
+  margin: 0.2em;
+  border: 0;
+  border-radius: 0.4em;
+}
+section.pads-aside section.tag li button:focus, section.pads-aside section.tag li button:hover {
+  background-color: #8157c2;
 }
 
 /* Tablet and Up */

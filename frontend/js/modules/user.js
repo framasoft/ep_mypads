@@ -81,7 +81,7 @@ module.exports = (function () {
   * `optional` icon is the base icon for all optional fields
   */
 
-  user.view.icon.optional = function (c) {
+  user.view.icon.optional = function () {
     return m('i', {
       class: 'block tooltip icon-info-circled',
       'data-msg': USER.INFO.OPTIONAL 
@@ -317,13 +317,13 @@ module.exports = (function () {
   */
 
   user.view.aside = {
-    common: function (c) {
+    common: function () {
       return m('section.user-aside', [
         m('h2', conf.SERVER.title),
         m('article', m.trust(conf.SERVER.descr))
       ]);
     },
-    profile: function (c) {
+    profile: function () {
       return m('section.user-aside', [
         m('h2', conf.LANG.ACTIONS.HELP),
         m('article', m.trust(USER.HELP.PROFILE)) ]);

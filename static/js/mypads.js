@@ -499,7 +499,7 @@ module.exports = (function () {
   */
 
   login.controller = function () {
-    var c = {}
+    var c = {};
     form.initFields(c, ['login', 'password']);
 
     /**
@@ -827,7 +827,6 @@ module.exports = (function () {
   var conf = require('../configuration.js');
   var PADS = conf.LANG.PADS;
   var auth = require('../auth.js');
-  var notif = require('./notification.js');
   var layout = require('./layout.js');
 
   var pads = {};
@@ -853,34 +852,43 @@ module.exports = (function () {
   var view = {};
 
   view.search = function (c) {
-    return m('section', [
-      m('h3', PADS.SEARCH.TITLE),
-      m('input', {
+    return m('section.search.block-group', [
+      m('h3.block', [
+        m('span', PADS.SEARCH.TITLE),
+        m('i.tooltip.icon-info-circled', { 'data-msg': PADS.SEARCH.HELP })
+      ]),
+      m('input.block', {
         type: 'search',
         placeholder: PADS.SEARCH.TYPE,
         minlength: 3,
         pattern: '.{3}'
       }),
-      m('button', { type: 'button' }, conf.LANG.USER.OK)
+      m('button.block', { type: 'button' }, conf.LANG.USER.OK)
     ]);
   };
 
   view.filters = function (c) {
-    return (m('section'), [
-      m('h3', PADS.FILTERS.TITLE),
+    return m('section.filter', [
+      m('h3', [
+        m('span', PADS.FILTERS.TITLE),
+        m('i.tooltip.icon-info-circled', { 'data-msg': PADS.FILTERS.HELP })
+      ]),
       m('ul', [
-        m('li', PADS.FILTERS.ADMIN),
-        m('li', PADS.FILTERS.USER)
+        m('li', [ m('button.admin', PADS.FILTERS.ADMIN) ]),
+        m('li', [ m('button.user', PADS.FILTERS.USER) ])
       ])
     ]);
   };
 
   view.tags = function (c) {
-    return m('section', [
-      m('h3', PADS.TAGS.TITLE),
+    return m('section.tag', [
+      m('h3', [
+        m('span', PADS.TAGS.TITLE),
+        m('i.tooltip.icon-info-circled', { 'data-msg': PADS.TAGS.HELP })
+      ]),
       m('ul', [
-        m('li', 'tag1'),
-        m('li', 'tag2')
+        m('li', [ m('button', 'tag1') ]),
+        m('li', [ m('button', 'tag2') ])
       ])
     ]);
   };
@@ -979,7 +987,7 @@ module.exports = (function () {
   return pads;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/notification.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js":[function(require,module,exports){
 /**
 *  # Subscription module
 *
@@ -1294,7 +1302,7 @@ module.exports = (function () {
   * `optional` icon is the base icon for all optional fields
   */
 
-  user.view.icon.optional = function (c) {
+  user.view.icon.optional = function () {
     return m('i', {
       class: 'block tooltip icon-info-circled',
       'data-msg': USER.INFO.OPTIONAL 
@@ -1530,13 +1538,13 @@ module.exports = (function () {
   */
 
   user.view.aside = {
-    common: function (c) {
+    common: function () {
       return m('section.user-aside', [
         m('h2', conf.SERVER.title),
         m('article', m.trust(conf.SERVER.descr))
       ]);
     },
-    profile: function (c) {
+    profile: function () {
       return m('section.user-aside', [
         m('h2', conf.LANG.ACTIONS.HELP),
         m('article', m.trust(USER.HELP.PROFILE)) ]);
@@ -1700,15 +1708,18 @@ module.exports = {
     },
     SEARCH: {
       TITLE: 'Search',
-      TYPE: 'Type here'
+      TYPE: 'Type here',
+      HELP: 'Search on common fields with at least 2 characters'
     },
     FILTERS: {
       TITLE: 'Filters',
       ADMIN: 'Groups I am admin',
-      USER: 'Groups I am user'
+      USER: 'Groups I am user',
+      HELP: 'You can select one or several filters, click again on it to deactivate'
     },
     TAGS: {
-      TITLE: 'Tags'
+      TITLE: 'Tags',
+      HELP: 'You can filter by one or more tags. Click again to deactivate if wanted'
     },
     PAD: {
       TITLE: 'Title',

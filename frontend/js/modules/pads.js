@@ -32,7 +32,6 @@ module.exports = (function () {
   var conf = require('../configuration.js');
   var PADS = conf.LANG.PADS;
   var auth = require('../auth.js');
-  var notif = require('./notification.js');
   var layout = require('./layout.js');
 
   var pads = {};
@@ -58,34 +57,43 @@ module.exports = (function () {
   var view = {};
 
   view.search = function (c) {
-    return m('section', [
-      m('h3', PADS.SEARCH.TITLE),
-      m('input', {
+    return m('section.search.block-group', [
+      m('h3.block', [
+        m('span', PADS.SEARCH.TITLE),
+        m('i.tooltip.icon-info-circled', { 'data-msg': PADS.SEARCH.HELP })
+      ]),
+      m('input.block', {
         type: 'search',
         placeholder: PADS.SEARCH.TYPE,
         minlength: 3,
         pattern: '.{3}'
       }),
-      m('button', { type: 'button' }, conf.LANG.USER.OK)
+      m('button.block', { type: 'button' }, conf.LANG.USER.OK)
     ]);
   };
 
   view.filters = function (c) {
-    return (m('section'), [
-      m('h3', PADS.FILTERS.TITLE),
+    return m('section.filter', [
+      m('h3', [
+        m('span', PADS.FILTERS.TITLE),
+        m('i.tooltip.icon-info-circled', { 'data-msg': PADS.FILTERS.HELP })
+      ]),
       m('ul', [
-        m('li', PADS.FILTERS.ADMIN),
-        m('li', PADS.FILTERS.USER)
+        m('li', [ m('button.admin', PADS.FILTERS.ADMIN) ]),
+        m('li', [ m('button.user', PADS.FILTERS.USER) ])
       ])
     ]);
   };
 
   view.tags = function (c) {
-    return m('section', [
-      m('h3', PADS.TAGS.TITLE),
+    return m('section.tag', [
+      m('h3', [
+        m('span', PADS.TAGS.TITLE),
+        m('i.tooltip.icon-info-circled', { 'data-msg': PADS.TAGS.HELP })
+      ]),
       m('ul', [
-        m('li', 'tag1'),
-        m('li', 'tag2')
+        m('li', [ m('button', 'tag1') ]),
+        m('li', [ m('button', 'tag2') ])
       ])
     ]);
   };

@@ -34,29 +34,8 @@ module.exports = (function () {
   var conf = require('../configuration.js');
   var USER = conf.LANG.USER;
   var form = require('../helpers/form.js');
-  // Style dependencies
-  var userStyle = require('../../style/modules/user.js');
-  var tooltipStyle = require('../../style/tooltip.js');
-  var stylesDetach = require('../../style/utils.js').fn.detach;
 
   var user = {};
-
-  /**
-  * ## Controller
-  *
-  * Used for common state, only style here.
-  */
-
-  user.controller = function () {
-    userStyle.attach();
-    var c = {};
-    c.classes = {
-      tooltip: tooltipStyle.sheet.main.classes,
-      user: userStyle.sheet.main.classes
-    };
-    c.onunload = stylesDetach.bind(null, userStyle.sheet);
-    return c;
-  };
 
   /**
   * ## Views
@@ -87,8 +66,7 @@ module.exports = (function () {
 
   user.view.icon.common = function (c, name, info, err) {
     var icls = c.valid[name]() ? ['icon-info-circled'] : ['icon-alert'];
-    icls.push(c.classes.tooltip.global);
-    icls.push(c.classes.user.i);
+    icls.push('tooltip');
     icls.push('block');
     var msg = c.valid[name]() ? info : err;
     return m('i', {
@@ -104,9 +82,10 @@ module.exports = (function () {
   */
 
   user.view.icon.optional = function (c) {
-    var icls = ['block icon-info-circled', c.classes.tooltip.global,
-      c.classes.user.i];
-    return m('i', { class: icls.join(' '), 'data-msg': USER.INFO.OPTIONAL });
+    return m('i', {
+      class: 'block tooltip icon-info-circled',
+      'data-msg': USER.INFO.OPTIONAL 
+    });
   };
   user.view.icon.firstname = user.view.icon.optional;
   user.view.icon.lastname = user.view.icon.optional;
@@ -136,8 +115,7 @@ module.exports = (function () {
       passwordCurrent: USER.INFO.PASSWORD_CURRENT
     };
     var icls = c.valid[name]() ? ['icon-info-circled'] : ['icon-alert'];
-    icls.push(c.classes.tooltip.global);
-    icls.push(c.classes.user.i);
+    icls.push('tooltip');
     icls.push('block');
     return m('i', {
       class: icls.join(' '),
@@ -176,12 +154,9 @@ module.exports = (function () {
 
   user.view.field.common = function (c, name, label) {
     return {
-      label: m('label', {
-        class: 'block ' + c.classes.user.label,
-        for: name
-      }, label),
+      label: m('label.block', { for: name }, label),
       input: m('input', {
-        class: 'block ' + c.classes.user.input,
+        class: 'block',
         name: name,
         value: c.data[name]() || '',
         oninput: form.handleField.bind(null, c)
@@ -221,12 +196,9 @@ module.exports = (function () {
     var passMin = conf.SERVER.passwordMin;
     var passMax = conf.SERVER.passwordMax;
     return {
-      label: m('label', {
-        class: 'block ' + c.classes.user.label,
-        for: name
-      }, label),
+      label: m('label.block', { for: name }, label),
       input: m('input', {
-        class: 'block ' + c.classes.user.input,
+        class: 'block',
         type: 'password',
         name: name,
         placeholder: USER.UNDEF,
@@ -346,20 +318,15 @@ module.exports = (function () {
 
   user.view.aside = {
     common: function (c) {
-      return m('section', { class: c.classes.user.sectionAside }, [
-        m('h2', { class: c.classes.user.h2Aside }, conf.SERVER.title),
-        m('article',
-          { class: c.classes.user.articleAside },
-          m.trust(conf.SERVER.descr))
+      return m('section.user-aside', [
+        m('h2', conf.SERVER.title),
+        m('article', m.trust(conf.SERVER.descr))
       ]);
     },
     profile: function (c) {
-      return m('section', { class: c.classes.user.sectionAside }, [
-        m('h2', { class: c.classes.user.h2Aside }, conf.LANG.ACTIONS.HELP),
-        m('article',
-          { class: c.classes.user.articleAside },
-          m.trust(USER.HELP.PROFILE))
-      ]);
+      return m('section.user-aside', [
+        m('h2', conf.LANG.ACTIONS.HELP),
+        m('article', m.trust(USER.HELP.PROFILE)) ]);
     }
   };
 

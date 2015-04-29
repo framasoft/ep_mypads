@@ -30,11 +30,6 @@ module.exports = (function () {
   var m = require('mithril');
   var ld = require('lodash');
   var conf = require('../configuration.js');
-  var menuStyle = require('../../style/modules/menu-main.js');
-  menuStyle.attach();
-  var classes = menuStyle.sheet.main.classes;
-  var notifStyle = require('../../style/notification.js');
-  var notifCls = notifStyle.sheet.main.classes;
   var LANG = conf.LANG;
   var auth = require('../auth.js');
   var notif = require('./notification.js');
@@ -46,13 +41,6 @@ module.exports = (function () {
   *
   * For styling only
   */
-
-  /* Sample, not pertinent here */
-  layout.controller = function () {
-    menuStyle.attach();
-    this.onunload(menuStyle.detach);
-    return { classes: menuStyle.sheet.main.classes };
-  };
 
   var views = {};
 
@@ -108,16 +96,10 @@ module.exports = (function () {
       ]
     };
     var activeRoute = function (r) {
-      var liCls = (m.route() === r.route) ? classes.itemActive + ' ' : '';
-      liCls += classes.li;
-      return m('li', { class: liCls }, [
-        m('a', {
-          class: classes.a,
-          href: r.route,
-          config: m.route
-        }, [
+      return m('li', { class: (m.route() === r.route) ? 'is-active' : '' }, [
+        m('a', { href: r.route, config: m.route }, [
           m('i', { class: 'icon-' + r.icon, title: r.txt }),
-          m('span', { class: classes.span }, r.txt)
+          m('span', r.txt)
         ])
       ]);
     };
@@ -141,15 +123,15 @@ module.exports = (function () {
     return [
       m('header.block', [
         m('h1', conf.SERVER.title),
-        m('nav', { class: classes.nav }, [
-          m('ul', { class: classes.ul }, views.menuMain())
+        m('nav', { class: 'menu-main' }, [
+          m('ul', views.menuMain())
         ])
       ]),
       m('main.block', [
         m('section.block', main || ''),
         m('aside.block', aside || '')
       ]),
-      m('section', { class: notifCls.section }, notif.view(notif.controller())),
+      m('section', { class: 'notification' }, notif.view(notif.controller())),
       m('footer.block', m('p', m.trust(LANG.GLOBAL.FOOTER)))
     ];
   };

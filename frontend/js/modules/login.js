@@ -48,7 +48,7 @@ module.exports = (function () {
   */
 
   login.controller = function () {
-    var c = user.controller();
+    var c = {}
     form.initFields(c, ['login', 'password']);
 
     /**
@@ -86,17 +86,13 @@ module.exports = (function () {
   view.form = function (c) {
     var login = user.view.field.login(c);
     var password = user.view.field.password(c);
-    return m('form', {
-      id: 'login-form',
-      class: 'block ' + c.classes.user.form,
-      onsubmit: c.submit
-      }, [
+    return m('form.block', {
+      id: 'login-form', onsubmit: c.submit }, [
       m('fieldset.block-group', [
-        m('legend', { class: c.classes.user.legend }, USER.MYPADS_ACCOUNT),
+        m('legend', USER.MYPADS_ACCOUNT),
         login.label, login.input, login.icon,
         password.label, password.input, password.icon,
-        m('input', {
-          class: 'block ' + c.classes.user.inputSubmit,
+        m('input.block.send', {
           form: 'login-form',
           type: 'submit',
           value: USER.LOGIN
@@ -106,13 +102,10 @@ module.exports = (function () {
   };
 
   view.main = function (c) {
-    return m('section', { class: 'block-group ' + c.classes.user.section }, [
-      m('h2', { class: 'block ' + c.classes.user.h2 }, [
+    return m('section', { class: 'block-group user' }, [
+      m('h2.block', [
         m('span', USER.FORM),
-        m('a', {
-          class: c.classes.user.a,
-          href: '/subscribe', config: m.route
-        }, USER.ORSUB)
+        m('a', { href: '/subscribe', config: m.route }, USER.ORSUB)
       ]),
       view.form(c)
     ]);

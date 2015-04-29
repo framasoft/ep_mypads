@@ -28,14 +28,12 @@
 */
 
 (function () {
-  var layoutStyle = require('./frontend/style/layout.js');
-  layoutStyle.attach();
   var conf = require('./frontend/js/configuration.js');
   var route = require('./frontend/js/route.js');
   conf.init(route.init);
 }).call(this);
 
-},{"./frontend/js/configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","./frontend/js/route.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/route.js","./frontend/style/layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/layout.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js":[function(require,module,exports){
+},{"./frontend/js/configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","./frontend/js/route.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/route.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js":[function(require,module,exports){
 /**
 *  # Authentification module
 *
@@ -340,11 +338,6 @@ module.exports = (function () {
   var m = require('mithril');
   var ld = require('lodash');
   var conf = require('../configuration.js');
-  var menuStyle = require('../../style/modules/menu-main.js');
-  menuStyle.attach();
-  var classes = menuStyle.sheet.main.classes;
-  var notifStyle = require('../../style/notification.js');
-  var notifCls = notifStyle.sheet.main.classes;
   var LANG = conf.LANG;
   var auth = require('../auth.js');
   var notif = require('./notification.js');
@@ -356,13 +349,6 @@ module.exports = (function () {
   *
   * For styling only
   */
-
-  /* Sample, not pertinent here */
-  layout.controller = function () {
-    menuStyle.attach();
-    this.onunload(menuStyle.detach);
-    return { classes: menuStyle.sheet.main.classes };
-  };
 
   var views = {};
 
@@ -418,16 +404,10 @@ module.exports = (function () {
       ]
     };
     var activeRoute = function (r) {
-      var liCls = (m.route() === r.route) ? classes.itemActive + ' ' : '';
-      liCls += classes.li;
-      return m('li', { class: liCls }, [
-        m('a', {
-          class: classes.a,
-          href: r.route,
-          config: m.route
-        }, [
+      return m('li', { class: (m.route() === r.route) ? 'is-active' : '' }, [
+        m('a', { href: r.route, config: m.route }, [
           m('i', { class: 'icon-' + r.icon, title: r.txt }),
-          m('span', { class: classes.span }, r.txt)
+          m('span', r.txt)
         ])
       ]);
     };
@@ -451,15 +431,15 @@ module.exports = (function () {
     return [
       m('header.block', [
         m('h1', conf.SERVER.title),
-        m('nav', { class: classes.nav }, [
-          m('ul', { class: classes.ul }, views.menuMain())
+        m('nav', { class: 'menu-main' }, [
+          m('ul', views.menuMain())
         ])
       ]),
       m('main.block', [
         m('section.block', main || ''),
         m('aside.block', aside || '')
       ]),
-      m('section', { class: notifCls.section }, notif.view(notif.controller())),
+      m('section', { class: 'notification' }, notif.view(notif.controller())),
       m('footer.block', m('p', m.trust(LANG.GLOBAL.FOOTER)))
     ];
   };
@@ -468,7 +448,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../../style/modules/menu-main.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/modules/menu-main.js","../../style/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/notification.js","../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","./notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/notification.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","./notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/notification.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js":[function(require,module,exports){
 /**
 *  # Login module
 *
@@ -519,7 +499,7 @@ module.exports = (function () {
   */
 
   login.controller = function () {
-    var c = user.controller();
+    var c = {}
     form.initFields(c, ['login', 'password']);
 
     /**
@@ -557,17 +537,13 @@ module.exports = (function () {
   view.form = function (c) {
     var login = user.view.field.login(c);
     var password = user.view.field.password(c);
-    return m('form', {
-      id: 'login-form',
-      class: 'block ' + c.classes.user.form,
-      onsubmit: c.submit
-      }, [
+    return m('form.block', {
+      id: 'login-form', onsubmit: c.submit }, [
       m('fieldset.block-group', [
-        m('legend', { class: c.classes.user.legend }, USER.MYPADS_ACCOUNT),
+        m('legend', USER.MYPADS_ACCOUNT),
         login.label, login.input, login.icon,
         password.label, password.input, password.icon,
-        m('input', {
-          class: 'block ' + c.classes.user.inputSubmit,
+        m('input.block.send', {
           form: 'login-form',
           type: 'submit',
           value: USER.LOGIN
@@ -577,13 +553,10 @@ module.exports = (function () {
   };
 
   view.main = function (c) {
-    return m('section', { class: 'block-group ' + c.classes.user.section }, [
-      m('h2', { class: 'block ' + c.classes.user.h2 }, [
+    return m('section', { class: 'block-group user' }, [
+      m('h2.block', [
         m('span', USER.FORM),
-        m('a', {
-          class: c.classes.user.a,
-          href: '/subscribe', config: m.route
-        }, USER.ORSUB)
+        m('a', { href: '/subscribe', config: m.route }, USER.ORSUB)
       ]),
       view.form(c)
     ]);
@@ -693,8 +666,6 @@ module.exports = (function () {
   // Local dependencies
   var conf = require('../configuration.js');
   var NOTIF = conf.LANG.NOTIFICATION;
-  var notifStyle = require('../../style/notification.js');
-  var classes = notifStyle.sheet.main.classes;
 
   var notif = {};
 
@@ -747,25 +718,23 @@ module.exports = (function () {
 
   notif.view = function (ctrl) {
     var keys = Object.keys(notif.model.items).sort();
-    return m('div', { class: classes.global }, keys.map(function (id) {
+    return m('div', keys.map(function (id) {
       var n = notif.model.items[id];
       ctrl.delayClose(id, n.timeout);
       var closeFn = ctrl.close.bind(ctrl, id, n.timeout);
-      var notifClass = [classes.div];
-      if (n.cls) { notifClass.push(classes[n.cls]); }
       return m('div.block-group', {
-        class: notifClass.join(' '),
+        class: n.cls ? n.cls : '',
         onclick: (n.click ? n.click : closeFn)
       }, [
-        m('header', { class: 'block ' + classes.header }, [
+        m('header', { class: 'block' }, [
           (n.icon ? m('i', { class: 'icon-' + n.icon }) : ''),
           m('span', n.title)
         ]),
         m('i', {
-          class: 'block close icon-cancel-circled ' + classes.iclose,
+          class: 'block close icon-cancel-circled',
           onclick: closeFn
         }),
-        m('p', { class: 'block ' + classes.p }, m.trust(n.body))
+        m('p', { class: 'block' }, m.trust(n.body))
       ]);
     }));
   };
@@ -823,7 +792,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../../style/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/notification.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pads.js":[function(require,module,exports){
+},{"../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pads.js":[function(require,module,exports){
 /**
 *  # Pads module
 *
@@ -1050,7 +1019,7 @@ module.exports = (function () {
   */
 
   subscribe.controller = function () {
-    var c = user.controller();
+    var c = {};
     c.profileView = m.prop((m.route() === '/myprofile'));
     if (c.profileView() && !auth.isAuthenticated()) {
       return m.route('/login');
@@ -1181,24 +1150,22 @@ module.exports = (function () {
       var log = fields.login;
       requiredFields.splice(0, 0, log.label, log.input, log.icon);
     }
-    return m('form', {
+    return m('form.block', {
       id: 'subscribe-form',
-      class: 'block ' + c.classes.user.form,
       onsubmit: c.profileView() ? c.submit.profileSave : c.submit.subscribe
       }, [
       m('fieldset.block-group', [
-        m('legend', { class: c.classes.user.legend }, USER.MANDATORY_FIELDS),
+        m('legend', USER.MANDATORY_FIELDS),
         m('div', requiredFields)
       ]),
       m('fieldset.block-group', [
-        m('legend', { class: c.classes.user.legendopt }, USER.OPTIONAL_FIELDS),
+        m('legend.opt', USER.OPTIONAL_FIELDS),
         fields.firstname.label, fields.firstname.input, fields.firstname.icon,
         fields.lastname.label, fields.lastname.input, fields.lastname.icon,
         fields.organization.label, fields.organization.input,
         fields.organization.icon
       ]),
-      m('input', {
-        class: 'block ' + c.classes.user.inputSubmit,
+      m('input.block.send', {
         form: 'subscribe-form',
         type: 'submit',
         value: c.profileView() ? conf.LANG.ACTIONS.SAVE : USER.REGISTER
@@ -1213,9 +1180,8 @@ module.exports = (function () {
   */
 
   view.main = function (c) {
-    return m('section', { class: 'block-group ' + c.classes.user.section }, [
-      m('h2', {
-        class: 'block ' + c.classes.user.h2
+    return m('section', { class: 'block-group user' }, [
+      m('h2.block', {
       }, c.profileView() ? USER.PROFILE : USER.SUBSCRIBE),
       view.form(c)
     ]);
@@ -1268,29 +1234,8 @@ module.exports = (function () {
   var conf = require('../configuration.js');
   var USER = conf.LANG.USER;
   var form = require('../helpers/form.js');
-  // Style dependencies
-  var userStyle = require('../../style/modules/user.js');
-  var tooltipStyle = require('../../style/tooltip.js');
-  var stylesDetach = require('../../style/utils.js').fn.detach;
 
   var user = {};
-
-  /**
-  * ## Controller
-  *
-  * Used for common state, only style here.
-  */
-
-  user.controller = function () {
-    userStyle.attach();
-    var c = {};
-    c.classes = {
-      tooltip: tooltipStyle.sheet.main.classes,
-      user: userStyle.sheet.main.classes
-    };
-    c.onunload = stylesDetach.bind(null, userStyle.sheet);
-    return c;
-  };
 
   /**
   * ## Views
@@ -1321,8 +1266,7 @@ module.exports = (function () {
 
   user.view.icon.common = function (c, name, info, err) {
     var icls = c.valid[name]() ? ['icon-info-circled'] : ['icon-alert'];
-    icls.push(c.classes.tooltip.global);
-    icls.push(c.classes.user.i);
+    icls.push('tooltip');
     icls.push('block');
     var msg = c.valid[name]() ? info : err;
     return m('i', {
@@ -1338,9 +1282,10 @@ module.exports = (function () {
   */
 
   user.view.icon.optional = function (c) {
-    var icls = ['block icon-info-circled', c.classes.tooltip.global,
-      c.classes.user.i];
-    return m('i', { class: icls.join(' '), 'data-msg': USER.INFO.OPTIONAL });
+    return m('i', {
+      class: 'block tooltip icon-info-circled',
+      'data-msg': USER.INFO.OPTIONAL 
+    });
   };
   user.view.icon.firstname = user.view.icon.optional;
   user.view.icon.lastname = user.view.icon.optional;
@@ -1370,8 +1315,7 @@ module.exports = (function () {
       passwordCurrent: USER.INFO.PASSWORD_CURRENT
     };
     var icls = c.valid[name]() ? ['icon-info-circled'] : ['icon-alert'];
-    icls.push(c.classes.tooltip.global);
-    icls.push(c.classes.user.i);
+    icls.push('tooltip');
     icls.push('block');
     return m('i', {
       class: icls.join(' '),
@@ -1410,12 +1354,9 @@ module.exports = (function () {
 
   user.view.field.common = function (c, name, label) {
     return {
-      label: m('label', {
-        class: 'block ' + c.classes.user.label,
-        for: name
-      }, label),
+      label: m('label.block', { for: name }, label),
       input: m('input', {
-        class: 'block ' + c.classes.user.input,
+        class: 'block',
         name: name,
         value: c.data[name]() || '',
         oninput: form.handleField.bind(null, c)
@@ -1455,12 +1396,9 @@ module.exports = (function () {
     var passMin = conf.SERVER.passwordMin;
     var passMax = conf.SERVER.passwordMax;
     return {
-      label: m('label', {
-        class: 'block ' + c.classes.user.label,
-        for: name
-      }, label),
+      label: m('label.block', { for: name }, label),
       input: m('input', {
-        class: 'block ' + c.classes.user.input,
+        class: 'block',
         type: 'password',
         name: name,
         placeholder: USER.UNDEF,
@@ -1580,20 +1518,15 @@ module.exports = (function () {
 
   user.view.aside = {
     common: function (c) {
-      return m('section', { class: c.classes.user.sectionAside }, [
-        m('h2', { class: c.classes.user.h2Aside }, conf.SERVER.title),
-        m('article',
-          { class: c.classes.user.articleAside },
-          m.trust(conf.SERVER.descr))
+      return m('section.user-aside', [
+        m('h2', conf.SERVER.title),
+        m('article', m.trust(conf.SERVER.descr))
       ]);
     },
     profile: function (c) {
-      return m('section', { class: c.classes.user.sectionAside }, [
-        m('h2', { class: c.classes.user.h2Aside }, conf.LANG.ACTIONS.HELP),
-        m('article',
-          { class: c.classes.user.articleAside },
-          m.trust(USER.HELP.PROFILE))
-      ]);
+      return m('section.user-aside', [
+        m('h2', conf.LANG.ACTIONS.HELP),
+        m('article', m.trust(USER.HELP.PROFILE)) ]);
     }
   };
 
@@ -1601,7 +1534,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../../style/modules/user.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/modules/user.js","../../style/tooltip.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/tooltip.js","../../style/utils.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/utils.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/route.js":[function(require,module,exports){
+},{"../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/route.js":[function(require,module,exports){
 /**
 *  # Routing module
 *
@@ -1773,243 +1706,7 @@ module.exports = {
   }
 };
 
-},{}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/layout.js":[function(require,module,exports){
-/**
-*  # Global CSS Style
-*
-*  ## License
-*
-*  Licensed to the Apache Software Foundation (ASF) under one
-*  or more contributor license agreements.  See the NOTICE file
-*  distributed with this work for additional information
-*  regarding copyright ownership.  The ASF licenses this file
-*  to you under the Apache License, Version 2.0 (the
-*  "License"); you may not use this file except in compliance
-*  with the License.  You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing,
-*  software distributed under the License is distributed on an
-*  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-*  KIND, either express or implied.  See the License for the
-*  specific language governing permissions and limitations
-*  under the License.
-*
-*  ## Description
-*
-*  This module contains globals for dynamic CSS Styling
-*/
-
-module.exports = (function () {
-
-  // Dependencies
-  var jss = require('jss');
-  var jssNested = require('jss-nested');
-  jss.use(jssNested);
-  var vars = require('./vars.js');
-  var tooltip = require('./tooltip.js');
-  var notif = require('./notification.js');
-
-  var layout = {};
-
-  /**
-  * ## rules
-  *
-  * All global CSS rules.
-  */
-
-  layout.rules = {
-    'main.block, aside.block': { 'background-color': vars.color.lightest },
-    'aside.block, main.block > section.block': {
-      'width': '100%',
-      'padding': '1em'
-    },
-    'body': {
-      'font-size': '1em',
-      'font-family': vars.font.family,
-      'background': vars.color.dark
-    },
-    'header, footer': {
-      'color': vars.color.light,
-      'background-color': vars.color.dark
-    },
-    'header h1': { 'padding-left': '1%' },
-    'footer': {
-      'font-size': '0.7em',
-      'text-align': 'center'
-    },
-    'a, a:visited, a:link': {
-      'background-color': vars.color.purple,
-      'color': vars.color.lightest,
-      'text-decoration': 'underline dotted'
-    },
-    'fieldset': { 'border': 'none' },
-    'legend': {
-      'font': '1.1em bold',
-      'border-bottom': '0.1em solid ' + vars.color.dark,
-      'margin-bottom': '1em'
-    },
-    'label, input': { 'margin': '0.5em 0 0.5em' },
-    'label': { 'text-transform': 'uppercase' },
-    'input': {
-      'padding': '0.7em',
-      'border': '0.1em solid ' + vars.color.lightgrey,
-      'border-radius': '0.3em',
-      'color': vars.color.dark,
-      'background': vars.color.lightest
-    },
-    'input:focus': {
-      'border-color': vars.color.grey,
-      'border-left-width': '0.3em',
-      'border-right-width': '0.3em'
-    },
-    'input:invalid': { 'border-color': vars.color.red },
-    'input[type=submit]': {
-      'font-weight': 'bold',
-      'color': vars.color.yellowlight,
-      'background': vars.color.yellowdarkest
-    },
-    'input[type=submit]:hover, input[type=submit]:focus': {
-      'background': vars.color.yellowdark
-    },
-    'input[disabled]': { 'color': vars.color.grey },
-    'i.icon-alert': { 'color': vars.color.red }
-  };
-
-  /**
-  * ## Animations
-  */
-
-  var fadeIn = { from: { 'opacity': 0 }, to: { 'opacity': 1 } };
-  layout.rules['@keyframes fadein'] = { 'from': fadeIn.from, 'to': fadeIn.to };
-  layout.rules['@-moz-keyframes fadein'] = {
-    'from': fadeIn.from,
-    'to': fadeIn.to
-  };
-  layout.rules['@-webkit-keyframes fadein'] = {
-    'from': fadeIn.from,
-    'to': fadeIn.to
-  };
-
-  /**
-  * ## Responsiveness
-  */
-
-  layout.responsive = {
-    'main.block > section.block': { 'width': '70%' },
-    'main.block > aside.block': { 'width': '30%' }
-  };
-
-  /**
-  * ## attach
-  *
-  * This function attaches the global stylesheet to the application.
-  * It uses classic css tags and not the named ones.
-  */
-
-  layout.attach = function () {
-    layout.sheet = {
-      main: jss.createStyleSheet(layout.rules, { named: false }).attach(),
-      desktop: jss.createStyleSheet(layout.responsive, {
-        media: '(min-width: 60em)',
-        named: false
-      }).attach()
-    };
-    tooltip.attach();
-    notif.attach();
-  };
-
-  return layout;
-
-}).call(this);
-
-},{"./notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/notification.js","./tooltip.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/tooltip.js","./vars.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/vars.js","jss":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/jss/index.js","jss-nested":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/jss-nested/index.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/modules/menu-main.js":[function(require,module,exports){
-/**
-*  # Menu Main Style
-*
-*  ## License
-*
-*  Licensed to the Apache Software Foundation (ASF) under one
-*  or more contributor license agreements.  See the NOTICE file
-*  distributed with this work for additional information
-*  regarding copyright ownership.  The ASF licenses this file
-*  to you under the Apache License, Version 2.0 (the
-*  "License"); you may not use this file except in compliance
-*  with the License.  You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing,
-*  software distributed under the License is distributed on an
-*  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-*  KIND, either express or implied.  See the License for the
-*  specific language governing permissions and limitations
-*  under the License.
-*
-*/
-
-module.exports = (function () {
-
-  // Dependencies
-  var utils = require('../utils.js');
-  var vars = require('../vars.js');
-
-  var menuMain = {};
-
-  /**
-  * ## rules
-  *
-  * Local rules for the main menu
-  */
-
-  menuMain.rules = {};
-  var rules = menuMain.rules;
-  var itemFocused = { 'background-color': vars.color.purpledark };
-
-  rules.nav = { 'text-align': 'right' };
-  rules.ul = { 'list-style-type': 'none' };
-  rules.li = {
-    'padding': '1em',
-    'display': 'inline',
-    'font-weight': 'bold',
-    '&:hover': itemFocused
-  };
-
-  var link = { 'background': 'none', 'text-decoration': 'none' };
-  rules.a = link;
-  rules.a['&:link'] = link;
-  rules.a['&:focus'] = itemFocused;
-  rules.span = { 'display': 'none' };
-  rules.itemActive = { 'background-color': vars.color.purplemid };
-
-  menuMain.responsive = {
-    largetablet: { span: { 'display': 'inherit' } }
-  };
-
-  /**
-  * ## attach
-  *
-  * Attach the local styles, plus all responsives variants
-  */
-
-  menuMain.attach = function () {
-    menuMain.sheet = utils.fn.attach(menuMain.rules, menuMain.responsive);
-  };
-
-  /**
-  * ## detach
-  *
-  * Detaching already attached local styles, performance reasons
-  */
-
-  menuMain.detach = utils.fn.detach.bind(null, menuMain.sheet);
-
-  return menuMain;
-
-}).call(this);
-
-},{"../utils.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/utils.js","../vars.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/vars.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/modules/pads.js":[function(require,module,exports){
+},{}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/modules/pads.js":[function(require,module,exports){
 /**
 *  # Pads style
 *
@@ -2079,303 +1776,7 @@ module.exports = (function () {
   return pads;
 }).call(this);
 
-},{"../utils.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/utils.js","../vars.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/vars.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/modules/user.js":[function(require,module,exports){
-/**
-*  # User style
-*
-*  ## License
-*
-*  Licensed to the Apache Software Foundation (ASF) under one
-*  or more contributor license agreements.  See the NOTICE file
-*  distributed with this work for additional information
-*  regarding copyright ownership.  The ASF licenses this file
-*  to you under the Apache License, Version 2.0 (the
-*  "License"); you may not use this file except in compliance
-*  with the License.  You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing,
-*  software distributed under the License is distributed on an
-*  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-*  KIND, either express or implied.  See the License for the
-*  specific language governing permissions and limitations
-*  under the License.
-*
-*  ## Description
-*
-*  This module contains common styles for `user`, `subscribe` and `profile
-*  modules.`
-*/
-
-module.exports = (function () {
-
-  // Dependencies
-  var utils = require('../utils.js');
-  var vars = require('../vars.js');
-
-  var user = {};
-
-  /**
-  * ## rules
-  *
-  * Local rules for user
-  */
-
-  user.rules = {};
-  user.rules.section = {
-    'width': '100%',
-    'margin': '0 auto 0 auto'
-  };
-  user.rules.label = { 'width': '100%' };
-  user.rules.input = { 'width': '95%' };
-  user.rules.i = { 'width': '5%' };
-  user.rules.inputSubmit = {
-    'text-transform': 'uppercase',
-    'margin-left': '50%',
-    'width': '50%'
-  };
-  user.rules.h2 = { 'color': vars.color.yellowdarkest };
-  user.rules.a = {
-    'color': vars.color.dark,
-    'background': 'none',
-    'font-size': 'smaller'
-  };
-  user.rules.form = {
-    'background': vars.color.yellowlight,
-    'border': '0.1em solid' + vars.color.yellow,
-    'border-radius': '0.2em',
-    'padding': '1em'
-  };
-  user.rules.legend = {
-    'font': '1.4em bold',
-    'padding-bottom': '0.6em'
-  };
-  user.rules.legendopt = {
-    'font': '1.3em bold',
-    'padding-bottom': '0.4em',
-    'color': vars.color.grey,
-    'border-color': vars.color.grey
-  };
-
-  user.rules.sectionAside = { 'margin': '1em' };
-  user.rules.h2Aside = {
-    'text-align': 'center',
-    'color': vars.color.purpledarkest
-  };
-  user.rules.articleAside = {
-    'background': vars.color.purplelight,
-    'border': '0.15em solid' + vars.color.purplemidlight,
-    'border-radius': '0.5em',
-    'padding': '1em'
-  };
-
-  user.responsive = {
-    tablet: {
-      section: { 'width': '80%' },
-      inputSubmit: { 'margin-left': '80%', 'width': '20%' }
-    },
-    desktop: {
-      section: { 'width': '40em' },
-      label: { 'width': '50%' },
-      input: { 'width': '45%' }
-    }
-  };
-
-  /**
-  * ## attach
-  *
-  * Attach the local styles, plus all responsives variants
-  */
-
-  user.attach = function () {
-    user.sheet = utils.fn.attach(user.rules, user.responsive);
-  };
-
-  return user;
-
-}).call(this);
-
-},{"../utils.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/utils.js","../vars.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/vars.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/notification.js":[function(require,module,exports){
-/**
-*  # Notification style
-*
-*  ## License
-*
-*  Licensed to the Apache Software Foundation (ASF) under one
-*  or more contributor license agreements.  See the NOTICE file
-*  distributed with this work for additional information
-*  regarding copyright ownership.  The ASF licenses this file
-*  to you under the Apache License, Version 2.0 (the
-*  "License"); you may not use this file except in compliance
-*  with the License.  You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing,
-*  software distributed under the License is distributed on an
-*  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-*  KIND, either express or implied.  See the License for the
-*  specific language governing permissions and limitations
-*  under the License.
-*
-*/
-
-module.exports = (function () {
-
-  // Dependencies
-  var utils = require('./utils.js');
-  var vars = require('./vars.js');
-
-  var notif = {};
-
-  /**
-  * ## rules
-  *
-  * Local rules for notifs
-  */
-
-  notif.rules = {};
-  notif.rules.global = {
-    'z-index': 99,
-    'cursor': 'pointer'
-  };
-  notif.rules.section = {
-    'width': '80%',
-    'position': 'fixed',
-    'right': '1%',
-    'bottom': '2%'
-  };
-  notif.rules.div = {
-    'margin': '0.3em',
-    'padding': '0.8em',
-    'border': '0.1em solid',
-    'border-radius': '0.3em',
-    'background-color': vars.color.lightgrey,
-    'animation': '1s fadein',
-    '-moz-animation': '1s fadein',
-    '-webkit-animation': '1s fadein'
-  };
-  notif.rules.success = { 'background-color': vars.color.green };
-  notif.rules.info = { 'background-color': vars.color.bluelight };
-  notif.rules.warning = { 'background-color': vars.color.yellow };
-  notif.rules.error = { 'background-color': vars.color.redlight };
-
-  notif.rules.header = {
-    'color': 'inherit',
-    'background-color': 'inherit',
-    'font-weight': 'bold',
-    'width': '95%'
-  };
-  notif.rules.p = { 'font-size': '0.8em' };
-  notif.rules.iclose = { 'width': '5%' };
-
-  notif.responsive = {
-    tablet: {
-      section: { 'width': '40%' }
-    },
-    desktop: {
-      section: { 'width': '25%' }
-    }
-  };
-
-  /**
-  * ## attach
-  *
-  * Attach the local styles, plus all responsives variants
-  */
-
-  notif.attach = function () {
-    notif.sheet = utils.fn.attach(notif.rules, notif.responsive);
-  };
-
-  return notif;
-
-}).call(this);
-
-},{"./utils.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/utils.js","./vars.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/vars.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/tooltip.js":[function(require,module,exports){
-/**
-*  # Tooltip style
-*
-*  ## License
-*
-*  Licensed to the Apache Software Foundation (ASF) under one
-*  or more contributor license agreements.  See the NOTICE file
-*  distributed with this work for additional information
-*  regarding copyright ownership.  The ASF licenses this file
-*  to you under the Apache License, Version 2.0 (the
-*  "License"); you may not use this file except in compliance
-*  with the License.  You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing,
-*  software distributed under the License is distributed on an
-*  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-*  KIND, either express or implied.  See the License for the
-*  specific language governing permissions and limitations
-*  under the License.
-*
-*/
-
-module.exports = (function () {
-
-  // Dependencies
-  var utils = require('./utils.js');
-  var vars = require('./vars.js');
-
-  var tooltip = {};
-
-  /**
-  * ## rules
-  *
-  * Local rules for tooltips
-  */
-
-  tooltip.rules = {};
-  var tooltipOn = {
-    'position': 'absolute',
-    'bottom': '1.5em',
-    'right': '0.1em',
-    'padding': '0.4em',
-    'width': '17em',
-    'color': vars.color.light,
-    'background-color': vars.color.dark,
-    'opacity': '0.9',
-    'border': '0.1em solid ' + vars.color.light,
-    'border-radius': '0.1em',
-    'font-size': '0.8em',
-    'content': 'attr(data-msg)'
-  };
-  tooltip.rules.global = {
-    'position': 'relative',
-    '&:hover:after': tooltipOn,
-    '&:focus:after': tooltipOn
-  };
-
-  /**
-  * ## attach
-  *
-  * Attach the local styles, plus all responsives variants
-  */
-
-  tooltip.attach = function () {
-    tooltip.sheet = utils.fn.attach(tooltip.rules);
-  };
-
-  /**
-  * ## detach
-  *
-  * Detaching already attached local styles, performance reasons
-  */
-
-  tooltip.detach = utils.fn.detach.bind(null, tooltip.sheet);
-
-  return tooltip;
-
-}).call(this);
-
-},{"./utils.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/utils.js","./vars.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/vars.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/utils.js":[function(require,module,exports){
+},{"../utils.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/utils.js","../vars.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/vars.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/style/utils.js":[function(require,module,exports){
 /**
 *  # CSS Style utilities
 *
@@ -2544,30 +1945,6 @@ module.exports = (function () {
   return vars;
 
 }).call(this);
-
-},{}],"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/jss-nested/index.js":[function(require,module,exports){
-'use strict'
-
-var regExp = /&/gi
-
-/**
- * Convert nested rules to separate, remove them from original styles.
- *
- * @param {Rule} rule
- * @api private
- */
-module.exports = function (rule) {
-    var stylesheet = rule.stylesheet
-    var style = rule.style
-
-    for (var prop in style) {
-        if (prop[0] == '&') {
-            var selector = prop.replace(regExp, rule.selector)
-            rule.addChild(selector, style[prop], {named: false})
-            delete style[prop]
-        }
-    }
-}
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/jss/index.js":[function(require,module,exports){
 /**

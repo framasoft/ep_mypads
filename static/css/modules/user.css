@@ -1,0 +1,77 @@
+/* User Module asbtraction : login, subscribe, profile */
+/* Main */
+
+section.user {
+  width: 100%;
+  margin: 0 auto 0 auto;
+}
+
+section.user label { width: 100%; }
+section.user input { width: 95%; }
+section.user i { width: 5%; }
+
+section.user input[type=submit] {
+  text-transform: uppercase;
+  margin-left: 50%;
+  width: 50%;
+}
+
+/* Tablet and Up */
+@media (min-width: 40em) {
+  section.user { width: 80%; }
+  section.user input[type=submit] {
+    margin-left: 80%;
+    width: 20%;
+  }
+}
+/* Desktop and Up */
+@media (min-width: 60em) {
+  section.user { width: 40em; }
+
+  section.user label { width: 50%; }
+  section.user input { width: 45%; }
+}
+
+section.user > h2 { color: #a15014; }
+section.user a {
+  color: #333333; 
+  background: none;
+  font-size: smaller;
+}
+
+section.user > form {
+  background: #fff8e3;
+  border: 0.1em solid #ffcf4f;
+  border-radius: 0.2em;
+  padding: 1em;
+}
+
+section.user > fieldset > legend {
+  font: 1.4em bold;
+  padding-bottom: 0.6em;
+}
+
+section.user > fieldset > legend.opt {
+  font: 1.3em bold;
+  padding-bottom: 0.4em;
+  color: #949494;
+  border-color: #949494;
+}
+
+/* Login Aside */
+
+section.user-aside {
+  margin: 1em;
+}
+
+section.user-aside > h2 {
+  text-align: center;
+  color: #3e3363;
+}
+
+section.user-aside > article {
+  background: #d3c5e8;
+  border: 0.15em solid #9876cc;
+  border-radius: 0.5em;
+  padding: 1em;
+}

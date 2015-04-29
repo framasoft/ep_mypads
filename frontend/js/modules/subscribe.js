@@ -50,7 +50,7 @@ module.exports = (function () {
   */
 
   subscribe.controller = function () {
-    var c = user.controller();
+    var c = {};
     c.profileView = m.prop((m.route() === '/myprofile'));
     if (c.profileView() && !auth.isAuthenticated()) {
       return m.route('/login');
@@ -181,24 +181,22 @@ module.exports = (function () {
       var log = fields.login;
       requiredFields.splice(0, 0, log.label, log.input, log.icon);
     }
-    return m('form', {
+    return m('form.block', {
       id: 'subscribe-form',
-      class: 'block ' + c.classes.user.form,
       onsubmit: c.profileView() ? c.submit.profileSave : c.submit.subscribe
       }, [
       m('fieldset.block-group', [
-        m('legend', { class: c.classes.user.legend }, USER.MANDATORY_FIELDS),
+        m('legend', USER.MANDATORY_FIELDS),
         m('div', requiredFields)
       ]),
       m('fieldset.block-group', [
-        m('legend', { class: c.classes.user.legendopt }, USER.OPTIONAL_FIELDS),
+        m('legend.opt', USER.OPTIONAL_FIELDS),
         fields.firstname.label, fields.firstname.input, fields.firstname.icon,
         fields.lastname.label, fields.lastname.input, fields.lastname.icon,
         fields.organization.label, fields.organization.input,
         fields.organization.icon
       ]),
-      m('input', {
-        class: 'block ' + c.classes.user.inputSubmit,
+      m('input.block.send', {
         form: 'subscribe-form',
         type: 'submit',
         value: c.profileView() ? conf.LANG.ACTIONS.SAVE : USER.REGISTER
@@ -213,9 +211,8 @@ module.exports = (function () {
   */
 
   view.main = function (c) {
-    return m('section', { class: 'block-group ' + c.classes.user.section }, [
-      m('h2', {
-        class: 'block ' + c.classes.user.h2
+    return m('section', { class: 'block-group user' }, [
+      m('h2.block', {
       }, c.profileView() ? USER.PROFILE : USER.SUBSCRIBE),
       view.form(c)
     ]);

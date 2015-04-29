@@ -27,8 +27,6 @@
 */
 
 (function () {
-  var layoutStyle = require('./frontend/style/layout.js');
-  layoutStyle.attach();
   var conf = require('./frontend/js/configuration.js');
   var route = require('./frontend/js/route.js');
   conf.init(route.init);

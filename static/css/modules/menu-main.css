@@ -1,0 +1,32 @@
+/* Menu Main */
+nav.menu-main {
+  text-align: right;
+}
+
+nav.menu-main > ul {
+  list-style-type: none;
+}
+
+nav.menu-main li {
+  padding: 1em;
+  display: inline; 
+  font-weight: bold;
+}
+
+nav.menu-main li.is-active { background-color: #8157c2; }
+
+nav.menu-main li:hover, nav.menu-main a:focus {
+  background-color: #635182;
+}
+
+nav.menu-main a {
+  background: none;
+  text-decoration: none;
+}
+
+nav.menu-main span { display: none; }
+
+/* Responsivity : full menu items for large tablets and up */
+@media (min-width: 50em) {
+  nav.menu-main span { display: inherit; }
+}

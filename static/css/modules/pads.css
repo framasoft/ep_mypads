@@ -44,11 +44,11 @@ header.pads-group { background: transparent; }
 
 header.pads-group > h4 {
   color: #333333;
-  width: 70%;
+  width: 65%;
   margin: 0;
 }
 header.pads-group > section {
-  width: 30%;
+  width: 35%;
   text-align: right;
 }
 
@@ -123,9 +123,18 @@ section.pads-aside h3 {
   }
 }
 /* Desktop and Up */
-@media (min-width: 60em) {
+@media (min-width: 70em) {
   ul.pads-group > li {
     width: 31%;
+    padding: 0.5em;
+    margin: 0.5em 0.3em;
+  }
+}
+
+/* Hi res desktop */
+@media (min-width: 90em) {
+  ul.pads-group > li {
+    width: 24%;
     padding: 0.5em;
     margin: 0.5em 0.3em;
   }

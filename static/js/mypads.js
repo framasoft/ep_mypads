@@ -839,7 +839,11 @@ module.exports = (function () {
   *
   */
 
-  pads.controller = function () {};
+  pads.controller = function () {
+    if (!auth.isAuthenticated()) {
+      return m.route('/login');
+    }
+  };
 
   /**
   * ## Views

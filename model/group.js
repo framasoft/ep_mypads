@@ -32,6 +32,7 @@ module.exports = (function () {
   var GPREFIX = storage.DBPREFIX.GROUP;
   var UPREFIX = storage.DBPREFIX.USER;
   var PPREFIX = storage.DBPREFIX.PAD;
+  var hashPassword = require('./user.js').fn.hashPassword;
 
   /**
   * ## Description
@@ -103,19 +104,23 @@ module.exports = (function () {
   group.set = function (params, callback) {
     common.addSetInit(params, callback, ['name', 'admin']);
     var g = group.fn.assignProps(params);
-    if (params._id) {
-      g._id = params._id;
-      storage.db.get(GPREFIX + g._id, function (err, res) {
-        if (err) { return callback(err); }
-        if (!res) { return callback(new Error('group does not exist')); }
-        g.pads = res.pads;
+    group.fn.handlePassword(g, function (err, password) {
+      if (err) { return callback(err); }
+      if (password) { g.password = password; }
+      if (params._id) {
+        g._id = params._id;
+        storage.db.get(GPREFIX + g._id, function (err, res) {
+          if (err) { return callback(err); }
+          if (!res) { return callback(new Error('group does not exist')); }
+          g.pads = res.pads;
+          group.fn.checkSet(g, callback);
+        });
+      } else {
+        g._id = cuid();
+        g.pads = [];
         group.fn.checkSet(g, callback);
-      });
-    } else {
-      g._id = cuid();
-      g.pads = [];
-      group.fn.checkSet(g, callback);
-    }
+      }
+    });
   };
 
 
@@ -243,6 +248,31 @@ module.exports = (function () {
     g.password = ld.isString(p.password) ? p.password : null;
     g.readonly = ld.isBoolean(p.readonly) ? p.readonly : false;
     return g;
+  };
+
+  /**
+  * ### handlePassword
+  *
+  * `handlePassword` is a function that ensures if `visibility` is *private*, a
+  * password has been filled. Also, it encrypts the given password with a salt,
+  * using `user.fn.hashPassword`. It takes :
+  *
+  * - `params` group object
+  * - `callback` function, called with an error or *null* and the *password*
+  *   object
+  */
+
+  group.fn.handlePassword = function (params, callback) {
+    if (params.visibility !== 'private') {
+      return callback(null);
+    }
+    if (!ld.isString(params.password) || ld.isEmpty(params.password)) {
+      return callback(new Error('password is invalid'));
+    }
+    hashPassword(undefined, params.password, function (err, res) {
+      if (err) { return callback(err); }
+      callback(null, res);
+    });
   };
 
 

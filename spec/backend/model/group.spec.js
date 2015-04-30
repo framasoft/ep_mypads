@@ -70,6 +70,7 @@
               gparams.admin = gadm._id;
               gparams.admins = ld.takeRight(gusers, 2);
               gparams.users = ld.take(gusers, 3);
+              gparams.password = 'aGoodOne';
               var pads = ld.map(['pad1', 'pad2', 'pad3'], function (val) {
                 return { name: val, group: gparams._id };
               });
@@ -251,6 +252,29 @@
         });
       });
 
+      it('should return an error if visibility is private with invalid ' +
+        'password', function (done) {
+          var params = {
+          _id: gparams._id,
+          name: 'college2',
+          admin: gadm._id,
+          visibility: 'private',
+          password: false
+        };
+        group.set(params, function (err, g) {
+          expect(ld.isError(err)).toBeTruthy();
+          expect(err).toMatch('password is invalid');
+          expect(g).toBeUndefined();
+          params.password = '';
+          group.set(params, function (err, g) {
+            expect(ld.isError(err)).toBeTruthy();
+            expect(err).toMatch('password is invalid');
+            expect(g).toBeUndefined();
+            done();
+          });
+        });
+      });
+
       it('should otherwise accept well defined parameters', function (done) {
         var params = {
           _id: gparams._id,
@@ -274,7 +298,9 @@
           expect(ld.isEmpty(ld.xor(g.users, params.users))).toBeTruthy();
           expect(ld.includes(gpads, ld.first(g.pads))).toBeTruthy();
           expect(g.visibility).toBe('private');
-          expect(g.password).toBeDefined();
+          expect(ld.isObject(g.password)).toBeTruthy();
+          expect(g.password.salt).toBeDefined();
+          expect(g.password.hash).toBeDefined();
           expect(ld.isEmpty(g.password)).toBeFalsy();
           expect(g.readonly).toBeTruthy();
           group.get(g._id, function (err, g) {

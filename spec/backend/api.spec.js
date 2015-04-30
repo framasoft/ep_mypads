@@ -733,6 +733,23 @@
           }
         );
 
+        it('should return an error if visibility is private with invalid ' +
+          'password', function (done) {
+            var b = {
+              body: {
+                name: 'groupOk',
+                admin: uid,
+                visibility: 'private'
+              }
+            };
+            rq.post(groupRoute, b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('password is invalid');
+              done();
+            });
+          }
+        );
+
         it('should create a new group otherwise', function (done) {
           var b = {
             body: {

@@ -212,8 +212,7 @@ module.exports = (function () {
 
   view.main = function (c) {
     return m('section', { class: 'block-group user' }, [
-      m('h2.block', {
-      }, c.profileView() ? USER.PROFILE : USER.SUBSCRIBE),
+      m('h2.block', c.profileView() ? USER.PROFILE : USER.SUBSCRIBE),
       view.form(c)
     ]);
   };

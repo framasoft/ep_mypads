@@ -96,7 +96,8 @@ module.exports = (function () {
       ]
     };
     var activeRoute = function (r) {
-      return m('li', { class: (m.route() === r.route) ? 'is-active' : '' }, [
+      var isActive = (m.route().slice(0, r.route.length) === r.route);
+      return m('li', { class: (isActive ? 'is-active' : '') }, [
         m('a', { href: r.route, config: m.route }, [
           m('i', { class: 'icon-' + r.icon, title: r.txt }),
           m('span', r.txt)

@@ -7,7 +7,7 @@ section.user {
 }
 
 section.user label { width: 100%; }
-section.user input { width: 95%; }
+section.user input, section.user select  { width: 95%; }
 section.user i { width: 5%; }
 
 section.user input[type=submit] {
@@ -29,7 +29,7 @@ section.user input[type=submit] {
   section.user { width: 40em; }
 
   section.user label { width: 50%; }
-  section.user input { width: 45%; }
+  section.user input, section.user select { width: 45%; }
 }
 
 section.user > h2 { color: #a15014; }

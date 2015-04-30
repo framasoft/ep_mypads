@@ -38,6 +38,7 @@ module.exports = (function () {
   config.URLS.LOGOUT = config.URLS.AUTH + '/logout';
   config.URLS.CHECK = config.URLS.AUTH + '/check';
   config.URLS.USER = config.URLS.BASE + '/user';
+  config.URLS.GROUP = config.URLS.BASE + '/group';
   config.SERVER = m.prop();
   // FIXME : tmp to EN only
   config.LANG = require('../l10n/en.js');

@@ -52,30 +52,6 @@ module.exports = (function () {
   user.view.icon = {};
 
   /**
-  * #### common
-  *
-  * `common` is an helper that makes an classic icon by its :
-  *
-  * - `c` controller,
-  * - `name` of the field,
-  * - `info` message
-  * - `err` message
-  *
-  * It returns a vdom node.
-  */
-
-  user.view.icon.common = function (c, name, info, err) {
-    var icls = c.valid[name]() ? ['icon-info-circled'] : ['icon-alert'];
-    icls.push('tooltip');
-    icls.push('block');
-    var msg = c.valid[name]() ? info : err;
-    return m('i', {
-      class: icls.join(' '),
-      'data-msg': msg
-    });
-  };
-
-  /**
   * #### optional icon
   *
   * `optional` icon is the base icon for all optional fields
@@ -96,7 +72,7 @@ module.exports = (function () {
   */
 
   user.view.icon.login = function (c) {
-    return user.view.icon.common(c, 'login', USER.INFO.LOGIN, USER.ERR.LOGIN);
+    return form.icon(c, 'login', USER.INFO.LOGIN, USER.ERR.LOGIN);
   };
 
   /**
@@ -128,7 +104,7 @@ module.exports = (function () {
   */
 
   user.view.icon.email = function (c) {
-    return user.view.icon.common(c, 'email', USER.INFO.EMAIL, USER.ERR.EMAIL);
+    return form.icon(c, 'email', USER.INFO.EMAIL, USER.ERR.EMAIL);
   };
 
   /**
@@ -144,33 +120,11 @@ module.exports = (function () {
   user.view.field = {};
 
   /**
-  * #### common
-  *
-  * `common` is an helper that returns the triplet of vdoms, by taking
-  *
-  * - the `name` of the field,
-  * - the `label` locale
-  */
-
-  user.view.field.common = function (c, name, label) {
-    return {
-      label: m('label.block', { for: name }, label),
-      input: m('input', {
-        class: 'block',
-        name: name,
-        value: c.data[name]() || '',
-        oninput: form.handleField.bind(null, c)
-      }),
-      icon: user.view.icon[name](c)
-    };
-  };
-
-  /**
   * #### login
   */
 
   user.view.field.login = function (c) {
-    var fields = user.view.field.common(c, 'login', USER.USERNAME);
+    var fields = form.field(c, 'login', USER.USERNAME, user.view.icon.login(c));
     ld.assign(fields.input.attrs, {
         type: 'text',
         placeholder: USER.LOGIN,
@@ -258,7 +212,7 @@ module.exports = (function () {
   */
 
   user.view.field.email = function (c) {
-    var fields = user.view.field.common(c, 'email', USER.EMAIL);
+    var fields = form.field(c, 'email', USER.EMAIL, user.view.icon.email(c));
     ld.assign(fields.input.attrs, {
         type: 'email',
         placeholder: USER.EMAIL_SAMPLE,
@@ -273,7 +227,8 @@ module.exports = (function () {
   */
 
   user.view.field.firstname = function (c) {
-    var fields = user.view.field.common(c, 'firstname', USER.FIRSTNAME);
+    var fields = form.field(c, 'firstname', USER.FIRSTNAME,
+      user.view.icon.firstname(c));
     ld.assign(fields.input.attrs, {
         type: 'text',
         placeholder: USER.FIRSTNAME
@@ -286,7 +241,8 @@ module.exports = (function () {
   */
 
   user.view.field.lastname = function (c) {
-    var fields = user.view.field.common(c, 'lastname', USER.LASTNAME);
+    var fields = form.field(c, 'lastname', USER.LASTNAME,
+      user.view.icon.lastname(c));
     ld.assign(fields.input.attrs, {
         type: 'text',
         placeholder: USER.LASTNAME
@@ -299,7 +255,8 @@ module.exports = (function () {
   */
 
   user.view.field.organization = function (c) {
-    var fields = user.view.field.common(c, 'organization', USER.ORGANIZATION);
+    var fields = form.field(c, 'organization', USER.ORGANIZATION,
+      user.view.icon.organization(c));
     ld.assign(fields.input.attrs, {
         type: 'text',
         placeholder: USER.ORGANIZATION

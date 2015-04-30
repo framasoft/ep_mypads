@@ -111,6 +111,7 @@ module.exports = (function () {
   config.URLS.LOGOUT = config.URLS.AUTH + '/logout';
   config.URLS.CHECK = config.URLS.AUTH + '/check';
   config.URLS.USER = config.URLS.BASE + '/user';
+  config.URLS.GROUP = config.URLS.BASE + '/group';
   config.SERVER = m.prop();
   // FIXME : tmp to EN only
   config.LANG = require('../l10n/en.js');
@@ -171,6 +172,55 @@ module.exports = (function () {
   var m = require('mithril');
 
   var form = {};
+
+  /**
+  * ## icon
+  *
+  * `icon` is an helper that makes an classic icon by its :
+  *
+  * - `c` controller,
+  * - `name` of the field,
+  * - `info` message
+  * - `err` message
+  *
+  * It returns a vdom node.
+  */
+
+  form.icon = function (c, name, info, err) {
+    var icls = c.valid[name]() ? ['icon-info-circled'] : ['icon-alert'];
+    icls.push('tooltip');
+    icls.push('block');
+    var msg = c.valid[name]() ? info : err;
+    return m('i', {
+      class: icls.join(' '),
+      'data-msg': msg
+    });
+  };
+
+  /**
+  * ## field
+  *
+  * `field` is an helper that returns the triplet of vdoms, by taking
+  *
+  * - the `c` controller,
+  * - the `name` of the field,
+  * - the `label` locale
+  *   the `icon` ready vdom
+  */
+
+  form.field = function (c, name, label, icon) {
+    return {
+      label: m('label.block', { for: name }, label),
+      input: m('input', {
+        class: 'block',
+        name: name,
+        value: c.data[name]() || '',
+        oninput: form.handleField.bind(null, c)
+      }),
+      icon: icon
+    };
+  };
+
 
   /**
   * `initFields` takes
@@ -254,9 +304,9 @@ module.exports = (function () {
 module.exports = (function () {
 }).call(this);
 
-},{}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js":[function(require,module,exports){
+},{}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js":[function(require,module,exports){
 /**
-*  # Pads module
+*  # Group form module
 *
 *  ## License
 *
@@ -283,6 +333,233 @@ module.exports = (function () {
 */
 
 module.exports = (function () {
+  'use strict';
+  // Global dependencies
+  var m = require('mithril');
+  var ld = require('lodash');
+  // Local dependencies
+  var conf = require('../configuration.js');
+  var GROUP = conf.LANG.GROUP;
+  var auth = require('../auth.js');
+  var layout = require('./layout.js');
+  var form = require('../helpers/form.js');
+  var notif = require('./notification.js');
+
+  var gf = {};
+
+  /**
+  * ## Controller
+  *
+  * Used for authtentication enforcement.
+  */
+
+  gf.controller = function () {
+    if (!auth.isAuthenticated()) {
+      return m.route('/login');
+    }
+    var c = {};
+    c.fields = ['name', 'visibility', 'password', 'readonly'];
+    form.initFields(c, c.fields);
+    c.data.visibility('restricted');
+
+    /**
+    * `submit` internal calls the public API to add a new group with entered
+    * data. It adds necessary fields and displays errors if needed or success.
+    */
+    c.submit = function (e) {
+      e.preventDefault();
+      m.request({
+        method: 'POST',
+        url: conf.URLS.GROUP,
+        data: ld.assign(c.data, { admin: auth.userInfo()._id })
+      }).then(function () {
+        notif.success({ body: GROUP.INFO.ADD_SUCCESS });
+        m.route('/mypads/group/list');
+      }, function (err) {
+        notif.error({ body: err.error });
+      });
+    };
+    return c;
+  };
+
+  /**
+  * ## Views
+  */
+
+  var view = {};
+
+  view.icon = {};
+
+  /**
+  * ### icon common
+  *
+  * `common` returns an icon info vdom with viven `msg` on tooltip.
+  */
+
+  view.icon.common = function (msg) {
+    return m('i', {
+      class: 'block tooltip icon-info-circled',
+      'data-msg': msg
+    });
+  };
+
+  view.icon.name = function (c) {
+    return form.icon(c, 'name', GROUP.INFO.NAME, GROUP.ERR.NAME);
+  };
+
+  view.icon.visibility = view.icon.common(GROUP.INFO.VISIBILITY);
+  view.icon.password = view.icon.common(GROUP.INFO.PASSWORD);
+  view.icon.readonly = view.icon.common(GROUP.INFO.READONLY);
+
+  /**
+  * ### Fields
+  *
+  * Each `field` is a view returning three vdom elements :
+  *
+  * - a `label`
+  * - an `input`
+  * - the `icon`
+  */
+
+  view.field = {};
+
+  view.field.name = function (c) {
+    var f = form.field(c, 'name', GROUP.FIELD.NAME, view.icon.name(c));
+    ld.assign(f.input.attrs, { required: true });
+    return f;
+  };
+
+  view.field.visibility = function (c) {
+    var label = m('label.block', { for: 'visibility' }, GROUP.FIELD.VISIBILITY);
+    var select = m('select', {
+      name: 'visibility',
+      class: 'block',
+      required: true,
+      value: c.data.visibility(),
+      onchange: m.withAttr('value', c.data.visibility)
+    }, [
+      m('option', { value: 'restricted' }, GROUP.FIELD.RESTRICTED),
+      m('option', { value: 'private' }, GROUP.FIELD.PRIVATE),
+      m('option', { value: 'public' }, GROUP.FIELD.PUBLIC)
+    ]);
+    return { label: label, icon: view.icon.visibility, select: select };
+  };
+
+  view.field.password = function (c) {
+    var label = m('label.block', { for: 'password' }, conf.LANG.USER.PASSWORD);
+    var input = m('input.block', {
+      name: 'password',
+      type: 'password',
+      placeholder: conf.LANG.USER.UNDEF,
+      value: c.data.password(),
+      required: true,
+      oninput: m.withAttr('value', c.data.password)
+    });
+    return { label: label, icon: view.icon.password, input: input };
+  };
+
+  view.field.readonly = function (c) {
+    var label = m('label.block', { for: 'readonly' }, GROUP.FIELD.READONLY);
+    var input = m('input.block', {
+      name: 'readonly',
+      type: 'checkbox',
+      checked: c.data.readonly(),
+      onchange: m.withAttr('checked', c.data.readonly)
+    });
+    return { label: label, icon: view.icon.readonly, input: input };
+  };
+
+  /**
+  * ### form view
+  *
+  * Classic view with all fields and changes according to the view.
+  */
+
+  view.form = function (c) {
+    var _f = ld.reduce(c.fields, function (memo, f) {
+      memo[f] = view.field[f](c);
+      return memo;
+    }, {});
+    var fields = [ _f.name.label, _f.name.input, _f.name.icon,
+      _f.visibility.label, _f.visibility.select, _f.visibility.icon
+    ];
+    if (c.data.visibility() === 'private') {
+      fields.push(_f.password.label, _f.password.input, _f.password.icon);
+    }
+    fields.push(_f.readonly.label, _f.readonly.input, _f.readonly.icon);
+    return m('form.block', {
+      id: 'group-form',
+      onsubmit: c.submit
+    }, [
+      m('fieldset.block-group', [
+        m('legend', GROUP.GROUP),
+        m('div', fields)
+      ]),
+      m('input.block.send', {
+        form: 'group-form',
+        type: 'submit',
+        value: conf.LANG.ACTIONS.SAVE
+      })
+    ]);
+  };
+
+  /**
+  * ### main and global view
+  *
+  * Views with cosmetic and help changes according to the current page.
+  */
+
+  view.main = function (c) {
+    return m('section', { class: 'block-group user group-form' }, [
+      m('h2.block', GROUP.ADD),
+      view.form(c)
+    ]);
+  };
+
+  view.aside = function () {
+    return m('section.user-aside', [
+      m('h2', conf.LANG.ACTIONS.HELP),
+      m('article', m.trust(GROUP.ADD_HELP))
+    ]);
+  };
+
+  gf.view = function (c) {
+    return layout.view(view.main(c), view.aside(c));
+  };
+
+  return gf;
+}).call(this);
+
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/notification.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js":[function(require,module,exports){
+/**
+*  # Group List module
+*
+*  ## License
+*
+*  Licensed to the Apache Software Foundation (ASF) under one
+*  or more contributor license agreements.  See the NOTICE file
+*  distributed with this work for additional information
+*  regarding copyright ownership.  The ASF licenses this file
+*  to you under the Apache License, Version 2.0 (the
+*  "License"); you may not use this file except in compliance
+*  with the License.  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+*  Unless required by applicable law or agreed to in writing,
+*  software distributed under the License is distributed on an
+*  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+*  KIND, either express or implied.  See the License for the
+*  specific language governing permissions and limitations
+*  under the License.
+*
+*  ## Description
+*
+*  This module is the main one, containing groups.
+*/
+
+module.exports = (function () {
+  'use strict';
   // Global dependencies
   var m = require('mithril');
   // Local dependencies
@@ -297,7 +574,6 @@ module.exports = (function () {
   * ## Controller
   *
   * Used for module state and actions.
-  *
   */
 
   group.controller = function () {
@@ -420,7 +696,7 @@ module.exports = (function () {
       m('h2.block', [
         m('span', GROUP.MYGROUPS),
         m('a', {
-          href: '/mypads/add',
+          href: '/mypads/group/add',
           config: m.route
         }, [
           m('i.icon-plus-squared'),
@@ -599,7 +875,8 @@ module.exports = (function () {
       ]
     };
     var activeRoute = function (r) {
-      return m('li', { class: (m.route() === r.route) ? 'is-active' : '' }, [
+      var isActive = (m.route().slice(0, r.route.length) === r.route);
+      return m('li', { class: (isActive ? 'is-active' : '') }, [
         m('a', { href: r.route, config: m.route }, [
           m('i', { class: 'icon-' + r.icon, title: r.txt }),
           m('span', r.txt)
@@ -1202,8 +1479,7 @@ module.exports = (function () {
 
   view.main = function (c) {
     return m('section', { class: 'block-group user' }, [
-      m('h2.block', {
-      }, c.profileView() ? USER.PROFILE : USER.SUBSCRIBE),
+      m('h2.block', c.profileView() ? USER.PROFILE : USER.SUBSCRIBE),
       view.form(c)
     ]);
   };
@@ -1273,30 +1549,6 @@ module.exports = (function () {
   user.view.icon = {};
 
   /**
-  * #### common
-  *
-  * `common` is an helper that makes an classic icon by its :
-  *
-  * - `c` controller,
-  * - `name` of the field,
-  * - `info` message
-  * - `err` message
-  *
-  * It returns a vdom node.
-  */
-
-  user.view.icon.common = function (c, name, info, err) {
-    var icls = c.valid[name]() ? ['icon-info-circled'] : ['icon-alert'];
-    icls.push('tooltip');
-    icls.push('block');
-    var msg = c.valid[name]() ? info : err;
-    return m('i', {
-      class: icls.join(' '),
-      'data-msg': msg
-    });
-  };
-
-  /**
   * #### optional icon
   *
   * `optional` icon is the base icon for all optional fields
@@ -1317,7 +1569,7 @@ module.exports = (function () {
   */
 
   user.view.icon.login = function (c) {
-    return user.view.icon.common(c, 'login', USER.INFO.LOGIN, USER.ERR.LOGIN);
+    return form.icon(c, 'login', USER.INFO.LOGIN, USER.ERR.LOGIN);
   };
 
   /**
@@ -1349,7 +1601,7 @@ module.exports = (function () {
   */
 
   user.view.icon.email = function (c) {
-    return user.view.icon.common(c, 'email', USER.INFO.EMAIL, USER.ERR.EMAIL);
+    return form.icon(c, 'email', USER.INFO.EMAIL, USER.ERR.EMAIL);
   };
 
   /**
@@ -1365,33 +1617,11 @@ module.exports = (function () {
   user.view.field = {};
 
   /**
-  * #### common
-  *
-  * `common` is an helper that returns the triplet of vdoms, by taking
-  *
-  * - the `name` of the field,
-  * - the `label` locale
-  */
-
-  user.view.field.common = function (c, name, label) {
-    return {
-      label: m('label.block', { for: name }, label),
-      input: m('input', {
-        class: 'block',
-        name: name,
-        value: c.data[name]() || '',
-        oninput: form.handleField.bind(null, c)
-      }),
-      icon: user.view.icon[name](c)
-    };
-  };
-
-  /**
   * #### login
   */
 
   user.view.field.login = function (c) {
-    var fields = user.view.field.common(c, 'login', USER.USERNAME);
+    var fields = form.field(c, 'login', USER.USERNAME, user.view.icon.login(c));
     ld.assign(fields.input.attrs, {
         type: 'text',
         placeholder: USER.LOGIN,
@@ -1479,7 +1709,7 @@ module.exports = (function () {
   */
 
   user.view.field.email = function (c) {
-    var fields = user.view.field.common(c, 'email', USER.EMAIL);
+    var fields = form.field(c, 'email', USER.EMAIL, user.view.icon.email(c));
     ld.assign(fields.input.attrs, {
         type: 'email',
         placeholder: USER.EMAIL_SAMPLE,
@@ -1494,7 +1724,8 @@ module.exports = (function () {
   */
 
   user.view.field.firstname = function (c) {
-    var fields = user.view.field.common(c, 'firstname', USER.FIRSTNAME);
+    var fields = form.field(c, 'firstname', USER.FIRSTNAME,
+      user.view.icon.firstname(c));
     ld.assign(fields.input.attrs, {
         type: 'text',
         placeholder: USER.FIRSTNAME
@@ -1507,7 +1738,8 @@ module.exports = (function () {
   */
 
   user.view.field.lastname = function (c) {
-    var fields = user.view.field.common(c, 'lastname', USER.LASTNAME);
+    var fields = form.field(c, 'lastname', USER.LASTNAME,
+      user.view.icon.lastname(c));
     ld.assign(fields.input.attrs, {
         type: 'text',
         placeholder: USER.LASTNAME
@@ -1520,7 +1752,8 @@ module.exports = (function () {
   */
 
   user.view.field.organization = function (c) {
-    var fields = user.view.field.common(c, 'organization', USER.ORGANIZATION);
+    var fields = form.field(c, 'organization', USER.ORGANIZATION,
+      user.view.icon.organization(c));
     ld.assign(fields.input.attrs, {
         type: 'text',
         placeholder: USER.ORGANIZATION
@@ -1593,6 +1826,7 @@ module.exports = (function () {
   var logout = require('./modules/logout.js');
   var subscribe = require('./modules/subscribe.js');
   var group = require('./modules/group.js');
+  var groupForm = require('./modules/group-form.js');
   var admin = require('./modules/admin.js');
 
   var route = { model: {} };
@@ -1610,6 +1844,9 @@ module.exports = (function () {
     '/subscribe': subscribe,
     '/myprofile': subscribe,
     '/mypads': group,
+    '/mypads/group': group,
+    '/mypads/group/list': group,
+    '/mypads/group/add': groupForm,
     '/admin': admin
   };
 
@@ -1618,7 +1855,7 @@ module.exports = (function () {
   return route;
 }).call(this);
 
-},{"./modules/admin.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/subscribe.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/l10n/en.js":[function(require,module,exports){
+},{"./modules/admin.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/group-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./modules/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/subscribe.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/l10n/en.js":[function(require,module,exports){
 module.exports = {
   GLOBAL: {
     FOOTER: 'Powered by <a href="https://git.framasoft.org/framasoft/ep_mypads">MyPads</a><br>Published under Apache License 2.0',
@@ -1695,10 +1932,12 @@ module.exports = {
   },
   GROUP: {
     MYGROUPS: 'My Groups',
+    GROUP: 'Group',
     GROUPS: 'Groups',
     BOOKMARKED: 'Bookmarked groups',
     ARCHIVED: 'Archived groups',
     ADD: 'Add a new group',
+    ADD_HELP: '<h3>Visibility</h3><p>You have the choice between three levles of visibility. It will impact all linked pads :<ul><li><em>restricted</em>, default choice : access of the pads are limited to a list of invited users you have chosen;</li><li><em>private</em> : in this mode, you have to enter a password and access to the pads will be checked against this password;</li><li><em>public</em> : in this mode, all pads are public, users just need to have the URL address.</li></ul></p><h3>Readonly</h3><p>If you check <em>readonly</em>, all attached pads will stay in their state, and can not be edited. Note that visibility still works in readonly mode.</p>',
     EDIT: 'Edit',
     VIEW: 'View',
     REMOVE: 'Remove',
@@ -1708,6 +1947,14 @@ module.exports = {
       TITLE: 'Search',
       TYPE: 'Type here',
       HELP: 'Search on common fields with at least 2 characters'
+    },
+    FIELD: {
+      NAME: 'Name',
+      VISIBILITY: 'Visibility',
+      PRIVATE: 'Private',
+      RESTRICTED: 'Restricted',
+      PUBLIC: 'Public',
+      READONLY: 'Readonly'
     },
     FILTERS: {
       TITLE: 'Filters',
@@ -1724,6 +1971,16 @@ module.exports = {
       ADMINS: 'Admins',
       VISIBILITY: 'Visibility',
       PADS: 'Pads'
+    },
+    INFO: {
+      NAME: 'Name of the group',
+      VISIBILITY: 'Required, restricted by default to invited users or admins',
+      READONLY: 'If checked, linked pads will be in readonly mode',
+      PASSWORD: 'Required in private mode',
+      ADD_SUCCESS: 'Group has been successfully created'
+    },
+    ERR: {
+      NAME: 'The name of the group is required'
     }
   }
 };

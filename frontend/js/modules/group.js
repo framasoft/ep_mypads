@@ -1,5 +1,5 @@
 /**
-*  # Pads module
+*  # Group List module
 *
 *  ## License
 *
@@ -22,10 +22,11 @@
 *
 *  ## Description
 *
-*  This module is the main one, containing groups and pads.
+*  This module is the main one, containing groups.
 */
 
 module.exports = (function () {
+  'use strict';
   // Global dependencies
   var m = require('mithril');
   // Local dependencies
@@ -40,7 +41,6 @@ module.exports = (function () {
   * ## Controller
   *
   * Used for module state and actions.
-  *
   */
 
   group.controller = function () {
@@ -163,7 +163,7 @@ module.exports = (function () {
       m('h2.block', [
         m('span', GROUP.MYGROUPS),
         m('a', {
-          href: '/mypads/add',
+          href: '/mypads/group/add',
           config: m.route
         }, [
           m('i.icon-plus-squared'),

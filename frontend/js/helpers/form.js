@@ -32,6 +32,55 @@ module.exports = (function () {
   var form = {};
 
   /**
+  * ## icon
+  *
+  * `icon` is an helper that makes an classic icon by its :
+  *
+  * - `c` controller,
+  * - `name` of the field,
+  * - `info` message
+  * - `err` message
+  *
+  * It returns a vdom node.
+  */
+
+  form.icon = function (c, name, info, err) {
+    var icls = c.valid[name]() ? ['icon-info-circled'] : ['icon-alert'];
+    icls.push('tooltip');
+    icls.push('block');
+    var msg = c.valid[name]() ? info : err;
+    return m('i', {
+      class: icls.join(' '),
+      'data-msg': msg
+    });
+  };
+
+  /**
+  * ## field
+  *
+  * `field` is an helper that returns the triplet of vdoms, by taking
+  *
+  * - the `c` controller,
+  * - the `name` of the field,
+  * - the `label` locale
+  *   the `icon` ready vdom
+  */
+
+  form.field = function (c, name, label, icon) {
+    return {
+      label: m('label.block', { for: name }, label),
+      input: m('input', {
+        class: 'block',
+        name: name,
+        value: c.data[name]() || '',
+        oninput: form.handleField.bind(null, c)
+      }),
+      icon: icon
+    };
+  };
+
+
+  /**
   * `initFields` takes
   *
   * - a controller instance

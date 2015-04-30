@@ -1,38 +1,38 @@
 /* Pads Module */
 /* Main */
 
-section.pads {
+section.group {
   width: 100%;
   margin: 0 auto 0 auto;
 }
 
-section.pads > h2 { color: #333333; }
-section.pads h2 a {
+section.group > h2 { color: #333333; }
+section.group h2 a {
   font-size: smaller;
   color: #949494;
   background: none;
   margin-left: 1em;
 }
 
-section.pads h3.title {
+section.group h3.title {
   color: #fafafa;
   text-align: center;
   padding: 0.25em;
 }
 
-section.pads h3.title.bookmark { background-color: #52632a; }
-section.pads h3.title.group { background-color: #3e3363; }
-section.pads h3.title.archive { background-color: #666666; }
+section.group h3.title.bookmark { background-color: #52632a; }
+section.group h3.title.group { background-color: #3e3363; }
+section.group h3.title.archive { background-color: #666666; }
 
 /* Groups */
 
-ul.pads-group {
+ul.group {
   list-style-type: none;
   margin: 0;
   padding: 0;
 }
 
-ul.pads-group > li {
+ul.group > li {
   width: 95%;
   border: 0.2em solid #e0e0e0;
   border-radius: 0.5em;
@@ -40,62 +40,62 @@ ul.pads-group > li {
   margin: 0.5em 0.1em;
 }
 
-header.pads-group { background: transparent; }
+header.group { background: transparent; }
 
-header.pads-group > h4 {
+header.group > h4 {
   color: #333333;
   width: 65%;
   margin: 0;
 }
-header.pads-group > section {
+header.group > section {
   width: 35%;
   text-align: right;
 }
 
-header.pads-group a, footer.pads-group > a, footer.pads-group > button {
+header.group a, footer.group > a, footer.group > button {
   color: #3e3363;
   font-weight: bold;
   text-decoration: none;
   padding: 0.1em;
 }
 
-header.pads-group a {
+header.group a {
   background: none;
 }
-header.pads-group > a:focus, header.pads-group a:hover {
+header.group > a:focus, header.group a:hover {
   background-color: #3e3363;
   color: #e0e0e0;
 }
 
-dl.pads-group {
+dl.group {
   margin: 1em 0;
 }
-dl.pads-group > dt.block, dl.pads-group > dd.block {
+dl.group > dt.block, dl.group > dd.block {
   width: 50%;
   margin: 0;
   padding: 0.1em 0.3em;
   font-size: smaller;
 }
 
-dl.pads-group > dt.block {
+dl.group > dt.block {
   color: #6a5687;
 }
 
-footer.pads-group { background: transparent; }
-footer.pads-group > button {
+footer.group { background: transparent; }
+footer.group > button {
   width: 30%; 
   color: #304219;
 }
-footer.pads-group > button:focus, footer.pads-group > button:hover {
+footer.group > button:focus, footer.group > button:hover {
   background-color: #304219;
   color: #e0e0e0;
 }
-footer.pads-group > ul {
+footer.group > ul {
   width: 70%; 
   text-align: right;
   list-style-type : none;
 }
-footer.pads-group > ul > li {
+footer.group > ul > li {
   color:#e0e0e0;
   background: #9876cc;
   display: inline;
@@ -106,42 +106,42 @@ footer.pads-group > ul > li {
 
 /* Pads Aside */
 
-section.pads-aside {
+section.group-aside {
   background-color: #ede6f5;
   border-radius: 0.4em;
   margin: 1em;
   padding: 1em;
 }
 
-section.pads-aside h3 {
+section.group-aside h3 {
   margin: 0 1em;
 }
 
-section.pads-aside input[type=search]:focus {
+section.group-aside input[type=search]:focus {
   border-color: #8157c2;
 }
 
-section.pads-aside section.search h3 { width: 100%; }
-section.pads-aside section.search input { width: 70%; }
-section.pads-aside section.search button {
+section.group-aside section.search h3 { width: 100%; }
+section.group-aside section.search input { width: 70%; }
+section.group-aside section.search button {
   font-weight: bold;
   width: 15%;
   padding: 0.6em;
   margin: 0.5em 0;
 }
 
-section.pads-aside section.filter ul {
+section.group-aside section.filter ul {
   list-style-type: none;
   padding: 0;
 }
-section.pads-aside section.filter ul li > button.admin {
+section.group-aside section.filter ul li > button.admin {
   background-color: #de6933;
 }
-section.pads-aside section.filter ul li > button.user {
+section.group-aside section.filter ul li > button.user {
   background-color: #616161;
 }
 
-section.pads-aside section.filter ul li > button {
+section.group-aside section.filter ul li > button {
   color: #e0e0e0;
   text-align: center;
   background: #6a5687;
@@ -151,14 +151,14 @@ section.pads-aside section.filter ul li > button {
   width: 100%;
 }
 
-section.pads-aside section.filter ul li > button:focus, section.pads-aside section.filter ul li > button:hover {
+section.group-aside section.filter ul li > button:focus, section.group-aside section.filter ul li > button:hover {
   font-weight: bold;
   background-color: #8157c2;
 }
 
-section.pads-aside section.tag ul { list-style-type : none; padding: 0; }
-section.pads-aside section.tag li { display: inline; }
-section.pads-aside section.tag li button {
+section.group-aside section.tag ul { list-style-type : none; padding: 0; }
+section.group-aside section.tag li { display: inline; }
+section.group-aside section.tag li button {
   color:#e0e0e0;
   font-size: smaller;
   background: #333333;
@@ -167,13 +167,13 @@ section.pads-aside section.tag li button {
   border: 0;
   border-radius: 0.4em;
 }
-section.pads-aside section.tag li button:focus, section.pads-aside section.tag li button:hover {
+section.group-aside section.tag li button:focus, section.group-aside section.tag li button:hover {
   background-color: #8157c2;
 }
 
 /* Tablet and Up */
 @media (min-width: 40em) {
-  ul.pads-group > li {
+  ul.group > li {
     width: 48%;
     padding: 0.5em;
     margin: 0.3em;
@@ -181,7 +181,7 @@ section.pads-aside section.tag li button:focus, section.pads-aside section.tag l
 }
 /* Desktop and Up */
 @media (min-width: 70em) {
-  ul.pads-group > li {
+  ul.group > li {
     width: 31%;
     padding: 0.5em;
     margin: 0.5em 0.3em;
@@ -190,7 +190,7 @@ section.pads-aside section.tag li button:focus, section.pads-aside section.tag l
 
 /* Hi res desktop */
 @media (min-width: 90em) {
-  ul.pads-group > li {
+  ul.group > li {
     width: 24%;
     padding: 0.5em;
     margin: 0.5em 0.3em;

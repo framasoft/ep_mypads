@@ -254,7 +254,202 @@ module.exports = (function () {
 module.exports = (function () {
 }).call(this);
 
-},{}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js":[function(require,module,exports){
+},{}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js":[function(require,module,exports){
+/**
+*  # Pads module
+*
+*  ## License
+*
+*  Licensed to the Apache Software Foundation (ASF) under one
+*  or more contributor license agreements.  See the NOTICE file
+*  distributed with this work for additional information
+*  regarding copyright ownership.  The ASF licenses this file
+*  to you under the Apache License, Version 2.0 (the
+*  "License"); you may not use this file except in compliance
+*  with the License.  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+*  Unless required by applicable law or agreed to in writing,
+*  software distributed under the License is distributed on an
+*  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+*  KIND, either express or implied.  See the License for the
+*  specific language governing permissions and limitations
+*  under the License.
+*
+*  ## Description
+*
+*  This module is the main one, containing groups and pads.
+*/
+
+module.exports = (function () {
+  // Global dependencies
+  var m = require('mithril');
+  // Local dependencies
+  var conf = require('../configuration.js');
+  var GROUP = conf.LANG.GROUP;
+  var auth = require('../auth.js');
+  var layout = require('./layout.js');
+
+  var group = {};
+
+  /**
+  * ## Controller
+  *
+  * Used for module state and actions.
+  *
+  */
+
+  group.controller = function () {
+    if (!auth.isAuthenticated()) {
+      return m.route('/login');
+    }
+  };
+
+  /**
+  * ## Views
+  *
+  */
+
+  var view = {};
+
+  view.search = function (c) {
+    return m('section.search.block-group', [
+      m('h3.block', [
+        m('span', GROUP.SEARCH.TITLE),
+        m('i.tooltip.icon-info-circled', { 'data-msg': GROUP.SEARCH.HELP })
+      ]),
+      m('input.block', {
+        type: 'search',
+        placeholder: GROUP.SEARCH.TYPE,
+        minlength: 3,
+        pattern: '.{3}'
+      }),
+      m('button.block', { type: 'button' }, conf.LANG.USER.OK)
+    ]);
+  };
+
+  view.filters = function (c) {
+    return m('section.filter', [
+      m('h3', [
+        m('span', GROUP.FILTERS.TITLE),
+        m('i.tooltip.icon-info-circled', { 'data-msg': GROUP.FILTERS.HELP })
+      ]),
+      m('ul', [
+        m('li', [ m('button.admin', GROUP.FILTERS.ADMIN) ]),
+        m('li', [ m('button.user', GROUP.FILTERS.USER) ])
+      ])
+    ]);
+  };
+
+  view.tags = function (c) {
+    return m('section.tag', [
+      m('h3', [
+        m('span', GROUP.TAGS.TITLE),
+        m('i.tooltip.icon-info-circled', { 'data-msg': GROUP.TAGS.HELP })
+      ]),
+      m('ul', [
+        m('li', [ m('button', 'tag1') ]),
+        m('li', [ m('button', 'tag2') ])
+      ])
+    ]);
+  };
+
+  view.aside = function (c) {
+    return m('section.group-aside', [
+      view.search(c), view.filters(c), view.tags(c)
+    ]);
+  };
+
+  view.group = function (c) {
+    return m('li.block', [
+      m('header.group.block-group', [
+        m('h4.block', 'SampleName'),
+        m('section.block', [
+          m('a', {
+            href: '/mypads/group/view',
+            config: m.route,
+            title: GROUP.VIEW
+          }, [ m('i.icon-book-open') ]),
+          m('a', {
+            href: '/mypads/group/edit',
+            config: m.route,
+            title: GROUP.EDIT
+          }, [ m('i.icon-pencil') ]),
+          m('a', {
+            href: '/mypads/group/remove',
+            config: m.route,
+            title: GROUP.REMOVE
+          }, [ m('i.icon-trash') ])
+        ])
+      ]),
+      m('dl.block-group.group', [
+        m('dt.block', GROUP.PAD.ADMINS),
+        m('dd.block', 'xx, yy'),
+        m('dt.block', GROUP.PAD.VISIBILITY),
+        m('dd.block', 'private'),
+        m('dt.block', GROUP.PAD.PADS),
+        m('dd.block', '22')
+      ]),
+      m('footer.group.block-group', [
+        m('button.block', GROUP.BOOKMARK),
+        m('ul.block', [
+          m('li', 'tag4'),
+          m('li', 'tag3')
+        ])
+      ])
+    ]);
+  };
+
+  view.groups = function (c) {
+    return m('ul.group', [
+      view.group(c),
+      view.group(c),
+      view.group(c),
+      view.group(c),
+      view.group(c),
+      view.group(c)
+    ]);
+  };
+
+  view.bookmarked = view.groups;
+  view.archived = view.groups;
+
+  view.main = function (c) {
+    return m('section', { class: 'block-group group' }, [
+      m('h2.block', [
+        m('span', GROUP.MYGROUPS),
+        m('a', {
+          href: '/mypads/add',
+          config: m.route
+        }, [
+          m('i.icon-plus-squared'),
+          m('span', GROUP.ADD)
+        ])
+      ]),
+      m('section.block', [
+        m('h3.title.bookmark', GROUP.BOOKMARKED),
+        view.bookmarked(c)
+      ]),
+      m('section.block', [
+        m('h3.title.group', GROUP.GROUPS),
+        view.groups(c)
+      ]),
+      m('section.block', [
+        m('h3.title.archive', GROUP.ARCHIVED),
+        view.archived(c)
+      ])
+    ]);
+  };
+
+  group.view = function (c) {
+    return layout.view(view.main(c), view.aside(c));
+  };
+
+  return group;
+}).call(this);
+
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js":[function(require,module,exports){
 /**
 *  # Home module
 *
@@ -792,202 +987,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pads.js":[function(require,module,exports){
-/**
-*  # Pads module
-*
-*  ## License
-*
-*  Licensed to the Apache Software Foundation (ASF) under one
-*  or more contributor license agreements.  See the NOTICE file
-*  distributed with this work for additional information
-*  regarding copyright ownership.  The ASF licenses this file
-*  to you under the Apache License, Version 2.0 (the
-*  "License"); you may not use this file except in compliance
-*  with the License.  You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing,
-*  software distributed under the License is distributed on an
-*  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-*  KIND, either express or implied.  See the License for the
-*  specific language governing permissions and limitations
-*  under the License.
-*
-*  ## Description
-*
-*  This module is the main one, containing groups and pads.
-*/
-
-module.exports = (function () {
-  // Global dependencies
-  var m = require('mithril');
-  // Local dependencies
-  var conf = require('../configuration.js');
-  var PADS = conf.LANG.PADS;
-  var auth = require('../auth.js');
-  var layout = require('./layout.js');
-
-  var pads = {};
-
-  /**
-  * ## Controller
-  *
-  * Used for module state and actions.
-  *
-  */
-
-  pads.controller = function () {
-    if (!auth.isAuthenticated()) {
-      return m.route('/login');
-    }
-  };
-
-  /**
-  * ## Views
-  *
-  */
-
-  var view = {};
-
-  view.search = function (c) {
-    return m('section.search.block-group', [
-      m('h3.block', [
-        m('span', PADS.SEARCH.TITLE),
-        m('i.tooltip.icon-info-circled', { 'data-msg': PADS.SEARCH.HELP })
-      ]),
-      m('input.block', {
-        type: 'search',
-        placeholder: PADS.SEARCH.TYPE,
-        minlength: 3,
-        pattern: '.{3}'
-      }),
-      m('button.block', { type: 'button' }, conf.LANG.USER.OK)
-    ]);
-  };
-
-  view.filters = function (c) {
-    return m('section.filter', [
-      m('h3', [
-        m('span', PADS.FILTERS.TITLE),
-        m('i.tooltip.icon-info-circled', { 'data-msg': PADS.FILTERS.HELP })
-      ]),
-      m('ul', [
-        m('li', [ m('button.admin', PADS.FILTERS.ADMIN) ]),
-        m('li', [ m('button.user', PADS.FILTERS.USER) ])
-      ])
-    ]);
-  };
-
-  view.tags = function (c) {
-    return m('section.tag', [
-      m('h3', [
-        m('span', PADS.TAGS.TITLE),
-        m('i.tooltip.icon-info-circled', { 'data-msg': PADS.TAGS.HELP })
-      ]),
-      m('ul', [
-        m('li', [ m('button', 'tag1') ]),
-        m('li', [ m('button', 'tag2') ])
-      ])
-    ]);
-  };
-
-  view.aside = function (c) {
-    return m('section.pads-aside', [
-      view.search(c), view.filters(c), view.tags(c)
-    ]);
-  };
-
-  view.group = function (c) {
-    return m('li.block', [
-      m('header.pads-group.block-group', [
-        m('h4.block', 'SampleName'),
-        m('section.block', [
-          m('a', {
-            href: '/mypads/group/view',
-            config: m.route,
-            title: PADS.GROUP.VIEW
-          }, [ m('i.icon-book-open') ]),
-          m('a', {
-            href: '/mypads/group/edit',
-            config: m.route,
-            title: PADS.GROUP.EDIT
-          }, [ m('i.icon-pencil') ]),
-          m('a', {
-            href: '/mypads/group/remove',
-            config: m.route,
-            title: PADS.GROUP.REMOVE
-          }, [ m('i.icon-trash') ])
-        ])
-      ]),
-      m('dl.block-group.pads-group', [
-        m('dt.block', PADS.PAD.ADMINS),
-        m('dd.block', 'xx, yy'),
-        m('dt.block', PADS.PAD.VISIBILITY),
-        m('dd.block', 'private'),
-        m('dt.block', PADS.PAD.PADS),
-        m('dd.block', '22')
-      ]),
-      m('footer.pads-group.block-group', [
-        m('button.block', PADS.GROUP.BOOKMARK),
-        m('ul.block', [
-          m('li', 'tag4'),
-          m('li', 'tag3')
-        ])
-      ])
-    ]);
-  };
-
-  view.groups = function (c) {
-    return m('ul.pads-group', [
-      view.group(c),
-      view.group(c),
-      view.group(c),
-      view.group(c),
-      view.group(c),
-      view.group(c)
-    ]);
-  };
-
-  view.bookmarked = view.groups;
-  view.archived = view.groups;
-
-  view.main = function (c) {
-    return m('section', { class: 'block-group pads' }, [
-      m('h2.block', [
-        m('span', PADS.MYGROUPS),
-        m('a', {
-          href: '/mypads/add',
-          config: m.route
-        }, [
-          m('i.icon-plus-squared'),
-          m('span', PADS.GROUP.ADD)
-        ])
-      ]),
-      m('section.block', [
-        m('h3.title.bookmark', PADS.BOOKMARKED),
-        view.bookmarked(c)
-      ]),
-      m('section.block', [
-        m('h3.title.group', PADS.GROUPS),
-        view.groups(c)
-      ]),
-      m('section.block', [
-        m('h3.title.archive', PADS.ARCHIVED),
-        view.archived(c)
-      ])
-    ]);
-  };
-
-  pads.view = function (c) {
-    return layout.view(view.main(c), view.aside(c));
-  };
-
-  return pads;
-}).call(this);
-
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js":[function(require,module,exports){
+},{"../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js":[function(require,module,exports){
 /**
 *  # Subscription module
 *
@@ -1592,7 +1592,7 @@ module.exports = (function () {
   var login = require('./modules/login.js');
   var logout = require('./modules/logout.js');
   var subscribe = require('./modules/subscribe.js');
-  var pads = require('./modules/pads.js');
+  var group = require('./modules/group.js');
   var admin = require('./modules/admin.js');
 
   var route = { model: {} };
@@ -1609,7 +1609,7 @@ module.exports = (function () {
     '/logout': logout,
     '/subscribe': subscribe,
     '/myprofile': subscribe,
-    '/mypads': pads,
+    '/mypads': group,
     '/admin': admin
   };
 
@@ -1618,7 +1618,7 @@ module.exports = (function () {
   return route;
 }).call(this);
 
-},{"./modules/admin.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/home.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/pads.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pads.js","./modules/subscribe.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/l10n/en.js":[function(require,module,exports){
+},{"./modules/admin.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/subscribe.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/l10n/en.js":[function(require,module,exports){
 module.exports = {
   GLOBAL: {
     FOOTER: 'Powered by <a href="https://git.framasoft.org/framasoft/ep_mypads">MyPads</a><br>Published under Apache License 2.0',
@@ -1693,19 +1693,17 @@ module.exports = {
       PROFILE: '<p>Every change into your profile needs the current password field to be correctly filled. Please not that :</p><ul><li>you can change everything by updating the appropriate field;</li><li>leaving password and password confirmation empty won\'t affect your current password;</li><li>you can\'t change your login at the moment but you will in the future;</li><li>if you want to change your password, please enter the new one into the password field and confirm it with the password confirmation.</li></ul>'
     }
   },
-  PADS: {
+  GROUP: {
     MYGROUPS: 'My Groups',
     GROUPS: 'Groups',
     BOOKMARKED: 'Bookmarked groups',
     ARCHIVED: 'Archived groups',
-    GROUP: {
-      ADD: 'Add a new group',
-      EDIT: 'Edit',
-      VIEW: 'View',
-      REMOVE: 'Remove',
-      BOOKMARK: 'Bookmark',
-      UNMARK: 'Unmark'
-    },
+    ADD: 'Add a new group',
+    EDIT: 'Edit',
+    VIEW: 'View',
+    REMOVE: 'Remove',
+    BOOKMARK: 'Bookmark',
+    UNMARK: 'Unmark',
     SEARCH: {
       TITLE: 'Search',
       TYPE: 'Type here',

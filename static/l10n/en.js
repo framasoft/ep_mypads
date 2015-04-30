@@ -72,19 +72,17 @@ module.exports = {
       PROFILE: '<p>Every change into your profile needs the current password field to be correctly filled. Please not that :</p><ul><li>you can change everything by updating the appropriate field;</li><li>leaving password and password confirmation empty won\'t affect your current password;</li><li>you can\'t change your login at the moment but you will in the future;</li><li>if you want to change your password, please enter the new one into the password field and confirm it with the password confirmation.</li></ul>'
     }
   },
-  PADS: {
+  GROUP: {
     MYGROUPS: 'My Groups',
     GROUPS: 'Groups',
     BOOKMARKED: 'Bookmarked groups',
     ARCHIVED: 'Archived groups',
-    GROUP: {
-      ADD: 'Add a new group',
-      EDIT: 'Edit',
-      VIEW: 'View',
-      REMOVE: 'Remove',
-      BOOKMARK: 'Bookmark',
-      UNMARK: 'Unmark'
-    },
+    ADD: 'Add a new group',
+    EDIT: 'Edit',
+    VIEW: 'View',
+    REMOVE: 'Remove',
+    BOOKMARK: 'Bookmark',
+    UNMARK: 'Unmark',
     SEARCH: {
       TITLE: 'Search',
       TYPE: 'Type here',

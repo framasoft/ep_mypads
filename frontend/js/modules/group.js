@@ -30,11 +30,11 @@ module.exports = (function () {
   var m = require('mithril');
   // Local dependencies
   var conf = require('../configuration.js');
-  var PADS = conf.LANG.PADS;
+  var GROUP = conf.LANG.GROUP;
   var auth = require('../auth.js');
   var layout = require('./layout.js');
 
-  var pads = {};
+  var group = {};
 
   /**
   * ## Controller
@@ -43,7 +43,7 @@ module.exports = (function () {
   *
   */
 
-  pads.controller = function () {
+  group.controller = function () {
     if (!auth.isAuthenticated()) {
       return m.route('/login');
     }
@@ -59,12 +59,12 @@ module.exports = (function () {
   view.search = function (c) {
     return m('section.search.block-group', [
       m('h3.block', [
-        m('span', PADS.SEARCH.TITLE),
-        m('i.tooltip.icon-info-circled', { 'data-msg': PADS.SEARCH.HELP })
+        m('span', GROUP.SEARCH.TITLE),
+        m('i.tooltip.icon-info-circled', { 'data-msg': GROUP.SEARCH.HELP })
       ]),
       m('input.block', {
         type: 'search',
-        placeholder: PADS.SEARCH.TYPE,
+        placeholder: GROUP.SEARCH.TYPE,
         minlength: 3,
         pattern: '.{3}'
       }),
@@ -75,12 +75,12 @@ module.exports = (function () {
   view.filters = function (c) {
     return m('section.filter', [
       m('h3', [
-        m('span', PADS.FILTERS.TITLE),
-        m('i.tooltip.icon-info-circled', { 'data-msg': PADS.FILTERS.HELP })
+        m('span', GROUP.FILTERS.TITLE),
+        m('i.tooltip.icon-info-circled', { 'data-msg': GROUP.FILTERS.HELP })
       ]),
       m('ul', [
-        m('li', [ m('button.admin', PADS.FILTERS.ADMIN) ]),
-        m('li', [ m('button.user', PADS.FILTERS.USER) ])
+        m('li', [ m('button.admin', GROUP.FILTERS.ADMIN) ]),
+        m('li', [ m('button.user', GROUP.FILTERS.USER) ])
       ])
     ]);
   };
@@ -88,8 +88,8 @@ module.exports = (function () {
   view.tags = function (c) {
     return m('section.tag', [
       m('h3', [
-        m('span', PADS.TAGS.TITLE),
-        m('i.tooltip.icon-info-circled', { 'data-msg': PADS.TAGS.HELP })
+        m('span', GROUP.TAGS.TITLE),
+        m('i.tooltip.icon-info-circled', { 'data-msg': GROUP.TAGS.HELP })
       ]),
       m('ul', [
         m('li', [ m('button', 'tag1') ]),
@@ -99,43 +99,43 @@ module.exports = (function () {
   };
 
   view.aside = function (c) {
-    return m('section.pads-aside', [
+    return m('section.group-aside', [
       view.search(c), view.filters(c), view.tags(c)
     ]);
   };
 
   view.group = function (c) {
     return m('li.block', [
-      m('header.pads-group.block-group', [
+      m('header.group.block-group', [
         m('h4.block', 'SampleName'),
         m('section.block', [
           m('a', {
             href: '/mypads/group/view',
             config: m.route,
-            title: PADS.GROUP.VIEW
+            title: GROUP.VIEW
           }, [ m('i.icon-book-open') ]),
           m('a', {
             href: '/mypads/group/edit',
             config: m.route,
-            title: PADS.GROUP.EDIT
+            title: GROUP.EDIT
           }, [ m('i.icon-pencil') ]),
           m('a', {
             href: '/mypads/group/remove',
             config: m.route,
-            title: PADS.GROUP.REMOVE
+            title: GROUP.REMOVE
           }, [ m('i.icon-trash') ])
         ])
       ]),
-      m('dl.block-group.pads-group', [
-        m('dt.block', PADS.PAD.ADMINS),
+      m('dl.block-group.group', [
+        m('dt.block', GROUP.PAD.ADMINS),
         m('dd.block', 'xx, yy'),
-        m('dt.block', PADS.PAD.VISIBILITY),
+        m('dt.block', GROUP.PAD.VISIBILITY),
         m('dd.block', 'private'),
-        m('dt.block', PADS.PAD.PADS),
+        m('dt.block', GROUP.PAD.PADS),
         m('dd.block', '22')
       ]),
-      m('footer.pads-group.block-group', [
-        m('button.block', PADS.GROUP.BOOKMARK),
+      m('footer.group.block-group', [
+        m('button.block', GROUP.BOOKMARK),
         m('ul.block', [
           m('li', 'tag4'),
           m('li', 'tag3')
@@ -145,7 +145,7 @@ module.exports = (function () {
   };
 
   view.groups = function (c) {
-    return m('ul.pads-group', [
+    return m('ul.group', [
       view.group(c),
       view.group(c),
       view.group(c),
@@ -159,35 +159,35 @@ module.exports = (function () {
   view.archived = view.groups;
 
   view.main = function (c) {
-    return m('section', { class: 'block-group pads' }, [
+    return m('section', { class: 'block-group group' }, [
       m('h2.block', [
-        m('span', PADS.MYGROUPS),
+        m('span', GROUP.MYGROUPS),
         m('a', {
           href: '/mypads/add',
           config: m.route
         }, [
           m('i.icon-plus-squared'),
-          m('span', PADS.GROUP.ADD)
+          m('span', GROUP.ADD)
         ])
       ]),
       m('section.block', [
-        m('h3.title.bookmark', PADS.BOOKMARKED),
+        m('h3.title.bookmark', GROUP.BOOKMARKED),
         view.bookmarked(c)
       ]),
       m('section.block', [
-        m('h3.title.group', PADS.GROUPS),
+        m('h3.title.group', GROUP.GROUPS),
         view.groups(c)
       ]),
       m('section.block', [
-        m('h3.title.archive', PADS.ARCHIVED),
+        m('h3.title.archive', GROUP.ARCHIVED),
         view.archived(c)
       ])
     ]);
   };
 
-  pads.view = function (c) {
+  group.view = function (c) {
     return layout.view(view.main(c), view.aside(c));
   };
 
-  return pads;
+  return group;
 }).call(this);

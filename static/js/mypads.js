@@ -562,6 +562,7 @@ module.exports = (function () {
   'use strict';
   // Global dependencies
   var m = require('mithril');
+  var ld = require('lodash');
   // Local dependencies
   var conf = require('../configuration.js');
   var GROUP = conf.LANG.GROUP;
@@ -580,11 +581,16 @@ module.exports = (function () {
     if (!auth.isAuthenticated()) {
       return m.route('/login');
     }
+    var c = {};
+    c.groups = m.prop([]);
     m.request({
       url: conf.URLS.GROUP,
       method: 'GET'
-      // TODO: get with userID only
-    });
+    }).then(
+      function (resp) { c.groups(resp.value); },
+      function (err) { return notif.error({ body: err.error }); }
+    );
+    return c;
   };
 
   /**
@@ -670,7 +676,7 @@ module.exports = (function () {
         m('dt.block', GROUP.PAD.VISIBILITY),
         m('dd.block', g.visibility),
         m('dt.block', GROUP.PAD.PADS),
-        m('dd.block', '22')
+        m('dd.block', ld.size(g.pads))
       ]),
       m('footer.group.block-group', [
         m('button.block', GROUP.BOOKMARK),
@@ -683,21 +689,23 @@ module.exports = (function () {
   };
 
   view.groups = function (c) {
-    return m('ul.group', []);
+    return m('ul.group', ld.map(c.groups(), ld.partial(view.group, c)));
   };
 
   view.bookmarked = function (c) {
-    var sample = { _id: 'xxx', name: 'Sample', visibility: 'restricted' };
+    var sample = { _id: 'xxx', name: 'Sample', visibility: 'restricted', pads: [1, 2, 3] };
     return m('ul.group', [
-      view.group(sample, c),
-      view.group(sample, c),
-      view.group(sample, c),
-      view.group(sample, c),
-      view.group(sample, c),
-      view.group(sample, c),
-      view.group(sample, c),
-      view.group(sample, c),
-      view.group(sample, c),
+      view.group(c, sample),
+      view.group(c, sample),
+      view.group(c, sample),
+      view.group(c, sample),
+      view.group(c, sample),
+      view.group(c, sample),
+      view.group(c, sample),
+      view.group(c, sample),
+      view.group(c, sample),
+      view.group(c, sample),
+      view.group(c, sample),
     ]);
   };
 
@@ -737,7 +745,7 @@ module.exports = (function () {
   return group;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js":[function(require,module,exports){
 /**
 *  # Home module
 *

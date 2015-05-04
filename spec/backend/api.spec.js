@@ -672,6 +672,21 @@
         });
       });
 
+      describe('group.getByUSer GET', function () {
+        it('should return groups', function (done) {
+          rq.get(groupRoute, function (err, resp, body) {
+            expect(err).toBeNull();
+            expect(resp.statusCode).toBe(200);
+            expect(ld.isObject(body.value)).toBeTruthy();
+            var key = ld.first(ld.keys(body.value));
+            expect(body.value[key].name).toBe('g1');
+            expect(body.value[key].visibility).toBe('restricted');
+            expect(body.value[key].password).toBeUndefined();
+            done(); 
+          });
+        });
+      });
+
       describe('group.get GET and id', function () {
 
         it('should return an error if the id does not exist',

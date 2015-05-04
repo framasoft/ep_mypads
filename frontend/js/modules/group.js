@@ -47,6 +47,11 @@ module.exports = (function () {
     if (!auth.isAuthenticated()) {
       return m.route('/login');
     }
+    m.request({
+      url: conf.URLS.GROUP,
+      method: 'GET'
+      // TODO: get with userID only
+    });
   };
 
   /**
@@ -104,10 +109,10 @@ module.exports = (function () {
     ]);
   };
 
-  view.group = function (c) {
+  view.group = function (c, g) {
     return m('li.block', [
       m('header.group.block-group', [
-        m('h4.block', 'SampleName'),
+        m('h4.block', g.name),
         m('section.block', [
           m('a', {
             href: '/mypads/group/view',
@@ -115,12 +120,12 @@ module.exports = (function () {
             title: GROUP.VIEW
           }, [ m('i.icon-book-open') ]),
           m('a', {
-            href: '/mypads/group/edit',
+            href: '/mypads/group/edit/' + g._id,
             config: m.route,
             title: GROUP.EDIT
           }, [ m('i.icon-pencil') ]),
           m('a', {
-            href: '/mypads/group/remove',
+            href: '/mypads/group/remove/' + g._id,
             config: m.route,
             title: GROUP.REMOVE
           }, [ m('i.icon-trash') ])
@@ -130,7 +135,7 @@ module.exports = (function () {
         m('dt.block', GROUP.PAD.ADMINS),
         m('dd.block', 'xx, yy'),
         m('dt.block', GROUP.PAD.VISIBILITY),
-        m('dd.block', 'private'),
+        m('dd.block', g.visibility),
         m('dt.block', GROUP.PAD.PADS),
         m('dd.block', '22')
       ]),
@@ -145,18 +150,25 @@ module.exports = (function () {
   };
 
   view.groups = function (c) {
+    return m('ul.group', []);
+  };
+
+  view.bookmarked = function (c) {
+    var sample = { _id: 'xxx', name: 'Sample', visibility: 'restricted' };
     return m('ul.group', [
-      view.group(c),
-      view.group(c),
-      view.group(c),
-      view.group(c),
-      view.group(c),
-      view.group(c)
+      view.group(sample, c),
+      view.group(sample, c),
+      view.group(sample, c),
+      view.group(sample, c),
+      view.group(sample, c),
+      view.group(sample, c),
+      view.group(sample, c),
+      view.group(sample, c),
+      view.group(sample, c),
     ]);
   };
 
-  view.bookmarked = view.groups;
-  view.archived = view.groups;
+  view.archived = view.bookmarked;
 
   view.main = function (c) {
     return m('section', { class: 'block-group group' }, [

@@ -29,6 +29,7 @@
   var storage = require('./storage.js');
   var api = require('./api.js');
   var user = require('./model/user.js');
+  var group = require('./model/group.js');
   var specCommon = require('./spec/backend/common.js');
 
   specCommon.mockupExpressServer();
@@ -41,9 +42,17 @@
           firstname: 'Parker',
           lastname: 'Lewis',
           email: 'parker@lewis.me'
-        }, function () {
-          api.init(specCommon.express.app);
-          console.log('Mockup Server runs on port 8042');
+        }, function (err, u) {
+          if (err) { console.log(err); }
+          var g = { name: 'Santa Fe', admin: u._id };
+          group.set(g, function () {
+            g.name = 'memories';
+            g.visibility = 'public';
+            group.set(g, function() {
+              api.init(specCommon.express.app);
+              console.log('Mockup Server runs on port 8042');
+            });
+          });
         });
       });
     });

@@ -71,6 +71,32 @@ module.exports = (function () {
   group.get = ld.partial(common.getDel, false, GPREFIX);
 
   /**
+  * ### getByUser
+  *
+  * `getByUser` is an asynchronous function that returns all groups for a
+  * defined user, using `storage.fn.getKeys`. It takes a `user` object and a
+  * `callback` function, called with *error* if needed, *null* and the results,
+  * an object with keys and groups values, otherwise.
+  *
+  */
+
+  group.getByUser = function (user, callback) {
+    if (!ld.isObject(user) || !ld.isArray(user.groups)) {
+      throw new TypeError('user is invalid');
+    }
+    if (!ld.isFunction(callback)) {
+      throw new TypeError('callback must be a function');
+    }
+    storage.fn.getKeys(
+      ld.map(user.groups, function (g) { return GPREFIX + g; }),
+      function (err, groups) {
+        if (err) { return callback(err); }
+        callback(null, groups);
+      }
+    );
+  };
+
+  /**
   * ### set
   *
   * This function adds a new group or updates an existing one.

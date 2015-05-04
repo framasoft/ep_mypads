@@ -387,6 +387,39 @@ module.exports = (function () {
     var groupRoute = api.initialRoute + 'group';
 
     /**
+    * GET method : `group.getByUser` via user login. passwords are omitted
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/group
+    */
+
+    app.get(groupRoute, fn.ensureAuthentificated,
+      function (req, res) {
+        user.get(req.session.login, function (err, u) {
+          if (err) { return res.status(400).send({ error: err }); }
+          try {
+            group.getByUser(u, function (err, groups) {
+              if (err) {
+                return res.status(404).send({
+                  error: err.message
+                });
+              }
+              var _groups = ld(groups)
+                .values()
+                .map(function (g) { return ld.omit (g, 'password'); })
+                .sortBy('name')
+                .value();
+              res.send({ value: _groups });
+            });
+          }
+          catch (e) {
+            res.status(400).send({ error: e.message });
+          }
+        });
+      }
+    );
+
+    /**
     * GET method : `group.get` unique id
     *
     * Sample URL:

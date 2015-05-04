@@ -375,6 +375,37 @@
 
     });
 
+    describe('group getByUser', function () {
+      beforeAll(initGroupUsersAndPads);
+      afterAll(specCommon.reInitDatabase);
+
+      it('should throw errors if arguments are incorrect', function () {
+        expect(group.getByUser).toThrow();
+        expect(ld.partial(group.getByUser, 123)).toThrow();
+        expect(ld.partial(group.getByUser, gadm)).toThrow();
+        expect(ld.partial(group.getByUser, gadm, 'notAFunc')).toThrow();
+        expect(ld.partial(group.getByUser, { login: 'inexistant' },
+          function () {})).toThrowError(/is invalid/);
+      });
+
+      it('should return groups otherwise', function (done) {
+        user.get(gadm.login, function (err, user) {
+          if (err) { console.log(err); }
+          gadm = user;
+          group.getByUser(gadm, function (err, groups) {
+            expect(err).toBeNull();
+            expect(ld.isObject(groups)).toBeTruthy();
+            var key = storage.DBPREFIX.GROUP + gadm.groups[0];
+            expect(groups[key].name).toBe('college');
+            expect(groups[key].visibility).toBe('private');
+            expect(groups[key].readonly).toBeTruthy();
+            done();
+          });
+        });
+      });
+
+    });
+
     describe('group del', function () {
 
       beforeAll(initGroupUsersAndPads);

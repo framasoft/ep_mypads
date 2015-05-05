@@ -23,6 +23,7 @@
 */
 
 module.exports = (function () {
+  'use strict';
   // Dependencies
   var ld = require('lodash');
   var common = require('./common.js');

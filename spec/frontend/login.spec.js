@@ -23,6 +23,7 @@
 */
 
 module.exports = (function () {
+  'use strict';
   // Dependencies
   var common = require('./common.js');
   var fill = common.helper.fill;

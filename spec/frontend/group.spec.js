@@ -1,5 +1,5 @@
 /**
-*  # Frontend functional testing Entry Point
+*  # Group list functional testing
 *
 *  ## License
 *
@@ -20,27 +20,9 @@
 *  specific language governing permissions and limitations
 *  under the License.
 *
-*  ## Description
-*
-*  This module is the entry point for front JavaScript programming. It requires
-*  global dependencies and main client-side file.
 */
 
-(function () {
-  var login = require('./login.spec.js');
-  var subscribe = require('./subscribe.spec.js');
-  var profile = require('./profile.spec.js');
-  var groupForm = require('./group-form.spec.js');
-
-  describe('MyPads testing', function () {
-    var app = frames[0];
-    beforeAll(function(done) {
-      // FIXME: 1sec for simplicity but should listen search/hash changes...
-      window.setTimeout(done, 1000);
-    });
-    login.run(app);
-    subscribe.run(app);
-    profile.run(app);
-    groupForm.run(app);
-  });
+module.exports = (function () {
+  'use strict';
+  // Dependencies
 }).call(this);

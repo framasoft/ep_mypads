@@ -23,6 +23,7 @@
 */
 
 module.exports = (function () {
+  'use strict';
   // Dependencies
   var ld = require('lodash');
   var common = require('./common.js');
@@ -35,7 +36,7 @@ module.exports = (function () {
   var $el;
   var hash;
 
-  profile.run = function (app ) {
+  profile.run = function (app) {
 
     describe('profile module testing', function () {
 

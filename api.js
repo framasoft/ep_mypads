@@ -404,11 +404,9 @@ module.exports = (function () {
                   error: err.message
                 });
               }
-              var _groups = ld(groups)
-                .values()
-                .map(function (g) { return ld.omit (g, 'password'); })
-                .sortBy('name')
-                .value();
+              var _groups = ld.transform(groups, function (memo, val, key) {
+                memo[key] = ld.omit(val, 'password');
+              });
               res.send({ value: _groups });
             });
           }

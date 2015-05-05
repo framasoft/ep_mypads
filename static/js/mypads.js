@@ -272,7 +272,62 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js":[function(require,module,exports){
+},{"mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js":[function(require,module,exports){
+/**
+*  # Group List module
+*
+*  ## License
+*
+*  Licensed to the Apache Software Foundation (ASF) under one
+*  or more contributor license agreements.  See the NOTICE file
+*  distributed with this work for additional information
+*  regarding copyright ownership.  The ASF licenses this file
+*  to you under the Apache License, Version 2.0 (the
+*  "License"); you may not use this file except in compliance
+*  with the License.  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+*  Unless required by applicable law or agreed to in writing,
+*  software distributed under the License is distributed on an
+*  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+*  KIND, either express or implied.  See the License for the
+*  specific language governing permissions and limitations
+*  under the License.
+*
+*  ## Description
+*
+*  This module is the main one, containing groups.
+*/
+
+module.exports = (function () {
+  'use strict';
+  // Global dependencies
+  var m = require('mithril');
+  var conf = require('../configuration.js');
+  var notif = require('../modules/notification.js');
+
+  var model = { data: m.prop([]) };
+  model.fetch = function (callback) {
+    m.request({
+      url: conf.URLS.GROUP,
+      method: 'GET'
+    }).then(
+      function (resp) {
+        model.data(resp.value); 
+        if (callback) { callback(); }
+      },
+      function (err) {
+        notif.error({ body: err.error });
+        if (callback) { callback(); }
+      }
+    );
+  };
+
+  return model;
+}).call(this);
+
+},{"../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../modules/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/notification.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js":[function(require,module,exports){
 /**
 *  # Routing module
 *
@@ -344,13 +399,16 @@ module.exports = (function () {
   var layout = require('./layout.js');
   var form = require('../helpers/form.js');
   var notif = require('./notification.js');
+  var model = require('../model/group.js');
 
   var gf = {};
 
   /**
   * ## Controller
   *
-  * Used for authtentication enforcement.
+  * Used for authentication enforcement, edit or add recognition and state.
+  * Stores old private status to add the ability to update a group without
+  * retyping the password.
   */
 
   gf.controller = function () {
@@ -358,22 +416,49 @@ module.exports = (function () {
       return m.route('/login');
     }
     var c = {};
-    c.fields = ['name', 'visibility', 'password', 'readonly'];
-    form.initFields(c, c.fields);
-    c.data.visibility('restricted');
+    var init = function () {
+      c.addView = m.prop(m.route() === '/mypads/group/add');
+      c.fields = ['name', 'visibility', 'password', 'readonly'];
+      form.initFields(c, c.fields);
+      c.data.visibility('restricted');
+      if (!c.addView()) {
+        var key = m.route.param('key');
+        c.group = model.data()[key];
+        ld.map(ld.keys(c.group), function (f) {
+            c.data[f] = m.prop(c.group[f]);
+        });
+        c.data.password = m.prop('');
+        c.private = m.prop(c.data.visibility() === 'private');
+      }
+    };
+    if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
 
     /**
-    * `submit` internal calls the public API to add a new group with entered
-    * data. It adds necessary fields and displays errors if needed or success.
+    * `submit` internal calls the public API to add a new group or edit an
+    * existing with entered data. It adds necessary fields and displays errors
+    * if needed or success.
     */
     c.submit = function (e) {
       e.preventDefault();
-      m.request({
-        method: 'POST',
-        url: conf.URLS.GROUP,
-        data: ld.assign(c.data, { admin: auth.userInfo()._id })
-      }).then(function () {
-        notif.success({ body: GROUP.INFO.ADD_SUCCESS });
+      var opts = (function () {
+        var _o = { params: {}, extra: {} };
+        if (c.addView()) {
+          _o.params.method = 'POST';
+          _o.params.url = conf.URLS.GROUP;
+          _o.extra.msg = GROUP.INFO.ADD_SUCCESS;
+        } else {
+          _o.params.method = 'PUT';
+          _o.params.url = conf.URLS.GROUP + '/' + c.group._id;
+          _o.extra.msg = GROUP.INFO.EDIT_SUCCESS;
+        }
+        return _o;
+      })();
+      opts.params.data = ld.assign(c.data, { admin: auth.userInfo()._id });
+      m.request(opts.params).then(function (resp) {
+        var data = model.data();
+        data[resp.key] = resp.value;
+        model.data(data);
+        notif.success({ body: opts.extra.msg });
         m.route('/mypads/group/list');
       }, function (err) {
         notif.error({ body: err.error });
@@ -452,7 +537,7 @@ module.exports = (function () {
       type: 'password',
       placeholder: conf.LANG.USER.UNDEF,
       value: c.data.password(),
-      required: true,
+      required: (c.addView() || !c.private()),
       oninput: m.withAttr('value', c.data.password)
     });
     return { label: label, icon: view.icon.password, input: input };
@@ -511,7 +596,7 @@ module.exports = (function () {
 
   view.main = function (c) {
     return m('section', { class: 'block-group user group-form' }, [
-      m('h2.block', GROUP.ADD),
+      m('h2.block', c.addView() ? GROUP.ADD : GROUP.EDIT_GROUP),
       view.form(c)
     ]);
   };
@@ -530,7 +615,7 @@ module.exports = (function () {
   return gf;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/notification.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/notification.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js":[function(require,module,exports){
 /**
 *  # Group List module
 *
@@ -568,6 +653,7 @@ module.exports = (function () {
   var GROUP = conf.LANG.GROUP;
   var auth = require('../auth.js');
   var layout = require('./layout.js');
+  var model = require('../model/group.js');
 
   var group = {};
 
@@ -581,16 +667,8 @@ module.exports = (function () {
     if (!auth.isAuthenticated()) {
       return m.route('/login');
     }
-    var c = {};
-    c.groups = m.prop([]);
-    m.request({
-      url: conf.URLS.GROUP,
-      method: 'GET'
-    }).then(
-      function (resp) { c.groups(resp.value); },
-      function (err) { return notif.error({ body: err.error }); }
-    );
-    return c;
+    if (ld.isEmpty(model.data())) { model.fetch(); }
+    return {};
   };
 
   /**
@@ -600,7 +678,7 @@ module.exports = (function () {
 
   var view = {};
 
-  view.search = function (c) {
+  view.search = function () {
     return m('section.search.block-group', [
       m('h3.block', [
         m('span', GROUP.SEARCH.TITLE),
@@ -616,7 +694,7 @@ module.exports = (function () {
     ]);
   };
 
-  view.filters = function (c) {
+  view.filters = function () {
     return m('section.filter', [
       m('h3', [
         m('span', GROUP.FILTERS.TITLE),
@@ -629,7 +707,7 @@ module.exports = (function () {
     ]);
   };
 
-  view.tags = function (c) {
+  view.tags = function () {
     return m('section.tag', [
       m('h3', [
         m('span', GROUP.TAGS.TITLE),
@@ -689,11 +767,17 @@ module.exports = (function () {
   };
 
   view.groups = function (c) {
-    return m('ul.group', ld.map(c.groups(), ld.partial(view.group, c)));
+    var _groups = ld(model.data()).values().sortBy('name').value();
+    return m('ul.group', ld.map(_groups, ld.partial(view.group, c)));
   };
 
   view.bookmarked = function (c) {
-    var sample = { _id: 'xxx', name: 'Sample', visibility: 'restricted', pads: [1, 2, 3] };
+    var sample = {
+      _id: 'xxx',
+      name: 'Sample',
+      visibility: 'restricted',
+      pads: [1, 2, 3] 
+    };
     return m('ul.group', [
       view.group(c, sample),
       view.group(c, sample),
@@ -745,7 +829,7 @@ module.exports = (function () {
   return group;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js":[function(require,module,exports){
 /**
 *  # Home module
 *
@@ -1867,6 +1951,7 @@ module.exports = (function () {
     '/mypads/group': group,
     '/mypads/group/list': group,
     '/mypads/group/add': groupForm,
+    '/mypads/group/edit/:key': groupForm,
     '/admin': admin
   };
 
@@ -1959,6 +2044,7 @@ module.exports = {
     ADD: 'Add a new group',
     ADD_HELP: '<h3>Visibility</h3><p>You have the choice between three levles of visibility. It will impact all linked pads :<ul><li><em>restricted</em>, default choice : access of the pads are limited to a list of invited users you have chosen;</li><li><em>private</em> : in this mode, you have to enter a password and access to the pads will be checked against this password;</li><li><em>public</em> : in this mode, all pads are public, users just need to have the URL address.</li></ul></p><h3>Readonly</h3><p>If you check <em>readonly</em>, all attached pads will stay in their state, and can not be edited. Note that visibility still works in readonly mode.</p>',
     EDIT: 'Edit',
+    EDIT_GROUP: 'Edit a group',
     VIEW: 'View',
     REMOVE: 'Remove',
     BOOKMARK: 'Bookmark',
@@ -1997,7 +2083,8 @@ module.exports = {
       VISIBILITY: 'Required, restricted by default to invited users or admins',
       READONLY: 'If checked, linked pads will be in readonly mode',
       PASSWORD: 'Required in private mode',
-      ADD_SUCCESS: 'Group has been successfully created'
+      ADD_SUCCESS: 'Group has been successfully created',
+      EDIT_SUCCESS: 'Group has been successfully updated'
     },
     ERR: {
       NAME: 'The name of the group is required'

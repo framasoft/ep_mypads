@@ -56,6 +56,7 @@ module.exports = (function () {
     '/mypads/group': group,
     '/mypads/group/list': group,
     '/mypads/group/add': groupForm,
+    '/mypads/group/edit/:key': groupForm,
     '/admin': admin
   };
 

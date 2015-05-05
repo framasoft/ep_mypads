@@ -37,13 +37,16 @@ module.exports = (function () {
   var layout = require('./layout.js');
   var form = require('../helpers/form.js');
   var notif = require('./notification.js');
+  var model = require('../model/group.js');
 
   var gf = {};
 
   /**
   * ## Controller
   *
-  * Used for authtentication enforcement.
+  * Used for authentication enforcement, edit or add recognition and state.
+  * Stores old private status to add the ability to update a group without
+  * retyping the password.
   */
 
   gf.controller = function () {
@@ -51,22 +54,49 @@ module.exports = (function () {
       return m.route('/login');
     }
     var c = {};
-    c.fields = ['name', 'visibility', 'password', 'readonly'];
-    form.initFields(c, c.fields);
-    c.data.visibility('restricted');
+    var init = function () {
+      c.addView = m.prop(m.route() === '/mypads/group/add');
+      c.fields = ['name', 'visibility', 'password', 'readonly'];
+      form.initFields(c, c.fields);
+      c.data.visibility('restricted');
+      if (!c.addView()) {
+        var key = m.route.param('key');
+        c.group = model.data()[key];
+        ld.map(ld.keys(c.group), function (f) {
+            c.data[f] = m.prop(c.group[f]);
+        });
+        c.data.password = m.prop('');
+        c.private = m.prop(c.data.visibility() === 'private');
+      }
+    };
+    if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
 
     /**
-    * `submit` internal calls the public API to add a new group with entered
-    * data. It adds necessary fields and displays errors if needed or success.
+    * `submit` internal calls the public API to add a new group or edit an
+    * existing with entered data. It adds necessary fields and displays errors
+    * if needed or success.
     */
     c.submit = function (e) {
       e.preventDefault();
-      m.request({
-        method: 'POST',
-        url: conf.URLS.GROUP,
-        data: ld.assign(c.data, { admin: auth.userInfo()._id })
-      }).then(function () {
-        notif.success({ body: GROUP.INFO.ADD_SUCCESS });
+      var opts = (function () {
+        var _o = { params: {}, extra: {} };
+        if (c.addView()) {
+          _o.params.method = 'POST';
+          _o.params.url = conf.URLS.GROUP;
+          _o.extra.msg = GROUP.INFO.ADD_SUCCESS;
+        } else {
+          _o.params.method = 'PUT';
+          _o.params.url = conf.URLS.GROUP + '/' + c.group._id;
+          _o.extra.msg = GROUP.INFO.EDIT_SUCCESS;
+        }
+        return _o;
+      })();
+      opts.params.data = ld.assign(c.data, { admin: auth.userInfo()._id });
+      m.request(opts.params).then(function (resp) {
+        var data = model.data();
+        data[resp.key] = resp.value;
+        model.data(data);
+        notif.success({ body: opts.extra.msg });
         m.route('/mypads/group/list');
       }, function (err) {
         notif.error({ body: err.error });
@@ -145,7 +175,7 @@ module.exports = (function () {
       type: 'password',
       placeholder: conf.LANG.USER.UNDEF,
       value: c.data.password(),
-      required: true,
+      required: (c.addView() || !c.private()),
       oninput: m.withAttr('value', c.data.password)
     });
     return { label: label, icon: view.icon.password, input: input };
@@ -204,7 +234,7 @@ module.exports = (function () {
 
   view.main = function (c) {
     return m('section', { class: 'block-group user group-form' }, [
-      m('h2.block', GROUP.ADD),
+      m('h2.block', c.addView() ? GROUP.ADD : GROUP.EDIT_GROUP),
       view.form(c)
     ]);
   };

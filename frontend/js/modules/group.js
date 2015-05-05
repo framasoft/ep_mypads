@@ -35,6 +35,7 @@ module.exports = (function () {
   var GROUP = conf.LANG.GROUP;
   var auth = require('../auth.js');
   var layout = require('./layout.js');
+  var model = require('../model/group.js');
 
   var group = {};
 
@@ -48,16 +49,8 @@ module.exports = (function () {
     if (!auth.isAuthenticated()) {
       return m.route('/login');
     }
-    var c = {};
-    c.groups = m.prop([]);
-    m.request({
-      url: conf.URLS.GROUP,
-      method: 'GET'
-    }).then(
-      function (resp) { c.groups(resp.value); },
-      function (err) { return notif.error({ body: err.error }); }
-    );
-    return c;
+    if (ld.isEmpty(model.data())) { model.fetch(); }
+    return {};
   };
 
   /**
@@ -67,7 +60,7 @@ module.exports = (function () {
 
   var view = {};
 
-  view.search = function (c) {
+  view.search = function () {
     return m('section.search.block-group', [
       m('h3.block', [
         m('span', GROUP.SEARCH.TITLE),
@@ -83,7 +76,7 @@ module.exports = (function () {
     ]);
   };
 
-  view.filters = function (c) {
+  view.filters = function () {
     return m('section.filter', [
       m('h3', [
         m('span', GROUP.FILTERS.TITLE),
@@ -96,7 +89,7 @@ module.exports = (function () {
     ]);
   };
 
-  view.tags = function (c) {
+  view.tags = function () {
     return m('section.tag', [
       m('h3', [
         m('span', GROUP.TAGS.TITLE),
@@ -156,11 +149,17 @@ module.exports = (function () {
   };
 
   view.groups = function (c) {
-    return m('ul.group', ld.map(c.groups(), ld.partial(view.group, c)));
+    var _groups = ld(model.data()).values().sortBy('name').value();
+    return m('ul.group', ld.map(_groups, ld.partial(view.group, c)));
   };
 
   view.bookmarked = function (c) {
-    var sample = { _id: 'xxx', name: 'Sample', visibility: 'restricted', pads: [1, 2, 3] };
+    var sample = {
+      _id: 'xxx',
+      name: 'Sample',
+      visibility: 'restricted',
+      pads: [1, 2, 3] 
+    };
     return m('ul.group', [
       view.group(c, sample),
       view.group(c, sample),

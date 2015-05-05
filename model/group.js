@@ -91,7 +91,11 @@ module.exports = (function () {
       ld.map(user.groups, function (g) { return GPREFIX + g; }),
       function (err, groups) {
         if (err) { return callback(err); }
-        callback(null, groups);
+        callback(null, ld.reduce(groups, function (memo, val, key) {
+          key = key.substr(GPREFIX.length);
+          memo[key] = val;
+          return memo;
+        }, {}));
       }
     );
   };
@@ -124,29 +128,37 @@ module.exports = (function () {
   *
   * `set` creates an empty `pads` array in case of creation, otherwise it just
   * gets back old value. `pads` array contains ids of pads attached to the
-  * group via `model.pad` creation or update.
+  * group via `model.pad` creation or update. Also, `password` is repopulated
+  * from old value if the group has already been set as *private* and no
+  * `password` has been given.
   */
 
   group.set = function (params, callback) {
     common.addSetInit(params, callback, ['name', 'admin']);
     var g = group.fn.assignProps(params);
-    group.fn.handlePassword(g, function (err, password) {
-      if (err) { return callback(err); }
-      if (password) { g.password = password; }
-      if (params._id) {
-        g._id = params._id;
-        storage.db.get(GPREFIX + g._id, function (err, res) {
-          if (err) { return callback(err); }
-          if (!res) { return callback(new Error('group does not exist')); }
-          g.pads = res.pads;
-          group.fn.checkSet(g, callback);
-        });
-      } else {
-        g._id = cuid();
-        g.pads = [];
+    var check = function () {
+      group.fn.handlePassword(g, function (err, password) {
+        if (err) { return callback(err); }
+        if (password) { g.password = password; }
         group.fn.checkSet(g, callback);
-      }
-    });
+      });
+    };
+    if (params._id) {
+      g._id = params._id;
+      storage.db.get(GPREFIX + g._id, function (err, res) {
+        if (err) { return callback(err); }
+        if (!res) { return callback(new Error('group does not exist')); }
+        g.pads = res.pads;
+        if ((res.visibility === 'private') && !g.password) {
+          g.password = res.password;
+        }
+        check();
+      });
+    } else {
+      g._id = cuid();
+      g.pads = [];
+      check();
+    }
   };
 
 
@@ -289,7 +301,7 @@ module.exports = (function () {
   */
 
   group.fn.handlePassword = function (params, callback) {
-    if (params.visibility !== 'private') {
+    if ((params.visibility !== 'private') || ld.isObject(params.password)) {
       return callback(null);
     }
     if (!ld.isString(params.password) || ld.isEmpty(params.password)) {

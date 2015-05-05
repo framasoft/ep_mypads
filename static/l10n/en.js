@@ -81,6 +81,7 @@ module.exports = {
     ADD: 'Add a new group',
     ADD_HELP: '<h3>Visibility</h3><p>You have the choice between three levles of visibility. It will impact all linked pads :<ul><li><em>restricted</em>, default choice : access of the pads are limited to a list of invited users you have chosen;</li><li><em>private</em> : in this mode, you have to enter a password and access to the pads will be checked against this password;</li><li><em>public</em> : in this mode, all pads are public, users just need to have the URL address.</li></ul></p><h3>Readonly</h3><p>If you check <em>readonly</em>, all attached pads will stay in their state, and can not be edited. Note that visibility still works in readonly mode.</p>',
     EDIT: 'Edit',
+    EDIT_GROUP: 'Edit a group',
     VIEW: 'View',
     REMOVE: 'Remove',
     BOOKMARK: 'Bookmark',
@@ -119,7 +120,8 @@ module.exports = {
       VISIBILITY: 'Required, restricted by default to invited users or admins',
       READONLY: 'If checked, linked pads will be in readonly mode',
       PASSWORD: 'Required in private mode',
-      ADD_SUCCESS: 'Group has been successfully created'
+      ADD_SUCCESS: 'Group has been successfully created',
+      EDIT_SUCCESS: 'Group has been successfully updated'
     },
     ERR: {
       NAME: 'The name of the group is required'

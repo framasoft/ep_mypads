@@ -255,17 +255,15 @@
       it('should return an error if visibility is private with invalid ' +
         'password', function (done) {
           var params = {
-          _id: gparams._id,
-          name: 'college2',
+          name: 'college3',
           admin: gadm._id,
-          visibility: 'private',
-          password: false
+          visibility: 'private'
         };
         group.set(params, function (err, g) {
           expect(ld.isError(err)).toBeTruthy();
           expect(err).toMatch('password is invalid');
           expect(g).toBeUndefined();
-          params.password = '';
+          params.password = 123;
           group.set(params, function (err, g) {
             expect(ld.isError(err)).toBeTruthy();
             expect(err).toMatch('password is invalid');
@@ -329,6 +327,24 @@
           });
         });
       });
+
+      it('should accept empty password for an already private group',
+        function (done) {
+          var params = ld.clone(gparams);
+          delete params.password;
+          params.name = 'collegeRenamed';
+          params.admin = gadm._id;
+          group.set(params, function (err, g) {
+            expect(err).toBeNull();
+            expect(ld.isString(g._id)).toBeTruthy();
+            expect(g.name).toBe('collegeRenamed');
+            expect(ld.isObject(g.password)).toBeTruthy();
+            expect(g.password.salt).toBeDefined();
+            expect(g.password.hash).toBeDefined();
+            done();
+          });
+        }
+      );
     });
 
     describe('group get', function () {
@@ -395,7 +411,7 @@
           group.getByUser(gadm, function (err, groups) {
             expect(err).toBeNull();
             expect(ld.isObject(groups)).toBeTruthy();
-            var key = storage.DBPREFIX.GROUP + gadm.groups[0];
+            var key = gadm.groups[0];
             expect(groups[key].name).toBe('college');
             expect(groups[key].visibility).toBe('private');
             expect(groups[key].readonly).toBeTruthy();

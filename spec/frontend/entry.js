@@ -31,6 +31,7 @@
   var subscribe = require('./subscribe.spec.js');
   var profile = require('./profile.spec.js');
   var groupForm = require('./group-form.spec.js');
+  var groupRemove = require('./group-remove.spec.js');
 
   describe('MyPads testing', function () {
     var app = frames[0];
@@ -42,5 +43,6 @@
     subscribe.run(app);
     profile.run(app);
     groupForm.run(app);
+    groupRemove.run(app);
   });
 }).call(this);

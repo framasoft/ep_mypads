@@ -29,7 +29,7 @@ module.exports = (function () {
   var fill = common.helper.fill;
 
   var form = {};
-  //
+
   // Shared variables
   var $el;
   var first;

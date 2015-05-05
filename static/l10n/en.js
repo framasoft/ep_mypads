@@ -121,7 +121,9 @@ module.exports = {
       READONLY: 'If checked, linked pads will be in readonly mode',
       PASSWORD: 'Required in private mode',
       ADD_SUCCESS: 'Group has been successfully created',
-      EDIT_SUCCESS: 'Group has been successfully updated'
+      EDIT_SUCCESS: 'Group has been successfully updated',
+      REMOVE_SUCCESS: 'Group has been successfully removed',
+      REMOVE_SURE: 'Are you sure you want to remove this group ?'
     },
     ERR: {
       NAME: 'The name of the group is required'

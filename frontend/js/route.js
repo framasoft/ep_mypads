@@ -36,6 +36,7 @@ module.exports = (function () {
   var subscribe = require('./modules/subscribe.js');
   var group = require('./modules/group.js');
   var groupForm = require('./modules/group-form.js');
+  var groupRemove = require('./modules/group-remove.js');
   var admin = require('./modules/admin.js');
 
   var route = { model: {} };
@@ -57,6 +58,7 @@ module.exports = (function () {
     '/mypads/group/list': group,
     '/mypads/group/add': groupForm,
     '/mypads/group/edit/:key': groupForm,
+    '/mypads/group/remove/:key': groupRemove,
     '/admin': admin
   };
 

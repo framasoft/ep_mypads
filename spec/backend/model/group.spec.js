@@ -145,7 +145,8 @@
             expect(ld.first(g.admins)).toBe(gadm._id);
             expect(g.visibility).toBe('restricted');
             expect(g.password).toBeNull();
-            expect(ld.readonly).toBeFalsy();
+            expect(g.readonly).toBeFalsy();
+            expect(ld.isArray(g.tags)).toBeTruthy();
 
             params = {
               name: 'college',
@@ -155,7 +156,8 @@
               pads: false,
               visibility: 'inexistentOption',
               password: [],
-              readonly: 'needABoolean'
+              readonly: 'needABoolean',
+              tags: 123
             };
             group.set(params, function (err, g) {
               expect(err).toBeNull();
@@ -170,6 +172,7 @@
               expect(g.visibility).toBe('restricted');
               expect(ld.isEmpty(g.password)).toBeTruthy();
               expect(g.readonly).toBeFalsy();
+              expect(ld.isArray(g.tags)).toBeTruthy();
               done();
             });
           });
@@ -184,7 +187,8 @@
           users: ld.takeRight(gusers, 3),
           visibility: 'private',
           password: 'aGoodOne',
-          readonly: true
+          readonly: true,
+          tags: ['80s', 'coolness']
         };
         group.set(params, function (err, g) {
           expect(err).toBeNull();
@@ -200,6 +204,9 @@
           expect(g.password).toBeDefined();
           expect(ld.isEmpty(g.password)).toBeFalsy();
           expect(g.readonly).toBeTruthy();
+          expect(ld.isArray(g.tags)).toBeTruthy();
+          expect(ld.first(g.tags)).toBe('80s');
+          expect(g.tags[1]).toBe('coolness');
           user.get(gadm.login, function (err, u) {
             expect(err).toBeNull();
             expect(u.login).toBe(gadm.login);

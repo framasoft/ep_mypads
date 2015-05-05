@@ -49,7 +49,8 @@ module.exports = (function () {
   *   users: [ 'ukey1' ],
   *   visibility: 'restricted' || 'public' || 'private',
   *   password: 'secret',
-  *   readonly: false
+  *   readonly: false,
+  *   tags: ['important', 'domain1']
   * };
   *
   */
@@ -285,6 +286,7 @@ module.exports = (function () {
     g.visibility = (ld.isString(v) && ld.includes(vVal, v)) ? v : 'restricted';
     g.password = ld.isString(p.password) ? p.password : null;
     g.readonly = ld.isBoolean(p.readonly) ? p.readonly : false;
+    g.tags = ld.isArray(p.tags) ? p.tags : [];
     return g;
   };
 

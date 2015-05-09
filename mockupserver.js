@@ -44,10 +44,11 @@
           email: 'parker@lewis.me'
         }, function (err, u) {
           if (err) { console.log(err); }
-          var g = { name: 'Santa Fe', admin: u._id };
+          var g = { name: 'Santa Fe', admin: u._id, tags: ['cool', 'weird'] };
           group.set(g, function () {
             g.name = 'memories';
             g.visibility = 'public';
+            g.tags = ['cool', 'funky'];
             group.set(g, function() {
               api.init(specCommon.express.app);
               console.log('Mockup Server runs on port 8042');

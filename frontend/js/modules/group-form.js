@@ -36,7 +36,8 @@ module.exports = (function () {
   var auth = require('../auth.js');
   var layout = require('./layout.js');
   var form = require('../helpers/form.js');
-  var notif = require('./notification.js');
+  var notif = require('../widgets/notification.js');
+  var tag = require('../widgets/tag.js');
   var model = require('../model/group.js');
 
   var gf = {};
@@ -59,6 +60,7 @@ module.exports = (function () {
       c.fields = ['name', 'visibility', 'password', 'readonly'];
       form.initFields(c, c.fields);
       c.data.visibility('restricted');
+      var tagsCurrent;
       if (!c.addView()) {
         var key = m.route.param('key');
         c.group = model.data()[key];
@@ -67,7 +69,14 @@ module.exports = (function () {
         });
         c.data.password = m.prop('');
         c.private = m.prop(c.data.visibility() === 'private');
+        tagsCurrent = c.group.tags;
       }
+      c.tag = new tag.controller({
+        current: tagsCurrent || [],
+        tags: model.tags()
+      });
+      c.data.tags = function () { return c.tag.current; };
+      c.data.tags.toJSON = function () { return c.tag.current; };
     };
     if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
 
@@ -96,6 +105,7 @@ module.exports = (function () {
         var data = model.data();
         data[resp.key] = resp.value;
         model.data(data);
+        model.tags(ld.union(model.tags(), resp.value.tags));
         notif.success({ body: opts.extra.msg });
         m.route('/mypads/group/list');
       }, function (err) {
@@ -192,6 +202,8 @@ module.exports = (function () {
     return { label: label, icon: view.icon.readonly, input: input };
   };
 
+  view.field.tag = function (c) { return tag.view(c.tag); };
+
   /**
   * ### form view
   *
@@ -210,6 +222,7 @@ module.exports = (function () {
       fields.push(_f.password.label, _f.password.input, _f.password.icon);
     }
     fields.push(_f.readonly.label, _f.readonly.input, _f.readonly.icon);
+    fields.push(view.field.tag(c));
     return m('form.block', {
       id: 'group-form',
       onsubmit: c.submit

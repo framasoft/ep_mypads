@@ -29,10 +29,11 @@ module.exports = (function () {
   'use strict';
   // Global dependencies
   var m = require('mithril');
+  var ld = require('lodash');
   var conf = require('../configuration.js');
-  var notif = require('../modules/notification.js');
+  var notif = require('../widgets/notification.js');
 
-  var model = { data: m.prop([]) };
+  var model = { data: m.prop([]), tags: m.prop([]) };
   model.fetch = function (callback) {
     m.request({
       url: conf.URLS.GROUP,
@@ -40,6 +41,13 @@ module.exports = (function () {
     }).then(
       function (resp) {
         model.data(resp.value); 
+        var tags = ld(resp.value)
+          .values()
+          .pluck('tags')
+          .flatten()
+          .union()
+          .value();
+        model.tags(tags);
         if (callback) { callback(); }
       },
       function (err) {

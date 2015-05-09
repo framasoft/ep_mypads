@@ -95,13 +95,14 @@ footer.group > ul {
   text-align: right;
   list-style-type : none;
 }
-footer.group > ul > li {
+footer.group > ul > li, div.tag > ul > li {
   color:#e0e0e0;
   background: #9876cc;
-  display: inline;
+  display: inline-block;
   padding: 0.5em;
   margin: 0.2em;
   border-radius: 0.4em;
+  cursor: pointer;
 }
 
 /* Pads Aside */

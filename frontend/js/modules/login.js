@@ -33,7 +33,7 @@ module.exports = (function () {
   var USER = conf.LANG.USER;
   var auth = require('../auth.js');
   var form = require('../helpers/form.js');
-  var notif = require('./notification.js');
+  var notif = require('../widgets/notification.js');
   var layout = require('./layout.js');
   var user = require('./user.js');
 

@@ -33,7 +33,7 @@ module.exports = (function () {
   var conf = require('../configuration.js');
   var GROUP = conf.LANG.GROUP;
   var model = require('../model/group.js');
-  var notif = require('./notification.js');
+  var notif = require('../widgets/notification.js');
 
   var remove = {};
 

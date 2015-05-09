@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/home/fabien/bak/code/node/ep_mypads/frontend.js":[function(require,module,exports){
 /**
 *  # Frontend Entry Point
 *
@@ -33,7 +33,7 @@
   conf.init(route.init);
 }).call(this);
 
-},{"./frontend/js/configuration.js":3,"./frontend/js/route.js":17}],2:[function(require,module,exports){
+},{"./frontend/js/configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","./frontend/js/route.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/route.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js":[function(require,module,exports){
 /**
 *  # Authentification module
 *
@@ -70,7 +70,7 @@ module.exports = (function () {
   return auth;
 }).call(this);
 
-},{"mithril":20}],3:[function(require,module,exports){
+},{"mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js":[function(require,module,exports){
 /**
 *  # Configuration
 *
@@ -139,7 +139,7 @@ module.exports = (function () {
   return config;
 }).call(this);
 
-},{"../l10n/en.js":18,"./auth.js":2,"mithril":20}],4:[function(require,module,exports){
+},{"../l10n/en.js":"/home/fabien/bak/code/node/ep_mypads/frontend/l10n/en.js","./auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js":[function(require,module,exports){
 /**
 *  # Form helpers functions
 *
@@ -272,7 +272,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"mithril":20}],5:[function(require,module,exports){
+},{"mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js":[function(require,module,exports){
 /**
 *  # Group List module
 *
@@ -304,10 +304,11 @@ module.exports = (function () {
   'use strict';
   // Global dependencies
   var m = require('mithril');
+  var ld = require('lodash');
   var conf = require('../configuration.js');
-  var notif = require('../modules/notification.js');
+  var notif = require('../widgets/notification.js');
 
-  var model = { data: m.prop([]) };
+  var model = { data: m.prop([]), tags: m.prop([]) };
   model.fetch = function (callback) {
     m.request({
       url: conf.URLS.GROUP,
@@ -315,6 +316,13 @@ module.exports = (function () {
     }).then(
       function (resp) {
         model.data(resp.value); 
+        var tags = ld(resp.value)
+          .values()
+          .pluck('tags')
+          .flatten()
+          .union()
+          .value();
+        model.tags(tags);
         if (callback) { callback(); }
       },
       function (err) {
@@ -327,7 +335,7 @@ module.exports = (function () {
   return model;
 }).call(this);
 
-},{"../configuration.js":3,"../modules/notification.js":14,"mithril":20}],6:[function(require,module,exports){
+},{"../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js":[function(require,module,exports){
 /**
 *  # Routing module
 *
@@ -359,7 +367,7 @@ module.exports = (function () {
 module.exports = (function () {
 }).call(this);
 
-},{}],7:[function(require,module,exports){
+},{}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js":[function(require,module,exports){
 /**
 *  # Group form module
 *
@@ -398,7 +406,8 @@ module.exports = (function () {
   var auth = require('../auth.js');
   var layout = require('./layout.js');
   var form = require('../helpers/form.js');
-  var notif = require('./notification.js');
+  var notif = require('../widgets/notification.js');
+  var tag = require('../widgets/tag.js');
   var model = require('../model/group.js');
 
   var gf = {};
@@ -421,6 +430,7 @@ module.exports = (function () {
       c.fields = ['name', 'visibility', 'password', 'readonly'];
       form.initFields(c, c.fields);
       c.data.visibility('restricted');
+      var tagsCurrent;
       if (!c.addView()) {
         var key = m.route.param('key');
         c.group = model.data()[key];
@@ -429,7 +439,14 @@ module.exports = (function () {
         });
         c.data.password = m.prop('');
         c.private = m.prop(c.data.visibility() === 'private');
+        tagsCurrent = c.group.tags;
       }
+      c.tag = new tag.controller({
+        current: tagsCurrent || [],
+        tags: model.tags()
+      });
+      c.data.tags = function () { return c.tag.current; };
+      c.data.tags.toJSON = function () { return c.tag.current; };
     };
     if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
 
@@ -458,6 +475,7 @@ module.exports = (function () {
         var data = model.data();
         data[resp.key] = resp.value;
         model.data(data);
+        model.tags(ld.union(model.tags(), resp.value.tags));
         notif.success({ body: opts.extra.msg });
         m.route('/mypads/group/list');
       }, function (err) {
@@ -554,6 +572,8 @@ module.exports = (function () {
     return { label: label, icon: view.icon.readonly, input: input };
   };
 
+  view.field.tag = function (c) { return tag.view(c.tag); };
+
   /**
   * ### form view
   *
@@ -572,6 +592,7 @@ module.exports = (function () {
       fields.push(_f.password.label, _f.password.input, _f.password.icon);
     }
     fields.push(_f.readonly.label, _f.readonly.input, _f.readonly.icon);
+    fields.push(view.field.tag(c));
     return m('form.block', {
       id: 'group-form',
       onsubmit: c.submit
@@ -615,7 +636,7 @@ module.exports = (function () {
   return gf;
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../helpers/form.js":4,"../model/group.js":5,"./layout.js":11,"./notification.js":14,"lodash":19,"mithril":20}],8:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../model/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","../widgets/tag.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/tag.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js":[function(require,module,exports){
 /**
 *  # Group remove module
 *
@@ -651,7 +672,7 @@ module.exports = (function () {
   var conf = require('../configuration.js');
   var GROUP = conf.LANG.GROUP;
   var model = require('../model/group.js');
-  var notif = require('./notification.js');
+  var notif = require('../widgets/notification.js');
 
   var remove = {};
 
@@ -685,7 +706,7 @@ module.exports = (function () {
   return remove;
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../model/group.js":5,"./notification.js":14,"mithril":20}],9:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js":[function(require,module,exports){
 /**
 *  # Group List module
 *
@@ -783,10 +804,9 @@ module.exports = (function () {
         m('span', GROUP.TAGS.TITLE),
         m('i.tooltip.icon-info-circled', { 'data-msg': GROUP.TAGS.HELP })
       ]),
-      m('ul', [
-        m('li', [ m('button', 'tag1') ]),
-        m('li', [ m('button', 'tag2') ])
-      ])
+      m('ul', ld.map(model.tags(), function (t) {
+        return m('li', [ m('button', t) ]);
+      }))
     ]);
   };
 
@@ -828,10 +848,7 @@ module.exports = (function () {
       ]),
       m('footer.group.block-group', [
         m('button.block', GROUP.BOOKMARK),
-        m('ul.block', [
-          m('li', 'tag4'),
-          m('li', 'tag3')
-        ])
+        m('ul.block', ld.map(g.tags, function (t) { return m('li', t); }))
       ])
     ]);
   };
@@ -899,7 +916,7 @@ module.exports = (function () {
   return group;
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../model/group.js":5,"./layout.js":11,"lodash":19,"mithril":20}],10:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js":[function(require,module,exports){
 /**
 *  # Home module
 *
@@ -950,7 +967,7 @@ module.exports = (function () {
   return home;
 }).call(this);
 
-},{"../auth.js":2,"./layout.js":11,"mithril":20}],11:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js":[function(require,module,exports){
 /**
 *  # Layout
 *
@@ -985,7 +1002,7 @@ module.exports = (function () {
   var conf = require('../configuration.js');
   var LANG = conf.LANG;
   var auth = require('../auth.js');
-  var notif = require('./notification.js');
+  var notif = require('../widgets/notification.js');
 
   var layout = {};
 
@@ -1094,7 +1111,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"./notification.js":14,"lodash":19,"mithril":20}],12:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js":[function(require,module,exports){
 /**
 *  # Login module
 *
@@ -1130,7 +1147,7 @@ module.exports = (function () {
   var USER = conf.LANG.USER;
   var auth = require('../auth.js');
   var form = require('../helpers/form.js');
-  var notif = require('./notification.js');
+  var notif = require('../widgets/notification.js');
   var layout = require('./layout.js');
   var user = require('./user.js');
 
@@ -1214,7 +1231,7 @@ module.exports = (function () {
   return login;
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../helpers/form.js":4,"./layout.js":11,"./notification.js":14,"./user.js":16,"mithril":20}],13:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./user.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js":[function(require,module,exports){
 /**
 *  # Home module
 *
@@ -1248,7 +1265,7 @@ module.exports = (function () {
   var conf = require('../configuration.js');
   var auth = require('../auth.js');
   var LOG = conf.LANG.USER;
-  var notif = require('./notification.js');
+  var notif = require('../widgets/notification.js');
 
   var logout = {
     /**
@@ -1277,168 +1294,7 @@ module.exports = (function () {
   return logout;
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"./notification.js":14,"mithril":20}],14:[function(require,module,exports){
-/**
-*  # Notification module
-*
-*  ## License
-*
-*  Licensed to the Apache Software Foundation (ASF) under one
-*  or more contributor license agreements.  See the NOTICE file
-*  distributed with this work for additional information
-*  regarding copyright ownership.  The ASF licenses this file
-*  to you under the Apache License, Version 2.0 (the
-*  "License"); you may not use this file except in compliance
-*  with the License.  You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing,
-*  software distributed under the License is distributed on an
-*  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-*  KIND, either express or implied.  See the License for the
-*  specific language governing permissions and limitations
-*  under the License.
-*
-*  ## Description
-*
-*  This module contains a generic widgets handling several types of visual
-*  notifications.
-*/
-
-module.exports = (function () {
-  // Global dependencies
-  var m = require('mithril');
-  // Local dependencies
-  var conf = require('../configuration.js');
-  var NOTIF = conf.LANG.NOTIFICATION;
-
-  var notif = {};
-
-  /**
-  * ## Model
-  *
-  * `model` contains a list of items id -> item and an autoincrement id.
-  */
-
-  notif.model = {
-    items: {},
-    counter: 0
-  };
-
-  /**
-  * ## Controller
-  *
-  * `controller` relies on `model` and gives functions to close directly or
-  * after a delay a notification.
-  */
-  notif.controller = function () {
-    var c = {};
-    c.toClose = {};
-    c.close = function (id, from) {
-      // with from false, no clear because notimeout
-      if ((from) && (from !== 'timeout')) {
-        window.clearTimeout(c.toClose[id]);
-      }
-      delete c.toClose[id];
-      delete notif.model.items[id];
-    };
-
-    c.delayClose = function (id, timeout) {
-      if ((timeout) && !(c.toClose[id])) {
-        c.toClose[id] = window.setTimeout(function () {
-          m.startComputation();
-          c.close(id, 'timeout');
-          m.endComputation();
-        }, timeout * 1000);
-      }
-    };
-    return c;
-  };
-
-  /**
-  * ## View
-  *
-  * Self contained view for notifications.
-  */
-
-  notif.view = function (ctrl) {
-    var keys = Object.keys(notif.model.items).sort();
-    return m('div', keys.map(function (id) {
-      var n = notif.model.items[id];
-      ctrl.delayClose(id, n.timeout);
-      var closeFn = ctrl.close.bind(ctrl, id, n.timeout);
-      return m('div.block-group', {
-        class: n.cls ? n.cls : '',
-        onclick: (n.click ? n.click : closeFn)
-      }, [
-        m('header', { class: 'block' }, [
-          (n.icon ? m('i', { class: 'icon-' + n.icon }) : ''),
-          m('span', n.title)
-        ]),
-        m('i', {
-          class: 'block close icon-cancel-circled',
-          onclick: closeFn
-        }),
-        m('p', { class: 'block' }, m.trust(n.body))
-      ]);
-    }));
-  };
-
-  /**
-  * ## Public functions
-  *
-  * `send` is the generic way of sending a new notification.
-  * They all takes an `options` object and a `callback` function.
-  */
-
-  notif.send = function (options, callback) {
-    if (options.timeout === undefined) { options.timeout = 10; }
-    notif.model.counter += 1;
-    notif.model.items[notif.model.counter] = options;
-    m.redraw();
-    if (callback) { callback(); }
-  };
-
-  notif.success = function (options, callback) {
-    options.title = options.title || NOTIF.SUCCESS;
-    options.cls = 'success';
-    options.icon = 'check';
-    notif.send(options, callback);
-  };
-
-  notif.info = function (options, callback) {
-    options.title = options.title || NOTIF.INFO;
-    options.cls = 'info';
-    options.icon = 'info-circled';
-    notif.send(options, callback);
-  };
-
-  notif.warning = function (options, callback) {
-    options.title = NOTIF.WARNING;
-    options.cls = options.icon = 'warning';
-    options.timeout = 15;
-    notif.send(options, callback);
-  };
-
-  notif.error = function (options, callback) {
-    options.title = NOTIF.ERROR;
-    options.cls = 'error';
-    options.icon = 'alert';
-    options.timeout = false;
-    notif.send(options, callback);
-  };
-
-  notif.errorUnexpected = function (options, callback) {
-    options.body = '<em>' + options.body + '</em><br>' + NOTIF.ERROR_UNEXPECTED;
-    notif.error(options, callback);
-  };
-
-  return notif;
-
-}).call(this);
-
-},{"../configuration.js":3,"mithril":20}],15:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js":[function(require,module,exports){
 /**
 *  # Subscription module
 *
@@ -1474,7 +1330,7 @@ module.exports = (function () {
   var conf = require('../configuration.js');
   var form = require('../helpers/form.js');
   var USER = conf.LANG.USER;
-  var notif = require('./notification.js');
+  var notif = require('../widgets/notification.js');
   var auth = require('../auth.js');
   var layout = require('./layout.js');
   var user = require('./user.js');
@@ -1668,7 +1524,7 @@ module.exports = (function () {
   return subscribe;
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../helpers/form.js":4,"./layout.js":11,"./notification.js":14,"./user.js":16,"lodash":19,"mithril":20}],16:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./user.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js":[function(require,module,exports){
 /**
 *  # User module
 *
@@ -1962,7 +1818,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../configuration.js":3,"../helpers/form.js":4,"lodash":19,"mithril":20}],17:[function(require,module,exports){
+},{"../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/route.js":[function(require,module,exports){
 /**
 *  # Routing module
 *
@@ -2032,7 +1888,317 @@ module.exports = (function () {
   return route;
 }).call(this);
 
-},{"./modules/admin.js":6,"./modules/group-form.js":7,"./modules/group-remove.js":8,"./modules/group.js":9,"./modules/home.js":10,"./modules/login.js":12,"./modules/logout.js":13,"./modules/subscribe.js":15,"mithril":20}],18:[function(require,module,exports){
+},{"./modules/admin.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/group-form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./modules/group-remove.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js","./modules/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/subscribe.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js":[function(require,module,exports){
+/**
+*  # Notification module
+*
+*  ## License
+*
+*  Licensed to the Apache Software Foundation (ASF) under one
+*  or more contributor license agreements.  See the NOTICE file
+*  distributed with this work for additional information
+*  regarding copyright ownership.  The ASF licenses this file
+*  to you under the Apache License, Version 2.0 (the
+*  "License"); you may not use this file except in compliance
+*  with the License.  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+*  Unless required by applicable law or agreed to in writing,
+*  software distributed under the License is distributed on an
+*  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+*  KIND, either express or implied.  See the License for the
+*  specific language governing permissions and limitations
+*  under the License.
+*
+*  ## Description
+*
+*  This module contains a generic widgets handling several types of visual
+*  notifications.
+*/
+
+module.exports = (function () {
+  'use strict';
+  // Global dependencies
+  var m = require('mithril');
+  // Local dependencies
+  var conf = require('../configuration.js');
+  var NOTIF = conf.LANG.NOTIFICATION;
+
+  var notif = {};
+
+  /**
+  * ## Model
+  *
+  * `model` contains a list of items id -> item and an autoincrement id.
+  */
+
+  notif.model = {
+    items: {},
+    counter: 0
+  };
+
+  /**
+  * ## Controller
+  *
+  * `controller` relies on `model` and gives functions to close directly or
+  * after a delay a notification.
+  */
+  notif.controller = function () {
+    var c = {};
+    c.toClose = {};
+    c.close = function (id, from) {
+      // with from false, no clear because notimeout
+      if ((from) && (from !== 'timeout')) {
+        window.clearTimeout(c.toClose[id]);
+      }
+      delete c.toClose[id];
+      delete notif.model.items[id];
+    };
+
+    c.delayClose = function (id, timeout) {
+      if ((timeout) && !(c.toClose[id])) {
+        c.toClose[id] = window.setTimeout(function () {
+          m.startComputation();
+          c.close(id, 'timeout');
+          m.endComputation();
+        }, timeout * 1000);
+      }
+    };
+    return c;
+  };
+
+  /**
+  * ## View
+  *
+  * Self contained view for notifications.
+  */
+
+  notif.view = function (ctrl) {
+    var keys = Object.keys(notif.model.items).sort();
+    return m('div', keys.map(function (id) {
+      var n = notif.model.items[id];
+      ctrl.delayClose(id, n.timeout);
+      var closeFn = ctrl.close.bind(ctrl, id, n.timeout);
+      return m('div.block-group', {
+        class: n.cls ? n.cls : '',
+        onclick: (n.click ? n.click : closeFn)
+      }, [
+        m('header', { class: 'block' }, [
+          (n.icon ? m('i', { class: 'icon-' + n.icon }) : ''),
+          m('span', n.title)
+        ]),
+        m('i', {
+          class: 'block close icon-cancel-circled',
+          onclick: closeFn
+        }),
+        m('p', { class: 'block' }, m.trust(n.body))
+      ]);
+    }));
+  };
+
+  /**
+  * ## Public functions
+  *
+  * `send` is the generic way of sending a new notification.
+  * They all takes an `options` object and a `callback` function.
+  */
+
+  notif.send = function (options, callback) {
+    if (options.timeout === undefined) { options.timeout = 10; }
+    notif.model.counter += 1;
+    notif.model.items[notif.model.counter] = options;
+    m.redraw();
+    if (callback) { callback(); }
+  };
+
+  notif.success = function (options, callback) {
+    options.title = options.title || NOTIF.SUCCESS;
+    options.cls = 'success';
+    options.icon = 'check';
+    notif.send(options, callback);
+  };
+
+  notif.info = function (options, callback) {
+    options.title = options.title || NOTIF.INFO;
+    options.cls = 'info';
+    options.icon = 'info-circled';
+    notif.send(options, callback);
+  };
+
+  notif.warning = function (options, callback) {
+    options.title = NOTIF.WARNING;
+    options.cls = options.icon = 'warning';
+    options.timeout = 15;
+    notif.send(options, callback);
+  };
+
+  notif.error = function (options, callback) {
+    options.title = NOTIF.ERROR;
+    options.cls = 'error';
+    options.icon = 'alert';
+    options.timeout = false;
+    notif.send(options, callback);
+  };
+
+  notif.errorUnexpected = function (options, callback) {
+    options.body = '<em>' + options.body + '</em><br>' + NOTIF.ERROR_UNEXPECTED;
+    notif.error(options, callback);
+  };
+
+  return notif;
+
+}).call(this);
+
+},{"../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/tag.js":[function(require,module,exports){
+
+/**
+*  # Tag field module
+*
+*  ## License
+*
+*  Licensed to the Apache Software Foundation (ASF) under one
+*  or more contributor license agreements.  See the NOTICE file
+*  distributed with this work for additional information
+*  regarding copyright ownership.  The ASF licenses this file
+*  to you under the Apache License, Version 2.0 (the
+*  "License"); you may not use this file except in compliance
+*  with the License.  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+*  Unless required by applicable law or agreed to in writing,
+*  software distributed under the License is distributed on an
+*  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+*  KIND, either express or implied.  See the License for the
+*  specific language governing permissions and limitations
+*  under the License.
+*
+*  ## Description
+*
+*  This module contains a generic widget handling tag like widget, using HTML5
+*  datalist element.
+*/
+
+module.exports = (function () {
+  'use strict';
+  // Global dependencies
+  var m = require('mithril');
+  var ld = require('lodash');
+  // Local dependencies
+  var conf = require('../configuration.js');
+  var TAG = conf.LANG.TAG;
+
+  var tag = {};
+
+  /**
+  * ## Controller
+  *
+  * Used for state. Takes a `config` JS Object with :
+  *
+  * - `content` ??
+  * - `tags` array, containing available choices
+  * - `current` array, for current attached values
+  * - optional `label` text for input field, default to *TAG.TAGS*
+  * - optional `placeholder` text for input field, default to *TAG.PLACEHOLDER*
+  * - optional `name` attribute, for the name of the input, default to *tags*
+  */
+
+  tag.controller = function (config) {
+    var c = config;
+    c.label = c.label || TAG.TAGS;
+    c.placeholder = c.placeholder || TAG.PLACEHOLDER;
+    c.name = c.name || 'tags';
+
+    c.tags = ld.difference(c.tags, c.current);
+
+    c.add = function (input) {
+      var v = input.value;
+      if (v.length !== 0) {
+        if (!ld.includes(c.current, v)) { c.current.push(v); }
+        ld.pull(c.tags, v);
+        input.value = '';
+      }
+    };
+
+    return c;
+  };
+
+  /**
+  * ## Views
+  *
+  * Views for the widget.
+  */
+
+  var view = {};
+
+  view.icon = function () {
+    return m('i', {
+      class: 'block tooltip icon-info-circled tag',
+      'data-msg': TAG.HELP
+    });
+  };
+
+  view.input = function (c) {
+    return m('input.block', {
+      id: c.name + '-input',
+      name: c.name,
+      type: 'text',
+      list: c.name,
+      placeholder: c.placeholder,
+      onkeydown: function (e) {
+        if (e.keyCode === 13) { // ENTER
+          e.preventDefault();
+          c.add(e.target);
+        }
+      },
+      onchange: function (e) { c.add(e.target); }
+    });
+  };
+
+  view.datalist = function (c) {
+    return m('datalist', { id: c.name }, ld.map(c.tags, function (tag) {
+      return m('option', { value: tag });
+    }));
+  };
+
+  view.tagslist = function (c) {
+    return m('ul.block', ld.map(c.current, function (tag) {
+      return m('li', [
+        m('span', tag),
+        m('i', {
+          role: 'button',
+          class: 'icon-cancel',
+          onclick: function (e) {
+            var value = e.target.parentElement.textContent;
+            ld.pull(c.current, value);
+            c.tags.push(value);
+          }
+        })
+        ]);
+      }));
+  };
+
+  tag.view = function (c) {
+    return m('div.block-group.tag', [
+      m('label.block', { for: c.name }, c.label),
+      view.input(c),
+      view.icon(),
+      m('button.block.ok', {
+        type: 'button',
+        onclick: function () {
+          c.add(document.getElementById(c.name + '-input'));
+        },
+      }, conf.LANG.USER.OK),
+      view.datalist(c),
+      view.tagslist(c)
+    ]);
+  };
+
+  return tag;
+}).call(this);
+
+},{"../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/l10n/en.js":[function(require,module,exports){
 module.exports = {
   GLOBAL: {
     FOOTER: 'Powered by <a href="https://git.framasoft.org/framasoft/ep_mypads">MyPads</a><br>Published under Apache License 2.0',
@@ -2060,6 +2226,11 @@ module.exports = {
     ERROR: 'Erreur',
     ERROR_UNEXPECTED: 'An unexpected error has raised. Please contact the administrator.',
     WARNING: 'Warning'
+  },
+  TAG: {
+    TAGS: 'Tags',
+    PLACEHOLDER: 'Enter your tag',
+    HELP: 'You can associate to this element as many tags as you wish'
   },
   USER: {
     FORM: 'Login',
@@ -2114,7 +2285,7 @@ module.exports = {
     BOOKMARKED: 'Bookmarked groups',
     ARCHIVED: 'Archived groups',
     ADD: 'Add a new group',
-    ADD_HELP: '<h3>Visibility</h3><p>You have the choice between three levles of visibility. It will impact all linked pads :<ul><li><em>restricted</em>, default choice : access of the pads are limited to a list of invited users you have chosen;</li><li><em>private</em> : in this mode, you have to enter a password and access to the pads will be checked against this password;</li><li><em>public</em> : in this mode, all pads are public, users just need to have the URL address.</li></ul></p><h3>Readonly</h3><p>If you check <em>readonly</em>, all attached pads will stay in their state, and can not be edited. Note that visibility still works in readonly mode.</p>',
+    ADD_HELP: '<h3>Visibility</h3><p>You have the choice between three levles of visibility. It will impact all linked pads :<ul><li><em>restricted</em>, default choice : access of the pads are limited to a list of invited users you have chosen;</li><li><em>private</em> : in this mode, you have to enter a password and access to the pads will be checked against this password;</li><li><em>public</em> : in this mode, all pads are public, users just need to have the URL address.</li></ul></p><h3>Readonly</h3><p>If you check <em>readonly</em>, all attached pads will stay in their state, and can not be edited. Note that visibility still works in readonly mode.</p><h3>Tags</h3><p>You can attach tags to this element by clicking on the corresponding input field and selecting them one by one.</p><p>To create a new tag, type it and type ENTER key or click on the \'Ok\' button. Once the tag has been added, it will automatically been selected on this form.</p><p>You can remove a tag by clicking on the cross located on the right.</p>',
     EDIT: 'Edit',
     EDIT_GROUP: 'Edit a group',
     VIEW: 'View',
@@ -2166,7 +2337,7 @@ module.exports = {
   }
 };
 
-},{}],19:[function(require,module,exports){
+},{}],"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js":[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -14336,7 +14507,7 @@ module.exports = {
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],20:[function(require,module,exports){
+},{}],"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js":[function(require,module,exports){
 var m = (function app(window, undefined) {
 	var OBJECT = "[object Object]", ARRAY = "[object Array]", STRING = "[object String]", FUNCTION = "function";
 	var type = {}.toString;
@@ -15404,4 +15575,4 @@ var m = (function app(window, undefined) {
 if (typeof module != "undefined" && module !== null && module.exports) module.exports = m;
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
-},{}]},{},[1]);
+},{}]},{},["/home/fabien/bak/code/node/ep_mypads/frontend.js"]);

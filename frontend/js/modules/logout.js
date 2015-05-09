@@ -31,7 +31,7 @@ module.exports = (function () {
   var conf = require('../configuration.js');
   var auth = require('../auth.js');
   var LOG = conf.LANG.USER;
-  var notif = require('./notification.js');
+  var notif = require('../widgets/notification.js');
 
   var logout = {
     /**

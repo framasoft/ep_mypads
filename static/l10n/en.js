@@ -26,6 +26,11 @@ module.exports = {
     ERROR_UNEXPECTED: 'An unexpected error has raised. Please contact the administrator.',
     WARNING: 'Warning'
   },
+  TAG: {
+    TAGS: 'Tags',
+    PLACEHOLDER: 'Enter your tag',
+    HELP: 'You can associate to this element as many tags as you wish'
+  },
   USER: {
     FORM: 'Login',
     ORSUB: ' (or subscribe ?)',
@@ -79,7 +84,7 @@ module.exports = {
     BOOKMARKED: 'Bookmarked groups',
     ARCHIVED: 'Archived groups',
     ADD: 'Add a new group',
-    ADD_HELP: '<h3>Visibility</h3><p>You have the choice between three levles of visibility. It will impact all linked pads :<ul><li><em>restricted</em>, default choice : access of the pads are limited to a list of invited users you have chosen;</li><li><em>private</em> : in this mode, you have to enter a password and access to the pads will be checked against this password;</li><li><em>public</em> : in this mode, all pads are public, users just need to have the URL address.</li></ul></p><h3>Readonly</h3><p>If you check <em>readonly</em>, all attached pads will stay in their state, and can not be edited. Note that visibility still works in readonly mode.</p>',
+    ADD_HELP: '<h3>Visibility</h3><p>You have the choice between three levles of visibility. It will impact all linked pads :<ul><li><em>restricted</em>, default choice : access of the pads are limited to a list of invited users you have chosen;</li><li><em>private</em> : in this mode, you have to enter a password and access to the pads will be checked against this password;</li><li><em>public</em> : in this mode, all pads are public, users just need to have the URL address.</li></ul></p><h3>Readonly</h3><p>If you check <em>readonly</em>, all attached pads will stay in their state, and can not be edited. Note that visibility still works in readonly mode.</p><h3>Tags</h3><p>You can attach tags to this element by clicking on the corresponding input field and selecting them one by one.</p><p>To create a new tag, type it and type ENTER key or click on the \'Ok\' button. Once the tag has been added, it will automatically been selected on this form.</p><p>You can remove a tag by clicking on the cross located on the right.</p>',
     EDIT: 'Edit',
     EDIT_GROUP: 'Edit a group',
     VIEW: 'View',

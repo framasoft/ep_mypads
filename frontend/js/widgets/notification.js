@@ -27,6 +27,7 @@
 */
 
 module.exports = (function () {
+  'use strict';
   // Global dependencies
   var m = require('mithril');
   // Local dependencies

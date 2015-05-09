@@ -32,7 +32,7 @@ module.exports = (function () {
   var conf = require('../configuration.js');
   var LANG = conf.LANG;
   var auth = require('../auth.js');
-  var notif = require('./notification.js');
+  var notif = require('../widgets/notification.js');
 
   var layout = {};
 

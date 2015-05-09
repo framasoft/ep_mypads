@@ -9,11 +9,31 @@ section.user {
 section.user label { width: 100%; }
 section.user input, section.user select  { width: 95%; }
 section.user i { width: 5%; }
+div.tag input { width: 85%; }
+div.tag button.ok {
+  width: 10%;
+  padding: 0.6em;
+  margin-top: 0.3em;
+  font-weight: bold;
+}
 
 section.user input[type=submit] {
   text-transform: uppercase;
   margin-left: 50%;
   width: 50%;
+}
+
+div.tag ul {
+  list-style-type: none;
+  width: 100%;
+}
+
+div.tag ul li {
+  display: inline;
+}
+
+div.tag label {
+  clear: left;
 }
 
 /* Tablet and Up */
@@ -30,6 +50,7 @@ section.user input[type=submit] {
 
   section.user label { width: 50%; }
   section.user input, section.user select { width: 45%; }
+  div.tag input { width: 35%; }
 }
 
 section.user > h2 { color: #a15014; }

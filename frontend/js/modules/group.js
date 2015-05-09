@@ -95,10 +95,9 @@ module.exports = (function () {
         m('span', GROUP.TAGS.TITLE),
         m('i.tooltip.icon-info-circled', { 'data-msg': GROUP.TAGS.HELP })
       ]),
-      m('ul', [
-        m('li', [ m('button', 'tag1') ]),
-        m('li', [ m('button', 'tag2') ])
-      ])
+      m('ul', ld.map(model.tags(), function (t) {
+        return m('li', [ m('button', t) ]);
+      }))
     ]);
   };
 
@@ -140,10 +139,7 @@ module.exports = (function () {
       ]),
       m('footer.group.block-group', [
         m('button.block', GROUP.BOOKMARK),
-        m('ul.block', [
-          m('li', 'tag4'),
-          m('li', 'tag3')
-        ])
+        m('ul.block', ld.map(g.tags, function (t) { return m('li', t); }))
       ])
     ]);
   };

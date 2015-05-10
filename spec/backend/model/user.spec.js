@@ -101,6 +101,9 @@
             expect(u.lastname).toBe('Lewis');
             expect(ld.isString(u.organization)).toBeTruthy();
             expect((ld.isArray(u.groups) && ld.isEmpty(u.groups))).toBeTruthy();
+            expect(ld.isObject(u.bookmarks)).toBeTruthy();
+            expect(ld.isArray(u.bookmarks.groups)).toBeTruthy();
+            expect(ld.isArray(u.bookmarks.pads)).toBeTruthy();
             expect(ld.includes(ld.values(user.ids), u._id)).toBeTruthy();
             expect((user.ids[u.login])).toBe(u._id);
             done();
@@ -189,7 +192,8 @@
               password: 'principalMusso',
               email: 'mik@randall.com',
               firstname: 'Michael',
-              lastname: 'Randall'
+              lastname: 'Randall',
+              bookmarks: { groups: ['someid:xxxxx', 'anotherid:xxx'], pads: [] }
             },
               function (err, u) {
                 expect(err).toBeNull();
@@ -199,7 +203,7 @@
                 expect(u.lastname).toBe('Randall');
                 expect(ld.isArray(u.groups)).toBeTruthy();
                 expect(ld.first(u.groups)).toBe(g._id);
-                expect(user.ids.mikey).toBe(u._id);
+                expect(ld.first(u.bookmarks.groups)).toBe('someid:xxxxx');
                 done();
               }
             );

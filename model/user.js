@@ -189,6 +189,12 @@ module.exports = (function () {
     }, {});
     u.email = (ld.isEmail(p.email)) ? p.email : '';
     u.groups = [];
+    if (ld.isObject(p.bookmarks) &&
+      ld.every([p.bookmarks.groups, p.bookmarks.pads], ld.isArray)) {
+      u.bookmarks = p.bookmarks;
+    } else {
+      u.bookmarks = { groups: [], pads: [] };
+    }
     return ld.assign({ _id: p._id, login: p.login, password: p.password }, u);
   };
 
@@ -340,6 +346,7 @@ module.exports = (function () {
   *   - optional `firstname` string
   *   - optional `lastname` string
   *   - optional `organization` string
+  *   - optional `bookmarks` JS object, default to { groups: [], pads: [] }
   *
   * - a classic `callback` function returning *Error* if error, *null* otherwise
   *   and the user object

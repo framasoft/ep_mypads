@@ -111,6 +111,7 @@ module.exports = (function () {
   config.URLS.LOGOUT = config.URLS.AUTH + '/logout';
   config.URLS.CHECK = config.URLS.AUTH + '/check';
   config.URLS.USER = config.URLS.BASE + '/user';
+  config.URLS.USERMARK = config.URLS.USER + '/mark';
   config.URLS.GROUP = config.URLS.BASE + '/group';
   config.SERVER = m.prop();
   // FIXME : tmp to EN only
@@ -779,10 +780,12 @@ module.exports = (function () {
         user.bookmarks.groups.push(gid);
       }
       m.request({
-        url: conf.URLS.USER + '/' + u().login,
-        method: 'PUT',
-        data: u()
-      }).then(function (resp) { auth.userInfo(resp.value); }, errfn);
+        url: conf.URLS.USERMARK,
+        method: 'POST',
+        data: { type: 'groups', key: gid }
+      }).then(function (resp) {
+        notif.success({ body: GROUP.MARK_SUCCESS });
+      }, errfn);
     };
 
     return c;
@@ -2326,6 +2329,7 @@ module.exports = {
     REMOVE: 'Remove',
     BOOKMARK: 'Bookmark',
     UNMARK: 'Unmark',
+    MARK_SUCCESS: 'Marking successfully',
     SEARCH: {
       TITLE: 'Search',
       TYPE: 'Type here',

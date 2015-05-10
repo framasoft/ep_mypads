@@ -70,10 +70,12 @@ module.exports = (function () {
         user.bookmarks.groups.push(gid);
       }
       m.request({
-        url: conf.URLS.USER + '/' + u().login,
-        method: 'PUT',
-        data: u()
-      }).then(function (resp) { auth.userInfo(resp.value); }, errfn);
+        url: conf.URLS.USERMARK,
+        method: 'POST',
+        data: { type: 'groups', key: gid }
+      }).then(function (resp) {
+        notif.success({ body: GROUP.MARK_SUCCESS });
+      }, errfn);
     };
 
     return c;

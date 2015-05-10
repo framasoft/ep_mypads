@@ -91,6 +91,7 @@ module.exports = {
     REMOVE: 'Remove',
     BOOKMARK: 'Bookmark',
     UNMARK: 'Unmark',
+    MARK_SUCCESS: 'Marking successfully',
     SEARCH: {
       TITLE: 'Search',
       TYPE: 'Type here',

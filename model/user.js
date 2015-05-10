@@ -189,12 +189,7 @@ module.exports = (function () {
     }, {});
     u.email = (ld.isEmail(p.email)) ? p.email : '';
     u.groups = [];
-    if (ld.isObject(p.bookmarks) &&
-      ld.every([p.bookmarks.groups, p.bookmarks.pads], ld.isArray)) {
-      u.bookmarks = p.bookmarks;
-    } else {
-      u.bookmarks = { groups: [], pads: [] };
-    }
+    u.bookmarks = { groups: [], pads: [] };
     return ld.assign({ _id: p._id, login: p.login, password: p.password }, u);
   };
 
@@ -346,14 +341,13 @@ module.exports = (function () {
   *   - optional `firstname` string
   *   - optional `lastname` string
   *   - optional `organization` string
-  *   - optional `bookmarks` JS object, default to { groups: [], pads: [] }
   *
   * - a classic `callback` function returning *Error* if error, *null* otherwise
   *   and the user object
   *
   * It takes care of updating correcly the `user.ids` in-memory index.
-  * `groups` array can't be fixed here but will be retrieved from database in
-  * case of update.
+  * `groups` array and `bookmarks` object can't be fixed here but will be
+  * retrieved from database in case of update.
   */
 
   user.set = function (params, callback) {
@@ -367,6 +361,7 @@ module.exports = (function () {
         user.get(u.login, function (err, dbuser) {
           if (err) { return callback(err); }
           u.groups = dbuser.groups;
+          u.bookmarks = dbuser.bookmarks;
           user.fn.genPassword(dbuser, u, function (err, u) {
             if (err) { return callback(err); }
             user.fn.set(u, callback);
@@ -401,6 +396,42 @@ module.exports = (function () {
   *  *true* . It takes mandatory `login` string and `callback` function.
   */
   user.del = ld.partial(user.fn.getDel, true);
+
+  /**
+  * ### mark
+  *
+  * This asynchronous function toggles bookmark from `bookmarks` user field.
+  * It takes :
+  *
+  * - `login` string
+  * - `type` field, for example *groups*
+  * - `key `database unique *identifier* for model, at the moment *groups* or
+  *   *pads*, which existence will be checked with `common.checkExistence`
+  * - `callback` function, called with *error* or *null*
+  */
+
+  user.mark = function (login, type, key, callback) {
+    if (!ld.includes(['pads', 'groups'], type)) {
+      throw new TypeError('type must be either pads or groups');
+    }
+    user.get(login, function (err, u) {
+      if (err) { return callback(err); }
+      var p = (type === 'pads') ? storage.DBPREFIX.PAD : storage.DBPREFIX.GROUP;
+      common.checkExistence(p + key, function (err, res) {
+        if (err) { return callback(err); }
+        if (!res) { return callback(new Error('bookmark id not found')); }
+        if (ld.includes(u.bookmarks[type], key)) {
+          ld.pull(u.bookmarks[type], key);
+        } else {
+          u.bookmarks[type].push(key);
+        }
+        user.fn.set(u, function (err) {
+          if (err) { return callback(err); }
+          callback(null);
+        });
+      });
+    });
+  };
 
   /**
   * ## lodash mixins

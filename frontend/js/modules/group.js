@@ -33,7 +33,9 @@ module.exports = (function () {
   // Local dependencies
   var conf = require('../configuration.js');
   var GROUP = conf.LANG.GROUP;
+  var notif = require('../widgets/notification.js');
   var auth = require('../auth.js');
+  var u = auth.userInfo;
   var layout = require('./layout.js');
   var model = require('../model/group.js');
 
@@ -50,7 +52,31 @@ module.exports = (function () {
       return m.route('/login');
     }
     if (ld.isEmpty(model.data())) { model.fetch(); }
-    return {};
+    var c = {};
+
+    /**
+    * ### mark
+    *
+    * `mark` function takes a group object and adds or removes it from the
+    * bookmarks of the current user.
+    */
+
+    c.mark = function (gid) {
+      var user = u();
+      var errfn = function (err) { return notif.error({ body: err.error }); };
+      if (ld.includes(user.bookmarks.groups, gid)) {
+        ld.pull(user.bookmarks.groups, gid);
+      } else {
+        user.bookmarks.groups.push(gid);
+      }
+      m.request({
+        url: conf.URLS.USER + '/' + u().login,
+        method: 'PUT',
+        data: u()
+      }).then(function (resp) { auth.userInfo(resp.value); }, errfn);
+    };
+
+    return c;
   };
 
   /**
@@ -138,7 +164,15 @@ module.exports = (function () {
         m('dd.block', ld.size(g.pads))
       ]),
       m('footer.group.block-group', [
-        m('button.block', GROUP.BOOKMARK),
+        m('button.block', {
+          onclick: c.mark.bind(c, g._id)
+          }, (function () {
+            if (ld.includes(u().bookmarks.groups, g._id)) {
+              return GROUP.UNMARK;
+            } else {
+              return GROUP.BOOKMARK;
+            }
+        })()),
         m('ul.block', ld.map(g.tags, function (t) { return m('li', t); }))
       ])
     ]);

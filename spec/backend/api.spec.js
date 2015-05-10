@@ -573,7 +573,6 @@
             rq.put(userRoute + '/mikey', b, function () {
               b.body.login = 'mike';
               rq.put(userRoute + '/mikey', b, function (err, resp, body) {
-                console.log(body);
                 expect(resp.statusCode).toBe(200);
                 expect(body.success).toBeTruthy();
                 expect(body.key).toBe('mikey');
@@ -609,6 +608,53 @@
               expect(body.value.firstname).toBe('Parker');
               expect(ld.isArray(body.value.groups)).toBeTruthy();
               done();
+            });
+          }
+        );
+
+      });
+
+      describe('user.mark POST', function () {
+
+        it('should return error when arguments are not as expected',
+          function (done) {
+            rq.post(userRoute + '/mark', function (err, resp, body) {
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('must be either pads or groups');
+              done();
+            });
+          }
+        );
+
+        it('will return an error if the bookmark id does not exist',
+          function (done) {
+            var b = { body: { type: 'pads', key:'xxx' } };
+            rq.post(userRoute + '/mark', b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(404);
+              expect(body.error).toMatch('bookmark id not found');
+              done();
+            });
+          }
+        );
+
+        it('should mark or unmark successfully otherwise',
+          function (done) {
+            rq.get(userRoute + '/guest', function (err, resp, body) {
+              var b = {
+                body: {
+                  name: 'group1',
+                  admin: body.value._id,
+                  visibility: 'restricted'
+                }
+              };
+              rq.post(route + 'group', b, function (err, resp, body) {
+                b = { body: { type: 'groups', key: body.value._id } };
+                rq.post(userRoute + '/mark', b, function (err, resp, body) {
+                  expect(resp.statusCode).toBe(200);
+                  expect(body.success).toBeTruthy();
+                  done();
+                });
+              });
             });
           }
         );

@@ -375,6 +375,28 @@ module.exports = (function () {
 
     app.delete(userRoute + '/:key', fn.ensureAuthentificated,
       ld.partial(fn.del, user.del));
+
+    /**
+    * POST method : `user.mark` with user session login, bookmark type and key
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/user/mark
+    */
+
+    app.post(userRoute + '/mark', fn.ensureAuthentificated,
+      function (req, res) {
+        try {
+          user.mark(req.session.login, req.body.type, req.body.key,
+            function (err) {
+              if (err) { return res.status(404).send({ error: err.message }); }
+              res.send({ success: true });
+            }
+          );
+        }
+        catch (e) { res.status(400).send({ error: e.message }); }
+      }
+    );
+
   };
 
   /**

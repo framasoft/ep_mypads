@@ -184,7 +184,7 @@
 
       it('should allow setting of an existing user, and gets back its groups',
         function (done) {
-          group.set({ name: 'g1', admin: mikey._id }, function (err, g) {
+          group.set({ name: 'g1', admin: mikey._id }, function (err) {
             expect(err).toBeNull();
             user.set({
               _id: mikey._id,
@@ -192,8 +192,7 @@
               password: 'principalMusso',
               email: 'mik@randall.com',
               firstname: 'Michael',
-              lastname: 'Randall',
-              bookmarks: { groups: ['someid:xxxxx', 'anotherid:xxx'], pads: [] }
+              lastname: 'Randall'
             },
               function (err, u) {
                 expect(err).toBeNull();
@@ -202,8 +201,7 @@
                 expect(u.firstname).toBe('Michael');
                 expect(u.lastname).toBe('Randall');
                 expect(ld.isArray(u.groups)).toBeTruthy();
-                expect(ld.first(u.groups)).toBe(g._id);
-                expect(ld.first(u.bookmarks.groups)).toBe('someid:xxxxx');
+                expect(ld.isObject(u.bookmarks)).toBeTruthy();
                 done();
               }
             );
@@ -308,6 +306,82 @@
         });
       }
     );
+  });
+
+  describe('user mark', function () {
+
+    var parker;
+
+    beforeAll(function (done) {
+      specCommon.reInitDatabase(function () {
+        user.set({
+          login: 'parker',
+          password: 'lovesKubiak',
+          firstname: 'Parker',
+          lastname: 'Lewis'
+        }, function (err, u) {
+          if (err) { console.log(err); }
+          parker = u;
+          done();
+        });
+      });
+    });
+
+    afterAll(specCommon.reInitDatabase);
+
+    it('should throw errors if arguments are not provided as expected',
+      function () {
+        expect(user.mark).toThrow();
+        expect(ld.partial(user.mark, 123)).toThrow();
+        expect(ld.partial(user.mark, 'key')).toThrow();
+        expect(ld.partial(user.mark, 'key', 'badType')).toThrow();
+        expect(ld.partial(user.mark, 'login', 'pads')).toThrow();
+        expect(ld.partial(user.mark, 'login', 'pads', 'id')).toThrow();
+        expect(ld.partial(user.mark, 'login', 'pads', 'id', 'notAFn'))
+          .toThrow();
+      }
+    );
+
+    it('should return an Error if the user is not found', function (done) {
+      user.mark('inexistent', 'pads', 'pid', function (err) {
+        expect(ld.isError(err)).toBeTruthy();
+        expect(err).toMatch('user not found');
+        done();
+      });
+    });
+
+    it('should return an Error if the bookmark id is not found',
+      function (done) {
+        user.mark('parker', 'pads', 'pid', function (err) {
+          expect(ld.isError(err)).toBeTruthy();
+          expect(err).toMatch('bookmark id not found');
+          done();
+        });
+      }
+    );
+
+    it('should accept bookmarking and unmarking otherwise', function (done) {
+      group.set({ name: 'g1', admin: parker._id }, function (err, g) {
+        user.mark('parker', 'groups', g._id, function (err) {
+          expect(err).toBeNull();
+          user.get('parker', function (err, u) {
+            expect(err).toBeNull();
+            expect(ld.size(u.bookmarks.groups)).toBe(1);
+            expect(ld.first(u.bookmarks.groups)).toBe(g._id);
+            expect(ld.isEmpty(u.bookmarks.pads)).toBeTruthy();
+            user.mark('parker', 'groups', g._id, function (err) {
+              expect(err).toBeNull();
+              user.get('parker', function (err, u) {
+                expect(err).toBeNull();
+                expect(ld.isEmpty(u.bookmarks.groups)).toBeTruthy();
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+
   });
 
   describe('user functions', function() {

@@ -807,6 +807,26 @@ module.exports = (function () {
       c.computeGroups();
     };
 
+    /**
+    * #### filterVisibility
+    *
+    * `filterVisibility` is similar to `filterTag` but works exact given
+    * `visibility` string.
+    */
+
+    c.filterVisibility = function (visibility) {
+      if (c.filterVisibVal === visibility) {
+        c.filters.visibility = false;
+        c.filterVisibVal = false;
+      } else {
+        c.filterVisibVal = visibility;
+        c.filters.visibility = function (g) {
+          return (g.visibility === visibility);
+        };
+      }
+      c.computeGroups();
+    };
+
     /*
     * #### filterSearch
     *
@@ -953,6 +973,17 @@ module.exports = (function () {
               onclick: ld.partial(c.filterToggle, 'users') 
             },
           GROUP.FILTERS.USER)
+        ]),
+        m('li', [
+          (function () {
+            return ld.map(['restricted', 'private', 'public'], function (f) {
+              return m('button',
+                {
+                  class: 'user' + ((c.filterVisibVal === f) ? ' active' : ''),
+                  onclick: ld.partial(c.filterVisibility, f) 
+                }, GROUP.GROUPS + ' ' + GROUP.FIELD[f.toUpperCase()]);
+            });
+          })()
         ])
       ])
     ]);

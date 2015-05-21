@@ -157,6 +157,10 @@ section.group-aside section.filter ul li > button:focus, section.group-aside sec
   background-color: #8157c2;
 }
 
+section.group-aside section.filter ul li > button.active, section.group-aside section.tag li button.active {
+  background-color: #ab2a0e;
+}
+
 section.group-aside section.tag ul { list-style-type : none; padding: 0; }
 section.group-aside section.tag li { display: inline; }
 section.group-aside section.tag li button {

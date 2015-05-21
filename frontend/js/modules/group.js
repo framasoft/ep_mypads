@@ -51,8 +51,84 @@ module.exports = (function () {
     if (!auth.isAuthenticated()) {
       return m.route('/login');
     }
-    if (ld.isEmpty(model.data())) { model.fetch(); }
-    var c = {};
+    var c = { groups: {} };
+
+    /**
+    * ### filters
+    *
+    * `filters` is an object of active functions to apply to the current list of
+    * groups. Keys are composed with filter names, being able to remove it if
+    * necessary.
+    */
+    c.filters = { admins: false, users: false };
+
+    /**
+    * #### filterToggle
+    *
+    * `filterToggle` is a function taking a `field` string object, key of
+    * `c.filters` for toggling filter, accoding to group `field` (for instance
+    * used for admins and users).
+    */
+
+    c.filterToggle = function (field) { 
+      if (!c.filters[field]) {
+        c.filters[field] = function (g) {
+          return ld.includes(g[field], u()._id);
+        }; 
+      } else {
+        c.filters[field] = false;
+      }
+      c.computeGroups();
+    };
+
+    /**
+    * #### filterTag
+    *
+    * `filterTag` is similar to `filterToggle` but works with several tags, as
+    * taken as argument.
+    */
+
+    c.filterTag = function (tag) {
+      if (!c.filters[tag]) {
+        c.filters[tag] = function (g) { return ld.includes(g.tags, tag); };
+      } else {
+        c.filters[tag] = false;
+      }
+      c.computeGroups();
+    };
+
+    /**
+    * ### computeGroups
+    *
+    * `computeGroups` is an internal function that computed groups according to
+    * list view needs. It :
+    *
+    * - filters according to `c.filters`
+    * - takes model.data() and creates a new object with separate bookmared,
+    *   archived and normal groups
+    * - sets `c.groups` for usage in view.
+    */
+
+    c.computeGroups = function () {
+      c.groups = ld(model.data()).values().sortBy('name').value();
+      var userGroups = u().bookmarks.groups;
+      c.groups = ld.reduce(c.groups, function (memo, g) {
+        for (var k in c.filters) {
+          if (c.filters[k]) {
+            if (!c.filters[k](g)) { return memo; }
+          }
+        }
+        if (ld.includes(userGroups, g._id)) {
+          memo.bookmarked.push(g);
+        } else if (g.readonly) {
+          memo.archived.push(g);
+        } else {
+          memo.normal.push(g);
+        }
+        return memo;
+      }, { bookmarked: [], archived: [], normal: [] });
+    };
+
 
     /**
     * ### mark
@@ -73,11 +149,20 @@ module.exports = (function () {
         url: conf.URLS.USERMARK,
         method: 'POST',
         data: { type: 'groups', key: gid }
-      }).then(function (resp) {
+      }).then(function () {
+        c.computeGroups();
         notif.success({ body: GROUP.MARK_SUCCESS });
       }, errfn);
     };
 
+    // Bootstrapping
+    if (ld.isEmpty(model.data())) {
+      model.fetch(c.computeGroups);
+    } else {
+      c.computeGroups();
+    }
+
+    window.c = c;
     return c;
   };
 
@@ -104,27 +189,48 @@ module.exports = (function () {
     ]);
   };
 
-  view.filters = function () {
+  view.filters = function (c) {
     return m('section.filter', [
       m('h3', [
         m('span', GROUP.FILTERS.TITLE),
         m('i.tooltip.icon-info-circled', { 'data-msg': GROUP.FILTERS.HELP })
       ]),
       m('ul', [
-        m('li', [ m('button.admin', GROUP.FILTERS.ADMIN) ]),
-        m('li', [ m('button.user', GROUP.FILTERS.USER) ])
+        m('li', [
+          m('button',
+            {
+              class: 'admin' + (c.filters.admins ? ' active' : ''),
+              onclick: ld.partial(c.filterToggle, 'admins') 
+            },
+            GROUP.FILTERS.ADMIN)
+        ]),
+        m('li', [
+          m('button',
+            {
+              class: 'user' + (c.filters.users ? ' active' : ''),
+              onclick: ld.partial(c.filterToggle, 'users') 
+            },
+          GROUP.FILTERS.USER)
+        ])
       ])
     ]);
   };
 
-  view.tags = function () {
+  view.tags = function (c) {
     return m('section.tag', [
       m('h3', [
         m('span', GROUP.TAGS.TITLE),
         m('i.tooltip.icon-info-circled', { 'data-msg': GROUP.TAGS.HELP })
       ]),
       m('ul', ld.map(model.tags(), function (t) {
-        return m('li', [ m('button', t) ]);
+        return m('li', [
+          m('button',
+            {
+              class: (c.filters[t] ? 'active': ''),
+              onclick: ld.partial(c.filterTag, t)
+            },
+            t)
+        ]);
       }))
     ]);
   };
@@ -180,34 +286,12 @@ module.exports = (function () {
     ]);
   };
 
-  view.groups = function (c) {
-    var _groups = ld(model.data()).values().sortBy('name').value();
-    return m('ul.group', ld.map(_groups, ld.partial(view.group, c)));
+  view._groups = function (c, type) {
+    return m('ul.group', ld.map(c.groups[type], ld.partial(view.group, c)));
   };
-
-  view.bookmarked = function (c) {
-    var sample = {
-      _id: 'xxx',
-      name: 'Sample',
-      visibility: 'restricted',
-      pads: [1, 2, 3] 
-    };
-    return m('ul.group', [
-      view.group(c, sample),
-      view.group(c, sample),
-      view.group(c, sample),
-      view.group(c, sample),
-      view.group(c, sample),
-      view.group(c, sample),
-      view.group(c, sample),
-      view.group(c, sample),
-      view.group(c, sample),
-      view.group(c, sample),
-      view.group(c, sample),
-    ]);
-  };
-
-  view.archived = view.bookmarked;
+  view.groups = ld.partialRight(view._groups, 'normal');
+  view.bookmarked = ld.partialRight(view._groups, 'bookmarked');
+  view.archived = ld.partialRight(view._groups, 'archived');
 
   view.main = function (c) {
     return m('section', { class: 'block-group group' }, [

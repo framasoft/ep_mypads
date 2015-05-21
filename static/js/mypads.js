@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/home/fabien/bak/code/node/ep_mypads/frontend.js":[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/mnt/share/fabien/bak/code/node/ep_mypads/frontend.js":[function(require,module,exports){
 /**
 *  # Frontend Entry Point
 *
@@ -33,7 +33,7 @@
   conf.init(route.init);
 }).call(this);
 
-},{"./frontend/js/configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","./frontend/js/route.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/route.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js":[function(require,module,exports){
+},{"./frontend/js/configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","./frontend/js/route.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/route.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js":[function(require,module,exports){
 /**
 *  # Authentification module
 *
@@ -70,7 +70,7 @@ module.exports = (function () {
   return auth;
 }).call(this);
 
-},{"mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js":[function(require,module,exports){
+},{"mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js":[function(require,module,exports){
 /**
 *  # Configuration
 *
@@ -140,7 +140,7 @@ module.exports = (function () {
   return config;
 }).call(this);
 
-},{"../l10n/en.js":"/home/fabien/bak/code/node/ep_mypads/frontend/l10n/en.js","./auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js":[function(require,module,exports){
+},{"../l10n/en.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/l10n/en.js","./auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js":[function(require,module,exports){
 /**
 *  # Form helpers functions
 *
@@ -273,7 +273,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js":[function(require,module,exports){
+},{"mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js":[function(require,module,exports){
 /**
 *  # Group List module
 *
@@ -336,7 +336,7 @@ module.exports = (function () {
   return model;
 }).call(this);
 
-},{"../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js":[function(require,module,exports){
+},{"../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js":[function(require,module,exports){
 /**
 *  # Routing module
 *
@@ -368,7 +368,7 @@ module.exports = (function () {
 module.exports = (function () {
 }).call(this);
 
-},{}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js":[function(require,module,exports){
+},{}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js":[function(require,module,exports){
 /**
 *  # Group form module
 *
@@ -637,7 +637,7 @@ module.exports = (function () {
   return gf;
 }).call(this);
 
-},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../model/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","../widgets/tag.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/tag.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","../widgets/tag.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/tag.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js":[function(require,module,exports){
 /**
 *  # Group remove module
 *
@@ -707,7 +707,7 @@ module.exports = (function () {
   return remove;
 }).call(this);
 
-},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js":[function(require,module,exports){
 /**
 *  # Group List module
 *
@@ -761,8 +761,84 @@ module.exports = (function () {
     if (!auth.isAuthenticated()) {
       return m.route('/login');
     }
-    if (ld.isEmpty(model.data())) { model.fetch(); }
-    var c = {};
+    var c = { groups: {} };
+
+    /**
+    * ### filters
+    *
+    * `filters` is an object of active functions to apply to the current list of
+    * groups. Keys are composed with filter names, being able to remove it if
+    * necessary.
+    */
+    c.filters = { admins: false, users: false };
+
+    /**
+    * #### filterToggle
+    *
+    * `filterToggle` is a function taking a `field` string object, key of
+    * `c.filters` for toggling filter, accoding to group `field` (for instance
+    * used for admins and users).
+    */
+
+    c.filterToggle = function (field) { 
+      if (!c.filters[field]) {
+        c.filters[field] = function (g) {
+          return ld.includes(g[field], u()._id);
+        }; 
+      } else {
+        c.filters[field] = false;
+      }
+      c.computeGroups();
+    };
+
+    /**
+    * #### filterTag
+    *
+    * `filterTag` is similar to `filterToggle` but works with several tags, as
+    * taken as argument.
+    */
+
+    c.filterTag = function (tag) {
+      if (!c.filters[tag]) {
+        c.filters[tag] = function (g) { return ld.includes(g.tags, tag); };
+      } else {
+        c.filters[tag] = false;
+      }
+      c.computeGroups();
+    };
+
+    /**
+    * ### computeGroups
+    *
+    * `computeGroups` is an internal function that computed groups according to
+    * list view needs. It :
+    *
+    * - filters according to `c.filters`
+    * - takes model.data() and creates a new object with separate bookmared,
+    *   archived and normal groups
+    * - sets `c.groups` for usage in view.
+    */
+
+    c.computeGroups = function () {
+      c.groups = ld(model.data()).values().sortBy('name').value();
+      var userGroups = u().bookmarks.groups;
+      c.groups = ld.reduce(c.groups, function (memo, g) {
+        for (var k in c.filters) {
+          if (c.filters[k]) {
+            if (!c.filters[k](g)) { return memo; }
+          }
+        }
+        if (ld.includes(userGroups, g._id)) {
+          memo.bookmarked.push(g);
+        } else if (g.readonly) {
+          memo.archived.push(g);
+        } else {
+          memo.normal.push(g);
+        }
+        return memo;
+      }, { bookmarked: [], archived: [], normal: [] });
+    };
+
 
     /**
     * ### mark
@@ -783,11 +859,20 @@ module.exports = (function () {
         url: conf.URLS.USERMARK,
         method: 'POST',
         data: { type: 'groups', key: gid }
-      }).then(function (resp) {
+      }).then(function () {
+        c.computeGroups();
         notif.success({ body: GROUP.MARK_SUCCESS });
       }, errfn);
     };
 
+    // Bootstrapping
+    if (ld.isEmpty(model.data())) {
+      model.fetch(c.computeGroups);
+    } else {
+      c.computeGroups();
+    }
+
+    window.c = c;
     return c;
   };
 
@@ -814,27 +899,48 @@ module.exports = (function () {
     ]);
   };
 
-  view.filters = function () {
+  view.filters = function (c) {
     return m('section.filter', [
       m('h3', [
         m('span', GROUP.FILTERS.TITLE),
         m('i.tooltip.icon-info-circled', { 'data-msg': GROUP.FILTERS.HELP })
       ]),
       m('ul', [
-        m('li', [ m('button.admin', GROUP.FILTERS.ADMIN) ]),
-        m('li', [ m('button.user', GROUP.FILTERS.USER) ])
+        m('li', [
+          m('button',
+            {
+              class: 'admin' + (c.filters.admins ? ' active' : ''),
+              onclick: ld.partial(c.filterToggle, 'admins') 
+            },
+            GROUP.FILTERS.ADMIN)
+        ]),
+        m('li', [
+          m('button',
+            {
+              class: 'user' + (c.filters.users ? ' active' : ''),
+              onclick: ld.partial(c.filterToggle, 'users') 
+            },
+          GROUP.FILTERS.USER)
+        ])
       ])
     ]);
   };
 
-  view.tags = function () {
+  view.tags = function (c) {
     return m('section.tag', [
       m('h3', [
         m('span', GROUP.TAGS.TITLE),
         m('i.tooltip.icon-info-circled', { 'data-msg': GROUP.TAGS.HELP })
       ]),
       m('ul', ld.map(model.tags(), function (t) {
-        return m('li', [ m('button', t) ]);
+        return m('li', [
+          m('button',
+            {
+              class: (c.filters[t] ? 'active': ''),
+              onclick: ld.partial(c.filterTag, t)
+            },
+            t)
+        ]);
       }))
     ]);
   };
@@ -890,34 +996,12 @@ module.exports = (function () {
     ]);
   };
 
-  view.groups = function (c) {
-    var _groups = ld(model.data()).values().sortBy('name').value();
-    return m('ul.group', ld.map(_groups, ld.partial(view.group, c)));
+  view._groups = function (c, type) {
+    return m('ul.group', ld.map(c.groups[type], ld.partial(view.group, c)));
   };
-
-  view.bookmarked = function (c) {
-    var sample = {
-      _id: 'xxx',
-      name: 'Sample',
-      visibility: 'restricted',
-      pads: [1, 2, 3] 
-    };
-    return m('ul.group', [
-      view.group(c, sample),
-      view.group(c, sample),
-      view.group(c, sample),
-      view.group(c, sample),
-      view.group(c, sample),
-      view.group(c, sample),
-      view.group(c, sample),
-      view.group(c, sample),
-      view.group(c, sample),
-      view.group(c, sample),
-      view.group(c, sample),
-    ]);
-  };
-
-  view.archived = view.bookmarked;
+  view.groups = ld.partialRight(view._groups, 'normal');
+  view.bookmarked = ld.partialRight(view._groups, 'bookmarked');
+  view.archived = ld.partialRight(view._groups, 'archived');
 
   view.main = function (c) {
     return m('section', { class: 'block-group group' }, [
@@ -953,7 +1037,7 @@ module.exports = (function () {
   return group;
 }).call(this);
 
-},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js":[function(require,module,exports){
 /**
 *  # Home module
 *
@@ -1004,7 +1088,7 @@ module.exports = (function () {
   return home;
 }).call(this);
 
-},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js":[function(require,module,exports){
 /**
 *  # Layout
 *
@@ -1148,7 +1232,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js":[function(require,module,exports){
 /**
 *  # Login module
 *
@@ -1268,7 +1352,7 @@ module.exports = (function () {
   return login;
 }).call(this);
 
-},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./user.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./user.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js":[function(require,module,exports){
 /**
 *  # Home module
 *
@@ -1331,7 +1415,7 @@ module.exports = (function () {
   return logout;
 }).call(this);
 
-},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js":[function(require,module,exports){
 /**
 *  # Subscription module
 *
@@ -1561,7 +1645,7 @@ module.exports = (function () {
   return subscribe;
 }).call(this);
 
-},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./user.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./user.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js":[function(require,module,exports){
 /**
 *  # User module
 *
@@ -1855,7 +1939,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/route.js":[function(require,module,exports){
+},{"../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/route.js":[function(require,module,exports){
 /**
 *  # Routing module
 *
@@ -1925,7 +2009,7 @@ module.exports = (function () {
   return route;
 }).call(this);
 
-},{"./modules/admin.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/group-form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./modules/group-remove.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js","./modules/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/subscribe.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js":[function(require,module,exports){
+},{"./modules/admin.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/group-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./modules/group-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js","./modules/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/subscribe.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js":[function(require,module,exports){
 /**
 *  # Notification module
 *
@@ -2087,7 +2171,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/tag.js":[function(require,module,exports){
+},{"../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/tag.js":[function(require,module,exports){
 
 /**
 *  # Tag field module
@@ -2235,7 +2319,7 @@ module.exports = (function () {
   return tag;
 }).call(this);
 
-},{"../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/l10n/en.js":[function(require,module,exports){
+},{"../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/l10n/en.js":[function(require,module,exports){
 module.exports = {
   GLOBAL: {
     FOOTER: 'Powered by <a href="https://git.framasoft.org/framasoft/ep_mypads">MyPads</a><br>Published under Apache License 2.0',
@@ -2375,7 +2459,7 @@ module.exports = {
   }
 };
 
-},{}],"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js":[function(require,module,exports){
+},{}],"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js":[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -14545,7 +14629,7 @@ module.exports = {
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js":[function(require,module,exports){
+},{}],"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js":[function(require,module,exports){
 var m = (function app(window, undefined) {
 	var OBJECT = "[object Object]", ARRAY = "[object Array]", STRING = "[object String]", FUNCTION = "function";
 	var type = {}.toString;
@@ -15613,4 +15697,4 @@ var m = (function app(window, undefined) {
 if (typeof module != "undefined" && module !== null && module.exports) module.exports = m;
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
-},{}]},{},["/home/fabien/bak/code/node/ep_mypads/frontend.js"]);
+},{}]},{},["/mnt/share/fabien/bak/code/node/ep_mypads/frontend.js"]);

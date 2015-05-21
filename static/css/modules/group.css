@@ -160,6 +160,9 @@ section.group-aside section.filter ul li > button:focus, section.group-aside sec
 section.group-aside section.filter ul li > button.active, section.group-aside section.tag li button.active {
   background-color: #ab2a0e;
 }
+section.group-aside section.filter ul li > button.active:after, section.group-aside section.tag li button.active:after {
+  content: ' ✓';
+}
 
 section.group-aside section.tag ul { list-style-type : none; padding: 0; }
 section.group-aside section.tag li { display: inline; }

@@ -807,6 +807,28 @@ module.exports = (function () {
       c.computeGroups();
     };
 
+    /*
+    * #### filterSearch
+    *
+    * `filterSearch` function checks group *name* and *tags* field with
+    * full-text search pattern `c.search` but only if `c.search` has 3
+    * characters or more.
+    */
+
+    c.search = m.prop('');
+    c.filterSearch = function () {
+      if (c.search().length > 2) {
+        c.filters.search = function (g) {
+          var re = new RegExp(c.search(), 'gi');
+          if (g.name.match(re)) { return true; }
+          return g.tags.toString().match(re);
+        };
+      } else {
+        c.filters.search = false;
+      }
+      c.computeGroups();
+    };
+
     /**
     * ### computeGroups
     *
@@ -883,7 +905,7 @@ module.exports = (function () {
 
   var view = {};
 
-  view.search = function () {
+  view.search = function (c) {
     return m('section.search.block-group', [
       m('h3.block', [
         m('span', GROUP.SEARCH.TITLE),
@@ -893,9 +915,19 @@ module.exports = (function () {
         type: 'search',
         placeholder: GROUP.SEARCH.TYPE,
         minlength: 3,
-        pattern: '.{3}'
+        pattern: '.{3,}',
+        value: c.search(),
+        oninput: m.withAttr('value', c.search),
+        onkeydown: function (e) {
+          if (e.keyCode === 13) { // ENTER
+            e.preventDefault();
+            c.filterSearch();
+          }
+        }
       }),
-      m('button.block', { type: 'button' }, conf.LANG.USER.OK)
+      m('button.block',
+        { type: 'button', onclick: c.filterSearch },
+        conf.LANG.USER.OK)
     ]);
   };
 

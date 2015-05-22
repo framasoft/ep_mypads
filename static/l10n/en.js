@@ -118,6 +118,7 @@ module.exports = {
     PAD: {
       TITLE: 'Title',
       ADMINS: 'Admins',
+      USERS: 'Users',
       VISIBILITY: 'Visibility',
       PADS: 'Pads'
     },

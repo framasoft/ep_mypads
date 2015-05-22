@@ -1044,10 +1044,14 @@ module.exports = (function () {
         ])
       ]),
       m('dl.block-group.group', [
+        m('dt.block', GROUP.PAD.PADS),
+        m('dd.block', ld.size(g.pads)),
         m('dt.block', GROUP.PAD.VISIBILITY),
         m('dd.block', g.visibility),
-        m('dt.block', GROUP.PAD.PADS),
-        m('dd.block', ld.size(g.pads))
+        m('dt.block', GROUP.PAD.ADMINS),
+        m('dd.block', ld.size(g.admins)),
+        m('dt.block', GROUP.PAD.USERS),
+        m('dd.block', ld.size(g.users))
       ]),
       m('footer.group.block-group', [
         m('button.block', {
@@ -2513,6 +2517,7 @@ module.exports = {
     PAD: {
       TITLE: 'Title',
       ADMINS: 'Admins',
+      USERS: 'Users',
       VISIBILITY: 'Visibility',
       PADS: 'Pads'
     },

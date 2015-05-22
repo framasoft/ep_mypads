@@ -212,7 +212,6 @@ module.exports = (function () {
       c.computeGroups();
     }
 
-    window.c = c;
     return c;
   };
 
@@ -335,8 +334,6 @@ module.exports = (function () {
         ])
       ]),
       m('dl.block-group.group', [
-        m('dt.block', GROUP.PAD.ADMINS),
-        m('dd.block', 'xx, yy'),
         m('dt.block', GROUP.PAD.VISIBILITY),
         m('dd.block', g.visibility),
         m('dt.block', GROUP.PAD.PADS),

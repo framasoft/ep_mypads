@@ -144,8 +144,7 @@ module.exports = (function () {
           expect($el.visibility.value).toBe('private');
           expect($el.readonly.checked).toBeFalsy();
           expect($el.password.value).toBe('');
-          $el.readonly.checked = true;
-          $el.readonly.onchange($el.readonly);
+          fill($el.name, 'High School Memories, again');
           window.setTimeout(function () {
             $el.submit.click();
             window.setTimeout(function () {
@@ -155,11 +154,11 @@ module.exports = (function () {
               $notif.click();
               window.setTimeout(done, 100);
             }, 200);
-          }, 100);
+          }, 200);
         });
 
         it('should accept changes and setting a new password', function (done) {
-          expect($el.readonly.checked).toBeTruthy();
+          expect($el.name.value).toBe('High School Memories, again');
           $el.password.value = 'aNewPassWord';
           $el.submit.click();
           window.setTimeout(function () {

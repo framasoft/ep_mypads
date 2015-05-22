@@ -73,7 +73,7 @@ module.exports = (function () {
         window.setTimeout(function () {
           expect($li).toBeDefined();
           expect($li.querySelector('h4').textContent)
-            .toBe('High School Memories');
+            .toBe('High School Memories, again');
           done();
         }, 100);
       });

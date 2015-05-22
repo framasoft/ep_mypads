@@ -30,6 +30,7 @@
   var login = require('./login.spec.js');
   var subscribe = require('./subscribe.spec.js');
   var profile = require('./profile.spec.js');
+  var groupList = require('./group.spec.js');
   var groupForm = require('./group-form.spec.js');
   var groupRemove = require('./group-remove.spec.js');
   var tagWidget = require('./tag-widget.spec.js');
@@ -43,6 +44,7 @@
     login.run(app);
     subscribe.run(app);
     profile.run(app);
+    groupList.run(app);
     groupForm.run(app);
     groupRemove.run(app);
     tagWidget.run(app);

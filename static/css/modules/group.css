@@ -104,6 +104,9 @@ footer.group > ul > li, div.tag > ul > li {
   border-radius: 0.4em;
   cursor: pointer;
 }
+footer.group > ul > li.active {
+  background-color: #ab2a0e;
+}
 
 /* Pads Aside */
 

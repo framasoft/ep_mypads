@@ -773,6 +773,23 @@ module.exports = (function () {
     c.filters = { admins: false, users: false };
 
     /**
+    * #### filterFn
+    *
+    * Private `filterFn` is a function taking :
+    *
+    * - `name` filter for `c.filters` storing
+    * - `cond` expression, for toggling purpose
+    * - `action` function, value for `c.filters[name]` if `cond` is *true*
+    *
+    * It fixes filters according to arguments and calls `computeGroups`.
+    */
+
+    var filterFn = function (name, cond, action) {
+      c.filters[name] = cond ? action : false;
+      c.computeGroups();
+    };
+
+    /**
     * #### filterToggle
     *
     * `filterToggle` is a function taking a `field` string object, key of
@@ -780,15 +797,9 @@ module.exports = (function () {
     * used for admins and users).
     */
 
-    c.filterToggle = function (field) { 
-      if (!c.filters[field]) {
-        c.filters[field] = function (g) {
-          return ld.includes(g[field], u()._id);
-        }; 
-      } else {
-        c.filters[field] = false;
-      }
-      c.computeGroups();
+    c.filterToggle = function (field) {
+      var action = function (g) { return ld.includes(g[field], u()._id); }; 
+      filterFn(field, !c.filters[field], action);
     };
 
     /**
@@ -799,19 +810,16 @@ module.exports = (function () {
     */
 
     c.filterTag = function (tag) {
-      if (!c.filters[tag]) {
-        c.filters[tag] = function (g) { return ld.includes(g.tags, tag); };
-      } else {
-        c.filters[tag] = false;
-      }
-      c.computeGroups();
+      var action = function (g) { return ld.includes(g.tags, tag); };
+      filterFn(tag, !c.filters[tag], action);
     };
 
     /**
     * #### filterVisibility
     *
     * `filterVisibility` is similar to `filterTag` but works exact given
-    * `visibility` string.
+    * `visibility` string and keeps in memory old visibility value because it
+    * should only be one selected at the same time.
     */
 
     c.filterVisibility = function (visibility) {
@@ -1054,7 +1062,12 @@ module.exports = (function () {
               return GROUP.BOOKMARK;
             }
         })()),
-        m('ul.block', ld.map(g.tags, function (t) { return m('li', t); }))
+        m('ul.block', ld.map(g.tags, function (t) {
+          return m('li', {
+            class: (c.filters[t] ? 'active' : ''),
+            onclick: ld.partial(c.filterTag, t)
+          }, t);
+        }))
       ])
     ]);
   };

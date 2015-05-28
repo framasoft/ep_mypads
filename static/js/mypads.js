@@ -309,15 +309,16 @@ module.exports = (function () {
   var conf = require('../configuration.js');
   var notif = require('../widgets/notification.js');
 
-  var model = { data: m.prop([]), tags: m.prop([]) };
+  var model = { data: m.prop({}), pads: m.prop({}), tags: m.prop([]) };
   model.fetch = function (callback) {
     m.request({
       url: conf.URLS.GROUP,
       method: 'GET'
     }).then(
       function (resp) {
-        model.data(resp.value); 
-        var tags = ld(resp.value)
+        model.data(resp.value.groups); 
+        model.pads(resp.value.pads);
+        var tags = ld(resp.value.groups)
           .values()
           .pluck('tags')
           .flatten()
@@ -761,6 +762,9 @@ module.exports = (function () {
     var init = function () {
       var key = m.route.param('key');
       c.group = model.data()[key];
+      c.pads = ld.map(c.group.pads, function (p) {
+        return model.pads()[p];
+      });
     };
 
     if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
@@ -809,7 +813,7 @@ module.exports = (function () {
     if (ld.size(c.group.pads) === 0) {
       return m('p', GROUP.PAD.NONE);
     } else {
-      return m('ul', ld.map(c.group.pads, function (p) { return m('li', p); }));
+      return m('ul', ld.map(c.pads, function (p) { return m('li', p.name); }));
     }
   };
 

@@ -406,8 +406,10 @@
         expect(group.getByUser).toThrow();
         expect(ld.partial(group.getByUser, 123)).toThrow();
         expect(ld.partial(group.getByUser, gadm)).toThrow();
-        expect(ld.partial(group.getByUser, gadm, 'notAFunc')).toThrow();
-        expect(ld.partial(group.getByUser, { login: 'inexistant' },
+        expect(ld.partial(group.getByUser, gadm, 'notABool', function () {}))
+          .toThrow();
+        expect(ld.partial(group.getByUser, gadm, false, 'notAFunc')).toThrow();
+        expect(ld.partial(group.getByUser, { login: 'inexistant' }, false,
           function () {})).toThrowError(/is invalid/);
       });
 
@@ -415,13 +417,35 @@
         user.get(gadm.login, function (err, user) {
           if (err) { console.log(err); }
           gadm = user;
-          group.getByUser(gadm, function (err, groups) {
+          group.getByUser(gadm, false, function (err, groups) {
             expect(err).toBeNull();
             expect(ld.isObject(groups)).toBeTruthy();
             var key = gadm.groups[0];
             expect(groups[key].name).toBe('college');
             expect(groups[key].visibility).toBe('private');
             expect(groups[key].readonly).toBeTruthy();
+            done();
+          });
+        });
+      });
+
+      it('should return groups and pads withPads to true', function (done) {
+        user.get(gadm.login, function (err, user) {
+          if (err) { console.log(err); }
+          gadm = user;
+          group.getByUser(gadm, true, function (err, groupsAndPads) {
+            expect(err).toBeNull();
+            expect(ld.isObject(groupsAndPads)).toBeTruthy();
+            var groups = groupsAndPads.groups;
+            var pads = groupsAndPads.pads;
+            expect(ld.isObject(groups)).toBeTruthy();
+            expect(ld.isObject(pads)).toBeTruthy();
+            var key = gadm.groups[0];
+            expect(groups[key].name).toBe('college');
+            expect(groups[key].visibility).toBe('private');
+            expect(groups[key].readonly).toBeTruthy();
+            var pad = ld.first(ld.values(pads));
+            expect(pad.name).toBe('pad1');
             done();
           });
         });

@@ -51,6 +51,9 @@ module.exports = (function () {
     var init = function () {
       var key = m.route.param('key');
       c.group = model.data()[key];
+      c.pads = ld.map(c.group.pads, function (p) {
+        return model.pads()[p];
+      });
     };
 
     if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
@@ -99,7 +102,7 @@ module.exports = (function () {
     if (ld.size(c.group.pads) === 0) {
       return m('p', GROUP.PAD.NONE);
     } else {
-      return m('ul', ld.map(c.group.pads, function (p) { return m('li', p); }));
+      return m('ul', ld.map(c.pads, function (p) { return m('li', p.name); }));
     }
   };
 

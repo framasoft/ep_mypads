@@ -719,15 +719,19 @@
       });
 
       describe('group.getByUSer GET', function () {
-        it('should return groups', function (done) {
+
+        it('should return groups and pads', function (done) {
           rq.get(groupRoute, function (err, resp, body) {
             expect(err).toBeNull();
             expect(resp.statusCode).toBe(200);
             expect(ld.isObject(body.value)).toBeTruthy();
-            var key = ld.first(ld.keys(body.value));
-            expect(body.value[key].name).toBe('g1');
-            expect(body.value[key].visibility).toBe('restricted');
-            expect(body.value[key].password).toBeUndefined();
+            expect(ld.isObject(body.value.groups)).toBeTruthy();
+            expect(ld.isObject(body.value.pads)).toBeTruthy();
+            var groups = body.value.groups;
+            var key = ld.first(ld.keys(groups));
+            expect(groups[key].name).toBe('g1');
+            expect(groups[key].visibility).toBe('restricted');
+            expect(groups[key].password).toBeUndefined();
             done(); 
           });
         });

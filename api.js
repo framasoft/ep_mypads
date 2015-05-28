@@ -410,6 +410,7 @@ module.exports = (function () {
 
     /**
     * GET method : `group.getByUser` via user login. passwords are omitted
+    * Returns all groups and pads, filtered from sensitive data.
     *
     * Sample URL:
     * http://etherpad.ndd/mypads/api/group
@@ -420,16 +421,19 @@ module.exports = (function () {
         user.get(req.session.login, function (err, u) {
           if (err) { return res.status(400).send({ error: err }); }
           try {
-            group.getByUser(u, function (err, groups) {
+            group.getByUser(u, true, function (err, data) {
               if (err) {
                 return res.status(404).send({
                   error: err.message
                 });
               }
-              var _groups = ld.transform(groups, function (memo, val, key) {
+              var groups = ld.transform(data.groups, function (memo, val, key) {
                 memo[key] = ld.omit(val, 'password');
               });
-              res.send({ value: _groups });
+              var pads = ld.transform(data.pads, function (memo, val, key) {
+                memo[key] = ld.pick(val, '_id', 'name');
+              });
+              res.send({ value: { groups: groups, pads: pads } });
             });
           }
           catch (e) {

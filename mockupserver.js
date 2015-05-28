@@ -30,6 +30,7 @@
   var api = require('./api.js');
   var user = require('./model/user.js');
   var group = require('./model/group.js');
+  var pad = require('./model/pad.js');
   var specCommon = require('./spec/backend/common.js');
 
   specCommon.mockupExpressServer();
@@ -49,9 +50,14 @@
             g.name = 'memories';
             g.visibility = 'public';
             g.tags = ['cool', 'funky'];
-            group.set(g, function() {
-              api.init(specCommon.express.app);
-              console.log('Mockup Server runs on port 8042');
+            group.set(g, function (err, g) {
+              if (err) { console.log(err); }
+              pad.set({ name: 'Loving Annie', group: g._id }, function () {
+                pad.set({ name: 'Watch sync', group: g._id }, function () {
+                  api.init(specCommon.express.app);
+                  console.log('Mockup Server runs on port 8042');
+                });
+              });
             });
           });
         });

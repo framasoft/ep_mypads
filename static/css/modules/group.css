@@ -21,8 +21,14 @@ section.group h3.title {
 }
 
 section.group h3.title.bookmark { background-color: #52632a; }
-section.group h3.title.group { background-color: #3e3363; }
+section.group h3.title.group, section.props h3.title { background-color: #3e3363; }
 section.group h3.title.archive { background-color: #666666; }
+section.pads h3.title { background-color: #0c5b7a; }
+section.users h3.title { background-color: #333333; }
+
+/* View module */
+
+section.pads, section.users { width: 100%; }
 
 /* Groups */
 
@@ -197,6 +203,9 @@ section.group-aside section.tag li button:focus, section.group-aside section.tag
     padding: 0.5em;
     margin: 0.5em 0.3em;
   }
+  section.pads, section.users { width: 50%; }
+  section.pads { padding-right: 0.5em; }
+  section.users { padding-left: 0.5em; }
 }
 
 /* Hi res desktop */

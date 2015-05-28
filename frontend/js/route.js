@@ -35,6 +35,7 @@ module.exports = (function () {
   var logout = require('./modules/logout.js');
   var subscribe = require('./modules/subscribe.js');
   var group = require('./modules/group.js');
+  var groupView = require('./modules/group-view.js');
   var groupForm = require('./modules/group-form.js');
   var groupRemove = require('./modules/group-remove.js');
   var admin = require('./modules/admin.js');
@@ -57,6 +58,7 @@ module.exports = (function () {
     '/mypads/group': group,
     '/mypads/group/list': group,
     '/mypads/group/add': groupForm,
+    '/mypads/group/view/:key': groupView,
     '/mypads/group/edit/:key': groupForm,
     '/mypads/group/remove/:key': groupRemove,
     '/admin': admin

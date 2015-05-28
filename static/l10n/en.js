@@ -88,6 +88,7 @@ module.exports = {
     EDIT: 'Edit',
     EDIT_GROUP: 'Edit a group',
     VIEW: 'View',
+    VIEW_HELP: 'The details of the group shows you :<ul><li>options defined when group has been created or updated;</li><li>list of pads created for this group;</li><li>and list of admins and users of the group.</li></ul>',
     REMOVE: 'Remove',
     BOOKMARK: 'Bookmark',
     UNMARK: 'Unmark',
@@ -97,6 +98,7 @@ module.exports = {
       TYPE: 'Type here',
       HELP: 'Search on common fields with at least 2 characters'
     },
+    PROPERTIES: 'Properties',
     FIELD: {
       NAME: 'Name',
       VISIBILITY: 'Visibility',
@@ -119,8 +121,10 @@ module.exports = {
       TITLE: 'Title',
       ADMINS: 'Admins',
       USERS: 'Users',
+      USERS_NONE: 'No user',
       VISIBILITY: 'Visibility',
-      PADS: 'Pads'
+      PADS: 'Pads',
+      NONE: 'No pad linked'
     },
     INFO: {
       NAME: 'Name of the group',

@@ -317,7 +317,7 @@ module.exports = (function () {
         m('h4.block', g.name),
         m('section.block', [
           m('a', {
-            href: '/mypads/group/view',
+            href: '/mypads/group/view/' + g._id,
             config: m.route,
             title: GROUP.VIEW
           }, [ m('i.icon-book-open') ]),

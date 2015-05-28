@@ -745,6 +745,7 @@ module.exports = (function () {
   // Local dependencies
   var conf = require('../configuration.js');
   var GROUP = conf.LANG.GROUP;
+  var auth = require('../auth.js');
   var layout = require('./layout.js');
   var model = require('../model/group.js');
 
@@ -758,7 +759,12 @@ module.exports = (function () {
   */
 
   group.controller = function () {
+    if (!auth.isAuthenticated()) {
+      return m.route('/login');
+    }
+
     var c = {};
+    c.bookmarks = auth.userInfo().bookmarks.pads;
 
     var init = function () {
       var key = m.route.param('key');
@@ -822,6 +828,7 @@ module.exports = (function () {
           return m('p', GROUP.PAD.NONE);
         } else {
           return m('ul', ld.map(c.pads, function (p) {
+            var isBookmarked = ld.includes(c.bookmarks, p._id);
             return m('li.block-group', [
               m('span.block.name', [
                 m('a', {
@@ -831,6 +838,14 @@ module.exports = (function () {
                 }, p.name)
               ]),
               m('span.block.actions', [
+                m('a', {
+                  href: route + '/pad/mark/' + p._id,
+                  config: m.route,
+                  title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK)
+                }, [
+                  m('i',
+                    { class: 'icon-star' + (isBookmarked ? '' : '-empty') })
+                ]),
                 m('a', {
                   href: route + '/pad/view/' + p._id,
                   config: m.route,
@@ -923,7 +938,7 @@ module.exports = (function () {
   return group;
 }).call(this);
 
-},{"../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js":[function(require,module,exports){
 /**
 *  # Group List module
 *
@@ -1807,7 +1822,79 @@ module.exports = (function () {
   return add;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-remove.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-mark.js":[function(require,module,exports){
+/**
+*  # Pad bookmarking module
+*
+*  ## License
+*
+*  Licensed to the Apache Software Foundation (ASF) under one
+*  or more contributor license agreements.  See the NOTICE file
+*  distributed with this work for additional information
+*  regarding copyright ownership.  The ASF licenses this file
+*  to you under the Apache License, Version 2.0 (the
+*  "License"); you may not use this file except in compliance
+*  with the License.  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+*  Unless required by applicable law or agreed to in writing,
+*  software distributed under the License is distributed on an
+*  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+*  KIND, either express or implied.  See the License for the
+*  specific language governing permissions and limitations
+*  under the License.
+*
+*  ## Description
+*
+*  Short module for pad bookmark and unmark
+*/
+
+module.exports = (function () {
+  'use strict';
+  // Dependencies
+  var m = require('mithril');
+  var ld = require('lodash');
+  var auth = require('../auth.js');
+  var conf = require('../configuration.js');
+  var GROUP = conf.LANG.GROUP;
+  var notif = require('../widgets/notification.js');
+
+  var mark = {};
+
+  /**
+  * ## Controller
+  *
+  * Used for authentication enforcement and confirmation before removal. In all
+  * cases, redirection to parent group view.
+  */
+
+  mark.controller = function () {
+    var user = auth.userInfo();
+    if (!auth.isAuthenticated()) { return m.route('/login'); }
+    var key = m.route.param('pad');
+    var gkey = m.route.param('group');
+    if (ld.includes(user.bookmarks.pads, key)) {
+      ld.pull(user.bookmarks.pads, key);
+    } else {
+      user.bookmarks.pads.push(key);
+    }
+    m.request({
+      url: conf.URLS.USERMARK,
+      method: 'POST',
+      data: { type: 'pads', key: key }
+    }).then(function () {
+      notif.success({ body: GROUP.MARK_SUCCESS });
+    }, function (err) { return notif.error({ body: err.error }); });
+    m.route('/mypads/group/' + gkey + '/view');
+  };
+
+  mark.view = function () {};
+
+  return mark;
+}).call(this);
+
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-remove.js":[function(require,module,exports){
 /**
 *  # Pad remove module
 *
@@ -2450,6 +2537,7 @@ module.exports = (function () {
   var groupRemove = require('./modules/group-remove.js');
   var padAdd = require('./modules/pad-add.js');
   var padRemove = require('./modules/pad-remove.js');
+  var padMark = require('./modules/pad-mark.js');
   var admin = require('./modules/admin.js');
 
   var route = { model: {} };
@@ -2476,6 +2564,7 @@ module.exports = (function () {
     '/mypads/group/:group/pad/add': padAdd,
     '/mypads/group/:group/pad/edit/:pad': padAdd,
     '/mypads/group/:group/pad/remove/:pad': padRemove,
+    '/mypads/group/:group/pad/mark/:pad': padMark,
     '/admin': admin
   };
 
@@ -2484,7 +2573,7 @@ module.exports = (function () {
   return route;
 }).call(this);
 
-},{"./modules/admin.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/group-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./modules/group-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js","./modules/group-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-view.js","./modules/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/pad-add.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-add.js","./modules/pad-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-remove.js","./modules/subscribe.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js":[function(require,module,exports){
+},{"./modules/admin.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/group-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./modules/group-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js","./modules/group-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-view.js","./modules/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/pad-add.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-add.js","./modules/pad-mark.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-mark.js","./modules/pad-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-remove.js","./modules/subscribe.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js":[function(require,module,exports){
 /**
 *  # Notification module
 *

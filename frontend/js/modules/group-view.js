@@ -33,6 +33,7 @@ module.exports = (function () {
   // Local dependencies
   var conf = require('../configuration.js');
   var GROUP = conf.LANG.GROUP;
+  var auth = require('../auth.js');
   var layout = require('./layout.js');
   var model = require('../model/group.js');
 
@@ -46,7 +47,12 @@ module.exports = (function () {
   */
 
   group.controller = function () {
+    if (!auth.isAuthenticated()) {
+      return m.route('/login');
+    }
+
     var c = {};
+    c.bookmarks = auth.userInfo().bookmarks.pads;
 
     var init = function () {
       var key = m.route.param('key');
@@ -110,6 +116,7 @@ module.exports = (function () {
           return m('p', GROUP.PAD.NONE);
         } else {
           return m('ul', ld.map(c.pads, function (p) {
+            var isBookmarked = ld.includes(c.bookmarks, p._id);
             return m('li.block-group', [
               m('span.block.name', [
                 m('a', {
@@ -119,6 +126,14 @@ module.exports = (function () {
                 }, p.name)
               ]),
               m('span.block.actions', [
+                m('a', {
+                  href: route + '/pad/mark/' + p._id,
+                  config: m.route,
+                  title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK)
+                }, [
+                  m('i',
+                    { class: 'icon-star' + (isBookmarked ? '' : '-empty') })
+                ]),
                 m('a', {
                   href: route + '/pad/view/' + p._id,
                   config: m.route,

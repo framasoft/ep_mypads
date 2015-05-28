@@ -317,17 +317,17 @@ module.exports = (function () {
         m('h4.block', g.name),
         m('section.block', [
           m('a', {
-            href: '/mypads/group/view/' + g._id,
+            href: '/mypads/group/' + g._id + '/view',
             config: m.route,
             title: GROUP.VIEW
           }, [ m('i.icon-book-open') ]),
           m('a', {
-            href: '/mypads/group/edit/' + g._id,
+            href: '/mypads/group/' + g._id + '/edit',
             config: m.route,
             title: GROUP.EDIT
           }, [ m('i.icon-pencil') ]),
           m('a', {
-            href: '/mypads/group/remove/' + g._id,
+            href: '/mypads/group/' + g._id + '/remove',
             config: m.route,
             title: GROUP.REMOVE
           }, [ m('i.icon-trash') ])

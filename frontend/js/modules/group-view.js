@@ -99,18 +99,54 @@ module.exports = (function () {
   */
 
   view.pads = function (c) {
-    if (ld.size(c.group.pads) === 0) {
-      return m('p', GROUP.PAD.NONE);
-    } else {
-      return m('ul', ld.map(c.pads, function (p) { return m('li', p.name); }));
-    }
+    var route = '/mypads/group/' + c.group._id;
+    return m('section.pad', [
+      m('a.add', { href: route + '/pad/add', config: m.route }, [
+        m('i.icon-plus-squared'),
+        GROUP.PAD.ADD
+      ]),
+      (function () {
+        if (ld.size(c.group.pads) === 0) {
+          return m('p', GROUP.PAD.NONE);
+        } else {
+          return m('ul', ld.map(c.pads, function (p) {
+            return m('li.block-group', [
+              m('span.block.name', [
+                m('a', {
+                  href: route + '/pad/view/' + p._id,
+                  config: m.route,
+                  title: GROUP.VIEW
+                }, p.name)
+              ]),
+              m('span.block.actions', [
+                m('a', {
+                  href: route + '/pad/view/' + p._id,
+                  config: m.route,
+                  title: GROUP.VIEW
+                }, [ m('i.icon-book-open') ]),
+                m('a', {
+                  href: route + '/pad/edit/' + p._id,
+                  config: m.route,
+                  title: GROUP.EDIT
+                }, [ m('i.icon-pencil') ]),
+                m('a', {
+                  href: route + '/pad/remove/' + p._id,
+                  config: m.route,
+                  title: GROUP.REMOVE
+                }, [ m('i.icon-trash') ]),
+              ])
+            ]); 
+          }));
+        }
+      })()
+    ]);
   };
 
   /**
   * ### users
   *
   * View for all `users` and admins, displayed with some information and quick
-  * actions.
+  * actions. `users` block is shown only if group has `visibility` *restricted*.
   */
 
   view.users = function (c) {
@@ -121,13 +157,21 @@ module.exports = (function () {
         return m('ul', ld.map(field, function (a) { return m('li', a); }));
       }
     };
-    return m('section', [
+    var sectionElements = [
       m('h4.block', GROUP.PAD.ADMINS),
-      list(c.group.admins),
-      m('h4.block', GROUP.PAD.USERS),
-      list(c.group.users) 
-    ]);
+      list(c.group.admins)
+    ];
+    if (c.group.visibility === 'restricted') {
+      sectionElements.push(m('h4.block', GROUP.PAD.USERS), list(c.group.users));
+    }
+    return m('section', sectionElements);
   };
+
+  /**
+  * ### main
+  *
+  * `main` view, composed by properties, pads and users.
+  */
 
   view.main = function (c) {
     return m('section', { class: 'block-group group' }, [
@@ -141,11 +185,17 @@ module.exports = (function () {
         view.pads(c)
       ]),
       m('section.block.users', [
-        m('h3.title', GROUP.PAD.USERS),
+        m('h3.title', GROUP.PAD.ADMINS + ' & ' + GROUP.PAD.USERS),
         view.users(c)
       ])
     ]);
   };
+
+  /**
+  * ### aside
+  *
+  * aside function, here some help and explanation
+  */
 
   view.aside = function () {
     return m('section.user-aside', [

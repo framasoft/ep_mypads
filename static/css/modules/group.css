@@ -58,17 +58,17 @@ header.group > section {
   text-align: right;
 }
 
-header.group a, footer.group > a, footer.group > button {
+header.group a, footer.group > a, footer.group > button, section.pad li a {
   color: #3e3363;
   font-weight: bold;
   text-decoration: none;
   padding: 0.1em;
 }
 
-header.group a {
+header.group a, section.pad li a {
   background: none;
 }
-header.group > a:focus, header.group a:hover {
+header.group > a:focus, header.group a:hover, section.pad li a:hover, section.pad li a:focus {
   background-color: #3e3363;
   color: #e0e0e0;
 }
@@ -113,6 +113,21 @@ footer.group > ul > li, div.tag > ul > li {
 footer.group > ul > li.active {
   background-color: #ab2a0e;
 }
+
+/* Pads specific */
+
+section.pad a.add {
+  color: #0c5b7a;
+  font-weight: bold;
+  background: none;
+}
+section.pad a.add:focus, section.pad a.add:hover {
+  color: #e1f8fc;
+  background: #0c5b7a;
+}
+
+section.pad li span.block.name { width: 65%; }
+section.pad li span.block.actions { width: 35%; }
 
 /* Pads Aside */
 

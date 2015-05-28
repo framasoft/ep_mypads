@@ -40,6 +40,7 @@ module.exports = (function () {
   config.URLS.USER = config.URLS.BASE + '/user';
   config.URLS.USERMARK = config.URLS.USER + '/mark';
   config.URLS.GROUP = config.URLS.BASE + '/group';
+  config.URLS.PAD = config.URLS.BASE + '/pad';
   config.SERVER = m.prop();
   // FIXME : tmp to EN only
   config.LANG = require('../l10n/en.js');

@@ -113,6 +113,7 @@ module.exports = (function () {
   config.URLS.USER = config.URLS.BASE + '/user';
   config.URLS.USERMARK = config.URLS.USER + '/mark';
   config.URLS.GROUP = config.URLS.BASE + '/group';
+  config.URLS.PAD = config.URLS.BASE + '/pad';
   config.SERVER = m.prop();
   // FIXME : tmp to EN only
   config.LANG = require('../l10n/en.js');
@@ -810,18 +811,54 @@ module.exports = (function () {
   */
 
   view.pads = function (c) {
-    if (ld.size(c.group.pads) === 0) {
-      return m('p', GROUP.PAD.NONE);
-    } else {
-      return m('ul', ld.map(c.pads, function (p) { return m('li', p.name); }));
-    }
+    var route = '/mypads/group/' + c.group._id;
+    return m('section.pad', [
+      m('a.add', { href: route + '/pad/add', config: m.route }, [
+        m('i.icon-plus-squared'),
+        GROUP.PAD.ADD
+      ]),
+      (function () {
+        if (ld.size(c.group.pads) === 0) {
+          return m('p', GROUP.PAD.NONE);
+        } else {
+          return m('ul', ld.map(c.pads, function (p) {
+            return m('li.block-group', [
+              m('span.block.name', [
+                m('a', {
+                  href: route + '/pad/view/' + p._id,
+                  config: m.route,
+                  title: GROUP.VIEW
+                }, p.name)
+              ]),
+              m('span.block.actions', [
+                m('a', {
+                  href: route + '/pad/view/' + p._id,
+                  config: m.route,
+                  title: GROUP.VIEW
+                }, [ m('i.icon-book-open') ]),
+                m('a', {
+                  href: route + '/pad/edit/' + p._id,
+                  config: m.route,
+                  title: GROUP.EDIT
+                }, [ m('i.icon-pencil') ]),
+                m('a', {
+                  href: route + '/pad/remove/' + p._id,
+                  config: m.route,
+                  title: GROUP.REMOVE
+                }, [ m('i.icon-trash') ]),
+              ])
+            ]); 
+          }));
+        }
+      })()
+    ]);
   };
 
   /**
   * ### users
   *
   * View for all `users` and admins, displayed with some information and quick
-  * actions.
+  * actions. `users` block is shown only if group has `visibility` *restricted*.
   */
 
   view.users = function (c) {
@@ -832,13 +869,21 @@ module.exports = (function () {
         return m('ul', ld.map(field, function (a) { return m('li', a); }));
       }
     };
-    return m('section', [
+    var sectionElements = [
       m('h4.block', GROUP.PAD.ADMINS),
-      list(c.group.admins),
-      m('h4.block', GROUP.PAD.USERS),
-      list(c.group.users) 
-    ]);
+      list(c.group.admins)
+    ];
+    if (c.group.visibility === 'restricted') {
+      sectionElements.push(m('h4.block', GROUP.PAD.USERS), list(c.group.users));
+    }
+    return m('section', sectionElements);
   };
+
+  /**
+  * ### main
+  *
+  * `main` view, composed by properties, pads and users.
+  */
 
   view.main = function (c) {
     return m('section', { class: 'block-group group' }, [
@@ -852,11 +897,17 @@ module.exports = (function () {
         view.pads(c)
       ]),
       m('section.block.users', [
-        m('h3.title', GROUP.PAD.USERS),
+        m('h3.title', GROUP.PAD.ADMINS + ' & ' + GROUP.PAD.USERS),
         view.users(c)
       ])
     ]);
   };
+
+  /**
+  * ### aside
+  *
+  * aside function, here some help and explanation
+  */
 
   view.aside = function () {
     return m('section.user-aside', [
@@ -1192,17 +1243,17 @@ module.exports = (function () {
         m('h4.block', g.name),
         m('section.block', [
           m('a', {
-            href: '/mypads/group/view/' + g._id,
+            href: '/mypads/group/' + g._id + '/view',
             config: m.route,
             title: GROUP.VIEW
           }, [ m('i.icon-book-open') ]),
           m('a', {
-            href: '/mypads/group/edit/' + g._id,
+            href: '/mypads/group/' + g._id + '/edit',
             config: m.route,
             title: GROUP.EDIT
           }, [ m('i.icon-pencil') ]),
           m('a', {
-            href: '/mypads/group/remove/' + g._id,
+            href: '/mypads/group/' + g._id + '/remove',
             config: m.route,
             title: GROUP.REMOVE
           }, [ m('i.icon-trash') ])
@@ -1657,7 +1708,106 @@ module.exports = (function () {
   return logout;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-add.js":[function(require,module,exports){
+/**
+*  # Pad creation and edition module
+*
+*  ## License
+*
+*  Licensed to the Apache Software Foundation (ASF) under one
+*  or more contributor license agreements.  See the NOTICE file
+*  distributed with this work for additional information
+*  regarding copyright ownership.  The ASF licenses this file
+*  to you under the Apache License, Version 2.0 (the
+*  "License"); you may not use this file except in compliance
+*  with the License.  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+*  Unless required by applicable law or agreed to in writing,
+*  software distributed under the License is distributed on an
+*  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+*  KIND, either express or implied.  See the License for the
+*  specific language governing permissions and limitations
+*  under the License.
+*
+*  ## Description
+*
+*  Short module for pad adding and updating by name
+*/
+
+module.exports = (function () {
+  'use strict';
+  // Dependencies
+  var m = require('mithril');
+  var auth = require('../auth.js');
+  var conf = require('../configuration.js');
+  var GROUP = conf.LANG.GROUP;
+  var model = require('../model/group.js');
+  var notif = require('../widgets/notification.js');
+
+  var add = {};
+
+  /**
+  * ## Controller
+  *
+  * Used for authentication enforcement and confirmation before removal. In all
+  * cases, redirection to parent group view.
+  */
+
+  add.controller = function () {
+    if (!auth.isAuthenticated()) { return m.route('/login'); }
+    var key = m.route.param('pad');
+    var gkey = m.route.param('group');
+    var opts;
+    if (key) {
+      opts = {
+        pad: model.pads()[key],
+        method: 'PUT',
+        url: conf.URLS.PAD + '/' + key,
+        promptMsg: GROUP.PAD.ADD_PROMPT,
+        successMsg: GROUP.INFO.PAD_EDIT_SUCCESS
+      };
+    } else {
+      opts = {
+        pad: { name: '' },
+        method: 'POST',
+        url: conf.URLS.PAD,
+        promptMsg: GROUP.PAD.EDIT_PROMPT,
+        successMsg: GROUP.INFO.PAD_ADD_SUCCESS
+      };
+    }
+    opts.pad.group = gkey;
+    var name = window.prompt(opts.promptMsg, opts.pad.name);
+    if (name) {
+      opts.pad.name = name;
+      m.request({
+        method: opts.method,
+        url: opts.url,
+        data: opts.pad
+      }).then(function (resp) {
+        var pads = model.pads();
+        pads[resp.key] = resp.value;
+        model.pads(pads);
+        if (!key) {
+          var groups = model.data();
+          groups[gkey].pads.push(resp.key);
+          model.data(groups);
+        }
+        notif.success({ body: opts.successMsg });
+        m.route('/mypads/group/' + gkey + '/view');
+      }, function (err) { notif.error({ body: err.error }); });
+    } else {
+      m.route('/mypads/group/' + gkey + '/view');
+    }
+  };
+
+  add.view = function () {};
+
+  return add;
+}).call(this);
+
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js":[function(require,module,exports){
 /**
 *  # Subscription module
 *
@@ -2222,6 +2372,7 @@ module.exports = (function () {
   var groupView = require('./modules/group-view.js');
   var groupForm = require('./modules/group-form.js');
   var groupRemove = require('./modules/group-remove.js');
+  var padAdd = require('./modules/pad-add.js');
   var admin = require('./modules/admin.js');
 
   var route = { model: {} };
@@ -2242,9 +2393,11 @@ module.exports = (function () {
     '/mypads/group': group,
     '/mypads/group/list': group,
     '/mypads/group/add': groupForm,
-    '/mypads/group/view/:key': groupView,
-    '/mypads/group/edit/:key': groupForm,
-    '/mypads/group/remove/:key': groupRemove,
+    '/mypads/group/:key/view': groupView,
+    '/mypads/group/:key/edit': groupForm,
+    '/mypads/group/:key/remove': groupRemove,
+    '/mypads/group/:group/pad/add': padAdd,
+    '/mypads/group/:group/pad/edit/:pad': padAdd,
     '/admin': admin
   };
 
@@ -2253,7 +2406,7 @@ module.exports = (function () {
   return route;
 }).call(this);
 
-},{"./modules/admin.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/group-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./modules/group-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js","./modules/group-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-view.js","./modules/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/subscribe.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js":[function(require,module,exports){
+},{"./modules/admin.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/group-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./modules/group-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js","./modules/group-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-view.js","./modules/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/pad-add.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-add.js","./modules/subscribe.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js":[function(require,module,exports){
 /**
 *  # Notification module
 *
@@ -2690,7 +2843,10 @@ module.exports = {
       USERS_NONE: 'No user',
       VISIBILITY: 'Visibility',
       PADS: 'Pads',
-      NONE: 'No pad linked'
+      NONE: 'No pad linked',
+      ADD: 'Create a new pad',
+      ADD_PROMPT: 'Enter the name of the new pad',
+      EDIT_PROMPT: 'Enter the new name of the pad'
     },
     INFO: {
       NAME: 'Name of the group',
@@ -2700,7 +2856,9 @@ module.exports = {
       ADD_SUCCESS: 'Group has been successfully created',
       EDIT_SUCCESS: 'Group has been successfully updated',
       REMOVE_SUCCESS: 'Group has been successfully removed',
-      REMOVE_SURE: 'Are you sure you want to remove this group ?'
+      REMOVE_SURE: 'Are you sure you want to remove this group ?',
+      PAD_ADD_SUCCESS: 'Pad has been successfully created',
+      PAD_EDIT_SUCCESS: 'Pad has been successfully updated'
     },
     ERR: {
       NAME: 'The name of the group is required'

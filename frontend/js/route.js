@@ -38,6 +38,7 @@ module.exports = (function () {
   var groupView = require('./modules/group-view.js');
   var groupForm = require('./modules/group-form.js');
   var groupRemove = require('./modules/group-remove.js');
+  var padAdd = require('./modules/pad-add.js');
   var admin = require('./modules/admin.js');
 
   var route = { model: {} };
@@ -58,9 +59,11 @@ module.exports = (function () {
     '/mypads/group': group,
     '/mypads/group/list': group,
     '/mypads/group/add': groupForm,
-    '/mypads/group/view/:key': groupView,
-    '/mypads/group/edit/:key': groupForm,
-    '/mypads/group/remove/:key': groupRemove,
+    '/mypads/group/:key/view': groupView,
+    '/mypads/group/:key/edit': groupForm,
+    '/mypads/group/:key/remove': groupRemove,
+    '/mypads/group/:group/pad/add': padAdd,
+    '/mypads/group/:group/pad/edit/:pad': padAdd,
     '/admin': admin
   };
 

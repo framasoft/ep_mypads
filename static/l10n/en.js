@@ -124,7 +124,10 @@ module.exports = {
       USERS_NONE: 'No user',
       VISIBILITY: 'Visibility',
       PADS: 'Pads',
-      NONE: 'No pad linked'
+      NONE: 'No pad linked',
+      ADD: 'Create a new pad',
+      ADD_PROMPT: 'Enter the name of the new pad',
+      EDIT_PROMPT: 'Enter the new name of the pad'
     },
     INFO: {
       NAME: 'Name of the group',
@@ -134,7 +137,9 @@ module.exports = {
       ADD_SUCCESS: 'Group has been successfully created',
       EDIT_SUCCESS: 'Group has been successfully updated',
       REMOVE_SUCCESS: 'Group has been successfully removed',
-      REMOVE_SURE: 'Are you sure you want to remove this group ?'
+      REMOVE_SURE: 'Are you sure you want to remove this group ?',
+      PAD_ADD_SUCCESS: 'Pad has been successfully created',
+      PAD_EDIT_SUCCESS: 'Pad has been successfully updated'
     },
     ERR: {
       NAME: 'The name of the group is required'

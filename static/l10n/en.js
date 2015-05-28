@@ -138,6 +138,8 @@ module.exports = {
       EDIT_SUCCESS: 'Group has been successfully updated',
       REMOVE_SUCCESS: 'Group has been successfully removed',
       REMOVE_SURE: 'Are you sure you want to remove this group ?',
+      PAD_REMOVE_SUCCESS: 'Pad has been successfully removed',
+      PAD_REMOVE_SURE: 'Are you sure you want to remove this pad ?',
       PAD_ADD_SUCCESS: 'Pad has been successfully created',
       PAD_EDIT_SUCCESS: 'Pad has been successfully updated'
     },

@@ -33,6 +33,7 @@
   var groupList = require('./group.spec.js');
   var groupForm = require('./group-form.spec.js');
   var groupRemove = require('./group-remove.spec.js');
+  var groupView = require('./group-view.spec.js');
   var tagWidget = require('./tag-widget.spec.js');
 
   describe('MyPads testing', function () {
@@ -47,6 +48,7 @@
     groupList.run(app);
     groupForm.run(app);
     groupRemove.run(app);
+    groupView.run(app);
     tagWidget.run(app);
   });
 }).call(this);

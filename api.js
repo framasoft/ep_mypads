@@ -427,13 +427,27 @@ module.exports = (function () {
                   error: err.message
                 });
               }
-              var groups = ld.transform(data.groups, function (memo, val, key) {
-                memo[key] = ld.omit(val, 'password');
+              data.groups = ld.transform(data.groups,
+                function (memo, val, key) {
+                  memo[key] = ld.omit(val, 'password');
+                }
+              );
+              data.pads = ld.transform(data.pads,
+                function (memo, val, key) {
+                  memo[key] = ld.pick(val, '_id', 'name');
+                }
+              );
+              data.users = ld.transform(data.users, function (memo, val, key) {
+                memo[key] = ld.pick(val, '_id', 'login', 'firstname',
+                  'lastname');
               });
-              var pads = ld.transform(data.pads, function (memo, val, key) {
-                memo[key] = ld.pick(val, '_id', 'name');
-              });
-              res.send({ value: { groups: groups, pads: pads } });
+              data.admins = ld.transform(data.admins,
+                function (memo, val, key) {
+                  memo[key] = ld.pick(val, '_id', 'login', 'firstname',
+                    'lastname', 'email');
+                }
+              );
+              res.send({ value: data });
             });
           }
           catch (e) {
@@ -447,7 +461,7 @@ module.exports = (function () {
     * GET method : `group.get` unique id
     *
     * Sample URL:
-    * http://etherpad.ndd/mypads/api/group/xxxx
+    * http://etherpad.ndd/mypemailads/api/group/xxxx
     */
 
     app.get(groupRoute + '/:key', fn.ensureAuthentificated,

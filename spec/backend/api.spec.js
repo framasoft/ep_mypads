@@ -720,18 +720,27 @@
 
       describe('group.getByUSer GET', function () {
 
-        it('should return groups and pads', function (done) {
+        it('should return groups, pads and users', function (done) {
           rq.get(groupRoute, function (err, resp, body) {
             expect(err).toBeNull();
             expect(resp.statusCode).toBe(200);
             expect(ld.isObject(body.value)).toBeTruthy();
             expect(ld.isObject(body.value.groups)).toBeTruthy();
             expect(ld.isObject(body.value.pads)).toBeTruthy();
+            expect(ld.isObject(body.value.users)).toBeTruthy();
+            expect(ld.isObject(body.value.admins)).toBeTruthy();
             var groups = body.value.groups;
             var key = ld.first(ld.keys(groups));
             expect(groups[key].name).toBe('g1');
             expect(groups[key].visibility).toBe('restricted');
             expect(groups[key].password).toBeUndefined();
+            var admin = ld.first(ld.values(body.value.admins));
+            expect(admin.login).toBe('guest');
+            expect(admin._id).toBeDefined();
+            expect(admin.firstname).toBeDefined();
+            expect(admin.lastname).toBeDefined();
+            expect(admin.email).toBeDefined();
+            expect(admin.password).toBeUndefined();
             done(); 
           });
         });

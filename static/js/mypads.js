@@ -904,9 +904,18 @@ module.exports = (function () {
         }));
       }
     };
-    var sectionElements = [ m('h4.block', GROUP.PAD.ADMINS), list(c.admins) ];
+    var route = '/mypads/group/' + c.group._id;
+    var sectionElements = [
+      m('h4.block', GROUP.PAD.ADMINS),
+      m('a.add', { href: route + '/share/admin', config: m.route },
+        [ m('i.icon-plus-squared'), GROUP.SHARE_ADMIN ]),
+      list(c.admins) 
+    ];
     if (c.group.visibility === 'restricted') {
-      sectionElements.push(m('h4.block', GROUP.PAD.USERS), list(c.users));
+      sectionElements.push(m('h4.block', GROUP.PAD.USERS),
+        m('a.add', { href: route + '/invite/user', config: m.route },
+          [ m('i.icon-plus-squared'), GROUP.INVITE_USER ]),
+        list(c.users));
     }
     return m('section', sectionElements);
   };
@@ -2991,11 +3000,13 @@ module.exports = {
     EDIT: 'Edit',
     EDIT_GROUP: 'Edit a group',
     VIEW: 'View',
-    VIEW_HELP: 'The details of the group shows you :<ul><li>options defined when group has been created or updated;</li><li>list of pads created for this group;</li><li>and list of admins and users of the group.</li></ul>',
+    VIEW_HELP: '<p>The details of the group shows you :<ul><li>options defined when group has been created or updated;</li><li>list of pads created for this group;</li><li>and list of admins and users of the group.</li></ul></p><p>From there, you can : <ul><li>create new pads, edit them, remove or mark them;</li><li>share administration of your group with other users;</li><li>invite other users to view and edit pads of the group.</li></ul></p>',
     REMOVE: 'Remove',
     BOOKMARK: 'Bookmark',
     UNMARK: 'Unmark',
     MARK_SUCCESS: 'Marking successfully',
+    SHARE_ADMIN: 'Share administration',
+    INVITE_USER: 'Invite users',
     SEARCH: {
       TITLE: 'Search',
       TYPE: 'Type here',

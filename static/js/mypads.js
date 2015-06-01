@@ -310,7 +310,13 @@ module.exports = (function () {
   var conf = require('../configuration.js');
   var notif = require('../widgets/notification.js');
 
-  var model = { data: m.prop({}), pads: m.prop({}), tags: m.prop([]) };
+  var model = {
+    data: m.prop({}),
+    pads: m.prop({}),
+    users: m.prop([]),
+    admins: m.prop([]),
+    tags: m.prop([])
+  };
   model.fetch = function (callback) {
     m.request({
       url: conf.URLS.GROUP,
@@ -319,6 +325,8 @@ module.exports = (function () {
       function (resp) {
         model.data(resp.value.groups); 
         model.pads(resp.value.pads);
+        model.admins(resp.value.admins);
+        model.users(resp.value.users);
         var tags = ld(resp.value.groups)
           .values()
           .pluck('tags')
@@ -754,7 +762,7 @@ module.exports = (function () {
   /**
   * ## Controller
   *
-  * Used for group and pads data.
+  * Used for group, pads and users data.
   * Ensures that models are already loaded, either load them.
   */
 
@@ -769,8 +777,8 @@ module.exports = (function () {
     var init = function () {
       var key = m.route.param('key');
       c.group = model.data()[key];
-      c.pads = ld.map(c.group.pads, function (p) {
-        return model.pads()[p];
+      ld.forEach(['pads', 'admins', 'users'], function (f) {
+        c[f] = ld.map(c.group[f], function (x) { return model[f]()[x]; });
       });
     };
 
@@ -877,19 +885,28 @@ module.exports = (function () {
   */
 
   view.users = function (c) {
-    var list = function (field) {
-      if (ld.size(field) === 0) {
+    var userView = function (u) {
+      var res = '';
+      if (u.firstname) {
+        res += (u.firstname + ' ' + u.lastname + ' ');
+      } else {
+        res += u.login;
+      }
+      return res + ' : ' + u.email;
+
+    };
+    var list = function (users) {
+      if (ld.size(users) === 0) {
         return m('p', GROUP.PAD.USERS_NONE);
       } else {
-        return m('ul', ld.map(field, function (a) { return m('li', a); }));
+        return m('ul', ld.map(users, function (u) {
+          return m('li', userView(u));
+        }));
       }
     };
-    var sectionElements = [
-      m('h4.block', GROUP.PAD.ADMINS),
-      list(c.group.admins)
-    ];
+    var sectionElements = [ m('h4.block', GROUP.PAD.ADMINS), list(c.admins) ];
     if (c.group.visibility === 'restricted') {
-      sectionElements.push(m('h4.block', GROUP.PAD.USERS), list(c.group.users));
+      sectionElements.push(m('h4.block', GROUP.PAD.USERS), list(c.users));
     }
     return m('section', sectionElements);
   };

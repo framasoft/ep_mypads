@@ -33,7 +33,13 @@ module.exports = (function () {
   var conf = require('../configuration.js');
   var notif = require('../widgets/notification.js');
 
-  var model = { data: m.prop({}), pads: m.prop({}), tags: m.prop([]) };
+  var model = {
+    data: m.prop({}),
+    pads: m.prop({}),
+    users: m.prop([]),
+    admins: m.prop([]),
+    tags: m.prop([])
+  };
   model.fetch = function (callback) {
     m.request({
       url: conf.URLS.GROUP,
@@ -42,6 +48,8 @@ module.exports = (function () {
       function (resp) {
         model.data(resp.value.groups); 
         model.pads(resp.value.pads);
+        model.admins(resp.value.admins);
+        model.users(resp.value.users);
         var tags = ld(resp.value.groups)
           .values()
           .pluck('tags')

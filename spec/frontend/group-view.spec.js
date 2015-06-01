@@ -98,6 +98,8 @@ module.exports = (function () {
         it('should display expected values', function () {
           var admins = $el.users.querySelectorAll('li');
           expect(admins.length).toBe(1);
+          expect(admins[0].textContent).toMatch(/Parker/);
+          expect(admins[0].textContent).toMatch(/@lewis.me/);
         });
 
       });

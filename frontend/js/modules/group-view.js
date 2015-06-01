@@ -187,14 +187,14 @@ module.exports = (function () {
     var route = '/mypads/group/' + c.group._id;
     var sectionElements = [
       m('h4.block', GROUP.PAD.ADMINS),
-      m('a.add', { href: route + '/share/admin', config: m.route },
+      m('a.add', { href: route + '/user/share', config: m.route },
         [ m('i.icon-plus-squared'), GROUP.SHARE_ADMIN ]),
       list(c.admins) 
     ];
     if (c.group.visibility === 'restricted') {
       sectionElements.push(m('h4.block', GROUP.PAD.USERS),
-        m('a.add', { href: route + '/invite/user', config: m.route },
-          [ m('i.icon-plus-squared'), GROUP.INVITE_USER ]),
+        m('a.add', { href: route + '/user/invite', config: m.route },
+          [ m('i.icon-plus-squared'), GROUP.INVITE_USER.IU ]),
         list(c.users));
     }
     return m('section', sectionElements);

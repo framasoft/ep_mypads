@@ -907,14 +907,14 @@ module.exports = (function () {
     var route = '/mypads/group/' + c.group._id;
     var sectionElements = [
       m('h4.block', GROUP.PAD.ADMINS),
-      m('a.add', { href: route + '/share/admin', config: m.route },
+      m('a.add', { href: route + '/user/share', config: m.route },
         [ m('i.icon-plus-squared'), GROUP.SHARE_ADMIN ]),
       list(c.admins) 
     ];
     if (c.group.visibility === 'restricted') {
       sectionElements.push(m('h4.block', GROUP.PAD.USERS),
-        m('a.add', { href: route + '/invite/user', config: m.route },
-          [ m('i.icon-plus-squared'), GROUP.INVITE_USER ]),
+        m('a.add', { href: route + '/user/invite', config: m.route },
+          [ m('i.icon-plus-squared'), GROUP.INVITE_USER.IU ]),
         list(c.users));
     }
     return m('section', sectionElements);
@@ -2226,7 +2226,150 @@ module.exports = (function () {
   return subscribe;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./user.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./user.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user-invitation.js":[function(require,module,exports){
+/**
+*  # User invitation module
+*
+*  ## License
+*
+*  Licensed to the Apache Software Foundation (ASF) under one
+*  or more contributor license agreements.  See the NOTICE file
+*  distributed with this work for additional information
+*  regarding copyright ownership.  The ASF licenses this file
+*  to you under the Apache License, Version 2.0 (the
+*  "License"); you may not use this file except in compliance
+*  with the License.  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+*  Unless required by applicable law or agreed to in writing,
+*  software distributed under the License is distributed on an
+*  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+*  KIND, either express or implied.  See the License for the
+*  specific language governing permissions and limitations
+*  under the License.
+*
+*  ## Description
+*
+*  This module handles group user invitation.
+*/
+
+module.exports = (function () {
+  'use strict';
+  // Global dependencies
+  var m = require('mithril');
+  var ld = require('lodash');
+  // Local dependencies
+  var conf = require('../configuration.js');
+  var GROUP = conf.LANG.GROUP;
+  var auth = require('../auth.js');
+  var layout = require('./layout.js');
+  var model = require('../model/group.js');
+  var tag = require('../widgets/tag.js');
+
+  var invite = {};
+
+  /**
+  * ## Controller
+  *
+  */
+
+  invite.controller = function () {
+
+    if (!auth.isAuthenticated()) { return m.route('/login'); }
+
+    var c = {};
+
+    var init = function () {
+      var group = m.route.param('group');
+      c.group = model.data()[group];
+      c.users = ld.reduce(ld.merge(model.admins(), model.users()),
+        function (memo, val, key) {
+          memo[val.email] = val;
+          return memo;
+      }, {});
+      c.tag = new tag.controller({
+        name: 'user-invite',
+        label: GROUP.INVITE_USER.USERS_SELECTION,
+        current: c.group.users,
+        placeholder: GROUP.INVITE_USER.PLACEHOLDER,
+        tags: ld.keys(c.users)
+      });
+    };
+    if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
+
+    window.c = c;
+    return c;
+  };
+
+  /**
+  * ## Views
+  */
+
+  var view = {};
+
+  view.userField = function (c) {
+    var ipt = tag.views.input(c);
+    ipt.attrs.type = 'email';
+    return m('div.block-group.tag', [
+      m('label.block', { for: c.name }, c.label),
+      ipt,
+      m('i', {
+        class: 'block tooltip icon-info-circled tag',
+        'data-msg': GROUP.INVITE_USER.INPUT_HELP }),
+      m('button.block.ok', {
+        type: 'button',
+        onclick: function () {
+          c.add(document.getElementById(c.name + '-input'));
+        },
+      }, conf.LANG.USER.OK),
+      tag.views.datalist(c)
+    ]);
+  };
+
+  view.form = function (c) {
+    return m('form.block', {
+      id: 'group-form',
+      onsubmit: c.submit
+    }, [
+      m('fieldset.block-group', [
+        m('legend', GROUP.INVITE_USER.IU),
+        m('div', view.userField(c.tag))
+      ]),
+      m('fieldset.block-group', [
+        m('legend', GROUP.INVITE_USER.USERS_SELECTED),
+        m('div', tag.views.tagslist(c.tag))
+      ]),
+      m('input.block.send', {
+        form: 'group-form',
+        type: 'submit',
+        value: conf.LANG.ACTIONS.SAVE
+      })
+    ]);
+  };
+
+  view.main = function (c) {
+    return m('section', { class: 'block-group user group-form' }, [
+      m('h2.block', GROUP.GROUP + ' ' + c.group.name),
+      view.form(c)
+    ]);
+  };
+
+  view.aside = function () {
+    return m('section.user-aside', [
+      m('h2', conf.LANG.ACTIONS.HELP),
+      m('article', m.trust(GROUP.INVITE_USER.HELP))
+    ]);
+  };
+
+  invite.view = function (c) {
+    return layout.view(view.main(c), view.aside(c)); 
+  };
+
+  return invite;
+}).call(this);
+
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/tag.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/tag.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js":[function(require,module,exports){
 /**
 *  # User module
 *
@@ -2564,6 +2707,7 @@ module.exports = (function () {
   var padAdd = require('./modules/pad-add.js');
   var padRemove = require('./modules/pad-remove.js');
   var padMark = require('./modules/pad-mark.js');
+  var userInvite = require('./modules/user-invitation.js');
   var admin = require('./modules/admin.js');
 
   var route = { model: {} };
@@ -2591,6 +2735,7 @@ module.exports = (function () {
     '/mypads/group/:group/pad/edit/:pad': padAdd,
     '/mypads/group/:group/pad/remove/:pad': padRemove,
     '/mypads/group/:group/pad/mark/:pad': padMark,
+    '/mypads/group/:group/user/invite': userInvite,
     '/admin': admin
   };
 
@@ -2599,7 +2744,7 @@ module.exports = (function () {
   return route;
 }).call(this);
 
-},{"./modules/admin.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/group-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./modules/group-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js","./modules/group-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-view.js","./modules/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/pad-add.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-add.js","./modules/pad-mark.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-mark.js","./modules/pad-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-remove.js","./modules/subscribe.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js":[function(require,module,exports){
+},{"./modules/admin.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/group-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./modules/group-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js","./modules/group-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-view.js","./modules/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/pad-add.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-add.js","./modules/pad-mark.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-mark.js","./modules/pad-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-remove.js","./modules/subscribe.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","./modules/user-invitation.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user-invitation.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js":[function(require,module,exports){
 /**
 *  # Notification module
 *
@@ -2841,16 +2986,16 @@ module.exports = (function () {
   * Views for the widget.
   */
 
-  var view = {};
+  tag.views = {};
 
-  view.icon = function () {
+  tag.views.icon = function () {
     return m('i', {
       class: 'block tooltip icon-info-circled tag',
       'data-msg': TAG.HELP
     });
   };
 
-  view.input = function (c) {
+  tag.views.input = function (c) {
     return m('input.block', {
       id: c.name + '-input',
       name: c.name,
@@ -2867,13 +3012,13 @@ module.exports = (function () {
     });
   };
 
-  view.datalist = function (c) {
+  tag.views.datalist = function (c) {
     return m('datalist', { id: c.name }, ld.map(c.tags, function (tag) {
       return m('option', { value: tag });
     }));
   };
 
-  view.tagslist = function (c) {
+  tag.views.tagslist = function (c) {
     return m('ul.block', ld.map(c.current, function (tag) {
       return m('li', [
         m('span', tag),
@@ -2893,16 +3038,16 @@ module.exports = (function () {
   tag.view = function (c) {
     return m('div.block-group.tag', [
       m('label.block', { for: c.name }, c.label),
-      view.input(c),
-      view.icon(),
+      tag.views.input(c),
+      tag.views.icon(),
       m('button.block.ok', {
         type: 'button',
         onclick: function () {
           c.add(document.getElementById(c.name + '-input'));
         },
       }, conf.LANG.USER.OK),
-      view.datalist(c),
-      view.tagslist(c)
+      tag.views.datalist(c),
+      tag.views.tagslist(c)
     ]);
   };
 
@@ -3006,7 +3151,14 @@ module.exports = {
     UNMARK: 'Unmark',
     MARK_SUCCESS: 'Marking successfully',
     SHARE_ADMIN: 'Share administration',
-    INVITE_USER: 'Invite users',
+    INVITE_USER: {
+      IU: 'Invite users',
+      HELP: '<h3>Invite users</h3><p>This field accepts on email at a time. When ENTER is typed, or OK is clicked, the email is added to list of invited users. A list of known users helps you to fill the emails.</p><h3>List of users</h3><p>This list contains all selected users. You can remove one by clicking the sign after each email.</p><h3>Note</h3><p>Please note that, for instance, registered users will be automatically added to your group. In short term, external users will receive a mail for creating an account.</p>',
+      USERS_SELECTION: 'Users selection',
+      USERS_SELECTED: 'List of selected users',
+      PLACEHOLDER: 'Enter email address',
+      INPUT_HELP: 'You can invite as many users as you want'
+    },
     SEARCH: {
       TITLE: 'Search',
       TYPE: 'Type here',

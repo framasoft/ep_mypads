@@ -77,16 +77,16 @@ module.exports = (function () {
   * Views for the widget.
   */
 
-  var view = {};
+  tag.views = {};
 
-  view.icon = function () {
+  tag.views.icon = function () {
     return m('i', {
       class: 'block tooltip icon-info-circled tag',
       'data-msg': TAG.HELP
     });
   };
 
-  view.input = function (c) {
+  tag.views.input = function (c) {
     return m('input.block', {
       id: c.name + '-input',
       name: c.name,
@@ -103,13 +103,13 @@ module.exports = (function () {
     });
   };
 
-  view.datalist = function (c) {
+  tag.views.datalist = function (c) {
     return m('datalist', { id: c.name }, ld.map(c.tags, function (tag) {
       return m('option', { value: tag });
     }));
   };
 
-  view.tagslist = function (c) {
+  tag.views.tagslist = function (c) {
     return m('ul.block', ld.map(c.current, function (tag) {
       return m('li', [
         m('span', tag),
@@ -129,16 +129,16 @@ module.exports = (function () {
   tag.view = function (c) {
     return m('div.block-group.tag', [
       m('label.block', { for: c.name }, c.label),
-      view.input(c),
-      view.icon(),
+      tag.views.input(c),
+      tag.views.icon(),
       m('button.block.ok', {
         type: 'button',
         onclick: function () {
           c.add(document.getElementById(c.name + '-input'));
         },
       }, conf.LANG.USER.OK),
-      view.datalist(c),
-      view.tagslist(c)
+      tag.views.datalist(c),
+      tag.views.tagslist(c)
     ]);
   };
 

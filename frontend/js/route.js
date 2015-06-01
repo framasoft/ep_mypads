@@ -41,6 +41,7 @@ module.exports = (function () {
   var padAdd = require('./modules/pad-add.js');
   var padRemove = require('./modules/pad-remove.js');
   var padMark = require('./modules/pad-mark.js');
+  var userInvite = require('./modules/user-invitation.js');
   var admin = require('./modules/admin.js');
 
   var route = { model: {} };
@@ -68,6 +69,7 @@ module.exports = (function () {
     '/mypads/group/:group/pad/edit/:pad': padAdd,
     '/mypads/group/:group/pad/remove/:pad': padRemove,
     '/mypads/group/:group/pad/mark/:pad': padMark,
+    '/mypads/group/:group/user/invite': userInvite,
     '/admin': admin
   };
 

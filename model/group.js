@@ -78,19 +78,19 @@ module.exports = (function () {
   * defined user, using `storage.fn.getKeys`. It takes :
   *
   * - a `user` object
-  * - a `withPads` boolean, for gathering or not pads information alongside
-  *   with groups, with the help of `getPadsByGroups` private function
+  * - a `withExtra` boolean, for gathering or not pads information alongside
+  *   with groups, with the help of `getPadsAndUsersByGroups` private function
   * - a `callback` function, called with *error* if needed, *null* and the
   *   results, an object with keys and groups values, otherwise.
   *
   */
 
-  group.getByUser = function (user, withPads, callback) {
+  group.getByUser = function (user, withExtra, callback) {
     if (!ld.isObject(user) || !ld.isArray(user.groups)) {
       throw new TypeError('user is invalid');
     }
-    if (!ld.isBoolean(withPads)) {
-      throw new TypeError('withPads must be a boolean'); 
+    if (!ld.isBoolean(withExtra)) {
+      throw new TypeError('withExtra must be a boolean'); 
     }
     if (!ld.isFunction(callback)) {
       throw new TypeError('callback must be a function');
@@ -104,8 +104,8 @@ module.exports = (function () {
           memo[key] = val;
           return memo;
         }, {});
-        if (withPads) {
-          group.fn.getPadsByGroups(groups, callback);
+        if (withExtra) {
+          group.fn.getPadsAndUsersByGroups(groups, callback);
         } else {
           callback(null, groups);
         }
@@ -436,24 +436,34 @@ module.exports = (function () {
   };
 
   /**
-  * ### getPadsByGroups
+  * ### getPadsAndUsersByGroups
   *
-  * `getPadsByGroups` is an asynchronous private function which return *pad*
-  * objects from an object of *group* objects (key: group).  It also takes a
-  * classic `callback` function.
+  * `getPadsAndUsersByGroups` is an asynchronous private function which return
+  * *pad* and *user* objects from an object of *group* objects (key: group).
+  * It also takes a classic `callback` function.
   */
 
-  group.fn.getPadsByGroups = function (groups, callback) {
-    var padsKeys = ld(groups).pluck('pads').flatten().union()
-      .map(function (p) { return PPREFIX + p; }).value();
-      storage.fn.getKeys(padsKeys, function (err, pads) {
+  group.fn.getPadsAndUsersByGroups = function (groups, callback) {
+    var defs = { pads: PPREFIX, admins: UPREFIX, users: UPREFIX };
+    var keys = ld.reduce(groups, function (memo, val) {
+      ld.forIn(defs, function (pfx, f) {
+        memo[f] = ld.union(memo[f], ld.map(val[f],
+          function (v) { return pfx + v; }));
+      });
+      return memo;
+    }, { pads: [], admins: [], users: [] });
+      storage.fn.getKeys(ld.flatten(ld.values(keys)), function (err, res) {
         if (err) { return callback(err); }
-        pads = ld.reduce(pads, function (memo, val, key) {
-          key = key.substr(PPREFIX.length);
-          memo[key] = val;
+        res = ld.reduce(res, function (memo, val, key) {
+          var field;
+          ld.forIn(keys, function (vals, f) {
+            if (ld.includes(vals, key)) { field = f; }
+          });
+          key = key.substr(defs[field].length);
+          memo[field][key] = val;
           return memo;
-        }, {});
-        callback(null, { groups: groups, pads: pads });
+        }, { groups: groups, pads: {}, admins: {}, users: {} });
+        callback(null, res);
       });
   };
 

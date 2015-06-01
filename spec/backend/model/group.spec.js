@@ -429,25 +429,30 @@
         });
       });
 
-      it('should return groups and pads withPads to true', function (done) {
-        user.get(gadm.login, function (err, user) {
-          if (err) { console.log(err); }
-          gadm = user;
-          group.getByUser(gadm, true, function (err, groupsAndPads) {
-            expect(err).toBeNull();
-            expect(ld.isObject(groupsAndPads)).toBeTruthy();
-            var groups = groupsAndPads.groups;
-            var pads = groupsAndPads.pads;
-            expect(ld.isObject(groups)).toBeTruthy();
-            expect(ld.isObject(pads)).toBeTruthy();
-            var key = gadm.groups[0];
-            expect(groups[key].name).toBe('college');
-            expect(groups[key].visibility).toBe('private');
-            expect(groups[key].readonly).toBeTruthy();
-            var pad = ld.first(ld.values(pads));
-            expect(pad.name).toBe('pad1');
-            done();
-          });
+      it('should return groups, pads, admins and users if withExtra is set ' +
+        'to true', function (done) {
+          user.get(gadm.login, function (err, user) {
+            if (err) { console.log(err); }
+            gadm = user;
+            group.getByUser(gadm, true, function (err, groupsFull) {
+              expect(err).toBeNull();
+              expect(ld.isObject(groupsFull)).toBeTruthy();
+              expect(ld.isObject(groupsFull.groups)).toBeTruthy();
+              expect(ld.isObject(groupsFull.pads)).toBeTruthy();
+              expect(ld.isObject(groupsFull.admins)).toBeTruthy();
+              expect(ld.isObject(groupsFull.users)).toBeTruthy();
+              var groups = groupsFull.groups;
+              var key = gadm.groups[0];
+              expect(groups[key].name).toBe('college');
+              expect(groups[key].visibility).toBe('private');
+              expect(groups[key].readonly).toBeTruthy();
+              var pad = ld.first(ld.values(groupsFull.pads));
+              expect(pad.name).toBe('pad1');
+              var admin = ld.first(ld.values(groupsFull.admins));
+              expect(admin.login).toBe('frank');
+              done();
+            }
+          );
         });
       });
 

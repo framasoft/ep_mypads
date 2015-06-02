@@ -603,7 +603,40 @@
           });
         }
       );
+
     });
+
+    describe('user getIdsFromLogins', function () {
+
+      it('should throw errors if arguments are not provided as expected',
+        function () {
+          expect(user.fn.getIdsFromLogins).toThrow();
+          expect(ld.partial(user.fn.getIdsFromLogins, 'notArray')).toThrow();
+          expect(ld.partial(user.fn.getIdsFromLogins, [], 'notFn')).toThrow();
+          expect(ld.partial(user.fn.getIdsFromLogins, false, function () {}))
+            .toThrow();
+        }
+      );
+
+      it('should return an array of uid otherwise, filtering not found users',
+        function (done) {
+          var u = { login: 'shelly', password: 'aGoodOneAndStrong' };
+          user.set(u, function (err, u) {
+            expect(err).toBeNull();
+            var users = ['shelly', 'inexistent'];
+            user.fn.getIdsFromLogins(users, function (err, res) {
+              expect(err).toBeNull();
+              expect(ld.isArray(res)).toBeTruthy();
+              expect(ld.size(res)).toBe(1);
+              expect(ld.first(res)).toBe(u._id);
+              done();
+            });
+          });
+        }
+      );
+
+    });
+
   });
 
 

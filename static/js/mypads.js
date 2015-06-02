@@ -2263,8 +2263,9 @@ module.exports = (function () {
   var conf = require('../configuration.js');
   var GROUP = conf.LANG.GROUP;
   var auth = require('../auth.js');
-  var layout = require('./layout.js');
   var model = require('../model/group.js');
+  var layout = require('./layout.js');
+  var notif = require('../widgets/notification.js');
   var tag = require('../widgets/tag.js');
 
   var invite = {};
@@ -2272,6 +2273,8 @@ module.exports = (function () {
   /**
   * ## Controller
   *
+  * Used to check authentication, init data for tag like widget with users and
+  * admins and gather data if not already fetched.
   */
 
   invite.controller = function () {
@@ -2283,22 +2286,56 @@ module.exports = (function () {
     var init = function () {
       var group = m.route.param('group');
       c.group = model.data()[group];
-      c.users = ld.reduce(ld.merge(model.admins(), model.users()),
-        function (memo, val, key) {
-          memo[val.email] = val;
-          return memo;
-      }, {});
+      var users = ld.merge(model.admins(), model.users());
+      users = ld.reduce(users, function (memo, val) {
+        memo.byId[val._id] = val;
+        memo.byLogin[val.login] = val;
+        return memo;
+      }, { byId: {}, byLogin: {} });
+      c.users = users.byLogin;
+      var current = ld(users.byId)
+        .pick(c.group.users)
+        .values()
+        .pluck('login')
+        .value();
       c.tag = new tag.controller({
         name: 'user-invite',
         label: GROUP.INVITE_USER.USERS_SELECTION,
-        current: c.group.users,
+        current: current,
         placeholder: GROUP.INVITE_USER.PLACEHOLDER,
-        tags: ld.keys(c.users)
+        tags: ld.pull(ld.keys(c.users), auth.userInfo().login)
       });
     };
     if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
 
-    window.c = c;
+    /**
+    * ### submit
+    *
+    * `submit` function calls the public API to update the group with new users
+    * or admins. It displays errors if needed or success.
+    *
+    * It filters user invitation by known users only.
+    */
+
+    c.submit = function (e) {
+      e.preventDefault();
+      var data = {
+        invite: true,
+        gid: c.group._id,
+        logins: c.tag.current
+      };
+      m.request({
+        method: 'POST',
+        url: conf.URLS.GROUP + '/invite',
+        data: data
+      }).then(function (resp) {
+        model.fetch(function () {
+          notif.success({ body: GROUP.INVITE_USER.SUCCESS });
+          m.route('/mypads/group/' + resp.value._id + '/view');
+        });
+      }, function (err) { notif.error({ body: err.error }); });
+    };
+
     return c;
   };
 
@@ -2309,11 +2346,9 @@ module.exports = (function () {
   var view = {};
 
   view.userField = function (c) {
-    var ipt = tag.views.input(c);
-    ipt.attrs.type = 'email';
     return m('div.block-group.tag', [
       m('label.block', { for: c.name }, c.label),
-      ipt,
+      tag.views.input(c),
       m('i', {
         class: 'block tooltip icon-info-circled tag',
         'data-msg': GROUP.INVITE_USER.INPUT_HELP }),
@@ -2369,7 +2404,7 @@ module.exports = (function () {
   return invite;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/tag.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/tag.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","../widgets/tag.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/tag.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js":[function(require,module,exports){
 /**
 *  # User module
 *
@@ -3153,11 +3188,12 @@ module.exports = {
     SHARE_ADMIN: 'Share administration',
     INVITE_USER: {
       IU: 'Invite users',
-      HELP: '<h3>Invite users</h3><p>This field accepts on email at a time. When ENTER is typed, or OK is clicked, the email is added to list of invited users. A list of known users helps you to fill the emails.</p><h3>List of users</h3><p>This list contains all selected users. You can remove one by clicking the sign after each email.</p><h3>Note</h3><p>Please note that, for instance, registered users will be automatically added to your group. In short term, external users will receive a mail for creating an account.</p>',
+      HELP: '<h3>Invite users</h3><p>This field accepts one login at a time. When ENTER is typed, or OK is clicked, the login is added to list of invited users. A list of known users helps you to fill the logins.</p><h3>List of users</h3><p>This list contains all selected users. You can remove one by clicking the sign after each login.</p><h3>Note</h3><p>Please note that, for instance, registered users will be automatically added to your group. In short term, external users will receive a mail for creating an account.</p>',
       USERS_SELECTION: 'Users selection',
       USERS_SELECTED: 'List of selected users',
-      PLACEHOLDER: 'Enter email address',
-      INPUT_HELP: 'You can invite as many users as you want'
+      PLACEHOLDER: 'Enter login',
+      INPUT_HELP: 'You can invite as many users as you want',
+      SUCCESS: 'User invitation has been successfully achieved'
     },
     SEARCH: {
       TITLE: 'Search',

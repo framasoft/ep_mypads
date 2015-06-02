@@ -34,8 +34,9 @@ module.exports = (function () {
   var conf = require('../configuration.js');
   var GROUP = conf.LANG.GROUP;
   var auth = require('../auth.js');
-  var layout = require('./layout.js');
   var model = require('../model/group.js');
+  var layout = require('./layout.js');
+  var notif = require('../widgets/notification.js');
   var tag = require('../widgets/tag.js');
 
   var invite = {};
@@ -43,6 +44,8 @@ module.exports = (function () {
   /**
   * ## Controller
   *
+  * Used to check authentication, init data for tag like widget with users and
+  * admins and gather data if not already fetched.
   */
 
   invite.controller = function () {
@@ -54,22 +57,56 @@ module.exports = (function () {
     var init = function () {
       var group = m.route.param('group');
       c.group = model.data()[group];
-      c.users = ld.reduce(ld.merge(model.admins(), model.users()),
-        function (memo, val) {
-          memo[val.email] = val;
-          return memo;
-      }, {});
+      var users = ld.merge(model.admins(), model.users());
+      users = ld.reduce(users, function (memo, val) {
+        memo.byId[val._id] = val;
+        memo.byLogin[val.login] = val;
+        return memo;
+      }, { byId: {}, byLogin: {} });
+      c.users = users.byLogin;
+      var current = ld(users.byId)
+        .pick(c.group.users)
+        .values()
+        .pluck('login')
+        .value();
       c.tag = new tag.controller({
         name: 'user-invite',
         label: GROUP.INVITE_USER.USERS_SELECTION,
-        current: c.group.users,
+        current: current,
         placeholder: GROUP.INVITE_USER.PLACEHOLDER,
-        tags: ld.keys(c.users)
+        tags: ld.pull(ld.keys(c.users), auth.userInfo().login)
       });
     };
     if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
 
-    window.c = c;
+    /**
+    * ### submit
+    *
+    * `submit` function calls the public API to update the group with new users
+    * or admins. It displays errors if needed or success.
+    *
+    * It filters user invitation by known users only.
+    */
+
+    c.submit = function (e) {
+      e.preventDefault();
+      var data = {
+        invite: true,
+        gid: c.group._id,
+        logins: c.tag.current
+      };
+      m.request({
+        method: 'POST',
+        url: conf.URLS.GROUP + '/invite',
+        data: data
+      }).then(function (resp) {
+        model.fetch(function () {
+          notif.success({ body: GROUP.INVITE_USER.SUCCESS });
+          m.route('/mypads/group/' + resp.value._id + '/view');
+        });
+      }, function (err) { notif.error({ body: err.error }); });
+    };
+
     return c;
   };
 
@@ -80,11 +117,9 @@ module.exports = (function () {
   var view = {};
 
   view.userField = function (c) {
-    var ipt = tag.views.input(c);
-    ipt.attrs.type = 'email';
     return m('div.block-group.tag', [
       m('label.block', { for: c.name }, c.label),
-      ipt,
+      tag.views.input(c),
       m('i', {
         class: 'block tooltip icon-info-circled tag',
         'data-msg': GROUP.INVITE_USER.INPUT_HELP }),

@@ -45,17 +45,23 @@
           email: 'parker@lewis.me'
         }, function (err, u) {
           if (err) { console.log(err); }
-          var g = { name: 'Santa Fe', admin: u._id, tags: ['cool', 'weird'] };
-          group.set(g, function () {
-            g.name = 'memories';
-            g.visibility = 'public';
-            g.tags = ['cool', 'funky'];
-            group.set(g, function (err, g) {
-              if (err) { console.log(err); }
-              pad.set({ name: 'Loving Annie', group: g._id }, function () {
-                pad.set({ name: 'Watch sync', group: g._id }, function () {
-                  api.init(specCommon.express.app);
-                  console.log('Mockup Server runs on port 8042');
+          user.set({
+            login: 'frank',
+            password: 'reallyLikesGrace',
+            email: 'frank@gracefanclub.org'
+          }, function () {
+            var g = { name: 'Santa Fe', admin: u._id, tags: ['cool', 'weird'] };
+            group.set(g, function () {
+              g.name = 'memories';
+              g.visibility = 'public';
+              g.tags = ['cool', 'funky'];
+              group.set(g, function (err, g) {
+                if (err) { console.log(err); }
+                pad.set({ name: 'Loving Annie', group: g._id }, function () {
+                  pad.set({ name: 'Watch sync', group: g._id }, function () {
+                    api.init(specCommon.express.app);
+                    console.log('Mockup Server runs on port 8042');
+                  });
                 });
               });
             });

@@ -96,11 +96,12 @@ module.exports = {
     SHARE_ADMIN: 'Share administration',
     INVITE_USER: {
       IU: 'Invite users',
-      HELP: '<h3>Invite users</h3><p>This field accepts on email at a time. When ENTER is typed, or OK is clicked, the email is added to list of invited users. A list of known users helps you to fill the emails.</p><h3>List of users</h3><p>This list contains all selected users. You can remove one by clicking the sign after each email.</p><h3>Note</h3><p>Please note that, for instance, registered users will be automatically added to your group. In short term, external users will receive a mail for creating an account.</p>',
+      HELP: '<h3>Invite users</h3><p>This field accepts one login at a time. When ENTER is typed, or OK is clicked, the login is added to list of invited users. A list of known users helps you to fill the logins.</p><h3>List of users</h3><p>This list contains all selected users. You can remove one by clicking the sign after each login.</p><h3>Note</h3><p>Please note that, for instance, registered users will be automatically added to your group. In short term, external users will receive a mail for creating an account.</p>',
       USERS_SELECTION: 'Users selection',
       USERS_SELECTED: 'List of selected users',
-      PLACEHOLDER: 'Enter email address',
-      INPUT_HELP: 'You can invite as many users as you want'
+      PLACEHOLDER: 'Enter login',
+      INPUT_HELP: 'You can invite as many users as you want',
+      SUCCESS: 'User invitation has been successfully achieved'
     },
     SEARCH: {
       TITLE: 'Search',

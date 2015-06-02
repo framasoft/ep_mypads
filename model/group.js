@@ -29,6 +29,7 @@ module.exports = (function () {
   var cuid = require('cuid');
   var storage = require('../storage.js');
   var common = require('./common.js');
+  var user = require('./user.js');
   var GPREFIX = storage.DBPREFIX.GROUP;
   var UPREFIX = storage.DBPREFIX.USER;
   var PPREFIX = storage.DBPREFIX.PAD;
@@ -197,6 +198,49 @@ module.exports = (function () {
       group.fn.indexUsers(true, g, function (err) {
         if (err) { return callback(err); }
         group.fn.cascadePads(g, callback);
+      });
+    });
+  };
+
+  /**
+  * ### inviteOrShare
+  *
+  * `inviteOrShare` is a asynchronous function that checks if given data, users
+  * or admins logins, are correct and transforms it to expected values : unique
+  * identifiers, before saving it to database.
+  *
+  * It takes :
+  *
+  * - `invite` boolean, *true* for user invitation, *false* for admin sharing;
+  * - `gid` group unique identifier;
+  * - array of users  `logins`;
+  * - `callback` function calling with  *error* if error or *null* and the
+  *   updated group otherwise.
+  */
+
+  group.inviteOrShare = function (invite, gid, logins, callback) {
+    if (!ld.isBoolean(invite)) {
+      throw new TypeError('invite must be a boolean');
+    }
+    if (!ld.isString(gid)) {
+      throw new TypeError('gid must be a string');
+    }
+    if (!ld.isArray(logins)) {
+      throw new TypeError('logins must be an array');
+    }
+    if (!ld.isFunction(callback)) {
+      throw new TypeError('callback must be a function');
+    }
+    user.fn.getIdsFromLogins(logins, function (err, uids) {
+      if (err) { return callback(err); }
+      group.get(gid, function (err, g) {
+        if (err) { return callback(err); }
+        var field = invite ? 'users' : 'admins';
+        g[field] = ld.union(g[field], uids);
+        group.fn.set(g, function (err, g) {
+          if (err) { return callback(err); }
+          callback(null, g);
+        });
       });
     });
   };

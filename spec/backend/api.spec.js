@@ -718,6 +718,60 @@
         });
       });
 
+      describe('group.inviteOrShare POST', function () {
+
+        it('should return error when arguments are not as expected',
+          function (done) {
+            rq.post(groupRoute + '/invite', function (err, resp, body) {
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('invite must be a boolean');
+              done();
+            });
+          }
+        );
+
+        it('will return an error if the group id does not exist',
+          function (done) {
+            var b = {
+              body: {
+                invite: true,
+                gid:'xxx',
+                logins: ['one', 'two'] 
+              }
+            };
+            rq.post(groupRoute + '/invite', b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(401);
+              expect(body.error).toMatch('key is not found');
+              done();
+            });
+          }
+        );
+
+        it('should invite successfully otherwise', function (done) {
+          var params = { login: 'franky', password: 'willnotlivelong' };
+          user.set(params, function (err, u) {
+            expect(err).toBeNull();
+            var b = {
+              body: {
+                invite: true,
+                gid: gid,
+                logins: [u.login, 'inexistent']
+              }
+            };
+              rq.post(groupRoute + '/invite', b, function (err, resp, body) {
+                expect(err).toBeNull();
+                expect(resp.statusCode).toBe(200);
+                expect(body.success).toBeTruthy();
+                expect(ld.isObject(body.value)).toBeTruthy();
+                expect(ld.first(body.value.users)).toBe(u._id);
+                done();
+              });
+            });
+          }
+        );
+
+      });
+
       describe('group.getByUSer GET', function () {
 
         it('should return groups, pads and users', function (done) {
@@ -979,6 +1033,7 @@
           }
         );
       });
+
     });
 
     describe('pad API', function () {

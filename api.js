@@ -501,6 +501,27 @@ module.exports = (function () {
     app.delete(groupRoute + '/:key', fn.ensureAuthentificated,
       ld.partial(fn.del, group.del));
 
+    /**
+    * POST method : `group.inviteOrShare` with gid group id, array of logins
+    * and invite boolean
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/group/invite
+    */
+
+    app.post(groupRoute + '/invite', fn.ensureAuthentificated,
+      function (req, res) {
+        try {
+          group.inviteOrShare(req.body.invite, req.body.gid, req.body.logins,
+            function (err, g) {
+              if (err) { return res.status(401).send({ error: err.message }); }
+              res.send({ success: true, value: g });
+          });
+        }
+        catch (e) { res.status(400).send({ error: e.message }); }
+      }
+    );
+
   };
 
   /**

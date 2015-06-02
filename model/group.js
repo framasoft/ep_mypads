@@ -216,6 +216,9 @@ module.exports = (function () {
   * - array of users  `logins`;
   * - `callback` function calling with  *error* if error or *null* and the
   *   updated group otherwise.
+  *
+  * It takes care of exclusion of admins and users : admin status is a
+  * escalation of user.
   */
 
   group.inviteOrShare = function (invite, gid, logins, callback) {
@@ -235,8 +238,13 @@ module.exports = (function () {
       if (err) { return callback(err); }
       group.get(gid, function (err, g) {
         if (err) { return callback(err); }
-        var field = invite ? 'users' : 'admins';
-        g[field] = ld.union(g[field], uids);
+        if (invite) {
+          g.users = ld.reject(ld.union(g.users, uids),
+            ld.partial(ld.includes, g.admins));
+        } else {
+          g.admins = ld.reject(ld.union(g.admins, uids),
+            ld.partial(ld.includes, g.users));
+        }
         group.fn.set(g, function (err, g) {
           if (err) { return callback(err); }
           callback(null, g);

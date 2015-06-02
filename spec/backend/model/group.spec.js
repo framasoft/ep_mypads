@@ -525,18 +525,18 @@
 
       it('should return an array of uid otherwise, filtering not found users',
         function (done) {
-          var users = ['frank', 'grace','shelly', 'mikey', 'jerry', 'inexist'];
+          var users = ['shelly', 'mikey', 'inexist'];
           group.inviteOrShare(true, gparams._id, users, function (err, res) {
             expect(err).toBeNull();
             expect(ld.isObject(res)).toBeTruthy();
-            expect(ld.size(res.users)).toBe(ld.size(users) - 1);
+            expect(ld.size(res.users)).toBe(3);
             var nbAdmins = res.admins.length;
             var admins = ['grace', 'inexist'];
             group.inviteOrShare(false, gparams._id, admins,
               function (err, res) {
                 expect(err).toBeNull();
                 expect(ld.isObject(res)).toBeTruthy();
-                expect(ld.size(res.admins)).toBe(nbAdmins + admins.length - 1);
+                expect(ld.size(res.admins)).toBe(nbAdmins + 1);
                 done();
               }
             );

@@ -36,6 +36,10 @@ div.tag label {
   clear: left;
 }
 
+i.icon-cancel {
+  cursor: pointer;
+} 
+
 /* Tablet and Up */
 @media (min-width: 40em) {
   section.user { width: 80%; }

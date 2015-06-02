@@ -2228,7 +2228,7 @@ module.exports = (function () {
 
 },{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./user.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user-invitation.js":[function(require,module,exports){
 /**
-*  # User invitation module
+*  # User invitation and admin sharing module
 *
 *  ## License
 *
@@ -2251,7 +2251,7 @@ module.exports = (function () {
 *
 *  ## Description
 *
-*  This module handles group user invitation.
+*  This module handles group user invitation and group user admin sharing.
 */
 
 module.exports = (function () {
@@ -2282,6 +2282,7 @@ module.exports = (function () {
     if (!auth.isAuthenticated()) { return m.route('/login'); }
 
     var c = {};
+    c.isInvite = (m.route.param('action') === 'invite');
 
     var init = function () {
       var group = m.route.param('group');
@@ -2294,7 +2295,7 @@ module.exports = (function () {
       }, { byId: {}, byLogin: {} });
       c.users = users.byLogin;
       var current = ld(users.byId)
-        .pick(c.group.users)
+        .pick(c.isInvite ? c.group.users : c.group.admins)
         .values()
         .pluck('login')
         .value();
@@ -2320,7 +2321,7 @@ module.exports = (function () {
     c.submit = function (e) {
       e.preventDefault();
       var data = {
-        invite: true,
+        invite: c.isInvite,
         gid: c.group._id,
         logins: c.tag.current
       };
@@ -2330,7 +2331,8 @@ module.exports = (function () {
         data: data
       }).then(function (resp) {
         model.fetch(function () {
-          notif.success({ body: GROUP.INVITE_USER.SUCCESS });
+          var lpfx = c.isInvite ? 'INVITE_USER' : 'ADMIN_SHARE';
+          notif.success({ body: GROUP[lpfx].SUCCESS });
           m.route('/mypads/group/' + resp.value._id + '/view');
         });
       }, function (err) { notif.error({ body: err.error }); });
@@ -2368,7 +2370,7 @@ module.exports = (function () {
       onsubmit: c.submit
     }, [
       m('fieldset.block-group', [
-        m('legend', GROUP.INVITE_USER.IU),
+        m('legend', (c.isInvite ? GROUP.INVITE_USER.IU : GROUP.ADMIN_SHARE.AS)),
         m('div', view.userField(c.tag))
       ]),
       m('fieldset.block-group', [
@@ -2390,10 +2392,13 @@ module.exports = (function () {
     ]);
   };
 
-  view.aside = function () {
+  view.aside = function (c) {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(GROUP.INVITE_USER.HELP))
+      m('article', [
+        m('h3', (c.isInvite ? GROUP.INVITE_USER.IU : GROUP.ADMIN_SHARE.AS)),
+        m('section', m.trust(GROUP.INVITE_USER.HELP))
+      ])
     ]);
   };
 
@@ -2770,7 +2775,7 @@ module.exports = (function () {
     '/mypads/group/:group/pad/edit/:pad': padAdd,
     '/mypads/group/:group/pad/remove/:pad': padRemove,
     '/mypads/group/:group/pad/mark/:pad': padMark,
-    '/mypads/group/:group/user/invite': userInvite,
+    '/mypads/group/:group/user/:action': userInvite,
     '/admin': admin
   };
 
@@ -3188,12 +3193,16 @@ module.exports = {
     SHARE_ADMIN: 'Share administration',
     INVITE_USER: {
       IU: 'Invite users',
-      HELP: '<h3>Invite users</h3><p>This field accepts one login at a time. When ENTER is typed, or OK is clicked, the login is added to list of invited users. A list of known users helps you to fill the logins.</p><h3>List of users</h3><p>This list contains all selected users. You can remove one by clicking the sign after each login.</p><h3>Note</h3><p>Please note that, for instance, registered users will be automatically added to your group. In short term, external users will receive a mail for creating an account.</p>',
+      HELP: '<p>This field accepts one login at a time. When ENTER is typed, or OK is clicked, the login is added to list of invited users. A list of known users helps you to fill the logins.</p><h3>List of users</h3><p>This list contains all selected users. You can remove one by clicking the sign after each login.</p><h3>Note</h3><p>Please note that, for instance, registered users will be automatically added to your group. In short term, external users will receive a mail for creating an account.</p>',
       USERS_SELECTION: 'Users selection',
       USERS_SELECTED: 'List of selected users',
       PLACEHOLDER: 'Enter login',
       INPUT_HELP: 'You can invite as many users as you want',
       SUCCESS: 'User invitation has been successfully achieved'
+    },
+    ADMIN_SHARE: {
+      AS: 'Administration sharing',
+      SUCCESS: 'Administration sharing has been successfully achieved'
     },
     SEARCH: {
       TITLE: 'Search',

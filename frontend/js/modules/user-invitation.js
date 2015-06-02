@@ -1,5 +1,5 @@
 /**
-*  # User invitation module
+*  # User invitation and admin sharing module
 *
 *  ## License
 *
@@ -22,7 +22,7 @@
 *
 *  ## Description
 *
-*  This module handles group user invitation.
+*  This module handles group user invitation and group user admin sharing.
 */
 
 module.exports = (function () {
@@ -53,6 +53,7 @@ module.exports = (function () {
     if (!auth.isAuthenticated()) { return m.route('/login'); }
 
     var c = {};
+    c.isInvite = (m.route.param('action') === 'invite');
 
     var init = function () {
       var group = m.route.param('group');
@@ -65,7 +66,7 @@ module.exports = (function () {
       }, { byId: {}, byLogin: {} });
       c.users = users.byLogin;
       var current = ld(users.byId)
-        .pick(c.group.users)
+        .pick(c.isInvite ? c.group.users : c.group.admins)
         .values()
         .pluck('login')
         .value();
@@ -91,7 +92,7 @@ module.exports = (function () {
     c.submit = function (e) {
       e.preventDefault();
       var data = {
-        invite: true,
+        invite: c.isInvite,
         gid: c.group._id,
         logins: c.tag.current
       };
@@ -101,7 +102,8 @@ module.exports = (function () {
         data: data
       }).then(function (resp) {
         model.fetch(function () {
-          notif.success({ body: GROUP.INVITE_USER.SUCCESS });
+          var lpfx = c.isInvite ? 'INVITE_USER' : 'ADMIN_SHARE';
+          notif.success({ body: GROUP[lpfx].SUCCESS });
           m.route('/mypads/group/' + resp.value._id + '/view');
         });
       }, function (err) { notif.error({ body: err.error }); });
@@ -139,7 +141,7 @@ module.exports = (function () {
       onsubmit: c.submit
     }, [
       m('fieldset.block-group', [
-        m('legend', GROUP.INVITE_USER.IU),
+        m('legend', (c.isInvite ? GROUP.INVITE_USER.IU : GROUP.ADMIN_SHARE.AS)),
         m('div', view.userField(c.tag))
       ]),
       m('fieldset.block-group', [
@@ -161,10 +163,13 @@ module.exports = (function () {
     ]);
   };
 
-  view.aside = function () {
+  view.aside = function (c) {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(GROUP.INVITE_USER.HELP))
+      m('article', [
+        m('h3', (c.isInvite ? GROUP.INVITE_USER.IU : GROUP.ADMIN_SHARE.AS)),
+        m('section', m.trust(GROUP.INVITE_USER.HELP))
+      ])
     ]);
   };
 

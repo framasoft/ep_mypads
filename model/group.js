@@ -239,11 +239,9 @@ module.exports = (function () {
       group.get(gid, function (err, g) {
         if (err) { return callback(err); }
         if (invite) {
-          g.users = ld.reject(ld.union(g.users, uids),
-            ld.partial(ld.includes, g.admins));
+          g.users = ld.reject(uids, ld.partial(ld.includes, g.admins));
         } else {
-          g.admins = ld.reject(ld.union(g.admins, uids),
-            ld.partial(ld.includes, g.users));
+          g.admins = ld.reject(uids, ld.partial(ld.includes, g.users));
         }
         group.fn.set(g, function (err, g) {
           if (err) { return callback(err); }

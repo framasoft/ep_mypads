@@ -529,14 +529,14 @@
           group.inviteOrShare(true, gparams._id, users, function (err, res) {
             expect(err).toBeNull();
             expect(ld.isObject(res)).toBeTruthy();
-            expect(ld.size(res.users)).toBe(3);
+            expect(ld.size(res.users)).toBe(ld.size(users) - 1);
             var nbAdmins = res.admins.length;
-            var admins = ['grace', 'inexist'];
+            var admins = ['guest', 'grace', 'inexist'];
             group.inviteOrShare(false, gparams._id, admins,
               function (err, res) {
                 expect(err).toBeNull();
                 expect(ld.isObject(res)).toBeTruthy();
-                expect(ld.size(res.admins)).toBe(nbAdmins + 1);
+                expect(ld.size(res.admins)).toBe(nbAdmins - 1);
                 done();
               }
             );

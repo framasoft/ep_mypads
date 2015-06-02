@@ -439,7 +439,7 @@ module.exports = (function () {
               );
               data.users = ld.transform(data.users, function (memo, val, key) {
                 memo[key] = ld.pick(val, '_id', 'login', 'firstname',
-                  'lastname');
+                  'lastname', 'email');
               });
               data.admins = ld.transform(data.admins,
                 function (memo, val, key) {

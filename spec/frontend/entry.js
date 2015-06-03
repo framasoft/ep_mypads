@@ -34,6 +34,7 @@
   var groupForm = require('./group-form.spec.js');
   var groupRemove = require('./group-remove.spec.js');
   var groupView = require('./group-view.spec.js');
+  var userInvite = require('./user-invitation.spec.js');
   var tagWidget = require('./tag-widget.spec.js');
 
   describe('MyPads testing', function () {
@@ -49,6 +50,7 @@
     groupForm.run(app);
     groupRemove.run(app);
     groupView.run(app);
+    userInvite.run(app);
     tagWidget.run(app);
   });
 }).call(this);

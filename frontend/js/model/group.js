@@ -31,6 +31,7 @@ module.exports = (function () {
   var m = require('mithril');
   var ld = require('lodash');
   var conf = require('../configuration.js');
+  var auth = require('../auth.js');
   var notif = require('../widgets/notification.js');
 
   var model = {
@@ -49,6 +50,14 @@ module.exports = (function () {
         model.data(resp.value.groups); 
         model.pads(resp.value.pads);
         model.admins(resp.value.admins);
+        console.log(model.admins());
+        console.log(auth.userInfo());
+        if (ld.size(model.admins()) === 0) {
+          var u = auth.userInfo();
+          var admins = {};
+          admins[u._id] = u;
+          model.admins(admins);
+        }
         model.users(resp.value.users);
         var tags = ld(resp.value.groups)
           .values()

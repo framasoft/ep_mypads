@@ -308,6 +308,7 @@ module.exports = (function () {
   var m = require('mithril');
   var ld = require('lodash');
   var conf = require('../configuration.js');
+  var auth = require('../auth.js');
   var notif = require('../widgets/notification.js');
 
   var model = {
@@ -326,6 +327,14 @@ module.exports = (function () {
         model.data(resp.value.groups); 
         model.pads(resp.value.pads);
         model.admins(resp.value.admins);
+        console.log(model.admins());
+        console.log(auth.userInfo());
+        if (ld.size(model.admins()) === 0) {
+          var u = auth.userInfo();
+          var admins = {};
+          admins[u._id] = u;
+          model.admins(admins);
+        }
         model.users(resp.value.users);
         var tags = ld(resp.value.groups)
           .values()
@@ -346,7 +355,7 @@ module.exports = (function () {
   return model;
 }).call(this);
 
-},{"../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js":[function(require,module,exports){
 /**
 *  # Routing module
 *

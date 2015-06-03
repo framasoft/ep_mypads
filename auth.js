@@ -75,7 +75,7 @@ module.exports = (function () {
 
   auth.fn.local = function () {
     passport.serializeUser(function(user, done) {
-      done(null, user._id);
+      done(null, user.login);
     });
     passport.deserializeUser(function(id, done) {
       user.get(id, done);

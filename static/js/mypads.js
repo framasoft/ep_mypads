@@ -311,13 +311,18 @@ module.exports = (function () {
   var auth = require('../auth.js');
   var notif = require('../widgets/notification.js');
 
-  var model = {
-    data: m.prop({}),
-    pads: m.prop({}),
-    users: m.prop([]),
-    admins: m.prop([]),
-    tags: m.prop([])
+  var model = {};
+  model.init = function () {
+    ld.assign(model, {
+      data: m.prop({}),
+      pads: m.prop({}),
+      users: m.prop([]),
+      admins: m.prop([]),
+      tags: m.prop([])
+    });
   };
+  model.init();
+
   model.fetch = function (callback) {
     m.request({
       url: conf.URLS.GROUP,
@@ -1729,6 +1734,7 @@ module.exports = (function () {
   var conf = require('../configuration.js');
   var auth = require('../auth.js');
   var LOG = conf.LANG.USER;
+  var model = require('../model/group.js');
   var notif = require('../widgets/notification.js');
 
   var logout = {
@@ -1745,6 +1751,7 @@ module.exports = (function () {
       .then(function () {
         auth.isAuthenticated(false);
         auth.userInfo(null);
+        model.init();
         notif.success({ body: LOG.AUTH.SUCCESS_OUT });
         m.route('/');
       }, function (err) {
@@ -1758,7 +1765,7 @@ module.exports = (function () {
   return logout;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-add.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-add.js":[function(require,module,exports){
 /**
 *  # Pad creation and edition module
 *

@@ -31,6 +31,7 @@ module.exports = (function () {
   var conf = require('../configuration.js');
   var auth = require('../auth.js');
   var LOG = conf.LANG.USER;
+  var model = require('../model/group.js');
   var notif = require('../widgets/notification.js');
 
   var logout = {
@@ -47,6 +48,7 @@ module.exports = (function () {
       .then(function () {
         auth.isAuthenticated(false);
         auth.userInfo(null);
+        model.init();
         notif.success({ body: LOG.AUTH.SUCCESS_OUT });
         m.route('/');
       }, function (err) {

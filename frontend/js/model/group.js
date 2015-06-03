@@ -34,13 +34,18 @@ module.exports = (function () {
   var auth = require('../auth.js');
   var notif = require('../widgets/notification.js');
 
-  var model = {
-    data: m.prop({}),
-    pads: m.prop({}),
-    users: m.prop([]),
-    admins: m.prop([]),
-    tags: m.prop([])
+  var model = {};
+  model.init = function () {
+    ld.assign(model, {
+      data: m.prop({}),
+      pads: m.prop({}),
+      users: m.prop([]),
+      admins: m.prop([]),
+      tags: m.prop([])
+    });
   };
+  model.init();
+
   model.fetch = function (callback) {
     m.request({
       url: conf.URLS.GROUP,

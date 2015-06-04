@@ -51,6 +51,12 @@ module.exports = (function () {
     var c = {};
     c.bookmarks = auth.userInfo().bookmarks.pads;
 
+    /**
+    * ## init function
+    *
+    * Gathers group and pad values from local cache.
+    */
+
     var init = function () {
       var group = m.route.param('group');
       c.group = model.data()[group];
@@ -59,6 +65,14 @@ module.exports = (function () {
     };
 
     if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
+
+    c.sendPass = m.prop(false);
+    c.password = m.prop('');
+
+    c.submit = function (e) {
+      e.preventDefault();
+      c.sendPass = m.prop(true);
+    };
 
     return c;
   };
@@ -69,17 +83,43 @@ module.exports = (function () {
 
   var view = {};
 
+  view.pad = function (c) {
+    var showPass = ((c.group.visibility === 'private') && !c.sendPass());
+    if (showPass) {
+      return m('form', {
+        id: 'password-form',
+        onsubmit: c.submit
+      }, [
+        m('label.block', { for: 'mypadspassword' }, conf.LANG.USER.PASSWORD),
+        m('input.block', {
+          type: 'password',
+          required: true,
+          placeholder: conf.LANG.USER.UNDEF,
+          value: c.password(),
+          oninput: m.withAttr('value', c.password)
+        }),
+        m('input.ok.block', {
+          form: 'password-form',
+          type: 'submit',
+          value: conf.LANG.USER.OK
+        })
+      ]);
+    } else {
+      return m('iframe', {
+        src: '/p/' + c.pad._id +
+          (c.sendPass() ? '?mypadspassword=' + c.password() : '')
+      });
+    }
+
+  };
+
   view.main = function (c) {
     return m('section', { class: 'block-group group' }, [
       m('h2.block', [
         m('span', PAD.PAD + ' ' + c.pad.name),
         m('span.subtitle', '(' + PAD.FROM_GROUP + c.group.name + ')')
       ]),
-      m('section.block.pad', [
-        m('iframe', {
-          src: '/p/' + c.pad._id
-        })
-      ])
+      m('section.block.pad', [ view.pad(c) ])
     ]);
   };
 

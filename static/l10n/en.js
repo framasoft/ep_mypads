@@ -137,11 +137,14 @@ module.exports = {
       USERS: 'Users',
       USERS_NONE: 'No user',
       VISIBILITY: 'Visibility',
+      PAD: 'Pad',
       PADS: 'Pads',
       NONE: 'No pad linked',
       ADD: 'Create a new pad',
       ADD_PROMPT: 'Enter the name of the new pad',
-      EDIT_PROMPT: 'Enter the new name of the pad'
+      EDIT_PROMPT: 'Enter the new name of the pad',
+      FROM_GROUP: 'group : ',
+      VIEW_HELP: 'Help...'
     },
     INFO: {
       NAME: 'Name of the group',

@@ -55,8 +55,6 @@ module.exports = (function () {
         model.data(resp.value.groups); 
         model.pads(resp.value.pads);
         model.admins(resp.value.admins);
-        console.log(model.admins());
-        console.log(auth.userInfo());
         if (ld.size(model.admins()) === 0) {
           var u = auth.userInfo();
           var admins = {};

@@ -949,7 +949,19 @@ module.exports = (function () {
 
   view.main = function (c) {
     return m('section', { class: 'block-group group' }, [
-      m('h2.block', GROUP.GROUP + ' ' + c.group.name),
+      m('h2.block', [
+        m('span', GROUP.GROUP + ' ' + c.group.name),
+        m('a', {
+          href: '/mypads/group/' + c.group._id + '/edit',
+          config: m.route,
+          title: GROUP.EDIT
+        }, [ m('i.icon-pencil') ]),
+        m('a', {
+          href: '/mypads/group/' + c.group._id + '/remove',
+          config: m.route,
+          title: GROUP.REMOVE
+        }, [ m('i.icon-trash') ])
+      ]),
       m('section.block.props', [
         m('h3.title', GROUP.PROPERTIES),
         view.properties(c)
@@ -2210,7 +2222,16 @@ module.exports = (function () {
     return m('section', { class: 'block-group group' }, [
       m('h2.block', [
         m('span', PAD.PAD + ' ' + c.pad.name),
-        m('span.subtitle', '(' + PAD.FROM_GROUP + c.group.name + ')')
+        m('span.subtitle', [
+          '(',
+          PAD.FROM_GROUP,
+          m('a', {
+            href: '/mypads/group/' + c.group._id + '/view',
+            config: m.route,
+            title: conf.LANG.GROUP.VIEW
+          }, c.group.name ),
+          ')'
+        ])
       ]),
       m('section.block.pad', [ view.pad(c) ])
     ]);

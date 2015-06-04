@@ -47,6 +47,7 @@ var user = require('./model/user.js');
 var group = require('./model/group.js');
 var pad = require('./model/pad.js');
 var auth = require('./auth.js');
+var perm = require('./perm.js');
 
 module.exports = (function () {
   'use strict';
@@ -68,6 +69,7 @@ module.exports = (function () {
     }
     auth.init(app);
     authAPI(app);
+    perm.init(app);
     configurationAPI(app);
     userAPI(app);
     groupAPI(app);
@@ -200,6 +202,7 @@ module.exports = (function () {
         if (err) { return res.status(400).send({ error: err.message }); }
         if (!user) { return res.status(400).send({ error: info.message }); }
         req.login(user, function (err) {
+          req.session.uid = user._id;
           req.session.login = user.login;
           if (err) { return res.status(400).send({ error: err }); }
           res.status(200).send({

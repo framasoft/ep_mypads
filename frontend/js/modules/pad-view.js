@@ -48,26 +48,29 @@ module.exports = (function () {
       return m.route('/login');
     }
 
-    var c = {};
-    c.bookmarks = auth.userInfo().bookmarks.pads;
+    var c = {
+      sendPass: m.prop(false),
+      password: m.prop('')
+    };
 
     /**
     * ## init function
     *
     * Gathers group and pad values from local cache.
+    * Admin should not need password when visibility is private.
     */
 
     var init = function () {
       var group = m.route.param('group');
       c.group = model.data()[group];
+      if (ld.includes(c.group.admins, auth.userInfo()._id)) {
+        c.sendPass = m.prop(true);
+      }
       var key = m.route.param('pad');
       c.pad = model.pads()[key];
     };
 
     if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
-
-    c.sendPass = m.prop(false);
-    c.password = m.prop('');
 
     c.submit = function (e) {
       e.preventDefault();

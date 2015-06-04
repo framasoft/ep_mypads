@@ -63,12 +63,10 @@ module.exports = (function () {
           res.status(403).send('You are not allowed to access to this pad.');
         };
         if (err) { return unexpectedErr(); }
+        // If admin of the group, ok
+        if (ld.includes(g.admins, req.session.uid)) { return next(); }
         if (g.visibility === 'restricted') {
-          if (ld.includes(ld.union(g.admins, g.users), req.session.uid)) {
-            return next();
-          } else {
-            return refuse();
-          }
+          return (ld.includes(g.users, req.session.uid) ? next() : refuse());
         } else if (g.visibility === 'private') {
           var password = req.query.mypadspassword;
           if (!password) { return refuse(); }

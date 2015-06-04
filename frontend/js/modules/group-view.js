@@ -144,6 +144,15 @@ module.exports = (function () {
                   config: m.route,
                   title: GROUP.EDIT
                 }, [ m('i.icon-pencil') ]),
+                (function () {
+                  if (c.group.visibility !== 'restricted') {
+                    return m('a', {
+                      href: route + '/pad/share/' + p._id,
+                      config: m.route,
+                      title: GROUP.SHARE
+                    }, [ m('i.icon-share') ]);
+                  }
+                })(),
                 m('a', {
                   href: route + '/pad/remove/' + p._id,
                   config: m.route,

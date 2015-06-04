@@ -876,6 +876,15 @@ module.exports = (function () {
                   config: m.route,
                   title: GROUP.EDIT
                 }, [ m('i.icon-pencil') ]),
+                (function () {
+                  if (c.group.visibility !== 'restricted') {
+                    return m('a', {
+                      href: route + '/pad/share/' + p._id,
+                      config: m.route,
+                      title: GROUP.SHARE
+                    }, [ m('i.icon-share') ]);
+                  }
+                })(),
                 m('a', {
                   href: route + '/pad/remove/' + p._id,
                   config: m.route,
@@ -2010,6 +2019,70 @@ module.exports = (function () {
   return remove;
 }).call(this);
 
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-share.js":[function(require,module,exports){
+/**
+*  # Pad sharing module
+*
+*  ## License
+*
+*  Licensed to the Apache Software Foundation (ASF) under one
+*  or more contributor license agreements.  See the NOTICE file
+*  distributed with this work for additional information
+*  regarding copyright ownership.  The ASF licenses this file
+*  to you under the Apache License, Version 2.0 (the
+*  "License"); you may not use this file except in compliance
+*  with the License.  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+*  Unless required by applicable law or agreed to in writing,
+*  software distributed under the License is distributed on an
+*  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+*  KIND, either express or implied.  See the License for the
+*  specific language governing permissions and limitations
+*  under the License.
+*
+*  ## Description
+*
+*  Short module for pad sharing
+*/
+
+module.exports = (function () {
+  'use strict';
+  // Dependencies
+  var m = require('mithril');
+  var ld = require('lodash');
+  var auth = require('../auth.js');
+  var conf = require('../configuration.js');
+  var GROUP = conf.LANG.GROUP;
+  var model = require('../model/group.js');
+  var notif = require('../widgets/notification.js');
+
+  var share = {};
+
+  /**
+  * ## Controller
+  *
+  * Used to display the real etherpad link.
+  */
+  share.controller = function () {
+    if (!auth.isAuthenticated()) { return m.route('/login'); }
+      var gkey = m.route.param('group');
+      var key = m.route.param('pad');
+      var group = model.data()[gkey];
+      var link = window.location.protocol + '//' + window.location.host +
+        '/p/' + key;
+      if (group.visibility === 'private') {
+        var password = window.prompt(GROUP.SHARE_PASSWORD);
+        link += '?mypadspassword=' + password;
+      }
+      window.prompt(GROUP.SHARE_LINK, link);
+      m.route('/mypads/group/' + gkey + '/view');
+  };
+
+  return share;
+}).call(this);
+
 },{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-view.js":[function(require,module,exports){
 /**
 *  # Group View module
@@ -2061,26 +2134,29 @@ module.exports = (function () {
       return m.route('/login');
     }
 
-    var c = {};
-    c.bookmarks = auth.userInfo().bookmarks.pads;
+    var c = {
+      sendPass: m.prop(false),
+      password: m.prop('')
+    };
 
     /**
     * ## init function
     *
     * Gathers group and pad values from local cache.
+    * Admin should not need password when visibility is private.
     */
 
     var init = function () {
       var group = m.route.param('group');
       c.group = model.data()[group];
+      if (ld.includes(c.group.admins, auth.userInfo()._id)) {
+        c.sendPass = m.prop(true);
+      }
       var key = m.route.param('pad');
       c.pad = model.pads()[key];
     };
 
     if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
-
-    c.sendPass = m.prop(false);
-    c.password = m.prop('');
 
     c.submit = function (e) {
       e.preventDefault();
@@ -2909,6 +2985,7 @@ module.exports = (function () {
   var padRemove = require('./modules/pad-remove.js');
   var padView = require('./modules/pad-view.js');
   var padMark = require('./modules/pad-mark.js');
+  var padShare = require('./modules/pad-share.js');
   var userInvite = require('./modules/user-invitation.js');
   var admin = require('./modules/admin.js');
 
@@ -2937,6 +3014,7 @@ module.exports = (function () {
     '/mypads/group/:group/pad/edit/:pad': padAdd,
     '/mypads/group/:group/pad/remove/:pad': padRemove,
     '/mypads/group/:group/pad/mark/:pad': padMark,
+    '/mypads/group/:group/pad/share/:pad': padShare,
     '/mypads/group/:group/pad/view/:pad': padView,
     '/mypads/group/:group/user/:action': userInvite,
     '/admin': admin
@@ -2947,7 +3025,7 @@ module.exports = (function () {
   return route;
 }).call(this);
 
-},{"./modules/admin.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/group-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./modules/group-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js","./modules/group-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-view.js","./modules/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/pad-add.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-add.js","./modules/pad-mark.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-mark.js","./modules/pad-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-remove.js","./modules/pad-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-view.js","./modules/subscribe.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","./modules/user-invitation.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user-invitation.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js":[function(require,module,exports){
+},{"./modules/admin.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/group-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./modules/group-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js","./modules/group-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-view.js","./modules/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/pad-add.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-add.js","./modules/pad-mark.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-mark.js","./modules/pad-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-remove.js","./modules/pad-share.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-share.js","./modules/pad-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-view.js","./modules/subscribe.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","./modules/user-invitation.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user-invitation.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js":[function(require,module,exports){
 /**
 *  # Notification module
 *
@@ -3349,6 +3427,9 @@ module.exports = {
     EDIT_GROUP: 'Edit a group',
     VIEW: 'View',
     VIEW_HELP: '<p>The details of the group shows you :<ul><li>options defined when group has been created or updated;</li><li>list of pads created for this group;</li><li>and list of admins and users of the group.</li></ul></p><p>From there, you can : <ul><li>create new pads, edit them, remove or mark them;</li><li>share administration of your group with other users;</li><li>invite other users to view and edit pads of the group.</li></ul></p>',
+    SHARE: 'Share',
+    SHARE_LINK: 'Please share this URL to your guests',
+    SHARE_PASSWORD: 'Please enter the password to be able to share',
     REMOVE: 'Remove',
     BOOKMARK: 'Bookmark',
     UNMARK: 'Unmark',

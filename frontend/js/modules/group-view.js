@@ -217,7 +217,19 @@ module.exports = (function () {
 
   view.main = function (c) {
     return m('section', { class: 'block-group group' }, [
-      m('h2.block', GROUP.GROUP + ' ' + c.group.name),
+      m('h2.block', [
+        m('span', GROUP.GROUP + ' ' + c.group.name),
+        m('a', {
+          href: '/mypads/group/' + c.group._id + '/edit',
+          config: m.route,
+          title: GROUP.EDIT
+        }, [ m('i.icon-pencil') ]),
+        m('a', {
+          href: '/mypads/group/' + c.group._id + '/remove',
+          config: m.route,
+          title: GROUP.REMOVE
+        }, [ m('i.icon-trash') ])
+      ]),
       m('section.block.props', [
         m('h3.title', GROUP.PROPERTIES),
         view.properties(c)

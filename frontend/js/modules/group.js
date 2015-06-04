@@ -314,7 +314,11 @@ module.exports = (function () {
   view.group = function (c, g) {
     return m('li.block', [
       m('header.group.block-group', [
-        m('h4.block', g.name),
+        m('h4.block', [ m('a', {
+          href: '/mypads/group/' + g._id + '/view',
+          config: m.route,
+          title: GROUP.VIEW
+        }, g.name) ]),
         m('section.block', [
           m('a', {
             href: '/mypads/group/' + g._id + '/view',

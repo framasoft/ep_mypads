@@ -145,7 +145,7 @@ module.exports = (function () {
             first('body > section p').click();
             done();
           }, 100);
-        }, 100);
+        }, 300);
       });
     });
   };

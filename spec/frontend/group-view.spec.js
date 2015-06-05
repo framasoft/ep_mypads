@@ -49,7 +49,7 @@ module.exports = (function () {
             'lovesKubiak');
           app.document.querySelector('input[type=submit]').click();
           window.setTimeout(function () {
-            app.document.querySelectorAll('a[href$=view]')[1].click();
+            app.document.querySelectorAll('a[href$=view]')[2].click();
             window.setTimeout(function () {
               $el = {
                 group: first('dl.group'),

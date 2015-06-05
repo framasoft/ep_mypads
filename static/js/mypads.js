@@ -2151,6 +2151,7 @@ module.exports = (function () {
     }
 
     var c = {
+      isUser: m.prop(true),
       sendPass: m.prop(false),
       password: m.prop('')
     };
@@ -2166,7 +2167,7 @@ module.exports = (function () {
       var group = m.route.param('group');
       c.group = model.data()[group];
       if (ld.includes(c.group.admins, auth.userInfo()._id)) {
-        c.sendPass = m.prop(true);
+        c.isUser = m.prop(false);
       }
       var key = m.route.param('pad');
       c.pad = model.pads()[key];
@@ -2189,7 +2190,8 @@ module.exports = (function () {
   var view = {};
 
   view.pad = function (c) {
-    var showPass = ((c.group.visibility === 'private') && !c.sendPass());
+    var showPass = (c.isUser() &&
+      ((c.group.visibility === 'private') && !c.sendPass()));
     if (showPass) {
       return m('form', {
         id: 'password-form',

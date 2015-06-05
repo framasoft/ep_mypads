@@ -72,8 +72,7 @@ module.exports = (function () {
           if (!password) { return refuse(); }
           auth.fn.isPasswordValid(g, password, function (err, valid) {
             if (err) { return unexpectedErr(); }
-            if (!valid) { return refuse(); }
-            next();
+            return (valid ? next() : refuse());
           });
         } else {
           next(); // public

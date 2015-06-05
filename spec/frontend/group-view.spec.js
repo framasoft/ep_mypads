@@ -155,6 +155,18 @@ module.exports = (function () {
           }, 100);
         });
 
+        it('should propose pad sharing', function (done) {
+          var link;
+          app.window.prompt = function (title, val) { link = val; };
+          var padShare = app.document
+            .querySelectorAll('a[href*=\'/pad/share\']');
+          padShare[2].click();
+          window.setTimeout(function () {
+            expect(link).toMatch('/p/[a-z0-9]+$');
+            done();
+          }, 100);
+        });
+
         it('should allow pad removal', function (done) {
           app.window.confirm = function () { return false; };
           var padRemove = app.document

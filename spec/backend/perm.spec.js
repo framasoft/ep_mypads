@@ -205,6 +205,49 @@
       });
 
     });
+
+    describe('local function readonly', function () {
+      var next = function () { return true; };
+      var req = { params: {}, session: {} };
+      var res = {
+        status: function (code) { this.code = code; return this; },
+        send: function (msg) { this.msg = msg; return this; }
+      };
+
+      it('should pass if pad has not been created by mypads', function (done) {
+        req.params.pid = 'inexistentOne';
+        perm.fn.readonly(req, res, function () {
+          expect(true).toBeTruthy();
+          done();
+        });
+      });
+
+      it('should pass if pad is not readonly', function (done) {
+        req.params.pid = pads.college._id;
+        perm.fn.readonly(req, res, function () {
+          expect(true).toBeTruthy();
+          done();
+        });
+      });
+
+      it('should return HTML if pad is readonly', function (done) {
+        groups.college.readonly = true;
+        groups.college.admin = users.parker._id;
+        group.set(groups.college, function (err, g) {
+          expect(err).toBeNull();
+          expect(g.readonly).toBeTruthy();
+          groups.college = g;
+
+          req.params.pid = pads.college._id;
+          perm.fn.readonly(req, res, next);
+          expect(res.code).toBe(200);
+          expect(res.msg).toMatch('Testing only');
+          done();
+        });
+      });
+
+    });
+
   });
 
 }).call(this);

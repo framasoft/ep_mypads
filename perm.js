@@ -27,6 +27,20 @@
 */
 
 // External dependencies
+var getPad;
+var getPadHTML;
+try {
+  // Normal case : when installed as a plugin
+  getPad = require('ep_etherpad-lite/node/db/PadManager').getPad;
+  getPadHTML = require('ep_etherpad-lite/node/utils/ExportHtml').getPadHTML;
+}
+catch (e) {
+  // Testing case : noop functions
+    getPad = function (padId, callback) { callback(null); };
+    getPadHTML = function (pad, rev, callback) {
+      callback(null, '<p>Testing only</p>');
+    };
+}
 var ld = require('lodash');
 var auth = require('./auth.js');
 var pad = require('./model/pad.js');
@@ -44,6 +58,25 @@ module.exports = (function () {
   perm.fn = {};
 
   /**
+  * ### getPadAndGroup
+  *
+  * `getPadAndGroup` asynchronous function returns to callback the *pad* and
+  * parent *group* or an *error* if there is. It takes mandatory pad id and
+  * callback function.
+  *
+  */
+
+  perm.fn.getPadAndGroup = function (pid, callback) {
+    pad.get(pid, function (err, p) {
+      if (err) { return callback(null, null); }
+      group.get(p.group, function (err, g) {
+        if (err) { return callback(err); }
+        return callback(null, { pad : p, group: g });
+      });
+    });
+  };
+
+  /**
   * ### check
   *
   * `check` function is a middlware-like function for all request to pads.
@@ -52,32 +85,63 @@ module.exports = (function () {
   */
 
   perm.fn.check = function (req, res, next) {
-    pad.get(req.params.pid, function (err, p) {
+    var unexpectedErr = function (err) {
+      return res.status(401).send('Sorry, an error has occured : ' + err);
+    };
+    var refuse = function () {
+      res.status(403).send('You are not allowed to access to this pad.');
+    };
+    perm.fn.getPadAndGroup(req.params.pid, function (err, pg) {
+      if (err) { return unexpectedErr(err); }
       // Key not found, not a MyPads pad so next()
-      if (err) { return next(); }
-      group.get(p.group, function (err, g) {
-        var unexpectedErr = function () {
-          return res.status(401).send('Sorry, an error has occured : ' + err);
-        };
-        var refuse = function () {
-          res.status(403).send('You are not allowed to access to this pad.');
-        };
-        if (err) { return unexpectedErr(); }
-        // If admin of the group, ok
-        if (ld.includes(g.admins, req.session.uid)) { return next(); }
-        if (g.visibility === 'restricted') {
-          return (ld.includes(g.users, req.session.uid) ? next() : refuse());
-        } else if (g.visibility === 'private') {
-          var password = req.query.mypadspassword;
-          if (!password) { return refuse(); }
-          auth.fn.isPasswordValid(g, password, function (err, valid) {
-            if (err) { return unexpectedErr(); }
-            return (valid ? next() : refuse());
+      if (!pg) { return next(); }
+      // If admin of the group, ok
+      var g = pg.group;
+      if (ld.includes(g.admins, req.session.uid)) { return next(); }
+      if (g.visibility === 'restricted') {
+        return (ld.includes(g.users, req.session.uid) ? next() : refuse());
+      } else if (g.visibility === 'private') {
+        var password = req.query.mypadspassword;
+        if (!password) { return refuse(); }
+        auth.fn.isPasswordValid(g, password, function (err, valid) {
+          if (err) { return unexpectedErr(err); }
+          return (valid ? next() : refuse());
+        });
+      } else {
+        next(); // public
+      }
+    });
+  };
+
+  /**
+  * ### readonly
+  *
+  * `readonly` is a middleware-like procedure for all requests to pads.
+  * It checks if the pad belongs to MyPads and has been archived. If yes, it
+  * redirects to HTML export.
+  */
+
+  perm.fn.readonly = function (req, res, next) {
+    var unexpectedErr = function (err) {
+      return res.status(401).send('Sorry, an error has occured : ' + err);
+    };
+    perm.fn.getPadAndGroup(req.params.pid, function (err, pg) {
+      if (err) { return unexpectedErr(err); }
+      // Key not found, not a MyPads pad so next()
+      if (!pg) { return next(); }
+      var g = pg.group;
+      if (g.readonly) {
+        getPad(pg.pad._id, function (err, p) {
+          if (err) { return unexpectedErr(err); }
+          getPadHTML(p, undefined, function (err, html) {
+            if (err) { return unexpectedErr(err); }
+            html = '<!DOCTYPE HTML><html><body>' + html + '</body></html>';
+            return res.status(200).send(html);
           });
-        } else {
-          next(); // public
-        }
-      });
+        });
+      } else {
+        return next();
+      }
     });
   };
 
@@ -96,6 +160,7 @@ module.exports = (function () {
 
   perm.init = function (app) {
     app.all('/p/:pid', perm.fn.check);
+    app.all('/p/:pid', perm.fn.readonly);
   };
 
   return perm;

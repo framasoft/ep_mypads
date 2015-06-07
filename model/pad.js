@@ -25,6 +25,15 @@ module.exports = (function () {
   'use strict';
 
   // Dependencies
+  var removePad;
+  try {
+    // Normal case : when installed as a plugin
+    removePad = require('ep_etherpad-lite/node/db/PadManager').removePad;
+  }
+  catch (e) {
+    // Testing case : noop function
+    removePad = function () {};
+  }
   var ld = require('lodash');
   var cuid = require('cuid');
   var common = require('./common.js');
@@ -229,10 +238,11 @@ module.exports = (function () {
   * ### del
   *
   *  This function uses `common.getDel` with `del` to *false* and *PPREFIX*
-  *  fixed.  It will takes mandatory key string and callback function. See
+  *  fixed.  It will take mandatory key string and callback function. See
   *  `common.getDel` for documentation.
   *
-  *  It uses the `callback` function to handle secondary indexes for groups.
+  * It also removes the pad from Etherpad instance, using the internal API.
+  * It uses the `callback` function to handle secondary indexes for groups.
   */
 
   pad.del = function (key, callback) {
@@ -241,6 +251,7 @@ module.exports = (function () {
     }
     common.getDel(true, PPREFIX, key, function (err, p) {
       if (err) { return callback(err); }
+      removePad(p._id);
       pad.fn.indexGroups(true, p, callback);
     });
   };

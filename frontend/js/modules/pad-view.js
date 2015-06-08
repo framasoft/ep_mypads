@@ -32,7 +32,8 @@ module.exports = (function () {
   var ld = require('lodash');
   // Local dependencies
   var conf = require('../configuration.js');
-  var PAD = conf.LANG.GROUP.PAD;
+  var GROUP = conf.LANG.GROUP;
+  var PAD = GROUP.PAD;
   var auth = require('../auth.js');
   var layout = require('./layout.js');
   var model = require('../model/group.js');
@@ -119,16 +120,41 @@ module.exports = (function () {
   };
 
   view.main = function (c) {
+    var isBookmarked = ld.includes(c.bookmarks, c.pad._id);
+    var route = '/mypads/group/' + c.group._id;
     return m('section', { class: 'block-group group' }, [
       m('h2.block', [
         m('span', PAD.PAD + ' ' + c.pad.name),
+        m('a', {
+          href: route + '/pad/mark/' + c.pad._id,
+          config: m.route,
+          title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK)
+        }, [
+          m('i',
+            { class: 'icon-star' + (isBookmarked ? '' : '-empty') }),
+          m('span', (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK))
+        ]),
+        (function () {
+          if (c.group.visibility !== 'restricted') {
+            return m('a', {
+              href: route + '/pad/share/' + c.pad._id,
+              config: m.route,
+              title: GROUP.SHARE
+            }, [ m('i.icon-share'), m('span', GROUP.SHARE) ]);
+          }
+        })(),
+        m('a', {
+          href: route + '/pad/remove/' + c.pad._id,
+          config: m.route,
+          title: GROUP.REMOVE
+        }, [ m('i.icon-trash'), m('span', GROUP.REMOVE) ]),
         m('span.subtitle', [
           '(',
           PAD.FROM_GROUP,
           m('a', {
-            href: '/mypads/group/' + c.group._id + '/view',
+            href: route + '/view',
             config: m.route,
-            title: conf.LANG.GROUP.VIEW
+            title: GROUP.VIEW
           }, c.group.name ),
           ')'
         ])

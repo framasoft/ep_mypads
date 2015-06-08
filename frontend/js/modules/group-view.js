@@ -223,12 +223,12 @@ module.exports = (function () {
           href: '/mypads/group/' + c.group._id + '/edit',
           config: m.route,
           title: GROUP.EDIT
-        }, [ m('i.icon-pencil') ]),
+        }, [ m('i.icon-pencil'), m('span', GROUP.EDIT) ]),
         m('a', {
           href: '/mypads/group/' + c.group._id + '/remove',
           config: m.route,
           title: GROUP.REMOVE
-        }, [ m('i.icon-trash') ])
+        }, [ m('i.icon-trash'), m('span', GROUP.REMOVE) ])
       ]),
       m('section.block.props', [
         m('h3.title', GROUP.PROPERTIES),

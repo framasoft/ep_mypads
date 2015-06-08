@@ -59,8 +59,8 @@
                 if (err) { console.log(err); }
                 pad.set({ name: 'Loving Annie', group: g._id }, function () {
                   pad.set({ name: 'Watch sync', group: g._id }, function () {
-                    api.init(specCommon.express.app);
-                    console.log('Mockup Server runs on port 8042');
+                    api.init(specCommon.express.app,
+                      console.log.bind(null, 'MockupServer runs on port 8042'));
                   });
                 });
               });

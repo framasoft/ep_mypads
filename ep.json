@@ -3,7 +3,7 @@
     {
       "name": "ep_mypads",
       "hooks": {
-        "expressConfigure": "ep_mypads/hooks:expressCreateServer",
+        "expressCreateServer": "ep_mypads/hooks:expressCreateServer",
         "init_ep_mypads": "ep_mypads/hooks:init"
       },
       "client_hooks": {}

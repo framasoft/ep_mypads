@@ -60,7 +60,7 @@ module.exports = (function () {
   * It initializes all API requirements, particularly mypads routes.
   */
 
-  api.init = function (app) {
+  api.init = function (app, callback) {
     app.use(bodyParser.json());
     app.use('/mypads', express.static(__dirname + '/static'));
     if (testMode) {
@@ -74,6 +74,7 @@ module.exports = (function () {
     userAPI(app);
     groupAPI(app);
     padAPI(app);
+    callback();
   };
 
   /**

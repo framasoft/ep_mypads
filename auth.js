@@ -32,6 +32,7 @@
 var ld = require('lodash');
 var session;
 var cookieParser;
+var testMode = false;
 try {
   // Normal case : when installed as a plugin
   session = require('../ep_etherpad-lite/node_modules/express-session');
@@ -39,6 +40,7 @@ try {
 }
 catch (e) {
   // Testing case : we need to mock the express dependency
+  testMode = true;
   session = require('express-session');
   cookieParser = require('cookie-parser');
 }
@@ -46,7 +48,6 @@ var passport = require('passport');
 var localStrategy = require('passport-local').Strategy;
 
 // Local dependencies
-var conf = require('./configuration.js');
 var user = require('./model/user.js');
 
 module.exports = (function () {
@@ -164,16 +165,16 @@ module.exports = (function () {
     app.use(cookieParser());
     app.use(passport.initialize());
     app.use(passport.session());
-    conf.get('sessionSecret', function (err, res) {
-      if (err) { throw new Error(err); }
+    if (testMode) {
+      var cuid = require('cuid');
       var hour = 3600000;
       app.use(session({
-        secret: res,
+        secret: cuid(),
         resave: false,
         saveUninitialized: false,
         cookie: { maxAge: hour }
       }));
-    });
+    }
   };
 
   return auth;

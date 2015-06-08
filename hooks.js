@@ -40,10 +40,20 @@ module.exports = (function () {
   hooks.init = function (name, args, callback) {
     var configuration = require('./configuration.js');
     configuration.init(function (err) {
-      if (!err) {
-        callback();
-      }
+      if (err) { console.log(err); }
+      callback();
     });
+  };
+
+  /**
+  * `expressConfigure` hook profits from the args.app express instance to
+  * initialize authentication, right before other things : MyPads routes etc.
+  */
+
+  hooks.expressConfigure = function (name, args, callback) {
+    var auth = require('./auth.js');
+    auth.init(args.app);
+    callback();
   };
 
   /**
@@ -56,8 +66,7 @@ module.exports = (function () {
     var storage = require('./storage.js');
     var api = require('./api.js');
     storage.init(function () {
-      api.init(args.app);
-      return callback();
+      api.init(args.app, callback);
     });
   };
 

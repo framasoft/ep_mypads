@@ -91,15 +91,16 @@ module.exports = (function () {
     var refuse = function () {
       res.status(403).send('You are not allowed to access to this pad.');
     };
+    var uid = req.session.uid || false;
     perm.fn.getPadAndGroup(req.params.pid, function (err, pg) {
       if (err) { return unexpectedErr(err); }
       // Key not found, not a MyPads pad so next()
       if (!pg) { return next(); }
       // If admin of the group, ok
       var g = pg.group;
-      if (ld.includes(g.admins, req.session.uid)) { return next(); }
+      if (ld.includes(g.admins, uid)) { return next(); }
       if (g.visibility === 'restricted') {
-        return (ld.includes(g.users, req.session.uid) ? next() : refuse());
+        return (ld.includes(g.users, uid) ? next() : refuse());
       } else if (g.visibility === 'private') {
         var password = req.query.mypadspassword;
         if (!password) { return refuse(); }

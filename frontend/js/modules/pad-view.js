@@ -144,6 +144,11 @@ module.exports = (function () {
           }
         })(),
         m('a', {
+          href: route + '/pad/edit/' + c.pad._id,
+          config: m.route,
+          title: GROUP.EDIT
+        }, [ m('i.icon-pencil'), m('span', GROUP.EDIT) ]),
+        m('a', {
           href: route + '/pad/remove/' + c.pad._id,
           config: m.route,
           title: GROUP.REMOVE

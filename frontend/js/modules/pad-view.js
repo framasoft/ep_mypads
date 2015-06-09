@@ -50,9 +50,9 @@ module.exports = (function () {
     }
 
     var c = {
-      isUser: m.prop(true),
       sendPass: m.prop(false),
-      password: m.prop('')
+      password: m.prop(''),
+      showIframe: m.prop(true)
     };
 
     /**
@@ -65,9 +65,6 @@ module.exports = (function () {
     var init = function () {
       var group = m.route.param('group');
       c.group = model.data()[group];
-      if (ld.includes(c.group.admins, auth.userInfo()._id)) {
-        c.isUser = m.prop(false);
-      }
       var key = m.route.param('pad');
       c.pad = model.pads()[key];
     };
@@ -89,10 +86,9 @@ module.exports = (function () {
   var view = {};
 
   view.pad = function (c) {
-    var showPass = (c.isUser() &&
-      ((c.group.visibility === 'private') && !c.sendPass()));
+    var showPass = ((c.group.visibility === 'private') && !c.sendPass());
     if (showPass) {
-      return m('form', {
+      return [ m('form', {
         id: 'password-form',
         onsubmit: c.submit
       }, [
@@ -109,12 +105,31 @@ module.exports = (function () {
           type: 'submit',
           value: conf.LANG.USER.OK
         })
-      ]);
+      ])];
     } else {
-      return m('iframe', {
-        src: '/p/' + c.pad._id +
-          (c.sendPass() ? '?mypadspassword=' + c.password() : '')
-      });
+      var link = '/p/' + c.pad._id +
+        (c.sendPass() ? '?mypadspassword=' + c.password() : '');
+      return [
+        m('p.external', [
+          m('a', {
+            href: link,
+            target: '_blank',
+            title: PAD.OPEN_TAB,
+            onclick: function () {
+              c.showIframe(false);
+              return true;
+            }
+          }, [
+            m('i.icon-popup'),
+            m('span', PAD.OPEN_TAB)
+          ])
+        ]),
+      (function () {
+        if (c.showIframe()) {
+          return m('iframe', { src: link });
+        }
+      })()
+      ];
     }
 
   };
@@ -125,34 +140,6 @@ module.exports = (function () {
     return m('section', { class: 'block-group group' }, [
       m('h2.block', [
         m('span', PAD.PAD + ' ' + c.pad.name),
-        m('a', {
-          href: route + '/pad/mark/' + c.pad._id,
-          config: m.route,
-          title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK)
-        }, [
-          m('i',
-            { class: 'icon-star' + (isBookmarked ? '' : '-empty') }),
-          m('span', (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK))
-        ]),
-        (function () {
-          if (c.group.visibility !== 'restricted') {
-            return m('a', {
-              href: route + '/pad/share/' + c.pad._id,
-              config: m.route,
-              title: GROUP.SHARE
-            }, [ m('i.icon-link'), m('span', GROUP.SHARE) ]);
-          }
-        })(),
-        m('a', {
-          href: route + '/pad/edit/' + c.pad._id,
-          config: m.route,
-          title: GROUP.EDIT
-        }, [ m('i.icon-pencil'), m('span', GROUP.EDIT) ]),
-        m('a', {
-          href: route + '/pad/remove/' + c.pad._id,
-          config: m.route,
-          title: GROUP.REMOVE
-        }, [ m('i.icon-trash'), m('span', GROUP.REMOVE) ]),
         m('span.subtitle', [
           '(',
           PAD.FROM_GROUP,
@@ -164,7 +151,37 @@ module.exports = (function () {
           ')'
         ])
       ]),
-      m('section.block.pad', [ view.pad(c) ])
+    m('p.actions', [
+      m('a', {
+        href: route + '/pad/mark/' + c.pad._id,
+        config: m.route,
+        title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK)
+      }, [
+        m('i',
+          { class: 'icon-star' + (isBookmarked ? '' : '-empty') }),
+        m('span', (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK))
+      ]),
+      (function () {
+        if (c.group.visibility !== 'restricted') {
+          return m('a', {
+            href: route + '/pad/share/' + c.pad._id,
+            config: m.route,
+            title: GROUP.SHARE
+          }, [ m('i.icon-link'), m('span', GROUP.SHARE) ]);
+        }
+      })(),
+      m('a', {
+        href: route + '/pad/edit/' + c.pad._id,
+        config: m.route,
+        title: GROUP.EDIT
+      }, [ m('i.icon-pencil'), m('span', GROUP.EDIT) ]),
+      m('a', {
+        href: route + '/pad/remove/' + c.pad._id,
+        config: m.route,
+        title: GROUP.REMOVE
+      }, [ m('i.icon-trash'), m('span', GROUP.REMOVE) ])
+    ]),
+    m('section.block.pad', view.pad(c))
     ]);
   };
 

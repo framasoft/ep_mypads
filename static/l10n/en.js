@@ -147,7 +147,8 @@ module.exports = {
       ADD_PROMPT: 'Enter the name of the new pad',
       EDIT_PROMPT: 'Enter the new name of the pad',
       FROM_GROUP: 'group :',
-      VIEW_HELP: '<p>Here is the main interface to the current pad.</p><p>If the group or the pad is private, you may need to enter the password to be able to access to it, unless you are admin of the group.</p><p>If you want to go back to the group, you can click on the group name.</p>'
+      VIEW_HELP: '<p>Here is the main interface to the current pad.</p><p>If the group or the pad is private, you may need to enter the password to be able to access to it, unless you are admin of the group.</p><p>If you want to go back to the group, you can click on the group name.</p>',
+      OPEN_TAB: 'Open in a new tab'
     },
     INFO: {
       NAME: 'Name of the group',

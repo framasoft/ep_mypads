@@ -206,6 +206,16 @@ section.group-aside section.tag li button:focus, section.group-aside section.tag
 
 /* Pad View Specific */
 
+section.pad p.external, section.group p.actions {
+  margin: 0 auto 1em auto;
+  text-align: center;
+}
+
+section.pad p.external a, section.group p.actions a {
+  background: transparent;
+  color: #6a5687;
+}
+
 section.pad iframe {
   width: 95%;
   height: 40em;

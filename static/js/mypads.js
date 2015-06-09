@@ -866,6 +866,15 @@ module.exports = (function () {
                   m('i',
                     { class: 'icon-star' + (isBookmarked ? '' : '-empty') })
                 ]),
+                (function () {
+                  if (c.group.visibility !== 'restricted') {
+                    return m('a', {
+                      href: route + '/pad/share/' + p._id,
+                      config: m.route,
+                      title: GROUP.SHARE
+                    }, [ m('i.icon-link') ]);
+                  }
+                })(),
                 m('a', {
                   href: route + '/pad/view/' + p._id,
                   config: m.route,
@@ -876,15 +885,6 @@ module.exports = (function () {
                   config: m.route,
                   title: GROUP.EDIT
                 }, [ m('i.icon-pencil') ]),
-                (function () {
-                  if (c.group.visibility !== 'restricted') {
-                    return m('a', {
-                      href: route + '/pad/share/' + p._id,
-                      config: m.route,
-                      title: GROUP.SHARE
-                    }, [ m('i.icon-link') ]);
-                  }
-                })(),
                 m('a', {
                   href: route + '/pad/remove/' + p._id,
                   config: m.route,
@@ -1312,6 +1312,7 @@ module.exports = (function () {
   };
 
   view.group = function (c, g) {
+    var isBookmarked = (ld.includes(u().bookmarks.groups, g._id));
     return m('li.block', [
       m('header.group.block-group', [
         m('h4.block', [ m('a', {
@@ -1320,6 +1321,15 @@ module.exports = (function () {
           title: GROUP.VIEW
         }, g.name) ]),
         m('section.block', [
+          m('a', {
+            onclick: c.mark.bind(c, g._id),
+            href: '/mypads',
+            config: m.route,
+            title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK)
+          }, [
+            m('i',
+              { class: 'icon-star' + (isBookmarked ? '' : '-empty') })
+            ]),
           m('a', {
             href: '/mypads/group/' + g._id + '/view',
             config: m.route,
@@ -1348,15 +1358,6 @@ module.exports = (function () {
         m('dd.block', ld.size(g.users))
       ]),
       m('footer.group.block-group', [
-        m('button.block', {
-          onclick: c.mark.bind(c, g._id)
-          }, (function () {
-            if (ld.includes(u().bookmarks.groups, g._id)) {
-              return GROUP.UNMARK;
-            } else {
-              return GROUP.BOOKMARK;
-            }
-        })()),
         m('ul.block', ld.map(g.tags, function (t) {
           return m('li', {
             class: (c.filters[t] ? 'active' : ''),

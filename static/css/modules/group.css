@@ -50,15 +50,15 @@ header.group { background: transparent; }
 
 header.group > h4 {
   color: #333333;
-  width: 65%;
+  width: 60%;
   margin: 0;
 }
 header.group > section {
-  width: 35%;
+  width: 40%;
   text-align: right;
 }
 
-header.group a, footer.group > a, footer.group > button, section.pad li a {
+header.group a, footer.group > a.add, section.pad li a {
   color: #3e3363;
   font-weight: bold;
   text-decoration: none;
@@ -88,16 +88,18 @@ dl.group > dt.block {
 }
 
 footer.group { background: transparent; }
-footer.group > button {
+footer.group > a.add {
   width: 30%; 
   color: #304219;
+  font-size: 1.5em;
+  /*text-align: left;*/
 }
-footer.group > button:focus, footer.group > button:hover {
+footer.group > a.add:focus, footer.group > a.add:hover {
   background-color: #304219;
   color: #e0e0e0;
 }
 footer.group > ul {
-  width: 70%; 
+  width: 100%; 
   text-align: right;
   list-style-type : none;
 }

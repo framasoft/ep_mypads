@@ -69,7 +69,7 @@ module.exports = (function () {
       });
 
       afterAll(function (done) {
-        $el.bookmarked.querySelector('li footer button').click();
+        $el.bookmarked.querySelector('header.group a[title$=mark]').click();
         window.setTimeout(function () {
           first('body > section p').click();
           window.setTimeout(function () {
@@ -91,10 +91,11 @@ module.exports = (function () {
             expect($el.common.children.length).toBe(2);
             var g = $el.common.children[0];
             var name = g.querySelector('header h4').textContent;
-            var btn = g.querySelector('footer button');
-            expect(btn.textContent).toBe('Bookmark');
+            var btn = g.querySelector('header.group a[title$=mark]');
+            console.log(btn);
+            expect(btn.getAttribute('title')).toBe('Bookmark');
             expect(name).toBe('Santa Fe');
-            g.querySelector('footer button').click();
+            g.querySelector('header.group a[title$=mark]').click();
             window.setTimeout(function () {
               first('body > section > div p').click();
               expect($el.bookmarked.children.length).toBe(1);
@@ -102,12 +103,12 @@ module.exports = (function () {
               g = $el.bookmarked.children[0];
               name = g.querySelector('header h4').textContent;
               expect(name).toBe('Santa Fe');
-              btn = g.querySelector('footer button');
-              expect(btn.textContent).toBe('Unmark');
+              btn = g.querySelector('header.group a[title$=mark]');
+              expect(btn.getAttribute('title')).toBe('Unmark');
               g = $el.common.children[0];
               name = g.querySelector('header h4').textContent;
               expect(name).toBe('memories');
-              g.querySelector('footer button').click();
+              g.querySelector('header.group a[title$=mark]').click();
               window.setTimeout(function () {
                 expect($el.bookmarked.children.length).toBe(2);
                 expect($el.common.children.length).toBe(0);
@@ -124,7 +125,7 @@ module.exports = (function () {
           var g = $el.bookmarked.children[1];
           var name = g.querySelector('header h4').textContent;
           expect(name).toBe('memories');
-          g.querySelector('footer button').click();
+          g.querySelector('header.group a[title$=mark]').click();
           window.setTimeout(function () {
             expect($el.bookmarked.children.length).toBe(1);
             expect($el.common.children.length).toBe(1);

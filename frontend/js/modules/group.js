@@ -379,6 +379,7 @@ module.exports = (function () {
     return m('section', { class: 'block-group group' }, [
       m('h2.block', [
         m('span', GROUP.MYGROUPS),
+        m('i.tooltip.icon-info-circled', { 'data-msg': GROUP.HELP }),
         m('a', {
           href: '/mypads/group/add',
           config: m.route

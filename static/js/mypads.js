@@ -1379,6 +1379,7 @@ module.exports = (function () {
     return m('section', { class: 'block-group group' }, [
       m('h2.block', [
         m('span', GROUP.MYGROUPS),
+        m('i.tooltip.icon-info-circled', { 'data-msg': GROUP.HELP }),
         m('a', {
           href: '/mypads/group/add',
           config: m.route
@@ -3069,8 +3070,6 @@ module.exports = (function () {
     '/mypads/group/:group/pad/add': padAdd,
     '/mypads/group/:group/pad/edit/:pad': padAdd,
     '/mypads/group/:group/pad/remove/:pad': padRemove,
-    '/mypads/group/:group/pad/mark/:pad': padMark,
-    '/mypads/group/:group/pad/share/:pad': padShare,
     '/mypads/group/:group/pad/view/:pad': padView,
     '/mypads/group/:group/user/:action': userInvite,
     '/admin': admin
@@ -3473,6 +3472,7 @@ module.exports = {
   },
   GROUP: {
     MYGROUPS: 'My Groups',
+    HELP: 'Groups contain pads, you need at least one of them',
     GROUP: 'Group',
     GROUPS: 'Groups',
     BOOKMARKED: 'Bookmarked groups',

@@ -79,6 +79,7 @@ module.exports = {
   },
   GROUP: {
     MYGROUPS: 'My Groups',
+    HELP: 'Groups contain pads, you need at least one of them',
     GROUP: 'Group',
     GROUPS: 'Groups',
     BOOKMARKED: 'Bookmarked groups',

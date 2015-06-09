@@ -70,8 +70,6 @@ module.exports = (function () {
     '/mypads/group/:group/pad/add': padAdd,
     '/mypads/group/:group/pad/edit/:pad': padAdd,
     '/mypads/group/:group/pad/remove/:pad': padRemove,
-    '/mypads/group/:group/pad/mark/:pad': padMark,
-    '/mypads/group/:group/pad/share/:pad': padShare,
     '/mypads/group/:group/pad/view/:pad': padView,
     '/mypads/group/:group/user/:action': userInvite,
     '/admin': admin

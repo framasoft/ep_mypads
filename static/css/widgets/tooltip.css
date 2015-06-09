@@ -17,9 +17,26 @@
   content: attr(data-msg);
 }
 
+aside .tooltip:hover:after, aside .tooltip:focus:after {
+  left: -5em;
+}
+
+h2 .tooltip:hover:after, h2 .tooltip:focus:after {
+  left: auto;
+  right: -8em;
+}
+
 /* Tablet and up */
 @media (min-width: 40em) {
   .tooltip:hover:after, .tooltip:focus:after {
     width: 30em;
+  }
+
+  aside .tooltip:hover:after, aside .tooltip:focus:after {
+    left: auto;
+  }
+
+  h2 .tooltip:hover:after, h2 .tooltip:focus:after {
+    left: 1em;
   }
 }

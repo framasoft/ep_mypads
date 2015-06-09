@@ -882,7 +882,7 @@ module.exports = (function () {
                       href: route + '/pad/share/' + p._id,
                       config: m.route,
                       title: GROUP.SHARE
-                    }, [ m('i.icon-share') ]);
+                    }, [ m('i.icon-link') ]);
                   }
                 })(),
                 m('a', {
@@ -2240,7 +2240,7 @@ module.exports = (function () {
               href: route + '/pad/share/' + c.pad._id,
               config: m.route,
               title: GROUP.SHARE
-            }, [ m('i.icon-share'), m('span', GROUP.SHARE) ]);
+            }, [ m('i.icon-link'), m('span', GROUP.SHARE) ]);
           }
         })(),
         m('a', {

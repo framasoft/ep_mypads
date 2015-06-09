@@ -150,7 +150,7 @@ module.exports = (function () {
                       href: route + '/pad/share/' + p._id,
                       config: m.route,
                       title: GROUP.SHARE
-                    }, [ m('i.icon-share') ]);
+                    }, [ m('i.icon-link') ]);
                   }
                 })(),
                 m('a', {

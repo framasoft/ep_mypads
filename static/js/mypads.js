@@ -3538,7 +3538,7 @@ module.exports = {
     FILTERS: {
       TITLE: 'Filters',
       ADMIN: 'Groups I am admin',
-      USER: 'Groups I am user',
+      USER: 'Groups I have been invited',
       HELP: 'You can select one or several filters, click again on it to deactivate'
     },
     TAGS: {

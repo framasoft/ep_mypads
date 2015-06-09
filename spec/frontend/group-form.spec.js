@@ -124,8 +124,7 @@ module.exports = (function () {
       describe('group edition', function () {
 
         beforeEach(function (done) {
-          var h3 = app.document.querySelector('h3.group');
-          h3.parentNode.querySelector('a[title=Edit]').click();
+          app.document.querySelector('a[title=Edit]').click();
           window.setTimeout(function () {
             $el = { 
               form: first('form'),

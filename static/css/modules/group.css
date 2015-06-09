@@ -58,17 +58,18 @@ header.group > section {
   text-align: right;
 }
 
-header.group a, footer.group > a.add, section.pad li a {
+header.group a, footer.group > a.add, section.pad li a, section.pad li button {
   color: #3e3363;
   font-weight: bold;
   text-decoration: none;
   padding: 0.1em;
+  border: 0;
 }
 
-header.group a, section.pad li a {
+header.group a, section.pad li a, section.pad li button {
   background: none;
 }
-header.group > a:focus, header.group a:hover, section.pad li a:hover, section.pad li a:focus {
+header.group > a:focus, header.group a:hover, section.pad li a:hover, section.pad li button:hover, section.pad li a:focus, section.pad li button:focus {
   background-color: #3e3363;
   color: #e0e0e0;
 }
@@ -213,9 +214,11 @@ section.pad p.external, section.group p.actions {
   text-align: center;
 }
 
-section.pad p.external a, section.group p.actions a {
+section.pad p.external a, section.group p.actions a, section.group p.actions button {
   background: transparent;
   color: #6a5687;
+  border: 0;
+  text-decoration: underline dotted;
 }
 
 section.pad iframe {
@@ -235,7 +238,7 @@ section.pad iframe {
   }
 }
 /* Desktop and Up */
-@media (min-width: 70em) {
+@media (min-width: 90em) {
   ul.group > li {
     width: 31%;
     padding: 0.5em;
@@ -247,7 +250,7 @@ section.pad iframe {
 }
 
 /* Hi res desktop */
-@media (min-width: 90em) {
+@media (min-width: 110em) {
   ul.group > li {
     width: 24%;
     padding: 0.5em;

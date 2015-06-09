@@ -37,6 +37,8 @@ module.exports = (function () {
   var auth = require('../auth.js');
   var layout = require('./layout.js');
   var model = require('../model/group.js');
+  var padMark = require('./pad-mark.js');
+  var padShare = require('./pad-share.js');
 
   var pad = {};
 
@@ -153,10 +155,9 @@ module.exports = (function () {
         ])
       ]),
     m('p.actions', [
-      m('a', {
-        href: route + '/pad/mark/' + c.pad._id,
-        config: m.route,
-        title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK)
+      m('button', {
+        title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK),
+        onclick: padMark.bind(c, c.pad._id)
       }, [
         m('i',
           { class: 'icon-star' + (isBookmarked ? '' : '-empty') }),
@@ -164,10 +165,9 @@ module.exports = (function () {
       ]),
       (function () {
         if (c.group.visibility !== 'restricted') {
-          return m('a', {
-            href: route + '/pad/share/' + c.pad._id,
-            config: m.route,
-            title: GROUP.SHARE
+          return m('button', {
+            title: GROUP.SHARE,
+            onclick: padShare.bind(c, c.group._id, c.pad._id)
           }, [ m('i.icon-link'), m('span', GROUP.SHARE) ]);
         }
       })(),

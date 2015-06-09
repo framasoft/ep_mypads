@@ -92,7 +92,6 @@ module.exports = (function () {
             var g = $el.common.children[0];
             var name = g.querySelector('header h4').textContent;
             var btn = g.querySelector('header.group a[title$=mark]');
-            console.log(btn);
             expect(btn.getAttribute('title')).toBe('Bookmark');
             expect(name).toBe('Santa Fe');
             g.querySelector('header.group a[title$=mark]').click();

@@ -35,36 +35,27 @@ module.exports = (function () {
   var GROUP = conf.LANG.GROUP;
   var notif = require('../widgets/notification.js');
 
-  var mark = {};
-
   /**
-  * ## Controller
+  * ## Main function
   *
   * Used for authentication enforcement and confirmation before removal. In all
   * cases, redirection to parent group view.
   */
 
-  mark.controller = function () {
+  return function (pid) {
     var user = auth.userInfo();
-    if (!auth.isAuthenticated()) { return m.route('/login'); }
-    var key = m.route.param('pad');
-    var gkey = m.route.param('group');
-    if (ld.includes(user.bookmarks.pads, key)) {
-      ld.pull(user.bookmarks.pads, key);
+    if (ld.includes(user.bookmarks.pads, pid)) {
+      ld.pull(user.bookmarks.pads, pid);
     } else {
-      user.bookmarks.pads.push(key);
+      user.bookmarks.pads.push(pid);
     }
     m.request({
       url: conf.URLS.USERMARK,
       method: 'POST',
-      data: { type: 'pads', key: key }
+      data: { type: 'pads', key: pid }
     }).then(function () {
       notif.success({ body: GROUP.MARK_SUCCESS });
     }, function (err) { return notif.error({ body: err.error }); });
-    m.route('/mypads/group/' + gkey + '/view');
   };
 
-  mark.view = function () {};
-
-  return mark;
 }).call(this);

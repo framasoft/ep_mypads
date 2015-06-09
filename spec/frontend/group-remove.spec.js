@@ -33,9 +33,7 @@ module.exports = (function () {
   remove.run = function (app) {
 
     describe('group remove module testing', function () {
-
-      var $li;
-      var removeAction;
+      var qfirst = function (sel) { return app.document.querySelector(sel); };
 
       beforeAll(function (done) {
         // Login
@@ -46,6 +44,7 @@ module.exports = (function () {
             'lovesKubiak');
           app.document.querySelector('input[type=submit]').click();
           window.setTimeout(function () {
+            app.document.querySelectorAll('a[href$=view]')[0].click();
             app.document.querySelector('body > section p').click();
             done();
           }, 200);
@@ -60,29 +59,21 @@ module.exports = (function () {
         }, 100);
       });
 
-      beforeEach(function (done) {
-        $li = app.document.querySelector('h3.group').parentNode;
-        $li = $li.querySelector('ul li');
-        removeAction = $li.querySelector('a[title=Remove]');
-        window.setTimeout(done, 100);
-      });
-
       it('should not remove if not confirmed', function (done) {
         app.window.confirm = function () { return false; };
-        removeAction.click();
+        qfirst('section.group a[title=Remove]').click();
         window.setTimeout(function () {
-          expect($li).toBeDefined();
-          expect($li.querySelector('h4').textContent)
-            .toBe('High School Memories, again');
+          var title = qfirst('section.group h2 span').textContent;
+          expect(title).toBe('Group High School Memories, again');
           done();
         }, 100);
       });
 
       it('should remove if confirmed', function (done) {
         app.window.confirm = function () { return true; };
-        removeAction.click();
+        qfirst('section.group a[title=Remove]').click();
         window.setTimeout(function () {
-          $li = app.document.querySelector('h3.group').parentNode;
+          var $li = app.document.querySelector('h3.group').parentNode;
           $li = $li.querySelector('ul li');
           expect($li.querySelector('h4').textContent).toBe('Santa Fe');
           var $n = app.document.querySelector('body > section p');

@@ -107,7 +107,7 @@ module.exports = (function () {
         model.data(data);
         model.tags(ld.union(model.tags(), resp.value.tags));
         notif.success({ body: opts.extra.msg });
-        m.route('/mypads/group/list');
+        m.route('/mypads/group/' + resp.value._id + '/view');
       }, function (err) {
         notif.error({ body: err.error });
       });

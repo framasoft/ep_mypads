@@ -159,7 +159,7 @@ module.exports = (function () {
           var link;
           app.window.prompt = function (title, val) { link = val; };
           var padShare = app.document
-            .querySelectorAll('a[href*=\'/pad/share\']');
+            .querySelectorAll('button[title=Share]');
           padShare[2].click();
           window.setTimeout(function () {
             expect(link).toMatch('/p/[a-z0-9]+$');
@@ -194,19 +194,19 @@ module.exports = (function () {
         });
 
         it('should allow pad marking', function (done) {
-          var padMark = first('a[href*=\'/pad/mark\']');
+          var padMark = first('button[title$=mark]');
           expect(padMark.getAttribute('title')).toBe('Bookmark');
           expect(padMark.querySelector('i').className).toBe('icon-star-empty');
           padMark.click();
           window.setTimeout(function () {
             first('body > section > div p').click();
-            padMark = first('a[href*=\'/pad/mark\']');
+            padMark = first('button[title$=mark]');
             expect(padMark.getAttribute('title')).toBe('Unmark');
             expect(padMark.querySelector('i').className).toBe('icon-star');
             padMark.click();
             window.setTimeout(function () {
               first('body > section > div p').click();
-              padMark = first('a[href*=\'/pad/mark\']');
+              padMark = first('button[title$=mark]');
               expect(padMark.getAttribute('title')).toBe('Bookmark');
               expect(padMark.querySelector('i').className)
                 .toBe('icon-star-empty');

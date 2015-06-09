@@ -58,7 +58,7 @@ module.exports = (function () {
         m.route('/mypads/group/list');
       }, function (err) { notif.error({ body: err.error }); });
     } else {
-      m.route('/mypads/group/list');
+      m.route('/mypads/group/' + m.route.param('key') + '/view');
     }
   };
 

@@ -50,6 +50,7 @@ module.exports = (function () {
     }
 
     var c = {
+      bookmarks: auth.userInfo().bookmarks.pads,
       sendPass: m.prop(false),
       password: m.prop(''),
       showIframe: m.prop(true)

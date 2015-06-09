@@ -61,21 +61,21 @@ module.exports = (function () {
           icon: 'doc-text',
           txt: LANG.MENU.PAD
         },
-        {
+        /*{
           route: '/mybookmarks',
           icon: 'bookmarks',
           txt: LANG.MENU.BOOKMARK
-        },
+        },*/
         {
           route: '/myprofile',
           icon: 'user',
           txt: LANG.MENU.PROFILE
         },
-        {
+        /*{
           route: '/admin',
           icon: 'tools',
           txt: LANG.MENU.ADMIN
-        },
+        },*/
         {
           route: '/logout',
           icon: 'logout',

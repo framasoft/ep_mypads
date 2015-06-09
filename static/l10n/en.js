@@ -10,7 +10,7 @@ module.exports = {
     CANCEL: 'Cancel'
   },
   MENU: {
-    PAD: 'My Pads',
+    PAD: 'My Groups & Pads',
     BOOKMARK: 'My Bookmarks',
     PROFILE: 'My Profile',
     ADMIN: 'Administration',

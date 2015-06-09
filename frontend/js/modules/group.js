@@ -312,13 +312,14 @@ module.exports = (function () {
   };
 
   view.group = function (c, g) {
+    var padRoute = '/mypads/group/' + g._id;
     var isBookmarked = (ld.includes(u().bookmarks.groups, g._id));
     return m('li.block', [
       m('header.group.block-group', [
         m('h4.block', [ m('a', {
           href: '/mypads/group/' + g._id + '/view',
           config: m.route,
-          title: GROUP.VIEW
+          title: GROUP.VIEW_MANAGE
         }, g.name) ]),
         m('section.block', [
           m('a', {
@@ -331,17 +332,17 @@ module.exports = (function () {
               { class: 'icon-star' + (isBookmarked ? '' : '-empty') })
             ]),
           m('a', {
-            href: '/mypads/group/' + g._id + '/view',
+            href: padRoute + '/view',
             config: m.route,
-            title: GROUP.VIEW
+            title: GROUP.VIEW_MANAGE
           }, [ m('i.icon-book-open') ]),
           m('a', {
-            href: '/mypads/group/' + g._id + '/edit',
+            href: padRoute + '/edit',
             config: m.route,
             title: GROUP.EDIT
           }, [ m('i.icon-pencil') ]),
           m('a', {
-            href: '/mypads/group/' + g._id + '/remove',
+            href: padRoute + '/remove',
             config: m.route,
             title: GROUP.REMOVE
           }, [ m('i.icon-trash') ])
@@ -349,13 +350,29 @@ module.exports = (function () {
       ]),
       m('dl.block-group.group', [
         m('dt.block', GROUP.PAD.PADS),
-        m('dd.block', ld.size(g.pads)),
+        m('dd.block', [
+          ld.size(g.pads),
+          m('a', { href: padRoute + '/pad/add', config: m.route }, [
+            m('i.icon-plus-squared', { title: GROUP.PAD.ADD }) ])
+        ]),
         m('dt.block', GROUP.PAD.VISIBILITY),
         m('dd.block', g.visibility),
         m('dt.block', GROUP.PAD.ADMINS),
-        m('dd.block', ld.size(g.admins)),
-        m('dt.block', GROUP.PAD.USERS),
-        m('dd.block', ld.size(g.users))
+        m('dd.block', [ ld.size(g.admins),
+          m('a', { href: padRoute + '/user/share', config: m.route }, [
+            m('i.icon-plus-squared', { title: GROUP.SHARE_ADMIN }) ])
+        ]),
+        (function () {
+          if (g.visibility === 'restricted') {
+            return m('div', [
+              m('dt.block', GROUP.PAD.USERS),
+              m('dd.block', [ ld.size(g.users),
+                m('a', { href: padRoute + '/user/invite', config: m.route }, [
+                  m('i.icon-plus-squared', { title: GROUP.INVITE_USER.IU }) ])
+              ])
+            ]);
+          }
+        })()
       ]),
       m('footer.group.block-group', [
         m('ul.block', ld.map(g.tags, function (t) {

@@ -79,7 +79,7 @@ module.exports = {
   },
   GROUP: {
     MYGROUPS: 'My Groups',
-    HELP: 'Groups contain pads, you need at least one of them',
+    HELP: 'Groups contain pads, you need at least to create one of them',
     GROUP: 'Group',
     GROUPS: 'Groups',
     BOOKMARKED: 'Bookmarked groups',
@@ -89,6 +89,7 @@ module.exports = {
     EDIT: 'Edit',
     EDIT_GROUP: 'Edit a group',
     VIEW: 'View',
+    VIEW_MANAGE: 'View and manage group and pads',
     VIEW_HELP: '<p>The details of the group shows you :<ul><li>options defined when group has been created or updated;</li><li>list of pads created for this group;</li><li>and list of admins and users of the group.</li></ul></p><p>From there, you can : <ul><li>create new pads, edit them, remove or mark them;</li><li>share administration of your group with other users;</li><li>invite other users to view and edit pads of the group.</li></ul></p>',
     SHARE: 'Share',
     SHARE_LINK: 'Please share this URL to your guests',

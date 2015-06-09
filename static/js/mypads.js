@@ -1312,13 +1312,14 @@ module.exports = (function () {
   };
 
   view.group = function (c, g) {
+    var padRoute = '/mypads/group/' + g._id;
     var isBookmarked = (ld.includes(u().bookmarks.groups, g._id));
     return m('li.block', [
       m('header.group.block-group', [
         m('h4.block', [ m('a', {
           href: '/mypads/group/' + g._id + '/view',
           config: m.route,
-          title: GROUP.VIEW
+          title: GROUP.VIEW_MANAGE
         }, g.name) ]),
         m('section.block', [
           m('a', {
@@ -1331,17 +1332,17 @@ module.exports = (function () {
               { class: 'icon-star' + (isBookmarked ? '' : '-empty') })
             ]),
           m('a', {
-            href: '/mypads/group/' + g._id + '/view',
+            href: padRoute + '/view',
             config: m.route,
-            title: GROUP.VIEW
+            title: GROUP.VIEW_MANAGE
           }, [ m('i.icon-book-open') ]),
           m('a', {
-            href: '/mypads/group/' + g._id + '/edit',
+            href: padRoute + '/edit',
             config: m.route,
             title: GROUP.EDIT
           }, [ m('i.icon-pencil') ]),
           m('a', {
-            href: '/mypads/group/' + g._id + '/remove',
+            href: padRoute + '/remove',
             config: m.route,
             title: GROUP.REMOVE
           }, [ m('i.icon-trash') ])
@@ -1349,13 +1350,29 @@ module.exports = (function () {
       ]),
       m('dl.block-group.group', [
         m('dt.block', GROUP.PAD.PADS),
-        m('dd.block', ld.size(g.pads)),
+        m('dd.block', [
+          ld.size(g.pads),
+          m('a', { href: padRoute + '/pad/add', config: m.route }, [
+            m('i.icon-plus-squared', { title: GROUP.PAD.ADD }) ])
+        ]),
         m('dt.block', GROUP.PAD.VISIBILITY),
         m('dd.block', g.visibility),
         m('dt.block', GROUP.PAD.ADMINS),
-        m('dd.block', ld.size(g.admins)),
-        m('dt.block', GROUP.PAD.USERS),
-        m('dd.block', ld.size(g.users))
+        m('dd.block', [ ld.size(g.admins),
+          m('a', { href: padRoute + '/user/share', config: m.route }, [
+            m('i.icon-plus-squared', { title: GROUP.SHARE_ADMIN }) ])
+        ]),
+        (function () {
+          if (g.visibility === 'restricted') {
+            return m('div', [
+              m('dt.block', GROUP.PAD.USERS),
+              m('dd.block', [ ld.size(g.users),
+                m('a', { href: padRoute + '/user/invite', config: m.route }, [
+                  m('i.icon-plus-squared', { title: GROUP.INVITE_USER.IU }) ])
+              ])
+            ]);
+          }
+        })()
       ]),
       m('footer.group.block-group', [
         m('ul.block', ld.map(g.tags, function (t) {
@@ -3041,8 +3058,6 @@ module.exports = (function () {
   var padAdd = require('./modules/pad-add.js');
   var padRemove = require('./modules/pad-remove.js');
   var padView = require('./modules/pad-view.js');
-  var padMark = require('./modules/pad-mark.js');
-  var padShare = require('./modules/pad-share.js');
   var userInvite = require('./modules/user-invitation.js');
   var admin = require('./modules/admin.js');
 
@@ -3080,7 +3095,7 @@ module.exports = (function () {
   return route;
 }).call(this);
 
-},{"./modules/admin.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/group-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./modules/group-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js","./modules/group-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-view.js","./modules/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/pad-add.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-add.js","./modules/pad-mark.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-mark.js","./modules/pad-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-remove.js","./modules/pad-share.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-share.js","./modules/pad-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-view.js","./modules/subscribe.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","./modules/user-invitation.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user-invitation.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js":[function(require,module,exports){
+},{"./modules/admin.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/group-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./modules/group-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js","./modules/group-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-view.js","./modules/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/pad-add.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-add.js","./modules/pad-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-remove.js","./modules/pad-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-view.js","./modules/subscribe.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","./modules/user-invitation.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user-invitation.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js":[function(require,module,exports){
 /**
 *  # Notification module
 *
@@ -3472,7 +3487,7 @@ module.exports = {
   },
   GROUP: {
     MYGROUPS: 'My Groups',
-    HELP: 'Groups contain pads, you need at least one of them',
+    HELP: 'Groups contain pads, you need at least to create one of them',
     GROUP: 'Group',
     GROUPS: 'Groups',
     BOOKMARKED: 'Bookmarked groups',
@@ -3482,6 +3497,7 @@ module.exports = {
     EDIT: 'Edit',
     EDIT_GROUP: 'Edit a group',
     VIEW: 'View',
+    VIEW_MANAGE: 'View and manage group and pads',
     VIEW_HELP: '<p>The details of the group shows you :<ul><li>options defined when group has been created or updated;</li><li>list of pads created for this group;</li><li>and list of admins and users of the group.</li></ul></p><p>From there, you can : <ul><li>create new pads, edit them, remove or mark them;</li><li>share administration of your group with other users;</li><li>invite other users to view and edit pads of the group.</li></ul></p>',
     SHARE: 'Share',
     SHARE_LINK: 'Please share this URL to your guests',

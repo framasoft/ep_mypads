@@ -58,7 +58,7 @@ header.group > section {
   text-align: right;
 }
 
-header.group a, footer.group > a.add, section.pad li a, section.pad li button {
+header.group a, footer.group > a.add, dl.group dd a, section.pad li a, section.pad li button {
   color: #3e3363;
   font-weight: bold;
   text-decoration: none;
@@ -66,7 +66,7 @@ header.group a, footer.group > a.add, section.pad li a, section.pad li button {
   border: 0;
 }
 
-header.group a, section.pad li a, section.pad li button {
+header.group a, section.pad li a, dl.group dd a, section.pad li button, section.pad {
   background: none;
 }
 header.group > a:focus, header.group a:hover, section.pad li a:hover, section.pad li button:hover, section.pad li a:focus, section.pad li button:focus {
@@ -77,14 +77,14 @@ header.group > a:focus, header.group a:hover, section.pad li a:hover, section.pa
 dl.group {
   margin: 1em 0;
 }
-dl.group > dt.block, dl.group > dd.block {
+dl.group dt.block, dl.group dd.block {
   width: 50%;
   margin: 0;
   padding: 0.1em 0.3em;
   font-size: smaller;
 }
 
-dl.group > dt.block {
+dl.group dt.block {
   color: #6a5687;
 }
 

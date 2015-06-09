@@ -41,14 +41,9 @@ module.exports = (function() {
 
   var DEFAULTS = {
     title: 'MyPads',
-    descr: 'MyPads is an Etherpad plugin which have been founded in 2014 by ' +
-    'an Ulule campaign. It handles :<ul><li>users and their authentication;' +
-    '</li><li>groups of pads per user, unlimited, sharable;</li><li>attached ' +
-    'pads, with choice between invite known users to use them, making them '+
-    'private with password or letting them public.</li></ul>',
     passwordMin: 8,
     passwordMax: 30,
-    sessionSecret: 'aSecretThatShouldBeChanged'
+    languages: ['en', 'fr']
   };
   var DBPREFIX = storage.DBPREFIX.CONF;
 
@@ -178,8 +173,8 @@ module.exports = (function() {
       }
       configuration.all(function (err, all) {
         if (err) { return callback(err); }
-        var filtered = ld.pick(all, 'title', 'descr', 'passwordMin',
-          'passwordMax');
+        var filtered = ld.pick(all, 'title', 'passwordMin', 'passwordMax',
+          'languages');
         return callback(null, filtered);
       });
     }

@@ -165,9 +165,9 @@
           conf.public(function (err, settings) {
             expect(settings.power).toBeUndefined();
             expect(settings.title).toBeDefined();
-            expect(settings.descr).toBeDefined();
             expect(settings.passwordMin).toBeDefined();
             expect(settings.passwordMax).toBeDefined();
+            expect(settings.languages).toBeDefined();
             done();
           });
         });

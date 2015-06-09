@@ -55,6 +55,12 @@
       "src": "entypo"
     },
     {
+      "uid": "815503841e980c848f55e0271deacead",
+      "css": "link",
+      "code": 59412,
+      "src": "entypo"
+    },
+    {
       "uid": "8538a2249db7f07ae75411886732fb87",
       "css": "bookmarks",
       "code": 59392,
@@ -124,6 +130,12 @@
       "uid": "2d76f2c8d13be40694ecadfea7fb83c3",
       "css": "logout",
       "code": 59397,
+      "src": "entypo"
+    },
+    {
+      "uid": "9248ce8062fb4707a6919bfe9ac1af8e",
+      "css": "popup",
+      "code": 59414,
       "src": "entypo"
     }
   ]

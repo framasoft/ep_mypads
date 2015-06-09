@@ -35,6 +35,7 @@ module.exports = (function () {
 
     // Shared variables
     var qfirst = function (sel) { return app.document.querySelector(sel); };
+    var qall = function (sel) { return app.document.querySelectorAll(sel); };
 
     describe('pad view module testing', function () {
 
@@ -79,6 +80,27 @@ module.exports = (function () {
             expect(title.textContent).toBe('Pad Loving Annie');
             expect(group.textContent).toMatch('memories');
             expect(iframe.getAttribute('src')).not.toMatch('mypadspassword');
+            done();
+          }, 100);
+        });
+
+        it('should have links for several things', function (done) {
+          var actions = {
+            btns: qall('p.actions button'),
+            links: qall('p.actions a'),
+            tab: qfirst('section.pad a')
+          };
+          var iframe = qfirst('iframe');
+          window.setTimeout(function () {
+            expect(actions.btns[0].getAttribute('title')).toBe('Bookmark');
+            expect(actions.btns[1].getAttribute('title')).toBe('Share');
+            expect(actions.links[0].getAttribute('title')).toBe('Edit');
+            expect(actions.links[0].getAttribute('href')).toMatch('/pad/edit');
+            expect(actions.links[1].getAttribute('title')).toBe('Remove');
+            expect(actions.links[1].getAttribute('href'))
+              .toMatch('/pad/remove');
+            expect(actions.tab.getAttribute('href'))
+              .toBe(iframe.getAttribute('src'));
             done();
           }, 100);
         });

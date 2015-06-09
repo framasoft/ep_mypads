@@ -218,7 +218,7 @@ section.pad p.external a, section.group p.actions a, section.group p.actions but
   background: transparent;
   color: #6a5687;
   border: 0;
-  text-decoration: underline dotted;
+  text-decoration: underline;
 }
 
 section.pad iframe {

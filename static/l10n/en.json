@@ -56,7 +56,7 @@
     "REGISTER": "Register",
     "INFO": {
       "LOGIN": "The unique login you choose when you have subscribed",
-      "EMAIL": "The email is required for password recovery and group invitation",
+      "EMAIL": "The email is required for password recovery",
       "PASSWORD_BEGIN": "Must be between ",
       "PASSWORD_END": " characters",
       "PASSWORD_CHECK": "For verification : must be the same as password",

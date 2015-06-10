@@ -1,175 +1,175 @@
 {
   "GLOBAL": {
     "LANG": "Français",
-    "DESCRIPTION": "MyPads is an Etherpad plugin which have been founded in 2014 by an Ulule campaign. It handles :<ul><li>users and their authentication; </li><li>groups of pads per user, unlimited, sharable;</li><li>attached pads, with choice between invite known users to use them, making them private with password or letting them public.</li></ul>",
-    "FOOTER": "Powered by <a href='https://git.framasoft.org/framasoft/ep_mypads'>MyPads</a><br>Published under Apache License 2.0",
-    "AND": "and"
+    "DESCRIPTION": "MyPads est un plugin Etherpad qui a été financé en 2014 par une campagne sur Ulule. Il prend en charge<ul><li>des utilisateurs et leur authentification;</li><li>des groupes de pads par utilisateur, illimités et partageables;</li><li>les pads qui leur sont attachés, donne la possibilité d'inviter des utilisateurs connus à les utiliser, les rendre privés sous contrainte de mot de passe ou les fixer en accès public.</li></ul>",
+    "FOOTER": "Propulsé par <a href='https://git.framasoft.org/framasoft/ep_mypads'>MyPads</a><br>Publié sous la licence Apache 2.0",
+    "AND": "et"
   },
   "ACTIONS": {
     "ACTIONS": "Actions",
-    "HELP": "Help",
-    "SAVE": "Save",
-    "CANCEL": "Cancel"
+    "HELP": "Aide",
+    "SAVE": "Sauvegarder",
+    "CANCEL": "Annuler"
   },
   "MENU": {
-    "PAD": "My Groups & Pads",
-    "BOOKMARK": "My Bookmarks",
-    "PROFILE": "My Profile",
+    "PAD": "Mes Groupes & Pads",
+    "BOOKMARK": "Mes Favoris",
+    "PROFILE": "Mon Profil",
     "ADMIN": "Administration",
-    "LOGOUT": "Logout"
+    "LOGOUT": "Déconnexion"
   },
   "ADMIN": {
-    "GLOBAL_SETTINGS": "Global settings"
+    "GLOBAL_SETTINGS": "Paramètres généraux"
   },
   "NOTIFICATION": {
-    "SUCCESS": "Success",
+    "SUCCESS": "Succès",
     "INFO": "Info",
-    "ERROR": "Error",
-    "ERROR_UNEXPECTED": "An unexpected error has been raised. Please contact the administrator.",
-    "WARNING": "Warning"
+    "ERROR": "Erreur",
+    "ERROR_UNEXPECTED": "Une erreur inattendue est arrivée. Merci de contacter l'administrateur.",
+    "WARNING": "Avertissement"
   },
   "TAG": {
-    "TAGS": "Tags",
-    "PLACEHOLDER": "Enter your tag",
-    "HELP": "You can associate to this element as many tags as you wish"
+    "TAGS": "Labels",
+    "PLACEHOLDER": "Entrez votre label",
+    "HELP": "Vous pouvez associer à cet élément autant de labels que vous le souhaitez"
   },
   "USER": {
-    "FORM": "Login",
-    "ORSUB": " (or subscribe ?)",
-    "MANDATORY_FIELDS": "Mandatory fields",
-    "OPTIONAL_FIELDS": "Optional fields",
-    "MYPADS_ACCOUNT": "MyPads account",
-    "SUBSCRIBE": "Subscribe",
-    "PROFILE": "Profile",
-    "USERNAME": "Username",
-    "LOGIN": "Login",
-    "PASSWORD": "Password",
-    "PASSCHECK": "Password Confirmation",
-    "PASSCURRENT": "Current password",
-    "EMAIL": "Email",
-    "EMAIL_SAMPLE": "username@example.org",
-    "FIRSTNAME": "Firstname",
-    "LASTNAME": "Lastname",
-    "ORGANIZATION": "Organization",
+    "FORM": "Connexion",
+    "ORSUB": " (ou inscription ?)",
+    "MANDATORY_FIELDS": "Champs obligatoires",
+    "OPTIONAL_FIELDS": "Champs optionnels",
+    "MYPADS_ACCOUNT": "Compte MyPads",
+    "SUBSCRIBE": "S'inscrire",
+    "PROFILE": "Profil",
+    "USERNAME": "Identifiant",
+    "LOGIN": "Se connecter",
+    "PASSWORD": "Mot de passe",
+    "PASSCHECK": "Confirmation de mot de passe",
+    "PASSCURRENT": "Mot de passe actuel",
+    "EMAIL": "Courriel",
+    "EMAIL_SAMPLE": "identifiant@exemple.org",
+    "FIRSTNAME": "Prénom",
+    "LASTNAME": "Nom",
+    "ORGANIZATION": "Organisation",
     "UNDEF": "********",
     "OK": "Ok",
-    "REGISTER": "Register",
+    "REGISTER": "S'enregistrer",
     "INFO": {
-      "LOGIN": "The unique login you choose when you have subscribed",
-      "EMAIL": "The email is required for password recovery and group invitation",
-      "PASSWORD_BEGIN": "Must be between ",
-      "PASSWORD_END": " characters",
-      "PASSWORD_CHECK": "For verification : must be the same as password",
-      "PASSWORD_CURRENT": "Security check : required for all profile changes",
-      "OPTIONAL": "Optional field"
+      "LOGIN": "L'identifiant unique que vous avez choisi lorsque vous vous êtes inscrit",
+      "EMAIL": "L'adresse mail est nécessaire pour la procédure de récupération de mot de passe",
+      "PASSWORD_BEGIN": "Doit être compris entre",
+      "PASSWORD_END": " caractères",
+      "PASSWORD_CHECK": "Pour confirmer : doit être le même que le mot de passe",
+      "PASSWORD_CURRENT": "Mesure de sécurité : nécessaire pour tout changement sur le profil",
+      "OPTIONAL": "Champ optionnel"
     },
     "ERR": {
-      "LOGIN": "Login is required",
-      "EMAIL": "The email is required and should be valid",
-      "LOGOUT": "Log out error : you wasn't authenticated.",
-      "PASSWORD_MISMATCH": "The entered passwords do not match."
+      "LOGIN": "Un identifiant est nécessaire",
+      "EMAIL": "Une adresse email est obligatoire et doit être valide",
+      "LOGOUT": "Erreur à la déconnexion : vous n'étiez pas authentifié",
+      "PASSWORD_MISMATCH": "Les mots de passe saisis ne correspondent pas l'un à l'autre"
     },
     "AUTH": {
-      "SUCCESS": "Successfull authentication ! Welcome.",
-      "SUCCESS_OUT": "You have been successfully disconnected.",
-      "SUBSCRIBE_SUCCESS": "Successfull subscription ! Welcome.",
-      "PROFILE_SUCCESS": "Profile successfully updated."
+      "SUCCESS": "Authentification réussie ! Bienvenue.",
+      "SUCCESS_OUT": "Vous avez été déconnecté avec succès.",
+      "SUBSCRIBE_SUCCESS": "Inscription complétée avec succès ! Bienvenue.",
+      "PROFILE_SUCCESS": "Profil mis à jour avec succès."
     },
     "HELP": {
-      "PROFILE": "<p>Every change into your profile needs the current password field to be correctly filled. Please note that :</p><ul><li>you can change everything by updating the appropriate field;</li><li>leaving password and password confirmation empty won't affect your current password;</li><li>you can't change your login at the moment but you will in the future;</li><li>if you want to change your password, please enter the new one into the password field and confirm it with the password confirmation.</li></ul>"
+      "PROFILE": "<p>Tout changement dans votre profil nécessite votre mot de passe actuel. Merci de noter que :</p><ul><li>vous pouvez modifier toute information en utilisant le champ correspondant;</li><li>laisser les champs de mot de passe et de confirmation vides n'auront pas d'effet sur votre mot de passe actuel;</li><li>vous ne pouvez pas changer d'identifiant pour le moment mais ce sera bientôt possible;</li><li>si vous voulez changer votre mot de passe, merci d'en saisir un nouveau dans le champ mot de passe et de le confirmer avec le champ de confirmation.</li></ul>"
     }
   },
   "GROUP": {
-    "MYGROUPS": "My Groups",
-    "HELP": "Groups contain pads, you need at least to create one of them",
-    "GROUP": "Group",
-    "GROUPS": "Groups",
-    "BOOKMARKED": "Bookmarked groups",
-    "ARCHIVED": "Archived groups",
-    "ADD": "Add a new group",
-    "ADD_HELP": "<h3>Visibility</h3><p>You have the choice between three levels of visibility. It will impact all linked pads :<ul><li><em>restricted</em>, default choice : access of the pads are limited to a list of invited users you have chosen;</li><li><em>private</em> : in this mode, you have to enter a password and access to the pads will be checked against this password;</li><li><em>public</em> : in this mode, all pads are public, users just need to have the URL address.</li></ul></p><h3>Readonly</h3><p>If you check <em>readonly</em>, all attached pads will stay in their state, and can not be edited. Note that visibility still works in readonly mode.</p><h3>Tags</h3><p>You can attach tags to this element by clicking on the corresponding input field and selecting them one by one.</p><p>To create a new tag, fill it and type ENTER key or click on the 'Ok' button. Once the tag has been added, it will automatically been selected on this form.</p><p>You can remove a tag by clicking on the cross located on the right of it.</p>",
-    "EDIT": "Edit",
-    "EDIT_GROUP": "Edit a group",
-    "VIEW": "View",
-    "VIEW_MANAGE": "View and manage group and its pads",
-    "VIEW_HELP": "<p>The details of the group show you :<ul><li>options defined when group has been created or updated;</li><li>list of pads created for this group;</li><li>and list of admins and users of the group.</li></ul></p><p>From there, you can : <ul><li>create new pads, edit them, remove or mark them;</li><li>share administration of your group with other users;</li><li>invite other users to view and edit pads of the group.</li></ul></p>",
-    "SHARE": "Share",
-    "SHARE_LINK": "Please share this URL to your guests",
-    "SHARE_PASSWORD": "Please enter the password to be able to share",
-    "REMOVE": "Remove",
-    "BOOKMARK": "Bookmark",
-    "UNMARK": "Unmark",
-    "MARK_SUCCESS": "Marking successfully",
-    "SHARE_ADMIN": "Share administration",
+    "MYGROUPS": "Mes groupes",
+    "HELP": "Les groupes contiennent des pads. Vous avez besoin de créer au moins un groupe.",
+    "GROUP": "Groupe",
+    "GROUPS": "Groupes",
+    "BOOKMARKED": "Favoris",
+    "ARCHIVED": "Archivés",
+    "ADD": "Créer un nouveau groupe",
+    "ADD_HELP": "<h3>Visibilité</h3><p>Vous avez le choix entre trois niveaux de visibilité. Cela impactera tous les pads liés :<ul><li><em>resteint</em>, le choix par défaut : l'accès aux pads sera limité à une liste d'utilisateurs invités que vous aurez choisi;</li><li><em>privé</em> : dans ce moden vous aurez à saisir un mot de passe qui sera vérifié pour autoriser l'accès;</li><li><em>public</em> : dans ce mode, tous les pads sont publics, les utilisateurs n'ont alors besoin que de l'adresse URL pour y accéder.</li></ul></p><h3>Lecture seule</h3><p>Si vous activez la <em>lecture seule</em>, tous les pads attachés conserveront leur dernier état connu et ne pourront être édités. Notez que la visibilité fonctionnera toujours.</p><h3>Labels</h3><p>Vous pouvez associer des labels à cet élément en cliquant sur le champ correspondant et en les sélectionnant un par un.</p><p>Pour créer un nouveau label, saisissez le et appuyer sur la touche ENTRÉE ou cliquez sur le bouton 'Ok'. Une fois le label ajouté, il sera automatiquement sélectionné sur ce formulaire.</p><p>Vous pouvez supprimer un label en cliquant sur la croix située à sa droite.</p>",
+    "EDIT": "Modifier",
+    "EDIT_GROUP": "Modifier un groupe",
+    "VIEW": "Voir",
+    "VIEW_MANAGE": "Voir et gérer le groupe et ses pads",
+    "VIEW_HELP": "<p>Les détails d'un groupe vous montre :<ul><li>les options définies lorsque le groupe a été créé ou mis à jour;</li><li>la liste des pads créés pour ce groupe;</li><li>et la liste des administrateurs et utilisateurs de ce groupe.</li></ul></p><p>À partir de là, vous pouvez : <ul><li>créer de nouveaux pads, les modifier, les supprimer ou les mettre en favoris;</li><li>partager l'administration de votre groupe avec d'autres utilisateurs;</li><li>inviter d'autres utilisateurs à voir et participer aux pads de ce groupe.</li></ul></p>",
+    "SHARE": "Partager",
+    "SHARE_LINK": "Merci de partager cette adresse à vos invités",
+    "SHARE_PASSWORD": "Merci de saisir le mot de passe afin de pouvoir partager le pad",
+    "REMOVE": "Supprimer",
+    "BOOKMARK": "Mettre en favori",
+    "UNMARK": "Supprimer des favoris",
+    "MARK_SUCCESS": "Favori réalisé avec succès",
+    "SHARE_ADMIN": "Partager l'administration",
     "INVITE_USER": {
-      "IU": "Invite users",
-      "HELP": "<p>This field accepts one login at a time. When ENTER is typed, or OK is clicked, the login is added to the list of invited users. A list of known users helps you to fill the login.</p><h3>List of users</h3><p>This list contains all selected users. You can remove one by clicking the sign after each login.</p><h3>Note</h3><p>Please note that, for instance, registered users will be automatically added to your group. In short term, external users will receive a mail for creating an account.</p>",
-      "USERS_SELECTION": "Users selection",
-      "USERS_SELECTED": "List of selected users",
-      "PLACEHOLDER": "Enter login",
-      "INPUT_HELP": "You can invite as many users as you want",
-      "SUCCESS": "User invitation has been successfully achieved"
+      "IU": "Inviter des utilisateurs",
+      "HELP": "<p>Ce champ accepte un identifiant à la fois. Quand vous pressez ENTRÉE ou cliquez sur OK, l'identifiant est ajouté à la liste des utilisateurs invités. Une liste d'utilisateurs connus vous aide à saisir.</p><h3>La liste des utilisateurs</h3><p>Cette liste contient tous les utilisateurs sélectionnés. Vous pouvez les supprimer en cliquant sur le signe derrière chaque identifiant.</p><h3>Note</h3><p>Merci de noter que, pour le moment, seuls les utilisateurs enregistrés pourront être ajoutés à votre groupe. Cela signifie que les utilisateurs externes à Mypads ne recevront pas de mail pour les inviter à créer un compte.</p>",
+      "USERS_SELECTION": "Sélection d'utilisateurs",
+      "USERS_SELECTED": "Liste d'utilisateurs sélectionnés",
+      "PLACEHOLDER": "Saisissez l'identifiant",
+      "INPUT_HELP": "Vous pouvez inviter autant d'utilisateurs que vous le souhaitez",
+      "SUCCESS": "L'invitation s'est déroulée avec succès"
     },
     "ADMIN_SHARE": {
-      "AS": "Administration sharing",
-      "SUCCESS": "Administration sharing has been successfully achieved"
+      "AS": "Partage d'administration",
+      "SUCCESS": "La partage d'administration s'est achevé avec succès"
     },
     "SEARCH": {
-      "TITLE": "Search",
-      "TYPE": "Type here",
-      "HELP": "Search on common fields with at least 2 characters"
+      "TITLE": "Recherche",
+      "TYPE": "Saisissez ici",
+      "HELP": "Recherche sur les champs les plus communs avec au moins 2 caractères"
     },
-    "PROPERTIES": "Properties",
+    "PROPERTIES": "Propriétés",
     "FIELD": {
-      "NAME": "Name",
-      "VISIBILITY": "Visibility",
-      "PRIVATE": "Private",
-      "RESTRICTED": "Restricted",
+      "NAME": "Nom",
+      "VISIBILITY": "Visibilité",
+      "PRIVATE": "Privé",
+      "RESTRICTED": "Restreint",
       "PUBLIC": "Public",
-      "READONLY": "Readonly"
+      "READONLY": "Lecture seule"
     },
     "FILTERS": {
-      "TITLE": "Filters",
-      "ADMIN": "Groups I am admin",
-      "USER": "Groups I have been invited",
-      "HELP": "You can select one or several filters, click again on it to deactivate"
+      "TITLE": "Filtres",
+      "ADMIN": "Groupes dont je suis l'administrateur",
+      "USER": "Groupes auxquels j'ai été invité",
+      "HELP": "Vous pouvez sélectionner un ou plusieurs filtres, cliquez à nouveau pour les désactiver"
     },
     "TAGS": {
-      "TITLE": "Tags",
-      "HELP": "You can filter by one or more tags. Click again to deactivate if wanted"
+      "TITLE": "Labels",
+      "HELP": "Vous pouvez filtrer par un ou plusieurs labels. Cliquez à nouveau pour les désactiver"
     },
     "PAD": {
-      "TITLE": "Title",
-      "ADMINS": "Admins",
-      "USERS": "Users",
-      "USERS_NONE": "No user",
-      "VISIBILITY": "Visibility",
+      "TITLE": "Titre",
+      "ADMINS": "Administrateurs",
+      "USERS": "Utilisateurs",
+      "USERS_NONE": "Pas d'utilisateur",
+      "VISIBILITY": "Visibilité",
       "PAD": "Pad",
       "PADS": "Pads",
-      "NONE": "No pad linked",
-      "ADD": "Create a new pad",
-      "ADD_PROMPT": "Enter the name of the new pad",
-      "EDIT_PROMPT": "Enter the new name of the pad",
-      "FROM_GROUP": "group :",
-      "VIEW_HELP": "<p>Here is the main interface to the current pad.</p><p>If the group or the pad is private, you need to enter the password to be able to access to it.</p><p>If you want to go back to the group, you can click on the group name.</p>",
-      "OPEN_TAB": "Open in a new tab"
+      "NONE": "Aucun pad attaché",
+      "ADD": "Créer un nouveau pad",
+      "ADD_PROMPT": "Saisissez le nom du nouveau pad",
+      "EDIT_PROMPT": "Saisissez le nouveau nom du pad",
+      "FROM_GROUP": "groupe :",
+      "VIEW_HELP": "<p>Vous voici sur l'interface principale du pad affiché.</p><p>Si le groupe ou le pad est privé, vous aurez besoin de saisir le mot de passe pour y avoir accès.</p><p>Si vous voulez revenir au groupe, vous pouvez cliquer sur le nom de celui-ci.</p>",
+      "OPEN_TAB": "Ouvrir dans un nouvel onglet"
     },
     "INFO": {
-      "NAME": "Name of the group",
-      "VISIBILITY": "Required, restricted by default to invited users or admins",
-      "READONLY": "If checked, linked pads will be in readonly mode",
-      "PASSWORD": "Required in private mode",
-      "ADD_SUCCESS": "Group has been successfully created",
-      "EDIT_SUCCESS": "Group has been successfully updated",
-      "REMOVE_SUCCESS": "Group has been successfully removed",
-      "REMOVE_SURE": "Are you sure you want to remove this group ?",
-      "PAD_REMOVE_SUCCESS": "Pad has been successfully removed",
-      "PAD_REMOVE_SURE": "Are you sure you want to remove this pad ?",
-      "PAD_ADD_SUCCESS": "Pad has been successfully created",
-      "PAD_EDIT_SUCCESS": "Pad has been successfully updated"
+      "NAME": "Nom du groupe",
+      "VISIBILITY": "Requis, restreint par défaut aux utilisateurs ou administrateurs invités",
+      "READONLY": "Si sélectionné les pads liés seront en lecture seule",
+      "PASSWORD": "Requis pour le mode privé",
+      "ADD_SUCCESS": "Le groupe a été ajouté avec succès",
+      "EDIT_SUCCESS": "Le groupe a été mis à jour avec succès",
+      "REMOVE_SUCCESS": "Le groupe a été supprimé avec succès",
+      "REMOVE_SURE": "Ëtes-vous sûr de vouloir supprimer ce groupe ?",
+      "PAD_REMOVE_SUCCESS": "Le pad a été supprimé avec succès",
+      "PAD_REMOVE_SURE": "Êtes-vous sûr de vouloir supprimer ce pad ?",
+      "PAD_ADD_SUCCESS": "Le pad a été créé avec succès",
+      "PAD_EDIT_SUCCESS": "Le pad a été mis à jour avec succès"
     },
     "ERR": {
-      "NAME": "The name of the group is required"
+      "NAME": "Le nom du groupe est nécessaire"
     }
   }
 }

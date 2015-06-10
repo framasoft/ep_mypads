@@ -86,6 +86,7 @@ module.exports = (function () {
     * - it ensures that additionnal validity check is done;
     * - it displays errors if needed or success and fixes local cached data for
     * the user;
+    * - it also updates UI lang if needed;
     * - finally, it authenticates new created user.
     */
 
@@ -103,6 +104,10 @@ module.exports = (function () {
           auth.isAuthenticated(true);
           auth.userInfo(resp.value);
           notif.success({ body: conf.LANG.USER.AUTH.SUBSCRIBE_SUCCESS });
+          var lang = auth.userInfo().lang;
+          if (lang !== conf.USERLANG) {
+            conf.updateLang(lang);
+          }
           m.request({
             method: 'POST',
             url: conf.URLS.LOGIN,

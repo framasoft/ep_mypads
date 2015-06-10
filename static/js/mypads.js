@@ -1727,7 +1727,7 @@ module.exports = (function () {
     /**
     * `submit` internal calls the public API to login with given login and
     * password. It displays errors if needed or success and fixes local cached
-    * data for the user.
+    * data for the user. It also updates UI lang if needed.
     */
 
     c.submit = function (e) {
@@ -2442,6 +2442,7 @@ module.exports = (function () {
     * - it ensures that additionnal validity check is done;
     * - it displays errors if needed or success and fixes local cached data for
     * the user;
+    * - it also updates UI lang if needed;
     * - finally, it authenticates new created user.
     */
 
@@ -2459,6 +2460,10 @@ module.exports = (function () {
           auth.isAuthenticated(true);
           auth.userInfo(resp.value);
           notif.success({ body: conf.LANG.USER.AUTH.SUBSCRIBE_SUCCESS });
+          var lang = auth.userInfo().lang;
+          if (lang !== conf.USERLANG) {
+            conf.updateLang(lang);
+          }
           m.request({
             method: 'POST',
             url: conf.URLS.LOGIN,
@@ -16722,7 +16727,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "GLOBAL": {
     "LANG": "English",
     "DESCRIPTION": "MyPads is an Etherpad plugin which have been founded in 2014 by an Ulule campaign. It handles :<ul><li>users and their authentication; </li><li>groups of pads per user, unlimited, sharable;</li><li>attached pads, with choice between invite known users to use them, making them private with password or letting them public.</li></ul>",

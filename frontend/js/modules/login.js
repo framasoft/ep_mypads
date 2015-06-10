@@ -53,7 +53,7 @@ module.exports = (function () {
     /**
     * `submit` internal calls the public API to login with given login and
     * password. It displays errors if needed or success and fixes local cached
-    * data for the user.
+    * data for the user. It also updates UI lang if needed.
     */
 
     c.submit = function (e) {

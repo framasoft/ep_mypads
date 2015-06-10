@@ -59,6 +59,8 @@ module.exports = (function () {
         expect($el.password.checkValidity()).toBeFalsy();
         expect($el.passwordConfirm.checkValidity()).toBeFalsy();
         expect($el.email.checkValidity()).toBeFalsy();
+        expect($el.lang.checkValidity()).toBeTruthy();
+        expect($el.lang.value).toBe('en');
         expect($el.firstname.checkValidity()).toBeTruthy();
         expect($el.lastname.checkValidity()).toBeTruthy();
         expect($el.organization.checkValidity()).toBeTruthy();
@@ -128,6 +130,8 @@ module.exports = (function () {
         fill($el.password, 'betterPassword123');
         fill($el.passwordConfirm, 'betterPassword123');
         fill($el.email, 'mikey@randall.me');
+        $el.lang.value = 'fr';
+        $el.lang.onchange($el.lang);
         expect($el.form.checkValidity()).toBeTruthy();
         expect($el.login.checkValidity()).toBeTruthy();
         expect($el.password.checkValidity()).toBeTruthy();
@@ -139,11 +143,15 @@ module.exports = (function () {
           $success = $success[$success.length - 1];
           expect($success.textContent).toMatch('Successfull subscription');
           $success.click();
-          first('.icon-logout').parentNode.click();
           window.setTimeout(function () {
-            expect(first('.icon-login')).toBeTruthy();
-            first('body > section p').click();
-            done();
+            expect(first('main h2').textContent).toMatch('Mes groupes');
+            first('header ul li').click(); // to english
+            first('.icon-logout').parentNode.click();
+            window.setTimeout(function () {
+              expect(first('.icon-login')).toBeTruthy();
+              first('body > section p').click();
+              done();
+            }, 200);
           }, 100);
         }, 300);
       });

@@ -61,7 +61,6 @@ module.exports = (function () {
         window.setTimeout(function () {
           expect(first('h2').textContent).toMatch('Login');
           first('header ul li:last-child').click();
-          console.log('ok');
           window.setTimeout(done, 200);
         }, 200);
       });

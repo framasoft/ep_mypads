@@ -80,6 +80,7 @@ module.exports = (function () {
           password: first('input[name=password]'),
           passwordConfirm: first('input[name=passwordConfirm]'),
           email: first('input[name=email]'),
+          lang: first('select[name=lang]'),
           firstname: first('input[name=firstname]'),
           lastname: first('input[name=lastname]'),
           organization: first('input[name=organization]'),

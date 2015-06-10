@@ -32,8 +32,6 @@ module.exports = (function () {
   var ld = require('lodash');
   // Local dependencies
   var conf = require('../configuration.js');
-  var GROUP = conf.LANG.GROUP;
-  var PAD = GROUP.PAD;
   var auth = require('../auth.js');
   var layout = require('./layout.js');
   var model = require('../model/group.js');
@@ -117,14 +115,14 @@ module.exports = (function () {
           m('a', {
             href: link,
             target: '_blank',
-            title: PAD.OPEN_TAB,
+            title: conf.LANG.GROUP.PAD.OPEN_TAB,
             onclick: function () {
               c.showIframe(false);
               return true;
             }
           }, [
             m('i.icon-popup'),
-            m('span', PAD.OPEN_TAB)
+            m('span', conf.LANG.GROUP.PAD.OPEN_TAB)
           ])
         ]),
       (function () {
@@ -140,16 +138,17 @@ module.exports = (function () {
   view.main = function (c) {
     var isBookmarked = ld.includes(c.bookmarks, c.pad._id);
     var route = '/mypads/group/' + c.group._id;
+    var GROUP = conf.LANG.GROUP;
     return m('section', { class: 'block-group group' }, [
       m('h2.block', [
-        m('span', PAD.PAD + ' ' + c.pad.name),
+        m('span', conf.LANG.GROUP.PAD.PAD + ' ' + c.pad.name),
         m('span.subtitle', [
           '(',
-          PAD.FROM_GROUP,
+          conf.LANG.GROUP.PAD.FROM_GROUP,
           m('a', {
             href: route + '/view',
             config: m.route,
-            title: GROUP.VIEW
+            title: conf.LANG.GROUP.VIEW
           }, c.group.name ),
           ')'
         ])
@@ -166,21 +165,21 @@ module.exports = (function () {
       (function () {
         if (c.group.visibility !== 'restricted') {
           return m('button', {
-            title: GROUP.SHARE,
+            title: conf.LANG.GROUP.SHARE,
             onclick: padShare.bind(c, c.group._id, c.pad._id)
-          }, [ m('i.icon-link'), m('span', GROUP.SHARE) ]);
+          }, [ m('i.icon-link'), m('span', conf.LANG.GROUP.SHARE) ]);
         }
       })(),
       m('a', {
         href: route + '/pad/edit/' + c.pad._id,
         config: m.route,
-        title: GROUP.EDIT
-      }, [ m('i.icon-pencil'), m('span', GROUP.EDIT) ]),
+        title: conf.LANG.GROUP.EDIT
+      }, [ m('i.icon-pencil'), m('span', conf.LANG.GROUP.EDIT) ]),
       m('a', {
         href: route + '/pad/remove/' + c.pad._id,
         config: m.route,
-        title: GROUP.REMOVE
-      }, [ m('i.icon-trash'), m('span', GROUP.REMOVE) ])
+        title: conf.LANG.GROUP.REMOVE
+      }, [ m('i.icon-trash'), m('span', conf.LANG.GROUP.REMOVE) ])
     ]),
     m('section.block.pad', view.pad(c))
     ]);
@@ -195,7 +194,7 @@ module.exports = (function () {
   view.aside = function () {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(PAD.VIEW_HELP))
+      m('article', m.trust(conf.LANG.GROUP.PAD.VIEW_HELP))
     ]);
   };
 

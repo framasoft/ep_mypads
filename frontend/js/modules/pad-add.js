@@ -31,7 +31,6 @@ module.exports = (function () {
   var m = require('mithril');
   var auth = require('../auth.js');
   var conf = require('../configuration.js');
-  var GROUP = conf.LANG.GROUP;
   var model = require('../model/group.js');
   var notif = require('../widgets/notification.js');
 
@@ -54,16 +53,16 @@ module.exports = (function () {
         pad: model.pads()[key],
         method: 'PUT',
         url: conf.URLS.PAD + '/' + key,
-        promptMsg: GROUP.PAD.ADD_PROMPT,
-        successMsg: GROUP.INFO.PAD_EDIT_SUCCESS
+        promptMsg: conf.LANG.GROUP.PAD.ADD_PROMPT,
+        successMsg: conf.LANG.GROUP.INFO.PAD_EDIT_SUCCESS
       };
     } else {
       opts = {
         pad: { name: '' },
         method: 'POST',
         url: conf.URLS.PAD,
-        promptMsg: GROUP.PAD.EDIT_PROMPT,
-        successMsg: GROUP.INFO.PAD_ADD_SUCCESS
+        promptMsg: conf.LANG.GROUP.PAD.EDIT_PROMPT,
+        successMsg: conf.LANG.GROUP.INFO.PAD_ADD_SUCCESS
       };
     }
     opts.pad.group = gkey;

@@ -30,7 +30,6 @@ module.exports = (function () {
   var m = require('mithril');
   var ld = require('lodash');
   var conf = require('../configuration.js');
-  var LANG = conf.LANG;
   var auth = require('../auth.js');
   var notif = require('../widgets/notification.js');
 
@@ -59,39 +58,39 @@ module.exports = (function () {
         {
           route: '/mypads',
           icon: 'doc-text',
-          txt: LANG.MENU.PAD
+          txt: conf.LANG.MENU.PAD
         },
         /*{
           route: '/mybookmarks',
           icon: 'bookmarks',
-          txt: LANG.MENU.BOOKMARK
+          txt: conf.LANG.MENU.BOOKMARK
         },*/
         {
           route: '/myprofile',
           icon: 'user',
-          txt: LANG.MENU.PROFILE
+          txt: conf.LANG.MENU.PROFILE
         },
         /*{
           route: '/admin',
           icon: 'tools',
-          txt: LANG.MENU.ADMIN
+          txt: conf.LANG.MENU.ADMIN
         },*/
         {
           route: '/logout',
           icon: 'logout',
-          txt: LANG.MENU.LOGOUT
+          txt: conf.LANG.MENU.LOGOUT
         }
       ],
       unauth: [
         {
           route: '/login',
           icon: 'login',
-          txt: LANG.USER.LOGIN
+          txt: conf.LANG.USER.LOGIN
         },
         {
           route: '/subscribe',
           icon: 'thumbs-up',
-          txt: LANG.USER.SUBSCRIBE
+          txt: conf.LANG.USER.SUBSCRIBE
         }
       ]
     };
@@ -133,7 +132,7 @@ module.exports = (function () {
         m('aside.block', aside || '')
       ]),
       m('section', { class: 'notification' }, notif.view(notif.controller())),
-      m('footer.block', m('p', m.trust(LANG.GLOBAL.FOOTER)))
+      m('footer.block', m('p', m.trust(conf.LANG.GLOBAL.FOOTER)))
     ];
   };
 

@@ -34,7 +34,6 @@ module.exports = (function () {
   var ld = require('lodash');
   // Local dependencies
   var conf = require('../configuration.js');
-  var TAG = conf.LANG.TAG;
 
   var tag = {};
 
@@ -53,8 +52,8 @@ module.exports = (function () {
 
   tag.controller = function (config) {
     var c = config;
-    c.label = c.label || TAG.TAGS;
-    c.placeholder = c.placeholder || TAG.PLACEHOLDER;
+    c.label = c.label || conf.LANG.TAG.TAGS;
+    c.placeholder = c.placeholder || conf.LANG.TAG.PLACEHOLDER;
     c.name = c.name || 'tags';
 
     c.tags = ld.difference(c.tags, c.current);
@@ -82,7 +81,7 @@ module.exports = (function () {
   tag.views.icon = function () {
     return m('i', {
       class: 'block tooltip icon-info-circled tag',
-      'data-msg': TAG.HELP
+      'data-msg': conf.LANG.TAG.HELP
     });
   };
 

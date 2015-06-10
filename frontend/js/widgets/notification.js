@@ -32,7 +32,6 @@ module.exports = (function () {
   var m = require('mithril');
   // Local dependencies
   var conf = require('../configuration.js');
-  var NOTIF = conf.LANG.NOTIFICATION;
 
   var notif = {};
 
@@ -122,28 +121,28 @@ module.exports = (function () {
   };
 
   notif.success = function (options, callback) {
-    options.title = options.title || NOTIF.SUCCESS;
+    options.title = options.title || conf.LANG.NOTIFICATION.SUCCESS;
     options.cls = 'success';
     options.icon = 'check';
     notif.send(options, callback);
   };
 
   notif.info = function (options, callback) {
-    options.title = options.title || NOTIF.INFO;
+    options.title = options.title || conf.LANG.NOTIFICATION.INFO;
     options.cls = 'info';
     options.icon = 'info-circled';
     notif.send(options, callback);
   };
 
   notif.warning = function (options, callback) {
-    options.title = NOTIF.WARNING;
+    options.title = conf.LANG.NOTIFICATION.WARNING;
     options.cls = options.icon = 'warning';
     options.timeout = 15;
     notif.send(options, callback);
   };
 
   notif.error = function (options, callback) {
-    options.title = NOTIF.ERROR;
+    options.title = conf.LANG.NOTIFICATION.ERROR;
     options.cls = 'error';
     options.icon = 'alert';
     options.timeout = false;
@@ -151,7 +150,8 @@ module.exports = (function () {
   };
 
   notif.errorUnexpected = function (options, callback) {
-    options.body = '<em>' + options.body + '</em><br>' + NOTIF.ERROR_UNEXPECTED;
+    options.body = '<em>' + options.body + '</em><br>' +
+      conf.LANG.NOTIFICATION.ERROR_UNEXPECTED;
     notif.error(options, callback);
   };
 

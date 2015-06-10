@@ -30,7 +30,6 @@ module.exports = (function () {
   var m = require('mithril');
   // Local dependencies
   var conf = require('../configuration.js');
-  var USER = conf.LANG.USER;
   var auth = require('../auth.js');
   var form = require('../helpers/form.js');
   var notif = require('../widgets/notification.js');
@@ -66,7 +65,7 @@ module.exports = (function () {
       }).then(function (resp) {
         auth.isAuthenticated(true);
         auth.userInfo(resp.user);
-        notif.success({ body: USER.AUTH.SUCCESS });
+        notif.success({ body: conf.LANG.USER.AUTH.SUCCESS });
         m.route('/');
       }, function (err) {
         notif.error({ body: err.error });
@@ -89,13 +88,13 @@ module.exports = (function () {
     return m('form.block', {
       id: 'login-form', onsubmit: c.submit }, [
       m('fieldset.block-group', [
-        m('legend', USER.MYPADS_ACCOUNT),
+        m('legend', conf.LANG.USER.MYPADS_ACCOUNT),
         login.label, login.input, login.icon,
         password.label, password.input, password.icon,
         m('input.block.send', {
           form: 'login-form',
           type: 'submit',
-          value: USER.LOGIN
+          value: conf.LANG.USER.LOGIN
         })
       ]),
     ]);
@@ -104,8 +103,8 @@ module.exports = (function () {
   view.main = function (c) {
     return m('section', { class: 'block-group user' }, [
       m('h2.block', [
-        m('span', USER.FORM),
-        m('a', { href: '/subscribe', config: m.route }, USER.ORSUB)
+        m('span', conf.LANG.USER.FORM),
+        m('a', { href: '/subscribe', config: m.route }, conf.LANG.USER.ORSUB)
       ]),
       view.form(c)
     ]);

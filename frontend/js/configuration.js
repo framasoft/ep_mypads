@@ -28,6 +28,7 @@
 module.exports = (function () {
   // Dependencies
   var m = require('mithril');
+  var ld = require('lodash');
   var auth = require('./auth.js');
 
   var config = {};
@@ -42,8 +43,8 @@ module.exports = (function () {
   config.URLS.GROUP = config.URLS.BASE + '/group';
   config.URLS.PAD = config.URLS.BASE + '/pad';
   config.SERVER = m.prop();
-  // FIXME : tmp to EN only
-  config.LANG = require('../l10n/en.js');
+  // default to en
+  config.LANG = require('../../static/l10n/en.json');
 
   /**
   * ## init
@@ -51,6 +52,7 @@ module.exports = (function () {
   * `init` is an asynchronous function that calls for the public configuration
   * of MyPads and push them to the `SERVER` field. It also populates `auth`
   * m.props with proper  data, when there is already a valid cookie fixed.
+  * Finally, it loads language according to browser preference.
   *
   * It takes a `callback` function to execute when initialization is finished.
   */
@@ -61,6 +63,16 @@ module.exports = (function () {
       config.SERVER = settings.value; 
       auth.isAuthenticated(settings.auth);
       auth.userInfo(settings.user);
+      var ulang = window.navigator.userLanguage || window.navigator.language;
+      ulang = ld.find(config.SERVER.languages, function (l) {
+        return ld.startsWith(ulang, l);
+      });
+      if (ulang && (ulang !== 'en')) {
+        m.request({
+          method: 'GET',
+          url: '/mypads/l10n/' + ulang + '.json'
+        }).then(function (resp) { config.LANG = resp; });
+      }
       callback();
     });
   };

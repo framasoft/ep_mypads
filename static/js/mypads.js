@@ -101,6 +101,7 @@ module.exports = (function () {
 module.exports = (function () {
   // Dependencies
   var m = require('mithril');
+  var ld = require('lodash');
   var auth = require('./auth.js');
 
   var config = {};
@@ -115,8 +116,8 @@ module.exports = (function () {
   config.URLS.GROUP = config.URLS.BASE + '/group';
   config.URLS.PAD = config.URLS.BASE + '/pad';
   config.SERVER = m.prop();
-  // FIXME : tmp to EN only
-  config.LANG = require('../l10n/en.js');
+  // default to en
+  config.LANG = require('../../static/l10n/en.json');
 
   /**
   * ## init
@@ -124,6 +125,7 @@ module.exports = (function () {
   * `init` is an asynchronous function that calls for the public configuration
   * of MyPads and push them to the `SERVER` field. It also populates `auth`
   * m.props with proper  data, when there is already a valid cookie fixed.
+  * Finally, it loads language according to browser preference.
   *
   * It takes a `callback` function to execute when initialization is finished.
   */
@@ -134,6 +136,16 @@ module.exports = (function () {
       config.SERVER = settings.value; 
       auth.isAuthenticated(settings.auth);
       auth.userInfo(settings.user);
+      var ulang = window.navigator.userLanguage || window.navigator.language;
+      ulang = ld.find(config.SERVER.languages, function (l) {
+        return ld.startsWith(ulang, l);
+      });
+      if (ulang && (ulang !== 'en')) {
+        m.request({
+          method: 'GET',
+          url: '/mypads/l10n/' + ulang + '.json'
+        }).then(function (resp) { config.LANG = resp; });
+      }
       callback();
     });
   };
@@ -141,7 +153,7 @@ module.exports = (function () {
   return config;
 }).call(this);
 
-},{"../l10n/en.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/l10n/en.js","./auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js":[function(require,module,exports){
+},{"../../static/l10n/en.json":"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json","./auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js":[function(require,module,exports){
 /**
 *  # Form helpers functions
 *
@@ -425,7 +437,6 @@ module.exports = (function () {
   var ld = require('lodash');
   // Local dependencies
   var conf = require('../configuration.js');
-  var GROUP = conf.LANG.GROUP;
   var auth = require('../auth.js');
   var layout = require('./layout.js');
   var form = require('../helpers/form.js');
@@ -485,11 +496,11 @@ module.exports = (function () {
         if (c.addView()) {
           _o.params.method = 'POST';
           _o.params.url = conf.URLS.GROUP;
-          _o.extra.msg = GROUP.INFO.ADD_SUCCESS;
+          _o.extra.msg = conf.LANG.GROUP.INFO.ADD_SUCCESS;
         } else {
           _o.params.method = 'PUT';
           _o.params.url = conf.URLS.GROUP + '/' + c.group._id;
-          _o.extra.msg = GROUP.INFO.EDIT_SUCCESS;
+          _o.extra.msg = conf.LANG.GROUP.INFO.EDIT_SUCCESS;
         }
         return _o;
       })();
@@ -530,12 +541,19 @@ module.exports = (function () {
   };
 
   view.icon.name = function (c) {
-    return form.icon(c, 'name', GROUP.INFO.NAME, GROUP.ERR.NAME);
+    return form.icon(c, 'name', conf.LANG.GROUP.INFO.NAME,
+      conf.LANG.GROUP.ERR.NAME);
   };
 
-  view.icon.visibility = view.icon.common(GROUP.INFO.VISIBILITY);
-  view.icon.password = view.icon.common(GROUP.INFO.PASSWORD);
-  view.icon.readonly = view.icon.common(GROUP.INFO.READONLY);
+  view.icon.visibility = function () {
+    return view.icon.common(conf.LANG.GROUP.INFO.VISIBILITY);
+  };
+  view.icon.password = function () {
+    return view.icon.common(conf.LANG.GROUP.INFO.PASSWORD);
+  };
+  view.icon.readonly = function () {
+    return view.icon.common(conf.LANG.GROUP.INFO.READONLY);
+  };
 
   /**
   * ### Fields
@@ -550,13 +568,16 @@ module.exports = (function () {
   view.field = {};
 
   view.field.name = function (c) {
-    var f = form.field(c, 'name', GROUP.FIELD.NAME, view.icon.name(c));
-    ld.assign(f.input.attrs, { required: true });
+    var f = form.field(c, 'name', conf.LANG.GROUP.INFO.NAME,
+      view.icon.name(c));
+    ld.assign(f.input.attrs,
+      { placeholder: conf.LANG.GROUP.INFO.NAME, required: true });
     return f;
   };
 
   view.field.visibility = function (c) {
-    var label = m('label.block', { for: 'visibility' }, GROUP.FIELD.VISIBILITY);
+    var label = m('label.block', { for: 'visibility' },
+      conf.LANG.GROUP.FIELD.VISIBILITY);
     var select = m('select', {
       name: 'visibility',
       class: 'block',
@@ -564,15 +585,16 @@ module.exports = (function () {
       value: c.data.visibility(),
       onchange: m.withAttr('value', c.data.visibility)
     }, [
-      m('option', { value: 'restricted' }, GROUP.FIELD.RESTRICTED),
-      m('option', { value: 'private' }, GROUP.FIELD.PRIVATE),
-      m('option', { value: 'public' }, GROUP.FIELD.PUBLIC)
+      m('option', { value: 'restricted' }, conf.LANG.GROUP.FIELD.RESTRICTED),
+      m('option', { value: 'private' }, conf.LANG.GROUP.FIELD.PRIVATE),
+      m('option', { value: 'public' }, conf.LANG.GROUP.FIELD.PUBLIC)
     ]);
-    return { label: label, icon: view.icon.visibility, select: select };
+    return { label: label, icon: view.icon.visibility(), select: select };
   };
 
   view.field.password = function (c) {
-    var label = m('label.block', { for: 'password' }, conf.LANG.USER.PASSWORD);
+    var label = m('label.block', { for: 'password' },
+      conf.LANG.USER.PASSWORD);
     var input = m('input.block', {
       name: 'password',
       type: 'password',
@@ -581,18 +603,19 @@ module.exports = (function () {
       required: (c.addView() || !c.private()),
       oninput: m.withAttr('value', c.data.password)
     });
-    return { label: label, icon: view.icon.password, input: input };
+    return { label: label, icon: view.icon.password(), input: input };
   };
 
   view.field.readonly = function (c) {
-    var label = m('label.block', { for: 'readonly' }, GROUP.FIELD.READONLY);
+    var label = m('label.block', { for: 'readonly' },
+      conf.LANG.GROUP.FIELD.READONLY);
     var input = m('input.block', {
       name: 'readonly',
       type: 'checkbox',
       checked: c.data.readonly(),
       onchange: m.withAttr('checked', c.data.readonly)
     });
-    return { label: label, icon: view.icon.readonly, input: input };
+    return { label: label, icon: view.icon.readonly(), input: input };
   };
 
   view.field.tag = function (c) { return tag.view(c.tag); };
@@ -621,7 +644,7 @@ module.exports = (function () {
       onsubmit: c.submit
     }, [
       m('fieldset.block-group', [
-        m('legend', GROUP.GROUP),
+        m('legend', conf.LANG.GROUP.GROUP),
         m('div', fields)
       ]),
       m('input.block.send', {
@@ -640,7 +663,8 @@ module.exports = (function () {
 
   view.main = function (c) {
     return m('section', { class: 'block-group user group-form' }, [
-      m('h2.block', c.addView() ? GROUP.ADD : GROUP.EDIT_GROUP),
+      m('h2.block',
+        c.addView() ? conf.LANG.GROUP.ADD : conf.LANG.GROUP.EDIT_GROUP),
       view.form(c)
     ]);
   };
@@ -648,7 +672,7 @@ module.exports = (function () {
   view.aside = function () {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(GROUP.ADD_HELP))
+      m('article', m.trust(conf.LANG.GROUP.ADD_HELP))
     ]);
   };
 
@@ -693,7 +717,6 @@ module.exports = (function () {
   var m = require('mithril');
   var auth = require('../auth.js');
   var conf = require('../configuration.js');
-  var GROUP = conf.LANG.GROUP;
   var model = require('../model/group.js');
   var notif = require('../widgets/notification.js');
 
@@ -708,7 +731,7 @@ module.exports = (function () {
 
   remove.controller = function () {
     if (!auth.isAuthenticated()) { return m.route('/login'); }
-    if (window.confirm(GROUP.INFO.REMOVE_SURE)) {
+    if (window.confirm(conf.LANG.GROUP.INFO.REMOVE_SURE)) {
       m.request({
         method: 'DELETE',
         url: conf.URLS.GROUP + '/' + m.route.param('key')
@@ -716,7 +739,7 @@ module.exports = (function () {
         var data = model.data();
         delete data[resp.key];
         model.data(data);
-        notif.success({ body: GROUP.INFO.REMOVE_SUCCESS });
+        notif.success({ body: conf.LANG.GROUP.INFO.REMOVE_SUCCESS });
         m.route('/mypads/group/list');
       }, function (err) { notif.error({ body: err.error }); });
     } else {
@@ -764,7 +787,6 @@ module.exports = (function () {
   var ld = require('lodash');
   // Local dependencies
   var conf = require('../configuration.js');
-  var GROUP = conf.LANG.GROUP;
   var auth = require('../auth.js');
   var layout = require('./layout.js');
   var model = require('../model/group.js');
@@ -816,17 +838,17 @@ module.exports = (function () {
   view.properties = function (c) {
     return m('section', [
       m('dl.block-group.group', [
-        m('dt.block', GROUP.PAD.PADS),
+        m('dt.block', conf.LANG.GROUP.PAD.PADS),
         m('dd.block', ld.size(c.group.pads)),
-        m('dt.block', GROUP.PAD.ADMINS),
+        m('dt.block', conf.LANG.GROUP.PAD.ADMINS),
         m('dd.block', ld.size(c.group.admins)),
-        m('dt.block', GROUP.PAD.USERS),
+        m('dt.block', conf.LANG.GROUP.PAD.USERS),
         m('dd.block', ld.size(c.group.users)),
-        m('dt.block', GROUP.PAD.VISIBILITY),
+        m('dt.block', conf.LANG.GROUP.PAD.VISIBILITY),
         m('dd.block', c.group.visibility),
-        m('dt.block', GROUP.FIELD.READONLY),
+        m('dt.block', conf.LANG.GROUP.FIELD.READONLY),
         m('dd.block', c.group.readonly),
-        m('dt.block', GROUP.TAGS.TITLE),
+        m('dt.block', conf.LANG.GROUP.TAGS.TITLE),
         m('dd.block', c.group.tags.join(', '))
       ])
     ]);
@@ -840,14 +862,15 @@ module.exports = (function () {
 
   view.pads = function (c) {
     var route = '/mypads/group/' + c.group._id;
+    var GROUP = conf.LANG.GROUP;
     return m('section.pad', [
       m('a.add', { href: route + '/pad/add', config: m.route }, [
         m('i.icon-plus-squared'),
-        GROUP.PAD.ADD
+        conf.LANG.GROUP.PAD.ADD
       ]),
       (function () {
         if (ld.size(c.group.pads) === 0) {
-          return m('p', GROUP.PAD.NONE);
+          return m('p', conf.LANG.GROUP.PAD.NONE);
         } else {
           return m('ul', ld.map(c.pads, function (p) {
             var isBookmarked = ld.includes(c.bookmarks, p._id);
@@ -856,7 +879,7 @@ module.exports = (function () {
                 m('a', {
                   href: route + '/pad/view/' + p._id,
                   config: m.route,
-                  title: GROUP.VIEW
+                  title: conf.LANG.GROUP.VIEW
                 }, p.name)
               ]),
               m('span.block.actions', [
@@ -870,7 +893,7 @@ module.exports = (function () {
                 (function () {
                   if (c.group.visibility !== 'restricted') {
                     return m('button', {
-                      title: GROUP.SHARE,
+                      title: conf.LANG.GROUP.SHARE,
                       onclick: padShare.bind(c, c.group._id, p._id)
                     }, [ m('i.icon-link') ]);
                   }
@@ -878,17 +901,17 @@ module.exports = (function () {
                 m('a', {
                   href: route + '/pad/view/' + p._id,
                   config: m.route,
-                  title: GROUP.VIEW
+                  title: conf.LANG.GROUP.VIEW
                 }, [ m('i.icon-book-open') ]),
                 m('a', {
                   href: route + '/pad/edit/' + p._id,
                   config: m.route,
-                  title: GROUP.EDIT
+                  title: conf.LANG.GROUP.EDIT
                 }, [ m('i.icon-pencil') ]),
                 m('a', {
                   href: route + '/pad/remove/' + p._id,
                   config: m.route,
-                  title: GROUP.REMOVE
+                  title: conf.LANG.GROUP.REMOVE
                 }, [ m('i.icon-trash') ]),
               ])
             ]); 
@@ -918,7 +941,7 @@ module.exports = (function () {
     };
     var list = function (users) {
       if (ld.size(users) === 0) {
-        return m('p', GROUP.PAD.USERS_NONE);
+        return m('p', conf.LANG.GROUP.PAD.USERS_NONE);
       } else {
         return m('ul', ld.map(users, function (u) {
           return m('li', userView(u));
@@ -927,15 +950,15 @@ module.exports = (function () {
     };
     var route = '/mypads/group/' + c.group._id;
     var sectionElements = [
-      m('h4.block', GROUP.PAD.ADMINS),
+      m('h4.block', conf.LANG.GROUP.PAD.ADMINS),
       m('a.add', { href: route + '/user/share', config: m.route },
-        [ m('i.icon-plus-squared'), GROUP.SHARE_ADMIN ]),
+        [ m('i.icon-plus-squared'), conf.LANG.GROUP.SHARE_ADMIN ]),
       list(c.admins) 
     ];
     if (c.group.visibility === 'restricted') {
-      sectionElements.push(m('h4.block', GROUP.PAD.USERS),
+      sectionElements.push(m('h4.block', conf.LANG.GROUP.PAD.USERS),
         m('a.add', { href: route + '/user/invite', config: m.route },
-          [ m('i.icon-plus-squared'), GROUP.INVITE_USER.IU ]),
+          [ m('i.icon-plus-squared'), conf.LANG.GROUP.INVITE_USER.IU ]),
         list(c.users));
     }
     return m('section', sectionElements);
@@ -950,28 +973,29 @@ module.exports = (function () {
   view.main = function (c) {
     return m('section', { class: 'block-group group' }, [
       m('h2.block', [
-        m('span', GROUP.GROUP + ' ' + c.group.name),
+        m('span', conf.LANG.GROUP.GROUP + ' ' + c.group.name),
         m('a', {
           href: '/mypads/group/' + c.group._id + '/edit',
           config: m.route,
-          title: GROUP.EDIT
-        }, [ m('i.icon-pencil'), m('span', GROUP.EDIT) ]),
+          title: conf.LANG.GROUP.EDIT
+        }, [ m('i.icon-pencil'), m('span', conf.LANG.GROUP.EDIT) ]),
         m('a', {
           href: '/mypads/group/' + c.group._id + '/remove',
           config: m.route,
-          title: GROUP.REMOVE
-        }, [ m('i.icon-trash'), m('span', GROUP.REMOVE) ])
+          title: conf.LANG.GROUP.REMOVE
+        }, [ m('i.icon-trash'), m('span', conf.LANG.GROUP.REMOVE) ])
       ]),
       m('section.block.props', [
-        m('h3.title', GROUP.PROPERTIES),
+        m('h3.title', conf.LANG.GROUP.PROPERTIES),
         view.properties(c)
       ]),
       m('section.block.pads', [
-        m('h3.title', GROUP.PAD.PADS),
+        m('h3.title', conf.LANG.GROUP.PAD.PADS),
         view.pads(c)
       ]),
       m('section.block.users', [
-        m('h3.title', GROUP.PAD.ADMINS + ' & ' + GROUP.PAD.USERS),
+        m('h3.title',
+          conf.LANG.GROUP.PAD.ADMINS + ' & ' + conf.LANG.GROUP.PAD.USERS),
         view.users(c)
       ])
     ]);
@@ -986,7 +1010,7 @@ module.exports = (function () {
   view.aside = function () {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(GROUP.VIEW_HELP))
+      m('article', m.trust(conf.LANG.GROUP.VIEW_HELP))
     ]);
   };
 
@@ -1032,7 +1056,6 @@ module.exports = (function () {
   var ld = require('lodash');
   // Local dependencies
   var conf = require('../configuration.js');
-  var GROUP = conf.LANG.GROUP;
   var notif = require('../widgets/notification.js');
   var auth = require('../auth.js');
   var u = auth.userInfo;
@@ -1201,7 +1224,7 @@ module.exports = (function () {
         data: { type: 'groups', key: gid }
       }).then(function () {
         c.computeGroups();
-        notif.success({ body: GROUP.MARK_SUCCESS });
+        notif.success({ body: conf.LANG.GROUP.MARK_SUCCESS });
       }, errfn);
     };
 
@@ -1225,12 +1248,13 @@ module.exports = (function () {
   view.search = function (c) {
     return m('section.search.block-group', [
       m('h3.block', [
-        m('span', GROUP.SEARCH.TITLE),
-        m('i.tooltip.icon-info-circled', { 'data-msg': GROUP.SEARCH.HELP })
+        m('span', conf.LANG.GROUP.SEARCH.TITLE),
+        m('i.tooltip.icon-info-circled',
+          { 'data-msg': conf.LANG.GROUP.SEARCH.HELP })
       ]),
       m('input.block', {
         type: 'search',
-        placeholder: GROUP.SEARCH.TYPE,
+        placeholder: conf.LANG.GROUP.SEARCH.TYPE,
         minlength: 3,
         pattern: '.{3,}',
         value: c.search(),
@@ -1251,8 +1275,9 @@ module.exports = (function () {
   view.filters = function (c) {
     return m('section.filter', [
       m('h3', [
-        m('span', GROUP.FILTERS.TITLE),
-        m('i.tooltip.icon-info-circled', { 'data-msg': GROUP.FILTERS.HELP })
+        m('span', conf.LANG.GROUP.FILTERS.TITLE),
+        m('i.tooltip.icon-info-circled',
+          { 'data-msg': conf.LANG.GROUP.FILTERS.HELP })
       ]),
       m('ul', [
         m('li', [
@@ -1261,7 +1286,7 @@ module.exports = (function () {
               class: 'admin' + (c.filters.admins ? ' active' : ''),
               onclick: ld.partial(c.filterToggle, 'admins') 
             },
-            GROUP.FILTERS.ADMIN)
+            conf.LANG.GROUP.FILTERS.ADMIN)
         ]),
         m('li', [
           m('button',
@@ -1269,7 +1294,7 @@ module.exports = (function () {
               class: 'user' + (c.filters.users ? ' active' : ''),
               onclick: ld.partial(c.filterToggle, 'users') 
             },
-          GROUP.FILTERS.USER)
+          conf.LANG.GROUP.FILTERS.USER)
         ]),
         m('li', [
           (function () {
@@ -1278,7 +1303,8 @@ module.exports = (function () {
                 {
                   class: 'user' + ((c.filterVisibVal === f) ? ' active' : ''),
                   onclick: ld.partial(c.filterVisibility, f) 
-                }, GROUP.GROUPS + ' ' + GROUP.FIELD[f.toUpperCase()]);
+                }, conf.LANG.GROUP.GROUPS + ' ' +
+                  conf.LANG.GROUP.FIELD[f.toUpperCase()]);
             });
           })()
         ])
@@ -1289,8 +1315,9 @@ module.exports = (function () {
   view.tags = function (c) {
     return m('section.tag', [
       m('h3', [
-        m('span', GROUP.TAGS.TITLE),
-        m('i.tooltip.icon-info-circled', { 'data-msg': GROUP.TAGS.HELP })
+        m('span', conf.LANG.GROUP.TAGS.TITLE),
+        m('i.tooltip.icon-info-circled',
+          { 'data-msg': conf.LANG.GROUP.TAGS.HELP })
       ]),
       m('ul', ld.map(model.tags(), function (t) {
         return m('li', [
@@ -1314,12 +1341,13 @@ module.exports = (function () {
   view.group = function (c, g) {
     var padRoute = '/mypads/group/' + g._id;
     var isBookmarked = (ld.includes(u().bookmarks.groups, g._id));
+    var GROUP = conf.LANG.GROUP;
     return m('li.block', [
       m('header.group.block-group', [
         m('h4.block', [ m('a', {
           href: '/mypads/group/' + g._id + '/view',
           config: m.route,
-          title: GROUP.VIEW_MANAGE
+          title: conf.LANG.GROUP.VIEW_MANAGE
         }, g.name) ]),
         m('section.block', [
           m('a', {
@@ -1334,41 +1362,42 @@ module.exports = (function () {
           m('a', {
             href: padRoute + '/view',
             config: m.route,
-            title: GROUP.VIEW_MANAGE
+            title: conf.LANG.GROUP.VIEW_MANAGE
           }, [ m('i.icon-book-open') ]),
           m('a', {
             href: padRoute + '/edit',
             config: m.route,
-            title: GROUP.EDIT
+            title: conf.LANG.GROUP.EDIT
           }, [ m('i.icon-pencil') ]),
           m('a', {
             href: padRoute + '/remove',
             config: m.route,
-            title: GROUP.REMOVE
+            title: conf.LANG.GROUP.REMOVE
           }, [ m('i.icon-trash') ])
         ])
       ]),
       m('dl.block-group.group', [
-        m('dt.block', GROUP.PAD.PADS),
+        m('dt.block', conf.LANG.GROUP.PAD.PADS),
         m('dd.block', [
           ld.size(g.pads),
           m('a', { href: padRoute + '/pad/add', config: m.route }, [
-            m('i.icon-plus-squared', { title: GROUP.PAD.ADD }) ])
+            m('i.icon-plus-squared', { title: conf.LANG.GROUP.PAD.ADD }) ])
         ]),
-        m('dt.block', GROUP.PAD.VISIBILITY),
+        m('dt.block', conf.LANG.GROUP.PAD.VISIBILITY),
         m('dd.block', g.visibility),
-        m('dt.block', GROUP.PAD.ADMINS),
+        m('dt.block', conf.LANG.GROUP.PAD.ADMINS),
         m('dd.block', [ ld.size(g.admins),
           m('a', { href: padRoute + '/user/share', config: m.route }, [
-            m('i.icon-plus-squared', { title: GROUP.SHARE_ADMIN }) ])
+            m('i.icon-plus-squared', { title: conf.LANG.GROUP.SHARE_ADMIN }) ])
         ]),
         (function () {
           if (g.visibility === 'restricted') {
             return m('div', [
-              m('dt.block', GROUP.PAD.USERS),
+              m('dt.block', conf.LANG.GROUP.PAD.USERS),
               m('dd.block', [ ld.size(g.users),
                 m('a', { href: padRoute + '/user/invite', config: m.route }, [
-                  m('i.icon-plus-squared', { title: GROUP.INVITE_USER.IU }) ])
+                  m('i.icon-plus-squared',
+                    { title: conf.LANG.GROUP.INVITE_USER.IU }) ])
               ])
             ]);
           }
@@ -1395,26 +1424,26 @@ module.exports = (function () {
   view.main = function (c) {
     return m('section', { class: 'block-group group' }, [
       m('h2.block', [
-        m('span', GROUP.MYGROUPS),
-        m('i.tooltip.icon-info-circled', { 'data-msg': GROUP.HELP }),
+        m('span', conf.LANG.GROUP.MYGROUPS),
+        m('i.tooltip.icon-info-circled', { 'data-msg': conf.LANG.GROUP.HELP }),
         m('a', {
           href: '/mypads/group/add',
           config: m.route
         }, [
           m('i.icon-plus-squared'),
-          m('span', GROUP.ADD)
+          m('span', conf.LANG.GROUP.ADD)
         ])
       ]),
       m('section.block', [
-        m('h3.title.bookmark', GROUP.BOOKMARKED),
+        m('h3.title.bookmark', conf.LANG.GROUP.BOOKMARKED),
         view.bookmarked(c)
       ]),
       m('section.block', [
-        m('h3.title.group', GROUP.GROUPS),
+        m('h3.title.group', conf.LANG.GROUP.GROUPS),
         view.groups(c)
       ]),
       m('section.block', [
-        m('h3.title.archive', GROUP.ARCHIVED),
+        m('h3.title.archive', conf.LANG.GROUP.ARCHIVED),
         view.archived(c)
       ])
     ]);
@@ -1511,7 +1540,6 @@ module.exports = (function () {
   var m = require('mithril');
   var ld = require('lodash');
   var conf = require('../configuration.js');
-  var LANG = conf.LANG;
   var auth = require('../auth.js');
   var notif = require('../widgets/notification.js');
 
@@ -1540,39 +1568,39 @@ module.exports = (function () {
         {
           route: '/mypads',
           icon: 'doc-text',
-          txt: LANG.MENU.PAD
+          txt: conf.LANG.MENU.PAD
         },
         /*{
           route: '/mybookmarks',
           icon: 'bookmarks',
-          txt: LANG.MENU.BOOKMARK
+          txt: conf.LANG.MENU.BOOKMARK
         },*/
         {
           route: '/myprofile',
           icon: 'user',
-          txt: LANG.MENU.PROFILE
+          txt: conf.LANG.MENU.PROFILE
         },
         /*{
           route: '/admin',
           icon: 'tools',
-          txt: LANG.MENU.ADMIN
+          txt: conf.LANG.MENU.ADMIN
         },*/
         {
           route: '/logout',
           icon: 'logout',
-          txt: LANG.MENU.LOGOUT
+          txt: conf.LANG.MENU.LOGOUT
         }
       ],
       unauth: [
         {
           route: '/login',
           icon: 'login',
-          txt: LANG.USER.LOGIN
+          txt: conf.LANG.USER.LOGIN
         },
         {
           route: '/subscribe',
           icon: 'thumbs-up',
-          txt: LANG.USER.SUBSCRIBE
+          txt: conf.LANG.USER.SUBSCRIBE
         }
       ]
     };
@@ -1614,7 +1642,7 @@ module.exports = (function () {
         m('aside.block', aside || '')
       ]),
       m('section', { class: 'notification' }, notif.view(notif.controller())),
-      m('footer.block', m('p', m.trust(LANG.GLOBAL.FOOTER)))
+      m('footer.block', m('p', m.trust(conf.LANG.GLOBAL.FOOTER)))
     ];
   };
 
@@ -1655,7 +1683,6 @@ module.exports = (function () {
   var m = require('mithril');
   // Local dependencies
   var conf = require('../configuration.js');
-  var USER = conf.LANG.USER;
   var auth = require('../auth.js');
   var form = require('../helpers/form.js');
   var notif = require('../widgets/notification.js');
@@ -1691,7 +1718,7 @@ module.exports = (function () {
       }).then(function (resp) {
         auth.isAuthenticated(true);
         auth.userInfo(resp.user);
-        notif.success({ body: USER.AUTH.SUCCESS });
+        notif.success({ body: conf.LANG.USER.AUTH.SUCCESS });
         m.route('/');
       }, function (err) {
         notif.error({ body: err.error });
@@ -1714,13 +1741,13 @@ module.exports = (function () {
     return m('form.block', {
       id: 'login-form', onsubmit: c.submit }, [
       m('fieldset.block-group', [
-        m('legend', USER.MYPADS_ACCOUNT),
+        m('legend', conf.LANG.USER.MYPADS_ACCOUNT),
         login.label, login.input, login.icon,
         password.label, password.input, password.icon,
         m('input.block.send', {
           form: 'login-form',
           type: 'submit',
-          value: USER.LOGIN
+          value: conf.LANG.USER.LOGIN
         })
       ]),
     ]);
@@ -1729,8 +1756,8 @@ module.exports = (function () {
   view.main = function (c) {
     return m('section', { class: 'block-group user' }, [
       m('h2.block', [
-        m('span', USER.FORM),
-        m('a', { href: '/subscribe', config: m.route }, USER.ORSUB)
+        m('span', conf.LANG.USER.FORM),
+        m('a', { href: '/subscribe', config: m.route }, conf.LANG.USER.ORSUB)
       ]),
       view.form(c)
     ]);
@@ -1775,7 +1802,6 @@ module.exports = (function () {
   var m = require('mithril');
   var conf = require('../configuration.js');
   var auth = require('../auth.js');
-  var LOG = conf.LANG.USER;
   var model = require('../model/group.js');
   var notif = require('../widgets/notification.js');
 
@@ -1794,7 +1820,7 @@ module.exports = (function () {
         auth.isAuthenticated(false);
         auth.userInfo(null);
         model.init();
-        notif.success({ body: LOG.AUTH.SUCCESS_OUT });
+        notif.success({ body: conf.LANG.USER.AUTH.SUCCESS_OUT });
         m.route('/');
       }, function (err) {
         notif.error({ body: err.error });
@@ -1841,7 +1867,6 @@ module.exports = (function () {
   var m = require('mithril');
   var auth = require('../auth.js');
   var conf = require('../configuration.js');
-  var GROUP = conf.LANG.GROUP;
   var model = require('../model/group.js');
   var notif = require('../widgets/notification.js');
 
@@ -1864,16 +1889,16 @@ module.exports = (function () {
         pad: model.pads()[key],
         method: 'PUT',
         url: conf.URLS.PAD + '/' + key,
-        promptMsg: GROUP.PAD.ADD_PROMPT,
-        successMsg: GROUP.INFO.PAD_EDIT_SUCCESS
+        promptMsg: conf.LANG.GROUP.PAD.ADD_PROMPT,
+        successMsg: conf.LANG.GROUP.INFO.PAD_EDIT_SUCCESS
       };
     } else {
       opts = {
         pad: { name: '' },
         method: 'POST',
         url: conf.URLS.PAD,
-        promptMsg: GROUP.PAD.EDIT_PROMPT,
-        successMsg: GROUP.INFO.PAD_ADD_SUCCESS
+        promptMsg: conf.LANG.GROUP.PAD.EDIT_PROMPT,
+        successMsg: conf.LANG.GROUP.INFO.PAD_ADD_SUCCESS
       };
     }
     opts.pad.group = gkey;
@@ -1941,7 +1966,6 @@ module.exports = (function () {
   var ld = require('lodash');
   var auth = require('../auth.js');
   var conf = require('../configuration.js');
-  var GROUP = conf.LANG.GROUP;
   var notif = require('../widgets/notification.js');
 
   /**
@@ -1963,7 +1987,7 @@ module.exports = (function () {
       method: 'POST',
       data: { type: 'pads', key: pid }
     }).then(function () {
-      notif.success({ body: GROUP.MARK_SUCCESS });
+      notif.success({ body: conf.LANG.GROUP.MARK_SUCCESS });
     }, function (err) { return notif.error({ body: err.error }); });
   };
 
@@ -2004,7 +2028,6 @@ module.exports = (function () {
   var ld = require('lodash');
   var auth = require('../auth.js');
   var conf = require('../configuration.js');
-  var GROUP = conf.LANG.GROUP;
   var model = require('../model/group.js');
   var notif = require('../widgets/notification.js');
 
@@ -2021,7 +2044,7 @@ module.exports = (function () {
     if (!auth.isAuthenticated()) { return m.route('/login'); }
     var key = m.route.param('pad');
     var gkey = m.route.param('group');
-    if (window.confirm(GROUP.INFO.PAD_REMOVE_SURE)) {
+    if (window.confirm(conf.LANG.GROUP.INFO.PAD_REMOVE_SURE)) {
       m.request({
         method: 'DELETE',
         url: conf.URLS.PAD + '/' + key
@@ -2032,7 +2055,7 @@ module.exports = (function () {
         var groups = model.data();
         ld.pull(groups[gkey].pads, key);
         model.data(groups);
-        notif.success({ body: GROUP.INFO.PAD_REMOVE_SUCCESS });
+        notif.success({ body: conf.LANG.GROUP.INFO.PAD_REMOVE_SUCCESS });
         m.route('/mypads/group/' + gkey + '/view');
       }, function (err) { notif.error({ body: err.error }); });
     } else {
@@ -2077,7 +2100,6 @@ module.exports = (function () {
   'use strict';
   // Dependencies
   var conf = require('../configuration.js');
-  var GROUP = conf.LANG.GROUP;
   var model = require('../model/group.js');
 
   /**
@@ -2090,10 +2112,10 @@ module.exports = (function () {
       var link = window.location.protocol + '//' + window.location.host +
         '/p/' + pid;
       if (group.visibility === 'private') {
-        var password = window.prompt(GROUP.SHARE_PASSWORD);
+        var password = window.prompt(conf.LANG.GROUP.SHARE_PASSWORD);
         link += '?mypadspassword=' + password;
       }
-      window.prompt(GROUP.SHARE_LINK, link);
+      window.prompt(conf.LANG.GROUP.SHARE_LINK, link);
   };
 }).call(this);
 
@@ -2132,8 +2154,6 @@ module.exports = (function () {
   var ld = require('lodash');
   // Local dependencies
   var conf = require('../configuration.js');
-  var GROUP = conf.LANG.GROUP;
-  var PAD = GROUP.PAD;
   var auth = require('../auth.js');
   var layout = require('./layout.js');
   var model = require('../model/group.js');
@@ -2217,14 +2237,14 @@ module.exports = (function () {
           m('a', {
             href: link,
             target: '_blank',
-            title: PAD.OPEN_TAB,
+            title: conf.LANG.GROUP.PAD.OPEN_TAB,
             onclick: function () {
               c.showIframe(false);
               return true;
             }
           }, [
             m('i.icon-popup'),
-            m('span', PAD.OPEN_TAB)
+            m('span', conf.LANG.GROUP.PAD.OPEN_TAB)
           ])
         ]),
       (function () {
@@ -2240,16 +2260,17 @@ module.exports = (function () {
   view.main = function (c) {
     var isBookmarked = ld.includes(c.bookmarks, c.pad._id);
     var route = '/mypads/group/' + c.group._id;
+    var GROUP = conf.LANG.GROUP;
     return m('section', { class: 'block-group group' }, [
       m('h2.block', [
-        m('span', PAD.PAD + ' ' + c.pad.name),
+        m('span', conf.LANG.GROUP.PAD.PAD + ' ' + c.pad.name),
         m('span.subtitle', [
           '(',
-          PAD.FROM_GROUP,
+          conf.LANG.GROUP.PAD.FROM_GROUP,
           m('a', {
             href: route + '/view',
             config: m.route,
-            title: GROUP.VIEW
+            title: conf.LANG.GROUP.VIEW
           }, c.group.name ),
           ')'
         ])
@@ -2266,21 +2287,21 @@ module.exports = (function () {
       (function () {
         if (c.group.visibility !== 'restricted') {
           return m('button', {
-            title: GROUP.SHARE,
+            title: conf.LANG.GROUP.SHARE,
             onclick: padShare.bind(c, c.group._id, c.pad._id)
-          }, [ m('i.icon-link'), m('span', GROUP.SHARE) ]);
+          }, [ m('i.icon-link'), m('span', conf.LANG.GROUP.SHARE) ]);
         }
       })(),
       m('a', {
         href: route + '/pad/edit/' + c.pad._id,
         config: m.route,
-        title: GROUP.EDIT
-      }, [ m('i.icon-pencil'), m('span', GROUP.EDIT) ]),
+        title: conf.LANG.GROUP.EDIT
+      }, [ m('i.icon-pencil'), m('span', conf.LANG.GROUP.EDIT) ]),
       m('a', {
         href: route + '/pad/remove/' + c.pad._id,
         config: m.route,
-        title: GROUP.REMOVE
-      }, [ m('i.icon-trash'), m('span', GROUP.REMOVE) ])
+        title: conf.LANG.GROUP.REMOVE
+      }, [ m('i.icon-trash'), m('span', conf.LANG.GROUP.REMOVE) ])
     ]),
     m('section.block.pad', view.pad(c))
     ]);
@@ -2295,7 +2316,7 @@ module.exports = (function () {
   view.aside = function () {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(PAD.VIEW_HELP))
+      m('article', m.trust(conf.LANG.GROUP.PAD.VIEW_HELP))
     ]);
   };
 
@@ -2342,7 +2363,6 @@ module.exports = (function () {
   // Local Dependencies
   var conf = require('../configuration.js');
   var form = require('../helpers/form.js');
-  var USER = conf.LANG.USER;
   var notif = require('../widgets/notification.js');
   var auth = require('../auth.js');
   var layout = require('./layout.js');
@@ -2401,7 +2421,7 @@ module.exports = (function () {
     c.submit.subscribe = function (e) {
       e.preventDefault();
       if (c.data.password() !== c.data.passwordConfirm()) {
-        notif.warning({ body: USER.ERR.PASSWORD_MISMATCH });
+        notif.warning({ body: conf.LANG.USER.ERR.PASSWORD_MISMATCH });
         document.querySelector('input[name="passwordConfirm"]').focus();
       } else {
         m.request({
@@ -2411,7 +2431,7 @@ module.exports = (function () {
         }).then(function (resp) {
           auth.isAuthenticated(true);
           auth.userInfo(resp.value);
-          notif.success({ body: USER.AUTH.SUBSCRIBE_SUCCESS });
+          notif.success({ body: conf.LANG.USER.AUTH.SUBSCRIBE_SUCCESS });
           m.request({
             method: 'POST',
             url: conf.URLS.LOGIN,
@@ -2453,7 +2473,7 @@ module.exports = (function () {
           data: c.data
         }).then(function (resp) {
           auth.userInfo(resp.value);
-          notif.success({ body: USER.AUTH.PROFILE_SUCCESS });
+          notif.success({ body: conf.LANG.USER.AUTH.PROFILE_SUCCESS });
         }, errfn);
       }, errfn);
     };
@@ -2491,16 +2511,17 @@ module.exports = (function () {
       var log = fields.login;
       requiredFields.splice(0, 0, log.label, log.input, log.icon);
     }
+    var USER = conf.LANG.USER;
     return m('form.block', {
       id: 'subscribe-form',
       onsubmit: c.profileView() ? c.submit.profileSave : c.submit.subscribe
       }, [
       m('fieldset.block-group', [
-        m('legend', USER.MANDATORY_FIELDS),
+        m('legend', conf.LANG.USER.MANDATORY_FIELDS),
         m('div', requiredFields)
       ]),
       m('fieldset.block-group', [
-        m('legend.opt', USER.OPTIONAL_FIELDS),
+        m('legend.opt', conf.LANG.USER.OPTIONAL_FIELDS),
         fields.firstname.label, fields.firstname.input, fields.firstname.icon,
         fields.lastname.label, fields.lastname.input, fields.lastname.icon,
         fields.organization.label, fields.organization.input,
@@ -2521,6 +2542,7 @@ module.exports = (function () {
   */
 
   view.main = function (c) {
+    var USER = conf.LANG.USER;
     return m('section', { class: 'block-group user' }, [
       m('h2.block', c.profileView() ? USER.PROFILE : USER.SUBSCRIBE),
       view.form(c)
@@ -2572,7 +2594,6 @@ module.exports = (function () {
   var ld = require('lodash');
   // Local dependencies
   var conf = require('../configuration.js');
-  var GROUP = conf.LANG.GROUP;
   var auth = require('../auth.js');
   var model = require('../model/group.js');
   var layout = require('./layout.js');
@@ -2612,9 +2633,9 @@ module.exports = (function () {
         .value();
       c.tag = new tag.controller({
         name: 'user-invite',
-        label: GROUP.INVITE_USER.USERS_SELECTION,
+        label: conf.LANG.GROUP.INVITE_USER.USERS_SELECTION,
         current: current,
-        placeholder: GROUP.INVITE_USER.PLACEHOLDER,
+        placeholder: conf.LANG.GROUP.INVITE_USER.PLACEHOLDER,
         tags: ld.pull(ld.keys(c.users), auth.userInfo().login)
       });
     };
@@ -2643,7 +2664,7 @@ module.exports = (function () {
       }).then(function (resp) {
         model.fetch(function () {
           var lpfx = c.isInvite ? 'INVITE_USER' : 'ADMIN_SHARE';
-          notif.success({ body: GROUP[lpfx].SUCCESS });
+          notif.success({ body: conf.LANG.GROUP[lpfx].SUCCESS });
           m.route('/mypads/group/' + resp.value._id + '/view');
         });
       }, function (err) { notif.error({ body: err.error }); });
@@ -2664,7 +2685,7 @@ module.exports = (function () {
       tag.views.input(c),
       m('i', {
         class: 'block tooltip icon-info-circled tag',
-        'data-msg': GROUP.INVITE_USER.INPUT_HELP }),
+        'data-msg': conf.LANG.GROUP.INVITE_USER.INPUT_HELP }),
       m('button.block.ok', {
         type: 'button',
         onclick: function () {
@@ -2676,6 +2697,7 @@ module.exports = (function () {
   };
 
   view.form = function (c) {
+    var GROUP = conf.LANG.GROUP;
     return m('form.block', {
       id: 'group-form',
       onsubmit: c.submit
@@ -2685,7 +2707,7 @@ module.exports = (function () {
         m('div', view.userField(c.tag))
       ]),
       m('fieldset.block-group', [
-        m('legend', GROUP.INVITE_USER.USERS_SELECTED),
+        m('legend', conf.LANG.GROUP.INVITE_USER.USERS_SELECTED),
         m('div', tag.views.tagslist(c.tag))
       ]),
       m('input.block.send', {
@@ -2698,17 +2720,18 @@ module.exports = (function () {
 
   view.main = function (c) {
     return m('section', { class: 'block-group user group-form' }, [
-      m('h2.block', GROUP.GROUP + ' ' + c.group.name),
+      m('h2.block', conf.LANG.GROUP.GROUP + ' ' + c.group.name),
       view.form(c)
     ]);
   };
 
   view.aside = function (c) {
+    var GROUP = conf.LANG.GROUP;
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
       m('article', [
         m('h3', (c.isInvite ? GROUP.INVITE_USER.IU : GROUP.ADMIN_SHARE.AS)),
-        m('section', m.trust(GROUP.INVITE_USER.HELP))
+        m('section', m.trust(conf.LANG.GROUP.INVITE_USER.HELP))
       ])
     ]);
   };
@@ -2755,7 +2778,6 @@ module.exports = (function () {
   var m = require('mithril');
   // Local dependencies
   var conf = require('../configuration.js');
-  var USER = conf.LANG.USER;
   var form = require('../helpers/form.js');
 
   var user = {};
@@ -2783,7 +2805,7 @@ module.exports = (function () {
   user.view.icon.optional = function () {
     return m('i', {
       class: 'block tooltip icon-info-circled',
-      'data-msg': USER.INFO.OPTIONAL 
+      'data-msg': conf.LANG.USER.INFO.OPTIONAL 
     });
   };
   user.view.icon.firstname = user.view.icon.optional;
@@ -2795,7 +2817,8 @@ module.exports = (function () {
   */
 
   user.view.icon.login = function (c) {
-    return form.icon(c, 'login', USER.INFO.LOGIN, USER.ERR.LOGIN);
+    return form.icon(c, 'login', conf.LANG.USER.INFO.LOGIN,
+      conf.LANG.USER.ERR.LOGIN);
   };
 
   /**
@@ -2807,11 +2830,11 @@ module.exports = (function () {
 
   user.view.icon.password = function (c, name) {
     var infos = {
-      password: USER.INFO.PASSWORD_BEGIN + conf.SERVER.passwordMin +
+      password: conf.LANG.USER.INFO.PASSWORD_BEGIN + conf.SERVER.passwordMin +
         ' ' + conf.LANG.GLOBAL.AND + ' ' + conf.SERVER.passwordMax +
-        USER.INFO.PASSWORD_END,
-      passwordConfirm: USER.INFO.PASSWORD_CHECK,
-      passwordCurrent: USER.INFO.PASSWORD_CURRENT
+        conf.LANG.USER.INFO.PASSWORD_END,
+      passwordConfirm: conf.LANG.USER.INFO.PASSWORD_CHECK,
+      passwordCurrent: conf.LANG.USER.INFO.PASSWORD_CURRENT
     };
     var icls = c.valid[name]() ? ['icon-info-circled'] : ['icon-alert'];
     icls.push('tooltip');
@@ -2827,7 +2850,8 @@ module.exports = (function () {
   */
 
   user.view.icon.email = function (c) {
-    return form.icon(c, 'email', USER.INFO.EMAIL, USER.ERR.EMAIL);
+    return form.icon(c, 'email', conf.LANG.USER.INFO.EMAIL,
+      conf.LANG.USER.ERR.EMAIL);
   };
 
   /**
@@ -2847,10 +2871,11 @@ module.exports = (function () {
   */
 
   user.view.field.login = function (c) {
-    var fields = form.field(c, 'login', USER.USERNAME, user.view.icon.login(c));
+    var fields = form.field(c, 'login', conf.LANG.USER.USERNAME,
+      user.view.icon.login(c));
     ld.assign(fields.input.attrs, {
         type: 'text',
-        placeholder: USER.LOGIN,
+        placeholder: conf.LANG.USER.USERNAME,
         required: true
     });
     return fields;
@@ -2878,7 +2903,7 @@ module.exports = (function () {
         class: 'block',
         type: 'password',
         name: name,
-        placeholder: USER.UNDEF,
+        placeholder: conf.LANG.USER.UNDEF,
         required: (!c.profileView || !c.profileView()),
         minlength: passMin,
         maxlength: passMax,
@@ -2896,7 +2921,7 @@ module.exports = (function () {
   */
 
   user.view.field.password = function (c) {
-    return user.view.field._pass(c, 'password', USER.PASSWORD);
+    return user.view.field._pass(c, 'password', conf.LANG.USER.PASSWORD);
   };
 
   /**
@@ -2911,8 +2936,8 @@ module.exports = (function () {
     var extraValid = function (c) {
       return (c.data.password() === c.data.passwordConfirm());
     };
-    var vdom = user.view.field._pass(c, 'passwordConfirm', USER.PASSCHECK,
-      extraValid);
+    var vdom = user.view.field._pass(c, 'passwordConfirm',
+      conf.LANG.USER.PASSCHECK, extraValid);
     return vdom;
   };
 
@@ -2924,7 +2949,8 @@ module.exports = (function () {
   */
 
   user.view.field.passwordCurrent = function (c) {
-    var vdom = user.view.field._pass(c, 'passwordCurrent', USER.PASSCURRENT);
+    var vdom = user.view.field._pass(c, 'passwordCurrent',
+      conf.LANG.USER.PASSCURRENT);
     ld.assign(vdom.label.attrs, { style: { fontWeight: 'bold' } });
     ld.assign(vdom.input.attrs, { required: true });
     return vdom;
@@ -2935,10 +2961,11 @@ module.exports = (function () {
   */
 
   user.view.field.email = function (c) {
-    var fields = form.field(c, 'email', USER.EMAIL, user.view.icon.email(c));
+    var fields = form.field(c, 'email', conf.LANG.USER.EMAIL,
+      user.view.icon.email(c));
     ld.assign(fields.input.attrs, {
         type: 'email',
-        placeholder: USER.EMAIL_SAMPLE,
+        placeholder: conf.LANG.USER.EMAIL_SAMPLE,
         required: true,
         value: c.data.email() || '',
     });
@@ -2950,11 +2977,11 @@ module.exports = (function () {
   */
 
   user.view.field.firstname = function (c) {
-    var fields = form.field(c, 'firstname', USER.FIRSTNAME,
+    var fields = form.field(c, 'firstname', conf.LANG.USER.FIRSTNAME,
       user.view.icon.firstname(c));
     ld.assign(fields.input.attrs, {
         type: 'text',
-        placeholder: USER.FIRSTNAME
+        placeholder: conf.LANG.USER.FIRSTNAME
     });
     return fields;
   };
@@ -2964,11 +2991,11 @@ module.exports = (function () {
   */
 
   user.view.field.lastname = function (c) {
-    var fields = form.field(c, 'lastname', USER.LASTNAME,
+    var fields = form.field(c, 'lastname', conf.LANG.USER.LASTNAME,
       user.view.icon.lastname(c));
     ld.assign(fields.input.attrs, {
         type: 'text',
-        placeholder: USER.LASTNAME
+        placeholder: conf.LANG.USER.LASTNAME
     });
     return fields;
   };
@@ -2978,11 +3005,11 @@ module.exports = (function () {
   */
 
   user.view.field.organization = function (c) {
-    var fields = form.field(c, 'organization', USER.ORGANIZATION,
+    var fields = form.field(c, 'organization', conf.LANG.USER.ORGANIZATION,
       user.view.icon.organization(c));
     ld.assign(fields.input.attrs, {
         type: 'text',
-        placeholder: USER.ORGANIZATION
+        placeholder: conf.LANG.USER.ORGANIZATION
     });
     return fields;
   };
@@ -3000,13 +3027,13 @@ module.exports = (function () {
     common: function () {
       return m('section.user-aside', [
         m('h2', conf.SERVER.title),
-        m('article', m.trust(conf.SERVER.descr))
+        m('article', m.trust(conf.LANG.GLOBAL.DESCRIPTION))
       ]);
     },
     profile: function () {
       return m('section.user-aside', [
         m('h2', conf.LANG.ACTIONS.HELP),
-        m('article', m.trust(USER.HELP.PROFILE)) ]);
+        m('article', m.trust(conf.LANG.USER.HELP.PROFILE)) ]);
     }
   };
 
@@ -3130,7 +3157,6 @@ module.exports = (function () {
   var m = require('mithril');
   // Local dependencies
   var conf = require('../configuration.js');
-  var NOTIF = conf.LANG.NOTIFICATION;
 
   var notif = {};
 
@@ -3220,28 +3246,28 @@ module.exports = (function () {
   };
 
   notif.success = function (options, callback) {
-    options.title = options.title || NOTIF.SUCCESS;
+    options.title = options.title || conf.LANG.NOTIFICATION.SUCCESS;
     options.cls = 'success';
     options.icon = 'check';
     notif.send(options, callback);
   };
 
   notif.info = function (options, callback) {
-    options.title = options.title || NOTIF.INFO;
+    options.title = options.title || conf.LANG.NOTIFICATION.INFO;
     options.cls = 'info';
     options.icon = 'info-circled';
     notif.send(options, callback);
   };
 
   notif.warning = function (options, callback) {
-    options.title = NOTIF.WARNING;
+    options.title = conf.LANG.NOTIFICATION.WARNING;
     options.cls = options.icon = 'warning';
     options.timeout = 15;
     notif.send(options, callback);
   };
 
   notif.error = function (options, callback) {
-    options.title = NOTIF.ERROR;
+    options.title = conf.LANG.NOTIFICATION.ERROR;
     options.cls = 'error';
     options.icon = 'alert';
     options.timeout = false;
@@ -3249,7 +3275,8 @@ module.exports = (function () {
   };
 
   notif.errorUnexpected = function (options, callback) {
-    options.body = '<em>' + options.body + '</em><br>' + NOTIF.ERROR_UNEXPECTED;
+    options.body = '<em>' + options.body + '</em><br>' +
+      conf.LANG.NOTIFICATION.ERROR_UNEXPECTED;
     notif.error(options, callback);
   };
 
@@ -3294,7 +3321,6 @@ module.exports = (function () {
   var ld = require('lodash');
   // Local dependencies
   var conf = require('../configuration.js');
-  var TAG = conf.LANG.TAG;
 
   var tag = {};
 
@@ -3313,8 +3339,8 @@ module.exports = (function () {
 
   tag.controller = function (config) {
     var c = config;
-    c.label = c.label || TAG.TAGS;
-    c.placeholder = c.placeholder || TAG.PLACEHOLDER;
+    c.label = c.label || conf.LANG.TAG.TAGS;
+    c.placeholder = c.placeholder || conf.LANG.TAG.PLACEHOLDER;
     c.name = c.name || 'tags';
 
     c.tags = ld.difference(c.tags, c.current);
@@ -3342,7 +3368,7 @@ module.exports = (function () {
   tag.views.icon = function () {
     return m('i', {
       class: 'block tooltip icon-info-circled tag',
-      'data-msg': TAG.HELP
+      'data-msg': conf.LANG.TAG.HELP
     });
   };
 
@@ -3405,182 +3431,7 @@ module.exports = (function () {
   return tag;
 }).call(this);
 
-},{"../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/l10n/en.js":[function(require,module,exports){
-module.exports = {
-  GLOBAL: {
-    FOOTER: 'Powered by <a href="https://git.framasoft.org/framasoft/ep_mypads">MyPads</a><br>Published under Apache License 2.0',
-    AND: 'and'
-  },
-  ACTIONS: {
-    ACTIONS: 'Actions',
-    HELP: 'Help',
-    SAVE: 'Save',
-    CANCEL: 'Cancel'
-  },
-  MENU: {
-    PAD: 'My Groups & Pads',
-    BOOKMARK: 'My Bookmarks',
-    PROFILE: 'My Profile',
-    ADMIN: 'Administration',
-    LOGOUT: 'Logout'
-  },
-  ADMIN: {
-    GLOBAL_SETTINGS: 'Global settings'
-  },
-  NOTIFICATION: {
-    SUCCESS: 'Success',
-    INFO: 'Info',
-    ERROR: 'Erreur',
-    ERROR_UNEXPECTED: 'An unexpected error has raised. Please contact the administrator.',
-    WARNING: 'Warning'
-  },
-  TAG: {
-    TAGS: 'Tags',
-    PLACEHOLDER: 'Enter your tag',
-    HELP: 'You can associate to this element as many tags as you wish'
-  },
-  USER: {
-    FORM: 'Login',
-    ORSUB: ' (or subscribe ?)',
-    MANDATORY_FIELDS: 'Mandatory fields',
-    OPTIONAL_FIELDS: 'Optional fields',
-    MYPADS_ACCOUNT: 'MyPads account',
-    SUBSCRIBE: 'Subscribe',
-    PROFILE: 'Profile',
-    USERNAME: 'Username',
-    LOGIN: 'Login',
-    PASSWORD: 'Password',
-    PASSCHECK: 'Password Confirmation',
-    PASSCURRENT: 'Current password',
-    EMAIL: 'Email',
-    EMAIL_SAMPLE: 'username@example.org',
-    FIRSTNAME: 'Firstname',
-    LASTNAME: 'Lastname',
-    ORGANIZATION: 'Organization',
-    UNDEF: '********',
-    OK: 'Ok',
-    REGISTER: 'Register',
-    INFO: {
-      LOGIN: 'The unique login you choose when you have subscribed',
-      EMAIL: 'The email is required for password recovery and group invitation',
-      PASSWORD_BEGIN: 'Must be between ',
-      PASSWORD_END: ' characters',
-      PASSWORD_CHECK: 'For verification : must be the same as password',
-      PASSWORD_CURRENT: 'Security check : required for all profile changes',
-      OPTIONAL: 'Optional field'
-    },
-    ERR: {
-      LOGIN: 'Login is required',
-      EMAIL: 'The email is required and shoule be valid',
-      LOGOUT: 'Log out error : you wasn\'t authenticated.',
-      PASSWORD_MISMATCH: 'The entered passwords do not match.'
-    },
-    AUTH: {
-      SUCCESS: 'Successfull authentication ! Welcome.',
-      SUCCESS_OUT: 'You have been successfully disconnected.',
-      SUBSCRIBE_SUCCESS: 'Successfull subscription ! Welcome.',
-      PROFILE_SUCCESS: 'Profile successfully updated.'
-    },
-    HELP: {
-      PROFILE: '<p>Every change into your profile needs the current password field to be correctly filled. Please not that :</p><ul><li>you can change everything by updating the appropriate field;</li><li>leaving password and password confirmation empty won\'t affect your current password;</li><li>you can\'t change your login at the moment but you will in the future;</li><li>if you want to change your password, please enter the new one into the password field and confirm it with the password confirmation.</li></ul>'
-    }
-  },
-  GROUP: {
-    MYGROUPS: 'My Groups',
-    HELP: 'Groups contain pads, you need at least to create one of them',
-    GROUP: 'Group',
-    GROUPS: 'Groups',
-    BOOKMARKED: 'Bookmarked groups',
-    ARCHIVED: 'Archived groups',
-    ADD: 'Add a new group',
-    ADD_HELP: '<h3>Visibility</h3><p>You have the choice between three levles of visibility. It will impact all linked pads :<ul><li><em>restricted</em>, default choice : access of the pads are limited to a list of invited users you have chosen;</li><li><em>private</em> : in this mode, you have to enter a password and access to the pads will be checked against this password;</li><li><em>public</em> : in this mode, all pads are public, users just need to have the URL address.</li></ul></p><h3>Readonly</h3><p>If you check <em>readonly</em>, all attached pads will stay in their state, and can not be edited. Note that visibility still works in readonly mode.</p><h3>Tags</h3><p>You can attach tags to this element by clicking on the corresponding input field and selecting them one by one.</p><p>To create a new tag, type it and type ENTER key or click on the \'Ok\' button. Once the tag has been added, it will automatically been selected on this form.</p><p>You can remove a tag by clicking on the cross located on the right.</p>',
-    EDIT: 'Edit',
-    EDIT_GROUP: 'Edit a group',
-    VIEW: 'View',
-    VIEW_MANAGE: 'View and manage group and pads',
-    VIEW_HELP: '<p>The details of the group shows you :<ul><li>options defined when group has been created or updated;</li><li>list of pads created for this group;</li><li>and list of admins and users of the group.</li></ul></p><p>From there, you can : <ul><li>create new pads, edit them, remove or mark them;</li><li>share administration of your group with other users;</li><li>invite other users to view and edit pads of the group.</li></ul></p>',
-    SHARE: 'Share',
-    SHARE_LINK: 'Please share this URL to your guests',
-    SHARE_PASSWORD: 'Please enter the password to be able to share',
-    REMOVE: 'Remove',
-    BOOKMARK: 'Bookmark',
-    UNMARK: 'Unmark',
-    MARK_SUCCESS: 'Marking successfully',
-    SHARE_ADMIN: 'Share administration',
-    INVITE_USER: {
-      IU: 'Invite users',
-      HELP: '<p>This field accepts one login at a time. When ENTER is typed, or OK is clicked, the login is added to list of invited users. A list of known users helps you to fill the logins.</p><h3>List of users</h3><p>This list contains all selected users. You can remove one by clicking the sign after each login.</p><h3>Note</h3><p>Please note that, for instance, registered users will be automatically added to your group. In short term, external users will receive a mail for creating an account.</p>',
-      USERS_SELECTION: 'Users selection',
-      USERS_SELECTED: 'List of selected users',
-      PLACEHOLDER: 'Enter login',
-      INPUT_HELP: 'You can invite as many users as you want',
-      SUCCESS: 'User invitation has been successfully achieved'
-    },
-    ADMIN_SHARE: {
-      AS: 'Administration sharing',
-      SUCCESS: 'Administration sharing has been successfully achieved'
-    },
-    SEARCH: {
-      TITLE: 'Search',
-      TYPE: 'Type here',
-      HELP: 'Search on common fields with at least 2 characters'
-    },
-    PROPERTIES: 'Properties',
-    FIELD: {
-      NAME: 'Name',
-      VISIBILITY: 'Visibility',
-      PRIVATE: 'Private',
-      RESTRICTED: 'Restricted',
-      PUBLIC: 'Public',
-      READONLY: 'Readonly'
-    },
-    FILTERS: {
-      TITLE: 'Filters',
-      ADMIN: 'Groups I am admin',
-      USER: 'Groups I have been invited',
-      HELP: 'You can select one or several filters, click again on it to deactivate'
-    },
-    TAGS: {
-      TITLE: 'Tags',
-      HELP: 'You can filter by one or more tags. Click again to deactivate if wanted'
-    },
-    PAD: {
-      TITLE: 'Title',
-      ADMINS: 'Admins',
-      USERS: 'Users',
-      USERS_NONE: 'No user',
-      VISIBILITY: 'Visibility',
-      PAD: 'Pad',
-      PADS: 'Pads',
-      NONE: 'No pad linked',
-      ADD: 'Create a new pad',
-      ADD_PROMPT: 'Enter the name of the new pad',
-      EDIT_PROMPT: 'Enter the new name of the pad',
-      FROM_GROUP: 'group :',
-      VIEW_HELP: '<p>Here is the main interface to the current pad.</p><p>If the group or the pad is private, you may need to enter the password to be able to access to it, unless you are admin of the group.</p><p>If you want to go back to the group, you can click on the group name.</p>',
-      OPEN_TAB: 'Open in a new tab'
-    },
-    INFO: {
-      NAME: 'Name of the group',
-      VISIBILITY: 'Required, restricted by default to invited users or admins',
-      READONLY: 'If checked, linked pads will be in readonly mode',
-      PASSWORD: 'Required in private mode',
-      ADD_SUCCESS: 'Group has been successfully created',
-      EDIT_SUCCESS: 'Group has been successfully updated',
-      REMOVE_SUCCESS: 'Group has been successfully removed',
-      REMOVE_SURE: 'Are you sure you want to remove this group ?',
-      PAD_REMOVE_SUCCESS: 'Pad has been successfully removed',
-      PAD_REMOVE_SURE: 'Are you sure you want to remove this pad ?',
-      PAD_ADD_SUCCESS: 'Pad has been successfully created',
-      PAD_EDIT_SUCCESS: 'Pad has been successfully updated'
-    },
-    ERR: {
-      NAME: 'The name of the group is required'
-    }
-  }
-};
-
-},{}],"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js":[function(require,module,exports){
+},{"../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js":[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -16817,5 +16668,182 @@ var m = (function app(window, undefined) {
 
 if (typeof module != "undefined" && module !== null && module.exports) module.exports = m;
 else if (typeof define === "function" && define.amd) define(function() {return m});
+
+},{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+  "GLOBAL": {
+    "LANG": "English",
+    "DESCRIPTION": "MyPads is an Etherpad plugin which have been founded in 2014 by an Ulule campaign. It handles :<ul><li>users and their authentication; </li><li>groups of pads per user, unlimited, sharable;</li><li>attached pads, with choice between invite known users to use them, making them private with password or letting them public.</li></ul>",
+    "FOOTER": "Powered by <a href='https://git.framasoft.org/framasoft/ep_mypads'>MyPads</a><br>Published under Apache License 2.0",
+    "AND": "and"
+  },
+  "ACTIONS": {
+    "ACTIONS": "Actions",
+    "HELP": "Help",
+    "SAVE": "Save",
+    "CANCEL": "Cancel"
+  },
+  "MENU": {
+    "PAD": "My Groups & Pads",
+    "BOOKMARK": "My Bookmarks",
+    "PROFILE": "My Profile",
+    "ADMIN": "Administration",
+    "LOGOUT": "Logout"
+  },
+  "ADMIN": {
+    "GLOBAL_SETTINGS": "Global settings"
+  },
+  "NOTIFICATION": {
+    "SUCCESS": "Success",
+    "INFO": "Info",
+    "ERROR": "Error",
+    "ERROR_UNEXPECTED": "An unexpected error has been raised. Please contact the administrator.",
+    "WARNING": "Warning"
+  },
+  "TAG": {
+    "TAGS": "Tags",
+    "PLACEHOLDER": "Enter your tag",
+    "HELP": "You can associate to this element as many tags as you wish"
+  },
+  "USER": {
+    "FORM": "Login",
+    "ORSUB": " (or subscribe ?)",
+    "MANDATORY_FIELDS": "Mandatory fields",
+    "OPTIONAL_FIELDS": "Optional fields",
+    "MYPADS_ACCOUNT": "MyPads account",
+    "SUBSCRIBE": "Subscribe",
+    "PROFILE": "Profile",
+    "USERNAME": "Username",
+    "LOGIN": "Login",
+    "PASSWORD": "Password",
+    "PASSCHECK": "Password Confirmation",
+    "PASSCURRENT": "Current password",
+    "EMAIL": "Email",
+    "EMAIL_SAMPLE": "username@example.org",
+    "FIRSTNAME": "Firstname",
+    "LASTNAME": "Lastname",
+    "ORGANIZATION": "Organization",
+    "UNDEF": "********",
+    "OK": "Ok",
+    "REGISTER": "Register",
+    "INFO": {
+      "LOGIN": "The unique login you choose when you have subscribed",
+      "EMAIL": "The email is required for password recovery",
+      "PASSWORD_BEGIN": "Must be between ",
+      "PASSWORD_END": " characters",
+      "PASSWORD_CHECK": "For verification : must be the same as password",
+      "PASSWORD_CURRENT": "Security check : required for all profile changes",
+      "OPTIONAL": "Optional field"
+    },
+    "ERR": {
+      "LOGIN": "Login is required",
+      "EMAIL": "The email is required and should be valid",
+      "LOGOUT": "Log out error : you wasn't authenticated.",
+      "PASSWORD_MISMATCH": "The entered passwords do not match."
+    },
+    "AUTH": {
+      "SUCCESS": "Successfull authentication ! Welcome.",
+      "SUCCESS_OUT": "You have been successfully disconnected.",
+      "SUBSCRIBE_SUCCESS": "Successfull subscription ! Welcome.",
+      "PROFILE_SUCCESS": "Profile successfully updated."
+    },
+    "HELP": {
+      "PROFILE": "<p>Every change into your profile needs the current password field to be correctly filled. Please note that :</p><ul><li>you can change everything by updating the appropriate field;</li><li>leaving password and password confirmation empty won't affect your current password;</li><li>you can't change your login at the moment but you will in the future;</li><li>if you want to change your password, please enter the new one into the password field and confirm it with the password confirmation.</li></ul>"
+    }
+  },
+  "GROUP": {
+    "MYGROUPS": "My Groups",
+    "HELP": "Groups contain pads, you need at least to create one of them",
+    "GROUP": "Group",
+    "GROUPS": "Groups",
+    "BOOKMARKED": "Bookmarked groups",
+    "ARCHIVED": "Archived groups",
+    "ADD": "Add a new group",
+    "ADD_HELP": "<h3>Visibility</h3><p>You have the choice between three levels of visibility. It will impact all linked pads :<ul><li><em>restricted</em>, default choice : access of the pads are limited to a list of invited users you have chosen;</li><li><em>private</em> : in this mode, you have to enter a password and access to the pads will be checked against this password;</li><li><em>public</em> : in this mode, all pads are public, users just need to have the URL address.</li></ul></p><h3>Readonly</h3><p>If you check <em>readonly</em>, all attached pads will stay in their state, and can not be edited. Note that visibility still works in readonly mode.</p><h3>Tags</h3><p>You can attach tags to this element by clicking on the corresponding input field and selecting them one by one.</p><p>To create a new tag, fill it and type ENTER key or click on the 'Ok' button. Once the tag has been added, it will automatically been selected on this form.</p><p>You can remove a tag by clicking on the cross located on the right of it.</p>",
+    "EDIT": "Edit",
+    "EDIT_GROUP": "Edit a group",
+    "VIEW": "View",
+    "VIEW_MANAGE": "View and manage group and its pads",
+    "VIEW_HELP": "<p>The details of the group show you :<ul><li>options defined when group has been created or updated;</li><li>list of pads created for this group;</li><li>and list of admins and users of the group.</li></ul></p><p>From there, you can : <ul><li>create new pads, edit them, remove or mark them;</li><li>share administration of your group with other users;</li><li>invite other users to view and edit pads of the group.</li></ul></p>",
+    "SHARE": "Share",
+    "SHARE_LINK": "Please share this URL to your guests",
+    "SHARE_PASSWORD": "Please enter the password to be able to share",
+    "REMOVE": "Remove",
+    "BOOKMARK": "Bookmark",
+    "UNMARK": "Unmark",
+    "MARK_SUCCESS": "Marking successfully",
+    "SHARE_ADMIN": "Share administration",
+    "INVITE_USER": {
+      "IU": "Invite users",
+      "HELP": "<p>This field accepts one login at a time. When ENTER is typed, or OK is clicked, the login is added to the list of invited users. A list of known users helps you to fill the login.</p><h3>List of users</h3><p>This list contains all selected users. You can remove one by clicking the sign after each login.</p><h3>Note</h3><p>Please note that, for instance, registered users will be automatically added to your group. In short term, external users will receive a mail for creating an account.</p>",
+      "USERS_SELECTION": "Users selection",
+      "USERS_SELECTED": "List of selected users",
+      "PLACEHOLDER": "Enter login",
+      "INPUT_HELP": "You can invite as many users as you want",
+      "SUCCESS": "User invitation has been successfully achieved"
+    },
+    "ADMIN_SHARE": {
+      "AS": "Administration sharing",
+      "SUCCESS": "Administration sharing has been successfully achieved"
+    },
+    "SEARCH": {
+      "TITLE": "Search",
+      "TYPE": "Type here",
+      "HELP": "Search on common fields with at least 2 characters"
+    },
+    "PROPERTIES": "Properties",
+    "FIELD": {
+      "NAME": "Name",
+      "VISIBILITY": "Visibility",
+      "PRIVATE": "Private",
+      "RESTRICTED": "Restricted",
+      "PUBLIC": "Public",
+      "READONLY": "Readonly"
+    },
+    "FILTERS": {
+      "TITLE": "Filters",
+      "ADMIN": "Groups I am admin",
+      "USER": "Groups I have been invited",
+      "HELP": "You can select one or several filters, click again on it to deactivate"
+    },
+    "TAGS": {
+      "TITLE": "Tags",
+      "HELP": "You can filter by one or more tags. Click again to deactivate if wanted"
+    },
+    "PAD": {
+      "TITLE": "Title",
+      "ADMINS": "Admins",
+      "USERS": "Users",
+      "USERS_NONE": "No user",
+      "VISIBILITY": "Visibility",
+      "PAD": "Pad",
+      "PADS": "Pads",
+      "NONE": "No pad linked",
+      "ADD": "Create a new pad",
+      "ADD_PROMPT": "Enter the name of the new pad",
+      "EDIT_PROMPT": "Enter the new name of the pad",
+      "FROM_GROUP": "group :",
+      "VIEW_HELP": "<p>Here is the main interface to the current pad.</p><p>If the group or the pad is private, you need to enter the password to be able to access to it.</p><p>If you want to go back to the group, you can click on the group name.</p>",
+      "OPEN_TAB": "Open in a new tab"
+    },
+    "INFO": {
+      "NAME": "Name of the group",
+      "VISIBILITY": "Required, restricted by default to invited users or admins",
+      "READONLY": "If checked, linked pads will be in readonly mode",
+      "PASSWORD": "Required in private mode",
+      "ADD_SUCCESS": "Group has been successfully created",
+      "EDIT_SUCCESS": "Group has been successfully updated",
+      "REMOVE_SUCCESS": "Group has been successfully removed",
+      "REMOVE_SURE": "Are you sure you want to remove this group ?",
+      "PAD_REMOVE_SUCCESS": "Pad has been successfully removed",
+      "PAD_REMOVE_SURE": "Are you sure you want to remove this pad ?",
+      "PAD_ADD_SUCCESS": "Pad has been successfully created",
+      "PAD_EDIT_SUCCESS": "Pad has been successfully updated"
+    },
+    "ERR": {
+      "NAME": "The name of the group is required"
+    }
+  }
+}
 
 },{}]},{},["/mnt/share/fabien/bak/code/node/ep_mypads/frontend.js"]);

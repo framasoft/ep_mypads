@@ -32,7 +32,6 @@ module.exports = (function () {
   var m = require('mithril');
   // Local dependencies
   var conf = require('../configuration.js');
-  var USER = conf.LANG.USER;
   var form = require('../helpers/form.js');
 
   var user = {};
@@ -60,7 +59,7 @@ module.exports = (function () {
   user.view.icon.optional = function () {
     return m('i', {
       class: 'block tooltip icon-info-circled',
-      'data-msg': USER.INFO.OPTIONAL 
+      'data-msg': conf.LANG.USER.INFO.OPTIONAL 
     });
   };
   user.view.icon.firstname = user.view.icon.optional;
@@ -72,7 +71,8 @@ module.exports = (function () {
   */
 
   user.view.icon.login = function (c) {
-    return form.icon(c, 'login', USER.INFO.LOGIN, USER.ERR.LOGIN);
+    return form.icon(c, 'login', conf.LANG.USER.INFO.LOGIN,
+      conf.LANG.USER.ERR.LOGIN);
   };
 
   /**
@@ -84,11 +84,11 @@ module.exports = (function () {
 
   user.view.icon.password = function (c, name) {
     var infos = {
-      password: USER.INFO.PASSWORD_BEGIN + conf.SERVER.passwordMin +
+      password: conf.LANG.USER.INFO.PASSWORD_BEGIN + conf.SERVER.passwordMin +
         ' ' + conf.LANG.GLOBAL.AND + ' ' + conf.SERVER.passwordMax +
-        USER.INFO.PASSWORD_END,
-      passwordConfirm: USER.INFO.PASSWORD_CHECK,
-      passwordCurrent: USER.INFO.PASSWORD_CURRENT
+        conf.LANG.USER.INFO.PASSWORD_END,
+      passwordConfirm: conf.LANG.USER.INFO.PASSWORD_CHECK,
+      passwordCurrent: conf.LANG.USER.INFO.PASSWORD_CURRENT
     };
     var icls = c.valid[name]() ? ['icon-info-circled'] : ['icon-alert'];
     icls.push('tooltip');
@@ -104,7 +104,8 @@ module.exports = (function () {
   */
 
   user.view.icon.email = function (c) {
-    return form.icon(c, 'email', USER.INFO.EMAIL, USER.ERR.EMAIL);
+    return form.icon(c, 'email', conf.LANG.USER.INFO.EMAIL,
+      conf.LANG.USER.ERR.EMAIL);
   };
 
   /**
@@ -124,10 +125,11 @@ module.exports = (function () {
   */
 
   user.view.field.login = function (c) {
-    var fields = form.field(c, 'login', USER.USERNAME, user.view.icon.login(c));
+    var fields = form.field(c, 'login', conf.LANG.USER.USERNAME,
+      user.view.icon.login(c));
     ld.assign(fields.input.attrs, {
         type: 'text',
-        placeholder: USER.LOGIN,
+        placeholder: conf.LANG.USER.USERNAME,
         required: true
     });
     return fields;
@@ -155,7 +157,7 @@ module.exports = (function () {
         class: 'block',
         type: 'password',
         name: name,
-        placeholder: USER.UNDEF,
+        placeholder: conf.LANG.USER.UNDEF,
         required: (!c.profileView || !c.profileView()),
         minlength: passMin,
         maxlength: passMax,
@@ -173,7 +175,7 @@ module.exports = (function () {
   */
 
   user.view.field.password = function (c) {
-    return user.view.field._pass(c, 'password', USER.PASSWORD);
+    return user.view.field._pass(c, 'password', conf.LANG.USER.PASSWORD);
   };
 
   /**
@@ -188,8 +190,8 @@ module.exports = (function () {
     var extraValid = function (c) {
       return (c.data.password() === c.data.passwordConfirm());
     };
-    var vdom = user.view.field._pass(c, 'passwordConfirm', USER.PASSCHECK,
-      extraValid);
+    var vdom = user.view.field._pass(c, 'passwordConfirm',
+      conf.LANG.USER.PASSCHECK, extraValid);
     return vdom;
   };
 
@@ -201,7 +203,8 @@ module.exports = (function () {
   */
 
   user.view.field.passwordCurrent = function (c) {
-    var vdom = user.view.field._pass(c, 'passwordCurrent', USER.PASSCURRENT);
+    var vdom = user.view.field._pass(c, 'passwordCurrent',
+      conf.LANG.USER.PASSCURRENT);
     ld.assign(vdom.label.attrs, { style: { fontWeight: 'bold' } });
     ld.assign(vdom.input.attrs, { required: true });
     return vdom;
@@ -212,10 +215,11 @@ module.exports = (function () {
   */
 
   user.view.field.email = function (c) {
-    var fields = form.field(c, 'email', USER.EMAIL, user.view.icon.email(c));
+    var fields = form.field(c, 'email', conf.LANG.USER.EMAIL,
+      user.view.icon.email(c));
     ld.assign(fields.input.attrs, {
         type: 'email',
-        placeholder: USER.EMAIL_SAMPLE,
+        placeholder: conf.LANG.USER.EMAIL_SAMPLE,
         required: true,
         value: c.data.email() || '',
     });
@@ -227,11 +231,11 @@ module.exports = (function () {
   */
 
   user.view.field.firstname = function (c) {
-    var fields = form.field(c, 'firstname', USER.FIRSTNAME,
+    var fields = form.field(c, 'firstname', conf.LANG.USER.FIRSTNAME,
       user.view.icon.firstname(c));
     ld.assign(fields.input.attrs, {
         type: 'text',
-        placeholder: USER.FIRSTNAME
+        placeholder: conf.LANG.USER.FIRSTNAME
     });
     return fields;
   };
@@ -241,11 +245,11 @@ module.exports = (function () {
   */
 
   user.view.field.lastname = function (c) {
-    var fields = form.field(c, 'lastname', USER.LASTNAME,
+    var fields = form.field(c, 'lastname', conf.LANG.USER.LASTNAME,
       user.view.icon.lastname(c));
     ld.assign(fields.input.attrs, {
         type: 'text',
-        placeholder: USER.LASTNAME
+        placeholder: conf.LANG.USER.LASTNAME
     });
     return fields;
   };
@@ -255,11 +259,11 @@ module.exports = (function () {
   */
 
   user.view.field.organization = function (c) {
-    var fields = form.field(c, 'organization', USER.ORGANIZATION,
+    var fields = form.field(c, 'organization', conf.LANG.USER.ORGANIZATION,
       user.view.icon.organization(c));
     ld.assign(fields.input.attrs, {
         type: 'text',
-        placeholder: USER.ORGANIZATION
+        placeholder: conf.LANG.USER.ORGANIZATION
     });
     return fields;
   };
@@ -277,13 +281,13 @@ module.exports = (function () {
     common: function () {
       return m('section.user-aside', [
         m('h2', conf.SERVER.title),
-        m('article', m.trust(conf.SERVER.descr))
+        m('article', m.trust(conf.LANG.GLOBAL.DESCRIPTION))
       ]);
     },
     profile: function () {
       return m('section.user-aside', [
         m('h2', conf.LANG.ACTIONS.HELP),
-        m('article', m.trust(USER.HELP.PROFILE)) ]);
+        m('article', m.trust(conf.LANG.USER.HELP.PROFILE)) ]);
     }
   };
 

@@ -32,7 +32,6 @@ module.exports = (function () {
   var ld = require('lodash');
   // Local dependencies
   var conf = require('../configuration.js');
-  var GROUP = conf.LANG.GROUP;
   var notif = require('../widgets/notification.js');
   var auth = require('../auth.js');
   var u = auth.userInfo;
@@ -201,7 +200,7 @@ module.exports = (function () {
         data: { type: 'groups', key: gid }
       }).then(function () {
         c.computeGroups();
-        notif.success({ body: GROUP.MARK_SUCCESS });
+        notif.success({ body: conf.LANG.GROUP.MARK_SUCCESS });
       }, errfn);
     };
 
@@ -225,12 +224,13 @@ module.exports = (function () {
   view.search = function (c) {
     return m('section.search.block-group', [
       m('h3.block', [
-        m('span', GROUP.SEARCH.TITLE),
-        m('i.tooltip.icon-info-circled', { 'data-msg': GROUP.SEARCH.HELP })
+        m('span', conf.LANG.GROUP.SEARCH.TITLE),
+        m('i.tooltip.icon-info-circled',
+          { 'data-msg': conf.LANG.GROUP.SEARCH.HELP })
       ]),
       m('input.block', {
         type: 'search',
-        placeholder: GROUP.SEARCH.TYPE,
+        placeholder: conf.LANG.GROUP.SEARCH.TYPE,
         minlength: 3,
         pattern: '.{3,}',
         value: c.search(),
@@ -251,8 +251,9 @@ module.exports = (function () {
   view.filters = function (c) {
     return m('section.filter', [
       m('h3', [
-        m('span', GROUP.FILTERS.TITLE),
-        m('i.tooltip.icon-info-circled', { 'data-msg': GROUP.FILTERS.HELP })
+        m('span', conf.LANG.GROUP.FILTERS.TITLE),
+        m('i.tooltip.icon-info-circled',
+          { 'data-msg': conf.LANG.GROUP.FILTERS.HELP })
       ]),
       m('ul', [
         m('li', [
@@ -261,7 +262,7 @@ module.exports = (function () {
               class: 'admin' + (c.filters.admins ? ' active' : ''),
               onclick: ld.partial(c.filterToggle, 'admins') 
             },
-            GROUP.FILTERS.ADMIN)
+            conf.LANG.GROUP.FILTERS.ADMIN)
         ]),
         m('li', [
           m('button',
@@ -269,7 +270,7 @@ module.exports = (function () {
               class: 'user' + (c.filters.users ? ' active' : ''),
               onclick: ld.partial(c.filterToggle, 'users') 
             },
-          GROUP.FILTERS.USER)
+          conf.LANG.GROUP.FILTERS.USER)
         ]),
         m('li', [
           (function () {
@@ -278,7 +279,8 @@ module.exports = (function () {
                 {
                   class: 'user' + ((c.filterVisibVal === f) ? ' active' : ''),
                   onclick: ld.partial(c.filterVisibility, f) 
-                }, GROUP.GROUPS + ' ' + GROUP.FIELD[f.toUpperCase()]);
+                }, conf.LANG.GROUP.GROUPS + ' ' +
+                  conf.LANG.GROUP.FIELD[f.toUpperCase()]);
             });
           })()
         ])
@@ -289,8 +291,9 @@ module.exports = (function () {
   view.tags = function (c) {
     return m('section.tag', [
       m('h3', [
-        m('span', GROUP.TAGS.TITLE),
-        m('i.tooltip.icon-info-circled', { 'data-msg': GROUP.TAGS.HELP })
+        m('span', conf.LANG.GROUP.TAGS.TITLE),
+        m('i.tooltip.icon-info-circled',
+          { 'data-msg': conf.LANG.GROUP.TAGS.HELP })
       ]),
       m('ul', ld.map(model.tags(), function (t) {
         return m('li', [
@@ -314,12 +317,13 @@ module.exports = (function () {
   view.group = function (c, g) {
     var padRoute = '/mypads/group/' + g._id;
     var isBookmarked = (ld.includes(u().bookmarks.groups, g._id));
+    var GROUP = conf.LANG.GROUP;
     return m('li.block', [
       m('header.group.block-group', [
         m('h4.block', [ m('a', {
           href: '/mypads/group/' + g._id + '/view',
           config: m.route,
-          title: GROUP.VIEW_MANAGE
+          title: conf.LANG.GROUP.VIEW_MANAGE
         }, g.name) ]),
         m('section.block', [
           m('a', {
@@ -334,41 +338,42 @@ module.exports = (function () {
           m('a', {
             href: padRoute + '/view',
             config: m.route,
-            title: GROUP.VIEW_MANAGE
+            title: conf.LANG.GROUP.VIEW_MANAGE
           }, [ m('i.icon-book-open') ]),
           m('a', {
             href: padRoute + '/edit',
             config: m.route,
-            title: GROUP.EDIT
+            title: conf.LANG.GROUP.EDIT
           }, [ m('i.icon-pencil') ]),
           m('a', {
             href: padRoute + '/remove',
             config: m.route,
-            title: GROUP.REMOVE
+            title: conf.LANG.GROUP.REMOVE
           }, [ m('i.icon-trash') ])
         ])
       ]),
       m('dl.block-group.group', [
-        m('dt.block', GROUP.PAD.PADS),
+        m('dt.block', conf.LANG.GROUP.PAD.PADS),
         m('dd.block', [
           ld.size(g.pads),
           m('a', { href: padRoute + '/pad/add', config: m.route }, [
-            m('i.icon-plus-squared', { title: GROUP.PAD.ADD }) ])
+            m('i.icon-plus-squared', { title: conf.LANG.GROUP.PAD.ADD }) ])
         ]),
-        m('dt.block', GROUP.PAD.VISIBILITY),
+        m('dt.block', conf.LANG.GROUP.PAD.VISIBILITY),
         m('dd.block', g.visibility),
-        m('dt.block', GROUP.PAD.ADMINS),
+        m('dt.block', conf.LANG.GROUP.PAD.ADMINS),
         m('dd.block', [ ld.size(g.admins),
           m('a', { href: padRoute + '/user/share', config: m.route }, [
-            m('i.icon-plus-squared', { title: GROUP.SHARE_ADMIN }) ])
+            m('i.icon-plus-squared', { title: conf.LANG.GROUP.SHARE_ADMIN }) ])
         ]),
         (function () {
           if (g.visibility === 'restricted') {
             return m('div', [
-              m('dt.block', GROUP.PAD.USERS),
+              m('dt.block', conf.LANG.GROUP.PAD.USERS),
               m('dd.block', [ ld.size(g.users),
                 m('a', { href: padRoute + '/user/invite', config: m.route }, [
-                  m('i.icon-plus-squared', { title: GROUP.INVITE_USER.IU }) ])
+                  m('i.icon-plus-squared',
+                    { title: conf.LANG.GROUP.INVITE_USER.IU }) ])
               ])
             ]);
           }
@@ -395,26 +400,26 @@ module.exports = (function () {
   view.main = function (c) {
     return m('section', { class: 'block-group group' }, [
       m('h2.block', [
-        m('span', GROUP.MYGROUPS),
-        m('i.tooltip.icon-info-circled', { 'data-msg': GROUP.HELP }),
+        m('span', conf.LANG.GROUP.MYGROUPS),
+        m('i.tooltip.icon-info-circled', { 'data-msg': conf.LANG.GROUP.HELP }),
         m('a', {
           href: '/mypads/group/add',
           config: m.route
         }, [
           m('i.icon-plus-squared'),
-          m('span', GROUP.ADD)
+          m('span', conf.LANG.GROUP.ADD)
         ])
       ]),
       m('section.block', [
-        m('h3.title.bookmark', GROUP.BOOKMARKED),
+        m('h3.title.bookmark', conf.LANG.GROUP.BOOKMARKED),
         view.bookmarked(c)
       ]),
       m('section.block', [
-        m('h3.title.group', GROUP.GROUPS),
+        m('h3.title.group', conf.LANG.GROUP.GROUPS),
         view.groups(c)
       ]),
       m('section.block', [
-        m('h3.title.archive', GROUP.ARCHIVED),
+        m('h3.title.archive', conf.LANG.GROUP.ARCHIVED),
         view.archived(c)
       ])
     ]);

@@ -32,7 +32,6 @@ module.exports = (function () {
   // Local Dependencies
   var conf = require('../configuration.js');
   var form = require('../helpers/form.js');
-  var USER = conf.LANG.USER;
   var notif = require('../widgets/notification.js');
   var auth = require('../auth.js');
   var layout = require('./layout.js');
@@ -91,7 +90,7 @@ module.exports = (function () {
     c.submit.subscribe = function (e) {
       e.preventDefault();
       if (c.data.password() !== c.data.passwordConfirm()) {
-        notif.warning({ body: USER.ERR.PASSWORD_MISMATCH });
+        notif.warning({ body: conf.LANG.USER.ERR.PASSWORD_MISMATCH });
         document.querySelector('input[name="passwordConfirm"]').focus();
       } else {
         m.request({
@@ -101,7 +100,7 @@ module.exports = (function () {
         }).then(function (resp) {
           auth.isAuthenticated(true);
           auth.userInfo(resp.value);
-          notif.success({ body: USER.AUTH.SUBSCRIBE_SUCCESS });
+          notif.success({ body: conf.LANG.USER.AUTH.SUBSCRIBE_SUCCESS });
           m.request({
             method: 'POST',
             url: conf.URLS.LOGIN,
@@ -143,7 +142,7 @@ module.exports = (function () {
           data: c.data
         }).then(function (resp) {
           auth.userInfo(resp.value);
-          notif.success({ body: USER.AUTH.PROFILE_SUCCESS });
+          notif.success({ body: conf.LANG.USER.AUTH.PROFILE_SUCCESS });
         }, errfn);
       }, errfn);
     };
@@ -181,16 +180,17 @@ module.exports = (function () {
       var log = fields.login;
       requiredFields.splice(0, 0, log.label, log.input, log.icon);
     }
+    var USER = conf.LANG.USER;
     return m('form.block', {
       id: 'subscribe-form',
       onsubmit: c.profileView() ? c.submit.profileSave : c.submit.subscribe
       }, [
       m('fieldset.block-group', [
-        m('legend', USER.MANDATORY_FIELDS),
+        m('legend', conf.LANG.USER.MANDATORY_FIELDS),
         m('div', requiredFields)
       ]),
       m('fieldset.block-group', [
-        m('legend.opt', USER.OPTIONAL_FIELDS),
+        m('legend.opt', conf.LANG.USER.OPTIONAL_FIELDS),
         fields.firstname.label, fields.firstname.input, fields.firstname.icon,
         fields.lastname.label, fields.lastname.input, fields.lastname.icon,
         fields.organization.label, fields.organization.input,
@@ -211,6 +211,7 @@ module.exports = (function () {
   */
 
   view.main = function (c) {
+    var USER = conf.LANG.USER;
     return m('section', { class: 'block-group user' }, [
       m('h2.block', c.profileView() ? USER.PROFILE : USER.SUBSCRIBE),
       view.form(c)

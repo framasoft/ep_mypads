@@ -32,7 +32,6 @@ module.exports = (function () {
   var ld = require('lodash');
   // Local dependencies
   var conf = require('../configuration.js');
-  var GROUP = conf.LANG.GROUP;
   var auth = require('../auth.js');
   var layout = require('./layout.js');
   var model = require('../model/group.js');
@@ -84,17 +83,17 @@ module.exports = (function () {
   view.properties = function (c) {
     return m('section', [
       m('dl.block-group.group', [
-        m('dt.block', GROUP.PAD.PADS),
+        m('dt.block', conf.LANG.GROUP.PAD.PADS),
         m('dd.block', ld.size(c.group.pads)),
-        m('dt.block', GROUP.PAD.ADMINS),
+        m('dt.block', conf.LANG.GROUP.PAD.ADMINS),
         m('dd.block', ld.size(c.group.admins)),
-        m('dt.block', GROUP.PAD.USERS),
+        m('dt.block', conf.LANG.GROUP.PAD.USERS),
         m('dd.block', ld.size(c.group.users)),
-        m('dt.block', GROUP.PAD.VISIBILITY),
+        m('dt.block', conf.LANG.GROUP.PAD.VISIBILITY),
         m('dd.block', c.group.visibility),
-        m('dt.block', GROUP.FIELD.READONLY),
+        m('dt.block', conf.LANG.GROUP.FIELD.READONLY),
         m('dd.block', c.group.readonly),
-        m('dt.block', GROUP.TAGS.TITLE),
+        m('dt.block', conf.LANG.GROUP.TAGS.TITLE),
         m('dd.block', c.group.tags.join(', '))
       ])
     ]);
@@ -108,14 +107,15 @@ module.exports = (function () {
 
   view.pads = function (c) {
     var route = '/mypads/group/' + c.group._id;
+    var GROUP = conf.LANG.GROUP;
     return m('section.pad', [
       m('a.add', { href: route + '/pad/add', config: m.route }, [
         m('i.icon-plus-squared'),
-        GROUP.PAD.ADD
+        conf.LANG.GROUP.PAD.ADD
       ]),
       (function () {
         if (ld.size(c.group.pads) === 0) {
-          return m('p', GROUP.PAD.NONE);
+          return m('p', conf.LANG.GROUP.PAD.NONE);
         } else {
           return m('ul', ld.map(c.pads, function (p) {
             var isBookmarked = ld.includes(c.bookmarks, p._id);
@@ -124,7 +124,7 @@ module.exports = (function () {
                 m('a', {
                   href: route + '/pad/view/' + p._id,
                   config: m.route,
-                  title: GROUP.VIEW
+                  title: conf.LANG.GROUP.VIEW
                 }, p.name)
               ]),
               m('span.block.actions', [
@@ -138,7 +138,7 @@ module.exports = (function () {
                 (function () {
                   if (c.group.visibility !== 'restricted') {
                     return m('button', {
-                      title: GROUP.SHARE,
+                      title: conf.LANG.GROUP.SHARE,
                       onclick: padShare.bind(c, c.group._id, p._id)
                     }, [ m('i.icon-link') ]);
                   }
@@ -146,17 +146,17 @@ module.exports = (function () {
                 m('a', {
                   href: route + '/pad/view/' + p._id,
                   config: m.route,
-                  title: GROUP.VIEW
+                  title: conf.LANG.GROUP.VIEW
                 }, [ m('i.icon-book-open') ]),
                 m('a', {
                   href: route + '/pad/edit/' + p._id,
                   config: m.route,
-                  title: GROUP.EDIT
+                  title: conf.LANG.GROUP.EDIT
                 }, [ m('i.icon-pencil') ]),
                 m('a', {
                   href: route + '/pad/remove/' + p._id,
                   config: m.route,
-                  title: GROUP.REMOVE
+                  title: conf.LANG.GROUP.REMOVE
                 }, [ m('i.icon-trash') ]),
               ])
             ]); 
@@ -186,7 +186,7 @@ module.exports = (function () {
     };
     var list = function (users) {
       if (ld.size(users) === 0) {
-        return m('p', GROUP.PAD.USERS_NONE);
+        return m('p', conf.LANG.GROUP.PAD.USERS_NONE);
       } else {
         return m('ul', ld.map(users, function (u) {
           return m('li', userView(u));
@@ -195,15 +195,15 @@ module.exports = (function () {
     };
     var route = '/mypads/group/' + c.group._id;
     var sectionElements = [
-      m('h4.block', GROUP.PAD.ADMINS),
+      m('h4.block', conf.LANG.GROUP.PAD.ADMINS),
       m('a.add', { href: route + '/user/share', config: m.route },
-        [ m('i.icon-plus-squared'), GROUP.SHARE_ADMIN ]),
+        [ m('i.icon-plus-squared'), conf.LANG.GROUP.SHARE_ADMIN ]),
       list(c.admins) 
     ];
     if (c.group.visibility === 'restricted') {
-      sectionElements.push(m('h4.block', GROUP.PAD.USERS),
+      sectionElements.push(m('h4.block', conf.LANG.GROUP.PAD.USERS),
         m('a.add', { href: route + '/user/invite', config: m.route },
-          [ m('i.icon-plus-squared'), GROUP.INVITE_USER.IU ]),
+          [ m('i.icon-plus-squared'), conf.LANG.GROUP.INVITE_USER.IU ]),
         list(c.users));
     }
     return m('section', sectionElements);
@@ -218,28 +218,29 @@ module.exports = (function () {
   view.main = function (c) {
     return m('section', { class: 'block-group group' }, [
       m('h2.block', [
-        m('span', GROUP.GROUP + ' ' + c.group.name),
+        m('span', conf.LANG.GROUP.GROUP + ' ' + c.group.name),
         m('a', {
           href: '/mypads/group/' + c.group._id + '/edit',
           config: m.route,
-          title: GROUP.EDIT
-        }, [ m('i.icon-pencil'), m('span', GROUP.EDIT) ]),
+          title: conf.LANG.GROUP.EDIT
+        }, [ m('i.icon-pencil'), m('span', conf.LANG.GROUP.EDIT) ]),
         m('a', {
           href: '/mypads/group/' + c.group._id + '/remove',
           config: m.route,
-          title: GROUP.REMOVE
-        }, [ m('i.icon-trash'), m('span', GROUP.REMOVE) ])
+          title: conf.LANG.GROUP.REMOVE
+        }, [ m('i.icon-trash'), m('span', conf.LANG.GROUP.REMOVE) ])
       ]),
       m('section.block.props', [
-        m('h3.title', GROUP.PROPERTIES),
+        m('h3.title', conf.LANG.GROUP.PROPERTIES),
         view.properties(c)
       ]),
       m('section.block.pads', [
-        m('h3.title', GROUP.PAD.PADS),
+        m('h3.title', conf.LANG.GROUP.PAD.PADS),
         view.pads(c)
       ]),
       m('section.block.users', [
-        m('h3.title', GROUP.PAD.ADMINS + ' & ' + GROUP.PAD.USERS),
+        m('h3.title',
+          conf.LANG.GROUP.PAD.ADMINS + ' & ' + conf.LANG.GROUP.PAD.USERS),
         view.users(c)
       ])
     ]);
@@ -254,7 +255,7 @@ module.exports = (function () {
   view.aside = function () {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(GROUP.VIEW_HELP))
+      m('article', m.trust(conf.LANG.GROUP.VIEW_HELP))
     ]);
   };
 

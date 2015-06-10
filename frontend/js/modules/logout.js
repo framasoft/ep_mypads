@@ -30,7 +30,6 @@ module.exports = (function () {
   var m = require('mithril');
   var conf = require('../configuration.js');
   var auth = require('../auth.js');
-  var LOG = conf.LANG.USER;
   var model = require('../model/group.js');
   var notif = require('../widgets/notification.js');
 
@@ -49,7 +48,7 @@ module.exports = (function () {
         auth.isAuthenticated(false);
         auth.userInfo(null);
         model.init();
-        notif.success({ body: LOG.AUTH.SUCCESS_OUT });
+        notif.success({ body: conf.LANG.USER.AUTH.SUCCESS_OUT });
         m.route('/');
       }, function (err) {
         notif.error({ body: err.error });

@@ -32,7 +32,6 @@ module.exports = (function () {
   var ld = require('lodash');
   // Local dependencies
   var conf = require('../configuration.js');
-  var GROUP = conf.LANG.GROUP;
   var auth = require('../auth.js');
   var model = require('../model/group.js');
   var layout = require('./layout.js');
@@ -72,9 +71,9 @@ module.exports = (function () {
         .value();
       c.tag = new tag.controller({
         name: 'user-invite',
-        label: GROUP.INVITE_USER.USERS_SELECTION,
+        label: conf.LANG.GROUP.INVITE_USER.USERS_SELECTION,
         current: current,
-        placeholder: GROUP.INVITE_USER.PLACEHOLDER,
+        placeholder: conf.LANG.GROUP.INVITE_USER.PLACEHOLDER,
         tags: ld.pull(ld.keys(c.users), auth.userInfo().login)
       });
     };
@@ -103,7 +102,7 @@ module.exports = (function () {
       }).then(function (resp) {
         model.fetch(function () {
           var lpfx = c.isInvite ? 'INVITE_USER' : 'ADMIN_SHARE';
-          notif.success({ body: GROUP[lpfx].SUCCESS });
+          notif.success({ body: conf.LANG.GROUP[lpfx].SUCCESS });
           m.route('/mypads/group/' + resp.value._id + '/view');
         });
       }, function (err) { notif.error({ body: err.error }); });
@@ -124,7 +123,7 @@ module.exports = (function () {
       tag.views.input(c),
       m('i', {
         class: 'block tooltip icon-info-circled tag',
-        'data-msg': GROUP.INVITE_USER.INPUT_HELP }),
+        'data-msg': conf.LANG.GROUP.INVITE_USER.INPUT_HELP }),
       m('button.block.ok', {
         type: 'button',
         onclick: function () {
@@ -136,6 +135,7 @@ module.exports = (function () {
   };
 
   view.form = function (c) {
+    var GROUP = conf.LANG.GROUP;
     return m('form.block', {
       id: 'group-form',
       onsubmit: c.submit
@@ -145,7 +145,7 @@ module.exports = (function () {
         m('div', view.userField(c.tag))
       ]),
       m('fieldset.block-group', [
-        m('legend', GROUP.INVITE_USER.USERS_SELECTED),
+        m('legend', conf.LANG.GROUP.INVITE_USER.USERS_SELECTED),
         m('div', tag.views.tagslist(c.tag))
       ]),
       m('input.block.send', {
@@ -158,17 +158,18 @@ module.exports = (function () {
 
   view.main = function (c) {
     return m('section', { class: 'block-group user group-form' }, [
-      m('h2.block', GROUP.GROUP + ' ' + c.group.name),
+      m('h2.block', conf.LANG.GROUP.GROUP + ' ' + c.group.name),
       view.form(c)
     ]);
   };
 
   view.aside = function (c) {
+    var GROUP = conf.LANG.GROUP;
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
       m('article', [
         m('h3', (c.isInvite ? GROUP.INVITE_USER.IU : GROUP.ADMIN_SHARE.AS)),
-        m('section', m.trust(GROUP.INVITE_USER.HELP))
+        m('section', m.trust(conf.LANG.GROUP.INVITE_USER.HELP))
       ])
     ]);
   };

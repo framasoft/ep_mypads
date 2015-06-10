@@ -31,7 +31,6 @@ module.exports = (function () {
   var m = require('mithril');
   var auth = require('../auth.js');
   var conf = require('../configuration.js');
-  var GROUP = conf.LANG.GROUP;
   var model = require('../model/group.js');
   var notif = require('../widgets/notification.js');
 
@@ -46,7 +45,7 @@ module.exports = (function () {
 
   remove.controller = function () {
     if (!auth.isAuthenticated()) { return m.route('/login'); }
-    if (window.confirm(GROUP.INFO.REMOVE_SURE)) {
+    if (window.confirm(conf.LANG.GROUP.INFO.REMOVE_SURE)) {
       m.request({
         method: 'DELETE',
         url: conf.URLS.GROUP + '/' + m.route.param('key')
@@ -54,7 +53,7 @@ module.exports = (function () {
         var data = model.data();
         delete data[resp.key];
         model.data(data);
-        notif.success({ body: GROUP.INFO.REMOVE_SUCCESS });
+        notif.success({ body: conf.LANG.GROUP.INFO.REMOVE_SUCCESS });
         m.route('/mypads/group/list');
       }, function (err) { notif.error({ body: err.error }); });
     } else {

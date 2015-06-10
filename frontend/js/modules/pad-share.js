@@ -29,7 +29,6 @@ module.exports = (function () {
   'use strict';
   // Dependencies
   var conf = require('../configuration.js');
-  var GROUP = conf.LANG.GROUP;
   var model = require('../model/group.js');
 
   /**
@@ -42,9 +41,9 @@ module.exports = (function () {
       var link = window.location.protocol + '//' + window.location.host +
         '/p/' + pid;
       if (group.visibility === 'private') {
-        var password = window.prompt(GROUP.SHARE_PASSWORD);
+        var password = window.prompt(conf.LANG.GROUP.SHARE_PASSWORD);
         link += '?mypadspassword=' + password;
       }
-      window.prompt(GROUP.SHARE_LINK, link);
+      window.prompt(conf.LANG.GROUP.SHARE_LINK, link);
   };
 }).call(this);

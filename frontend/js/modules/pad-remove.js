@@ -32,7 +32,6 @@ module.exports = (function () {
   var ld = require('lodash');
   var auth = require('../auth.js');
   var conf = require('../configuration.js');
-  var GROUP = conf.LANG.GROUP;
   var model = require('../model/group.js');
   var notif = require('../widgets/notification.js');
 
@@ -49,7 +48,7 @@ module.exports = (function () {
     if (!auth.isAuthenticated()) { return m.route('/login'); }
     var key = m.route.param('pad');
     var gkey = m.route.param('group');
-    if (window.confirm(GROUP.INFO.PAD_REMOVE_SURE)) {
+    if (window.confirm(conf.LANG.GROUP.INFO.PAD_REMOVE_SURE)) {
       m.request({
         method: 'DELETE',
         url: conf.URLS.PAD + '/' + key
@@ -60,7 +59,7 @@ module.exports = (function () {
         var groups = model.data();
         ld.pull(groups[gkey].pads, key);
         model.data(groups);
-        notif.success({ body: GROUP.INFO.PAD_REMOVE_SUCCESS });
+        notif.success({ body: conf.LANG.GROUP.INFO.PAD_REMOVE_SUCCESS });
         m.route('/mypads/group/' + gkey + '/view');
       }, function (err) { notif.error({ body: err.error }); });
     } else {

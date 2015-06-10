@@ -32,7 +32,6 @@ module.exports = (function () {
   var ld = require('lodash');
   // Local dependencies
   var conf = require('../configuration.js');
-  var GROUP = conf.LANG.GROUP;
   var auth = require('../auth.js');
   var layout = require('./layout.js');
   var form = require('../helpers/form.js');
@@ -92,11 +91,11 @@ module.exports = (function () {
         if (c.addView()) {
           _o.params.method = 'POST';
           _o.params.url = conf.URLS.GROUP;
-          _o.extra.msg = GROUP.INFO.ADD_SUCCESS;
+          _o.extra.msg = conf.LANG.GROUP.INFO.ADD_SUCCESS;
         } else {
           _o.params.method = 'PUT';
           _o.params.url = conf.URLS.GROUP + '/' + c.group._id;
-          _o.extra.msg = GROUP.INFO.EDIT_SUCCESS;
+          _o.extra.msg = conf.LANG.GROUP.INFO.EDIT_SUCCESS;
         }
         return _o;
       })();
@@ -137,12 +136,19 @@ module.exports = (function () {
   };
 
   view.icon.name = function (c) {
-    return form.icon(c, 'name', GROUP.INFO.NAME, GROUP.ERR.NAME);
+    return form.icon(c, 'name', conf.LANG.GROUP.INFO.NAME,
+      conf.LANG.GROUP.ERR.NAME);
   };
 
-  view.icon.visibility = view.icon.common(GROUP.INFO.VISIBILITY);
-  view.icon.password = view.icon.common(GROUP.INFO.PASSWORD);
-  view.icon.readonly = view.icon.common(GROUP.INFO.READONLY);
+  view.icon.visibility = function () {
+    return view.icon.common(conf.LANG.GROUP.INFO.VISIBILITY);
+  };
+  view.icon.password = function () {
+    return view.icon.common(conf.LANG.GROUP.INFO.PASSWORD);
+  };
+  view.icon.readonly = function () {
+    return view.icon.common(conf.LANG.GROUP.INFO.READONLY);
+  };
 
   /**
   * ### Fields
@@ -157,13 +163,16 @@ module.exports = (function () {
   view.field = {};
 
   view.field.name = function (c) {
-    var f = form.field(c, 'name', GROUP.FIELD.NAME, view.icon.name(c));
-    ld.assign(f.input.attrs, { required: true });
+    var f = form.field(c, 'name', conf.LANG.GROUP.INFO.NAME,
+      view.icon.name(c));
+    ld.assign(f.input.attrs,
+      { placeholder: conf.LANG.GROUP.INFO.NAME, required: true });
     return f;
   };
 
   view.field.visibility = function (c) {
-    var label = m('label.block', { for: 'visibility' }, GROUP.FIELD.VISIBILITY);
+    var label = m('label.block', { for: 'visibility' },
+      conf.LANG.GROUP.FIELD.VISIBILITY);
     var select = m('select', {
       name: 'visibility',
       class: 'block',
@@ -171,15 +180,16 @@ module.exports = (function () {
       value: c.data.visibility(),
       onchange: m.withAttr('value', c.data.visibility)
     }, [
-      m('option', { value: 'restricted' }, GROUP.FIELD.RESTRICTED),
-      m('option', { value: 'private' }, GROUP.FIELD.PRIVATE),
-      m('option', { value: 'public' }, GROUP.FIELD.PUBLIC)
+      m('option', { value: 'restricted' }, conf.LANG.GROUP.FIELD.RESTRICTED),
+      m('option', { value: 'private' }, conf.LANG.GROUP.FIELD.PRIVATE),
+      m('option', { value: 'public' }, conf.LANG.GROUP.FIELD.PUBLIC)
     ]);
-    return { label: label, icon: view.icon.visibility, select: select };
+    return { label: label, icon: view.icon.visibility(), select: select };
   };
 
   view.field.password = function (c) {
-    var label = m('label.block', { for: 'password' }, conf.LANG.USER.PASSWORD);
+    var label = m('label.block', { for: 'password' },
+      conf.LANG.USER.PASSWORD);
     var input = m('input.block', {
       name: 'password',
       type: 'password',
@@ -188,18 +198,19 @@ module.exports = (function () {
       required: (c.addView() || !c.private()),
       oninput: m.withAttr('value', c.data.password)
     });
-    return { label: label, icon: view.icon.password, input: input };
+    return { label: label, icon: view.icon.password(), input: input };
   };
 
   view.field.readonly = function (c) {
-    var label = m('label.block', { for: 'readonly' }, GROUP.FIELD.READONLY);
+    var label = m('label.block', { for: 'readonly' },
+      conf.LANG.GROUP.FIELD.READONLY);
     var input = m('input.block', {
       name: 'readonly',
       type: 'checkbox',
       checked: c.data.readonly(),
       onchange: m.withAttr('checked', c.data.readonly)
     });
-    return { label: label, icon: view.icon.readonly, input: input };
+    return { label: label, icon: view.icon.readonly(), input: input };
   };
 
   view.field.tag = function (c) { return tag.view(c.tag); };
@@ -228,7 +239,7 @@ module.exports = (function () {
       onsubmit: c.submit
     }, [
       m('fieldset.block-group', [
-        m('legend', GROUP.GROUP),
+        m('legend', conf.LANG.GROUP.GROUP),
         m('div', fields)
       ]),
       m('input.block.send', {
@@ -247,7 +258,8 @@ module.exports = (function () {
 
   view.main = function (c) {
     return m('section', { class: 'block-group user group-form' }, [
-      m('h2.block', c.addView() ? GROUP.ADD : GROUP.EDIT_GROUP),
+      m('h2.block',
+        c.addView() ? conf.LANG.GROUP.ADD : conf.LANG.GROUP.EDIT_GROUP),
       view.form(c)
     ]);
   };
@@ -255,7 +267,7 @@ module.exports = (function () {
   view.aside = function () {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(GROUP.ADD_HELP))
+      m('article', m.trust(conf.LANG.GROUP.ADD_HELP))
     ]);
   };
 

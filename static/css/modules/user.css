@@ -19,8 +19,8 @@ div.tag button.ok {
 
 section.user input[type=submit] {
   text-transform: uppercase;
-  margin-left: 50%;
-  width: 50%;
+  margin-left: 30%;
+  width: 70%;
 }
 
 div.tag ul {
@@ -44,8 +44,8 @@ i.icon-cancel {
 @media (min-width: 40em) {
   section.user { width: 80%; }
   section.user input[type=submit] {
-    margin-left: 80%;
-    width: 20%;
+    margin-left: 70%;
+    width: 30%;
   }
 }
 /* Desktop and Up */

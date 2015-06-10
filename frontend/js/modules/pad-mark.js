@@ -32,7 +32,6 @@ module.exports = (function () {
   var ld = require('lodash');
   var auth = require('../auth.js');
   var conf = require('../configuration.js');
-  var GROUP = conf.LANG.GROUP;
   var notif = require('../widgets/notification.js');
 
   /**
@@ -54,7 +53,7 @@ module.exports = (function () {
       method: 'POST',
       data: { type: 'pads', key: pid }
     }).then(function () {
-      notif.success({ body: GROUP.MARK_SUCCESS });
+      notif.success({ body: conf.LANG.GROUP.MARK_SUCCESS });
     }, function (err) { return notif.error({ body: err.error }); });
   };
 

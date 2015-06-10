@@ -28,6 +28,7 @@ module.exports = (function () {
   var crypto = require('crypto');
   var ld = require('lodash');
   var cuid = require('cuid');
+  var conf = require('../configuration.js');
   var storage = require('../storage.js');
   var common = require('./common.js');
   var UPREFIX = storage.DBPREFIX.USER;
@@ -190,6 +191,8 @@ module.exports = (function () {
     u.email = (ld.isEmail(p.email)) ? p.email : '';
     u.groups = [];
     u.bookmarks = { groups: [], pads: [] };
+    var langs = ld.keys(conf.DEFAULTS.languages);
+    u.lang = (ld.includes(langs, p.lang) ? p.lang : 'en');
     return ld.assign({ _id: p._id, login: p.login, password: p.password }, u);
   };
 

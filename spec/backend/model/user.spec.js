@@ -541,7 +541,8 @@
             organization: 'etherInc',
             firstname: true,
             irrelevant: 123,
-            email: 'brian@sample.net'
+            email: 'brian@sample.net',
+            lang: 'fr'
           };
           var u = user.fn.assignProps(params);
           expect(u._id).toBe('aMadeID');
@@ -549,6 +550,7 @@
           expect(u.password).toBe('secret');
           expect(u.organization).toBe('etherInc');
           expect(u.email).toBe('brian@sample.net');
+          expect(u.lang).toBe('fr');
           var uf = u.firstname;
           var ul = u.lastname;
           expect(ld.isString(uf) && ld.isEmpty(uf)).toBeTruthy();
@@ -557,8 +559,10 @@
           expect(ld.isEmpty(u.groups)).toBeTruthy();
           expect(u.irrelevant).toBeUndefined();
           params.email = 'notenamail@@@@';
+          params.lang = 'notAValidOne';
           u = user.fn.assignProps(params);
           var ue = u.email;
+          expect(u.lang).toBe('en');
           expect(ld.isString(ue) && ld.isEmpty(ue)).toBeTruthy();
         }
       );

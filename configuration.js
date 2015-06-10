@@ -33,18 +33,6 @@ module.exports = (function() {
   var storage = require('./storage.js');
   var db = storage.db;
 
-  /**
-  * The closure contains a private `DEFAULTS` field, holding defaults settings.
-  * Configuration data is taken from the database, applying defaults when
-  * necessary, for example at the plugin initialization.
-  */
-
-  var DEFAULTS = {
-    title: 'MyPads',
-    passwordMin: 8,
-    passwordMax: 30,
-    languages: ['en', 'fr']
-  };
   var DBPREFIX = storage.DBPREFIX.CONF;
 
   /**
@@ -53,6 +41,19 @@ module.exports = (function() {
   */
 
   var configuration = {
+
+    /**
+    * The closure contains a private `DEFAULTS` field, holding defaults
+    * settings.  Configuration data is taken from the database, applying
+    * defaults when necessary, for example at the plugin initialization.
+    */
+
+    DEFAULTS: {
+      title: 'MyPads',
+      passwordMin: 8,
+      passwordMax: 30,
+      languages: { en: 'English', fr: 'Français' }
+    },
 
     /**
     * `init` is called when mypads plugin is initialized. It fixes the default
@@ -67,8 +68,8 @@ module.exports = (function() {
         throw new TypeError('callback must be a function');
       }
       // Would like to use doBulk but not supported for all *ueberDB* backends
-      storage.fn.setKeys(ld.transform(DEFAULTS, function (memo, val, key) {
-        memo[DBPREFIX + key] = val; }), callback);
+      storage.fn.setKeys(ld.transform(configuration.DEFAULTS,
+        function (memo, val, key) { memo[DBPREFIX + key] = val; }), callback);
     },
 
     /**

@@ -48,6 +48,7 @@
     "PASSCURRENT": "Mot de passe actuel",
     "EMAIL": "Courriel",
     "EMAIL_SAMPLE": "identifiant@exemple.org",
+    "LANG": "Langue",
     "FIRSTNAME": "Prénom",
     "LASTNAME": "Nom",
     "ORGANIZATION": "Organisation",
@@ -57,6 +58,7 @@
     "INFO": {
       "LOGIN": "L'identifiant unique que vous avez choisi lorsque vous vous êtes inscrit",
       "EMAIL": "L'adresse mail est nécessaire pour la procédure de récupération de mot de passe",
+      "LANG": "Selon la configuration de votre navigateur par défaut, dépend de ceux disponibles sur MyPads",
       "PASSWORD_BEGIN": "Doit être compris entre",
       "PASSWORD_END": " caractères",
       "PASSWORD_CHECK": "Pour confirmer : doit être le même que le mot de passe",

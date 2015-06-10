@@ -45,7 +45,7 @@ module.exports = (function () {
 
       beforeAll(function (done) {
         // Login and go to form add page
-        app.document.querySelector('header > nav a:first-child').click();
+        app.document.querySelector('header nav a:first-child').click();
         window.setTimeout(function () {
           fill(app.document.querySelector('input[name=login]'), 'parker');
           fill(app.document.querySelector('input[name=password]'),

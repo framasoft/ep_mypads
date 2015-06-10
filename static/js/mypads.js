@@ -117,7 +117,27 @@ module.exports = (function () {
   config.URLS.PAD = config.URLS.BASE + '/pad';
   config.SERVER = m.prop();
   // default to en
+  config.USERLANG = 'en';
   config.LANG = require('../../static/l10n/en.json');
+
+  /**
+  * ## updateLang
+  *
+  * `updateLang` is an asynchronous function that takes a lang *key* and
+  * gathers the JSON language file to fix it into `config.LANG`.
+  *
+  * TODO: error handling
+  */
+
+  config.updateLang = function (key) {
+    m.request({
+      method: 'GET',
+      url: '/mypads/l10n/' + key + '.json'
+    }).then(function (resp) {
+      config.USERLANG = key;
+      config.LANG = resp;
+    });
+  };
 
   /**
   * ## init
@@ -137,15 +157,10 @@ module.exports = (function () {
       auth.isAuthenticated(settings.auth);
       auth.userInfo(settings.user);
       var ulang = window.navigator.userLanguage || window.navigator.language;
-      ulang = ld.find(config.SERVER.languages, function (l) {
+      ulang = ld.find(ld.keys(config.SERVER.languages), function (l) {
         return ld.startsWith(ulang, l);
       });
-      if (ulang && (ulang !== 'en')) {
-        m.request({
-          method: 'GET',
-          url: '/mypads/l10n/' + ulang + '.json'
-        }).then(function (resp) { config.LANG = resp; });
-      }
+      if (ulang && (ulang !== 'en')) { config.updateLang(ulang); }
       callback();
     });
   };
@@ -1545,12 +1560,6 @@ module.exports = (function () {
 
   var layout = {};
 
-  /**
-  * ## Controller
-  *
-  * For styling only
-  */
-
   var views = {};
 
   /**
@@ -1632,9 +1641,21 @@ module.exports = (function () {
   layout.view = function (main, aside) {
     return [
       m('header.block', [
-        m('h1', conf.SERVER.title),
-        m('nav', { class: 'menu-main' }, [
-          m('ul', views.menuMain())
+        m('div.block-group', [
+          m('h1.block', conf.SERVER.title),
+          m('ul.block.lang', ld.reduce(conf.SERVER.languages,
+            function (memo, val, key) {
+              var cls = (key === conf.USERLANG) ? 'active': '';
+              memo.push(m('li', {
+                class: cls,
+                onclick: conf.updateLang.bind(null, key)
+              }, val));
+              return memo;
+            }, [])
+          ),
+          m('nav.block', { class: 'menu-main' }, [
+            m('ul', views.menuMain())
+          ])
         ])
       ]),
       m('main.block', [
@@ -1718,6 +1739,10 @@ module.exports = (function () {
       }).then(function (resp) {
         auth.isAuthenticated(true);
         auth.userInfo(resp.user);
+        var lang = auth.userInfo().lang;
+        if (lang !== conf.USERLANG) {
+          conf.updateLang(lang);
+        }
         notif.success({ body: conf.LANG.USER.AUTH.SUCCESS });
         m.route('/');
       }, function (err) {
@@ -2386,7 +2411,7 @@ module.exports = (function () {
       return m.route('/login');
     }
     c.fields = ['login', 'password', 'passwordConfirm', 'email', 'firstname',
-      'lastname', 'organization'];
+      'lastname', 'organization', 'lang'];
     if (c.profileView()) { c.fields.push('passwordCurrent'); }
     form.initFields(c, c.fields);
     if (c.profileView()) {
@@ -2395,6 +2420,8 @@ module.exports = (function () {
           c.data[f] = m.prop(auth.userInfo()[f]);
         }
       });
+    } else {
+      c.data.lang = m.prop(conf.USERLANG);
     }
 
     /**
@@ -2502,7 +2529,8 @@ module.exports = (function () {
         fields.password.label, fields.password.input, fields.password.icon,
         fields.passwordConfirm.label, fields.passwordConfirm.input,
         fields.passwordConfirm.icon,
-        fields.email.label, fields.email.input, fields.email.icon
+        fields.email.label, fields.email.input, fields.email.icon,
+        fields.lang.label, fields.lang.select, fields.lang.icon
     ];
     if (c.profileView()) {
       var passC = user.view.field.passwordCurrent(c);
@@ -2970,6 +2998,30 @@ module.exports = (function () {
         value: c.data.email() || '',
     });
     return fields;
+  };
+
+  /**
+  * #### lang field
+  */
+
+  user.view.field.lang = function (c) {
+    var label = m('label.block', { for: 'lang' }, conf.LANG.USER.LANG);
+    var icon = m('i', {
+      class: 'block tooltip icon-info-circled',
+      'data-msg': conf.LANG.USER.INFO.LANG
+    });
+    var select = m('select', {
+      name: 'lang',
+      class: 'block',
+      required: true,
+      value: c.data.lang(),
+      onchange: m.withAttr('value', c.data.lang)
+      }, ld.reduce(conf.SERVER.languages, function (memo, v, k) {
+        memo.push(m('option', { value: k }, v));
+        return memo;
+      }, [])
+    );
+    return { label: label, icon: icon, select: select };
   };
 
   /**
@@ -16670,7 +16722,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "GLOBAL": {
     "LANG": "English",
     "DESCRIPTION": "MyPads is an Etherpad plugin which have been founded in 2014 by an Ulule campaign. It handles :<ul><li>users and their authentication; </li><li>groups of pads per user, unlimited, sharable;</li><li>attached pads, with choice between invite known users to use them, making them private with password or letting them public.</li></ul>",
@@ -16720,6 +16772,7 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
     "PASSCURRENT": "Current password",
     "EMAIL": "Email",
     "EMAIL_SAMPLE": "username@example.org",
+    "LANG": "Lang",
     "FIRSTNAME": "Firstname",
     "LASTNAME": "Lastname",
     "ORGANIZATION": "Organization",
@@ -16729,6 +16782,7 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
     "INFO": {
       "LOGIN": "The unique login you choose when you have subscribed",
       "EMAIL": "The email is required for password recovery",
+      "LANG": "Your browser configuration per default, depends on available language on MyPads",
       "PASSWORD_BEGIN": "Must be between ",
       "PASSWORD_END": " characters",
       "PASSWORD_CHECK": "For verification : must be the same as password",

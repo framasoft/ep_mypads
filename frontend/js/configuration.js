@@ -44,7 +44,27 @@ module.exports = (function () {
   config.URLS.PAD = config.URLS.BASE + '/pad';
   config.SERVER = m.prop();
   // default to en
+  config.USERLANG = 'en';
   config.LANG = require('../../static/l10n/en.json');
+
+  /**
+  * ## updateLang
+  *
+  * `updateLang` is an asynchronous function that takes a lang *key* and
+  * gathers the JSON language file to fix it into `config.LANG`.
+  *
+  * TODO: error handling
+  */
+
+  config.updateLang = function (key) {
+    m.request({
+      method: 'GET',
+      url: '/mypads/l10n/' + key + '.json'
+    }).then(function (resp) {
+      config.USERLANG = key;
+      config.LANG = resp;
+    });
+  };
 
   /**
   * ## init
@@ -64,15 +84,10 @@ module.exports = (function () {
       auth.isAuthenticated(settings.auth);
       auth.userInfo(settings.user);
       var ulang = window.navigator.userLanguage || window.navigator.language;
-      ulang = ld.find(config.SERVER.languages, function (l) {
+      ulang = ld.find(ld.keys(config.SERVER.languages), function (l) {
         return ld.startsWith(ulang, l);
       });
-      if (ulang && (ulang !== 'en')) {
-        m.request({
-          method: 'GET',
-          url: '/mypads/l10n/' + ulang + '.json'
-        }).then(function (resp) { config.LANG = resp; });
-      }
+      if (ulang && (ulang !== 'en')) { config.updateLang(ulang); }
       callback();
     });
   };

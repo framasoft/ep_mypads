@@ -38,7 +38,7 @@ module.exports = (function () {
 
   subscribe.beforeAll = function (app, done) {
     // Go to subscription page
-    common.user.beforeAll(app, 'header > nav > ul > li:last-child > a',
+    common.user.beforeAll(app, 'header nav > ul > li:last-child > a',
       function (res) {
         $el = res.$el; first = res.first; hash = res.hash;
         ld.assign($el, { login: first('input[name=login]') });

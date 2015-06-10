@@ -35,12 +35,6 @@ module.exports = (function () {
 
   var layout = {};
 
-  /**
-  * ## Controller
-  *
-  * For styling only
-  */
-
   var views = {};
 
   /**
@@ -122,9 +116,21 @@ module.exports = (function () {
   layout.view = function (main, aside) {
     return [
       m('header.block', [
-        m('h1', conf.SERVER.title),
-        m('nav', { class: 'menu-main' }, [
-          m('ul', views.menuMain())
+        m('div.block-group', [
+          m('h1.block', conf.SERVER.title),
+          m('ul.block.lang', ld.reduce(conf.SERVER.languages,
+            function (memo, val, key) {
+              var cls = (key === conf.USERLANG) ? 'active': '';
+              memo.push(m('li', {
+                class: cls,
+                onclick: conf.updateLang.bind(null, key)
+              }, val));
+              return memo;
+            }, [])
+          ),
+          m('nav.block', { class: 'menu-main' }, [
+            m('ul', views.menuMain())
+          ])
         ])
       ]),
       m('main.block', [

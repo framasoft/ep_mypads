@@ -27,9 +27,32 @@ header, footer {
   background-color: #333333;
 }
 
-header h1 {
+header h1.block {
   padding-left: 1%;
+  margin-bottom: 0;
+  width: 20%;
 }
+
+header ul.block.lang {
+  margin-top: 0;
+  padding-right: 2%;
+  width: 80%;
+  list-style-type: none;
+  text-align: right;
+}
+
+header ul.block.lang li {
+  display: inline-block;
+  padding: 0.5em 0.4em 0.4em 0.4em;
+  cursor: pointer;
+}
+
+header ul.block.lang li.active {
+  font-weight: bold;
+  background-color: #666666;
+}
+
+header nav { width: 100%; }
 
 footer {
   font-size: 0.7em; 

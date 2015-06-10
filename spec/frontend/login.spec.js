@@ -33,7 +33,7 @@ module.exports = (function () {
   var $el;
   login.beforeAll = function (app) {
     // Go to login page
-    app.document.querySelector('header > nav a:first-child').click();
+    app.document.querySelector('header nav a:first-child').click();
     first = function (sel) { return app.document.querySelector(sel); };
     $el = {
       form: first('form'),
@@ -53,6 +53,17 @@ module.exports = (function () {
         $el.login.value = '';
         $el.password.value = '';
         done();
+      });
+
+      it('should allow language change from homepage', function (done) {
+        expect(first('h2').textContent).toMatch('Connexion');
+        first('header ul li').click();
+        window.setTimeout(function () {
+          expect(first('h2').textContent).toMatch('Login');
+          first('header ul li:last-child').click();
+          console.log('ok');
+          window.setTimeout(done, 200);
+        }, 200);
       });
 
       it('should forbid submision whith no login/pass fill', function (done) {
@@ -104,7 +115,7 @@ module.exports = (function () {
         $el.submit.click();
         window.setTimeout(function () {
           var $success = first('body > section p');
-          expect($success.innerHTML).toMatch('Success');
+          expect($success.parentNode.className).toMatch('success');
           $success.click();
           window.setTimeout(function () {
             expect(app.location.search).toBe('?/mypads');

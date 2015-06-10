@@ -65,6 +65,10 @@ module.exports = (function () {
       }).then(function (resp) {
         auth.isAuthenticated(true);
         auth.userInfo(resp.user);
+        var lang = auth.userInfo().lang;
+        if (lang !== conf.USERLANG) {
+          conf.updateLang(lang);
+        }
         notif.success({ body: conf.LANG.USER.AUTH.SUCCESS });
         m.route('/');
       }, function (err) {

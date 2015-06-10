@@ -48,6 +48,7 @@
     "PASSCURRENT": "Current password",
     "EMAIL": "Email",
     "EMAIL_SAMPLE": "username@example.org",
+    "LANG": "Lang",
     "FIRSTNAME": "Firstname",
     "LASTNAME": "Lastname",
     "ORGANIZATION": "Organization",
@@ -57,6 +58,7 @@
     "INFO": {
       "LOGIN": "The unique login you choose when you have subscribed",
       "EMAIL": "The email is required for password recovery",
+      "LANG": "Your browser configuration per default, depends on available language on MyPads",
       "PASSWORD_BEGIN": "Must be between ",
       "PASSWORD_END": " characters",
       "PASSWORD_CHECK": "For verification : must be the same as password",

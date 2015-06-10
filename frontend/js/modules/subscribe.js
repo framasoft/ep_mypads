@@ -55,7 +55,7 @@ module.exports = (function () {
       return m.route('/login');
     }
     c.fields = ['login', 'password', 'passwordConfirm', 'email', 'firstname',
-      'lastname', 'organization'];
+      'lastname', 'organization', 'lang'];
     if (c.profileView()) { c.fields.push('passwordCurrent'); }
     form.initFields(c, c.fields);
     if (c.profileView()) {
@@ -64,6 +64,8 @@ module.exports = (function () {
           c.data[f] = m.prop(auth.userInfo()[f]);
         }
       });
+    } else {
+      c.data.lang = m.prop(conf.USERLANG);
     }
 
     /**
@@ -171,7 +173,8 @@ module.exports = (function () {
         fields.password.label, fields.password.input, fields.password.icon,
         fields.passwordConfirm.label, fields.passwordConfirm.input,
         fields.passwordConfirm.icon,
-        fields.email.label, fields.email.input, fields.email.icon
+        fields.email.label, fields.email.input, fields.email.icon,
+        fields.lang.label, fields.lang.select, fields.lang.icon
     ];
     if (c.profileView()) {
       var passC = user.view.field.passwordCurrent(c);

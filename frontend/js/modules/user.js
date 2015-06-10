@@ -227,6 +227,30 @@ module.exports = (function () {
   };
 
   /**
+  * #### lang field
+  */
+
+  user.view.field.lang = function (c) {
+    var label = m('label.block', { for: 'lang' }, conf.LANG.USER.LANG);
+    var icon = m('i', {
+      class: 'block tooltip icon-info-circled',
+      'data-msg': conf.LANG.USER.INFO.LANG
+    });
+    var select = m('select', {
+      name: 'lang',
+      class: 'block',
+      required: true,
+      value: c.data.lang(),
+      onchange: m.withAttr('value', c.data.lang)
+      }, ld.reduce(conf.SERVER.languages, function (memo, v, k) {
+        memo.push(m('option', { value: k }, v));
+        return memo;
+      }, [])
+    );
+    return { label: label, icon: icon, select: select };
+  };
+
+  /**
   * #### firstname field
   */
 

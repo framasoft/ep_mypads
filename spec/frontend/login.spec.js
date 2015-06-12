@@ -55,6 +55,10 @@ module.exports = (function () {
         done();
       });
 
+      it('should have a default title without username', function () {
+        expect(app.document.title).toBe('MyPads');
+      });
+
       it('should allow language change from homepage', function (done) {
         expect(first('h2').textContent).toMatch('Connexion');
         first('header ul li').click();
@@ -103,7 +107,7 @@ module.exports = (function () {
             expect($err.innerHTML).toMatch('not found');
             $err.click();
             done();
-          }, 100); // Too low ?
+          }, 200);
         }
       );
 
@@ -115,6 +119,7 @@ module.exports = (function () {
         window.setTimeout(function () {
           var $success = first('body > section p');
           expect($success.parentNode.className).toMatch('success');
+          expect(app.document.title).toMatch('parker');
           $success.click();
           window.setTimeout(function () {
             expect(app.location.search).toBe('?/mypads');
@@ -140,6 +145,7 @@ module.exports = (function () {
           first('.icon-logout').parentNode.click();
           window.setTimeout(function () {
             expect(first('.icon-login')).toBeTruthy();
+            expect(app.document.title).toBe('MyPads');
             first('body > section p').click();
             done();
           }, 100);

@@ -69,6 +69,8 @@ module.exports = (function () {
         if (lang !== conf.USERLANG) {
           conf.updateLang(lang);
         }
+        document.title += ' - ' + conf.LANG.USER.AUTH.WELCOME + ' ' +
+          resp.user.login;
         notif.success({ body: conf.LANG.USER.AUTH.SUCCESS });
         m.route('/');
       }, function (err) {

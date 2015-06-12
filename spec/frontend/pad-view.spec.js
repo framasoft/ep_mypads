@@ -102,7 +102,7 @@ module.exports = (function () {
             expect(actions.tab.getAttribute('href'))
               .toBe(iframe.getAttribute('src'));
             done();
-          }, 100);
+          }, 200);
         });
 
       });

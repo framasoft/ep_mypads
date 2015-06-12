@@ -75,7 +75,8 @@
       "SUCCESS": "Authentification réussie ! Bienvenue.",
       "SUCCESS_OUT": "Vous avez été déconnecté avec succès.",
       "SUBSCRIBE_SUCCESS": "Inscription complétée avec succès ! Bienvenue.",
-      "PROFILE_SUCCESS": "Profil mis à jour avec succès."
+      "PROFILE_SUCCESS": "Profil mis à jour avec succès.",
+      "WELCOME": "Bienvenue"
     },
     "HELP": {
       "PROFILE": "<p>Tout changement dans votre profil nécessite votre mot de passe actuel. Merci de noter que :</p><ul><li>vous pouvez modifier toute information en utilisant le champ correspondant;</li><li>laisser les champs de mot de passe et de confirmation vides n'auront pas d'effet sur votre mot de passe actuel;</li><li>vous ne pouvez pas changer d'identifiant pour le moment mais ce sera bientôt possible;</li><li>si vous voulez changer votre mot de passe, merci d'en saisir un nouveau dans le champ mot de passe et de le confirmer avec le champ de confirmation.</li></ul>"

@@ -48,6 +48,7 @@ module.exports = (function () {
         auth.isAuthenticated(false);
         auth.userInfo(null);
         model.init();
+        document.title = conf.SERVER.title;
         notif.success({ body: conf.LANG.USER.AUTH.SUCCESS_OUT });
         m.route('/');
       }, function (err) {

@@ -64,6 +64,10 @@ module.exports = (function () {
         }, 200);
       });
 
+      it('should displays login name into the page title', function () {
+        expect(first('section.user h2').textContent).toMatch('parker');
+      });
+
       it('should forbid profile update with empty current password',
         function (done) {
           $el.submit.click();
@@ -104,7 +108,7 @@ module.exports = (function () {
               first('body > section p').click();
               done();
             }, 100);
-          }, 100);
+          }, 200);
         }
       );
 

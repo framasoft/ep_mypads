@@ -219,9 +219,14 @@ module.exports = (function () {
   */
 
   view.main = function (c) {
-    var USER = conf.LANG.USER;
+    var h2txt;
+    if (c.profileView()) {
+      h2txt =  conf.LANG.USER.PROFILE + ' : ' + auth.userInfo().login;
+    } else {
+      h2txt = conf.LANG.USER.SUBSCRIBE;
+    }
     return m('section', { class: 'block-group user' }, [
-      m('h2.block', c.profileView() ? USER.PROFILE : USER.SUBSCRIBE),
+      m('h2.block', h2txt),
       view.form(c)
     ]);
   };

@@ -38,6 +38,14 @@
         });
       });
 
+      it('should return an Error if password is not given', function (done) {
+        expect(auth.fn.isPasswordValid(params, undefined, function (err) {
+          expect(ld.isError(err));
+          expect(err).toMatch('password');
+          done();
+        }));
+      });
+
       it('should return null and false if password does not match',
         function (done) {
           auth.fn.isPasswordValid(params, 'anotherOne', function (err, res) {

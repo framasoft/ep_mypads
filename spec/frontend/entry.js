@@ -44,15 +44,15 @@
       // FIXME: 1sec for simplicity but should listen search/hash changes...
       window.setTimeout(done, 1000);
     });
-    //login.run(app);
-    //subscribe.run(app);
+    login.run(app);
+    subscribe.run(app);
     profile.run(app);
-    //groupList.run(app);
-    //groupForm.run(app);
-    //groupRemove.run(app);
-    //groupView.run(app);
-    //userInvite.run(app);
-    //padView.run(app);
-    //tagWidget.run(app);
+    groupList.run(app);
+    groupForm.run(app);
+    groupRemove.run(app);
+    groupView.run(app);
+    userInvite.run(app);
+    padView.run(app);
+    tagWidget.run(app);
   });
 }).call(this);

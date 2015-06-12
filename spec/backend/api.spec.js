@@ -85,6 +85,15 @@
           });
         });
 
+        it('should return an error if password is not set', function(done) {
+          var params = { body: { login: 'guest' } };
+          rq.post(authRoute + '/check', params, function (err, resp, body) {
+            expect(resp.statusCode).toBe(400);
+            expect(body.error).toBe('missing password');
+            done();
+          });
+        });
+
         it('should return an error if user does not exist', function (done) {
           var params = { body: { login: 'inexistent', password: 'pass' } };
           rq.post(authRoute + '/check', params, function (err, resp, body) {

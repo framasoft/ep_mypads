@@ -137,6 +137,9 @@ module.exports = (function () {
   */
 
   auth.fn.isPasswordValid = function (u, password, callback) {
+    if (!ld.isString(password)) {
+      return callback(new TypeError('missing password'));
+    }
     user.fn.hashPassword(u.password.salt, password, function (err, res) {
       if (err) { callback(err); }
       if (res.hash === u.password.hash) {

@@ -108,7 +108,7 @@ module.exports = (function () {
         notif.success({ body: opts.extra.msg });
         m.route('/mypads/group/' + resp.value._id + '/view');
       }, function (err) {
-        notif.error({ body: err.error });
+        notif.error({ body: ld.result(conf.LANG, err.error) });
       });
     };
     return c;

@@ -118,7 +118,7 @@ module.exports = (function () {
           expect(app.location.search).toBe(hash);
           var $error = app.document.querySelectorAll('body > section p');
           $error = $error[$error.length - 1];
-          expect($error.textContent).toMatch('user already exist');
+          expect($error.textContent).toMatch('User already exists');
           $error.click();
           done();
         }, 100);

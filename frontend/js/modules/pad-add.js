@@ -29,6 +29,7 @@ module.exports = (function () {
   'use strict';
   // Dependencies
   var m = require('mithril');
+  var ld = require('lodash');
   var auth = require('../auth.js');
   var conf = require('../configuration.js');
   var model = require('../model/group.js');
@@ -84,7 +85,9 @@ module.exports = (function () {
         }
         notif.success({ body: opts.successMsg });
         m.route('/mypads/group/' + gkey + '/view');
-      }, function (err) { notif.error({ body: err.error }); });
+      }, function (err) {
+        notif.error({ body: ld.result(conf.LANG, err.error) });
+      });
     } else {
       m.route('/mypads/group/' + gkey + '/view');
     }

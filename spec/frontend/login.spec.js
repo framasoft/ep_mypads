@@ -103,8 +103,8 @@ module.exports = (function () {
           expect($el.form.checkValidity()).toBeTruthy();
           $el.submit.click();
           window.setTimeout(function () {
-            var $err = first('body > section p');
-            expect($err.innerHTML).toMatch('not found');
+            var $err = first('body > section.notification div div');
+            expect($err.className).toMatch('error');
             $err.click();
             done();
           }, 200);

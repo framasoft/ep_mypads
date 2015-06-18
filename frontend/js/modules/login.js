@@ -28,6 +28,7 @@
 module.exports = (function () {
   // Global dependencies
   var m = require('mithril');
+  var ld = require('lodash');
   // Local dependencies
   var conf = require('../configuration.js');
   var auth = require('../auth.js');
@@ -74,7 +75,7 @@ module.exports = (function () {
         notif.success({ body: conf.LANG.USER.AUTH.SUCCESS });
         m.route('/');
       }, function (err) {
-        notif.error({ body: err.error });
+        notif.error({ body: ld.result(conf.LANG, err.error) });
       });
     };
     return c;

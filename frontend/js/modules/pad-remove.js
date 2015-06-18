@@ -61,7 +61,9 @@ module.exports = (function () {
         model.data(groups);
         notif.success({ body: conf.LANG.GROUP.INFO.PAD_REMOVE_SUCCESS });
         m.route('/mypads/group/' + gkey + '/view');
-      }, function (err) { notif.error({ body: err.error }); });
+      }, function (err) {
+        notif.error({ body: ld.result(conf.LANG, err.error) });
+      });
     } else {
       m.route('/mypads/group/' + gkey + '/view');
     }

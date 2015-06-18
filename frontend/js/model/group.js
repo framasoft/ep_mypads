@@ -72,7 +72,7 @@ module.exports = (function () {
         if (callback) { callback(); }
       },
       function (err) {
-        notif.error({ body: err.error });
+        notif.error({ body: ld.result(conf.LANG, err.error) });
         if (callback) { callback(); }
       }
     );

@@ -75,7 +75,9 @@ module.exports = (function () {
     */
 
     c.submit = {};
-    var errfn = function (err) { return notif.error({ body: err.error }); };
+    var errfn = function (err) {
+      return notif.error({ body: ld.result(conf.LANG, err.error) });
+    };
 
     /**
     * #### submit.subscribe

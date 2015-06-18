@@ -54,7 +54,9 @@ module.exports = (function () {
       data: { type: 'pads', key: pid }
     }).then(function () {
       notif.success({ body: conf.LANG.GROUP.MARK_SUCCESS });
-    }, function (err) { return notif.error({ body: err.error }); });
+    }, function (err) {
+      return notif.error({ body: ld.result(conf.LANG, err.error) });
+    });
   };
 
 }).call(this);

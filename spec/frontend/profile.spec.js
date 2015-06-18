@@ -84,7 +84,7 @@ module.exports = (function () {
         $el.submit.click();
         window.setTimeout(function () {
           var $err = first('body > section p');
-          expect($err.innerHTML).toMatch('password is not correct');
+          expect($err.innerHTML).toMatch('Password is not correct');
           $err.click();
           done();
         }, 100);

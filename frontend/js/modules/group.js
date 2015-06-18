@@ -188,7 +188,9 @@ module.exports = (function () {
 
     c.mark = function (gid) {
       var user = u();
-      var errfn = function (err) { return notif.error({ body: err.error }); };
+      var errfn = function (err) {
+        return notif.error({ body: ld.result(conf.LANG, err.error) });
+      };
       if (ld.includes(user.bookmarks.groups, gid)) {
         ld.pull(user.bookmarks.groups, gid);
       } else {

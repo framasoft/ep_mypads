@@ -30,6 +30,9 @@
 module.exports = (function () {
   'use strict';
 
+  // Dependencies
+  var configuration = require('./configuration.js');
+
   var hooks = {};
 
   /**
@@ -38,7 +41,6 @@ module.exports = (function () {
   */
 
   hooks.init = function (name, args, callback) {
-    var configuration = require('./configuration.js');
     configuration.init(function (err) {
       if (err) { console.log(err); }
       callback();
@@ -66,7 +68,8 @@ module.exports = (function () {
     var storage = require('./storage.js');
     var api = require('./api.js');
     storage.init(function () {
-      api.init(args.app, callback);
+      var lang = configuration.get('defaultLanguage');
+      api.init(args.app, lang, callback);
     });
   };
 

@@ -191,7 +191,7 @@ module.exports = (function () {
     u.email = (ld.isEmail(p.email)) ? p.email : '';
     u.groups = [];
     u.bookmarks = { groups: [], pads: [] };
-    var langs = ld.keys(conf.DEFAULTS.languages);
+    var langs = ld.keys(conf.cache.languages);
     u.lang = (ld.includes(langs, p.lang) ? p.lang : 'en');
     return ld.assign({ _id: p._id, login: p.login, password: p.password }, u);
   };

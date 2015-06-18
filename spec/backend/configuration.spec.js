@@ -41,39 +41,28 @@
         function (done) {
           conf.init(function (err) {
             expect(err).toBeNull();
-            conf.get('passwordMax', function (err, res) {
-              expect(res).toBe(30);
-              done();
-            });
+            var res = conf.get('passwordMax');
+            expect(res).toBe(30);
+            done();
           });
         });
       });
 
     describe('get', function () {
 
-      it('throws an error if key isn\'t a string and callback not a function',
-        function () {
-          expect(conf.get).toThrow();
-          expect(ld.partial(conf.get, 1)).toThrow();
-          expect(ld.partial(conf.get, 1, 1)).toThrow();
-          expect(ld.partial(conf.get, 1, ld.noop)).toThrow();
-          expect(ld.partial(conf.get, 'key')).toThrow();
-          expect(ld.partial(conf.get, 'key', 2)).toThrow();
+      it('throws an error if key isn\'t a string', function () {
+        expect(conf.get).toThrow();
+        expect(ld.partial(conf.get, 1)).toThrow();
       });
 
-      it('returns an Error if the field isn\'t defined', function (done) {
-        conf.get('inexistent', function (err, res) {
-          expect(ld.isError(err)).toBeTruthy();
-          expect(res).toBeUndefined();
-          done();
-        });
+      it('returns undefined if the field isn\'t defined', function () {
+        var res = conf.get('inexistent');
+        expect(res).toBeUndefined();
       });
 
-      it('returns the value of the field', function (done) {
-        conf.get('passwordMin', function (err, res) {
-          expect(res).toBe(8);
-          done();
-        });
+      it('returns the value of the field otherwise', function () {
+        var res = conf.get('passwordMin');
+        expect(res).toBe(8);
       });
     });
 
@@ -92,14 +81,12 @@
 
       it('sets a key for the conf with the given value', function (done) {
         conf.set('key', 'value', function () {
-          conf.get('key', function (err, val) {
-            expect(val).toBe('value');
-            conf.set('@rray', [1, 2, 3], function () {
-              conf.get('@rray', function (err, val) {
-                expect(val.length).toBe(3);
-                done();
-              });
-            });
+          var val = conf.get('key');
+          expect(val).toBe('value');
+          conf.set('@rray', [1, 2, 3], function () {
+            val = conf.get('@rray');
+            expect(val.length).toBe(3);
+            done();
           });
         });
       });
@@ -119,15 +106,13 @@
 
       it('removes the item otherwise', function (done) {
         conf.set('forremove', 10, function () {
-          conf.get('forremove', function (err, res) {
-            expect(res).toBe(10);
-            conf.del('forremove', function (err) {
-              expect(err).toBeUndefined();
-              conf.get('forremove', function (err, res) {
-                expect(res).toBeUndefined();
-                done();
-              });
-            });
+          var res = conf.get('forremove');
+          expect(res).toBe(10);
+          conf.del('forremove', function (err) {
+            expect(err).toBeUndefined();
+            res = conf.get('forremove');
+            expect(res).toBeUndefined();
+            done();
           });
         });
       });
@@ -135,19 +120,13 @@
 
     describe('all', function () {
 
-      it('requires a mandatory function as callback', function () {
-        expect(conf.all).toThrow();
-        expect(ld.partial(conf.all, 'notAFn')).toThrow();
-      });
-
       it('returns the configuration object', function (done) {
         conf.set('key', 10, function () {
           conf.set('power', 'max', function () {
-            conf.all(function (err, settings) {
-              expect(settings.key).toBe(10);
-              expect(settings.power).toBe('max');
-              done();
-            });
+            var settings = conf.all();
+            expect(settings.key).toBe(10);
+            expect(settings.power).toBe('max');
+            done();
           });
         });
       });
@@ -155,21 +134,15 @@
 
     describe('public', function () {
 
-      it('requires a mandatory function as callback', function () {
-        expect(conf.public).toThrow();
-        expect(ld.partial(conf.public, 'notAFn')).toThrow();
-      });
-
       it('returns the filtered configuration object', function (done) {
         conf.set('power', 'max', function () {
-          conf.public(function (err, settings) {
-            expect(settings.power).toBeUndefined();
-            expect(settings.title).toBeDefined();
-            expect(settings.passwordMin).toBeDefined();
-            expect(settings.passwordMax).toBeDefined();
-            expect(settings.languages).toBeDefined();
-            done();
-          });
+          var settings = conf.public();
+          expect(settings.power).toBeUndefined();
+          expect(settings.title).toBeDefined();
+          expect(settings.passwordMin).toBeDefined();
+          expect(settings.passwordMax).toBeDefined();
+          expect(settings.languages).toBeDefined();
+          done();
         });
       });
     });

@@ -44,7 +44,7 @@
       specCommon.mockupExpressServer();
       specCommon.reInitDatabase(function () {
         conf.init(function () {
-          api.init(specCommon.express.app, function () {
+          api.init(specCommon.express.app, 'en', function () {
             rq = request.defaults({ json: true, jar: j });
             done();
           });
@@ -189,7 +189,7 @@
             function (err, resp, body) {
               expect(err).toBeNull();
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toBe('not authenticated');
+              expect(body.error).toBe('Not authenticated');
               done();
             }
           );
@@ -227,8 +227,9 @@
 
         beforeAll(function (done) {
           var kv = { title: 'Amigo', field: 3 };
-          storage.fn.setKeys(ld.transform(kv, function (memo, val, key) {
-            memo[CPREFIX + key] = val; }), done);
+          conf.set('title', 'Amigo', function () {
+            conf.set('field', 3, done);
+          });
         });
 
         afterAll(specCommon.reInitDatabase);
@@ -253,14 +254,11 @@
 
       beforeAll(function (done) {
         var kv = { field1: 8, field2: 3, field3: ['a', 'b'] };
-        storage.fn.setKeys(ld.transform(kv, function (memo, val, key) {
-          memo[CPREFIX + key] = val; }), function () {
-            var u = { login: 'guest', password: 'willnotlivelong' };
-            user.set(u, function () {
-              rq.post(route + 'auth/login', { body: u }, done);
-            });
-          }
-        );
+        ld.assign(conf.cache, kv);
+        var u = { login: 'guest', password: 'willnotlivelong' };
+        user.set(u, function () {
+          rq.post(route + 'auth/login', { body: u }, done);
+        });
       });
 
       afterAll(function (done) {
@@ -296,7 +294,7 @@
           function (done) {
             rq.get(confRoute + '/inexistent', function (err, resp, body) {
               expect(resp.statusCode).toBe(404);
-              expect(body.error).toMatch('Key doesn\'t');
+              expect(body.error).toMatch('Key has not been found');
               expect(body.key).toBe('inexistent');
               done();
             });
@@ -402,7 +400,7 @@
               expect(body.key).toBe('field1');
               rq.get(confRoute + '/field1', function (err, resp, body) {
                 expect(resp.statusCode).toBe(404);
-                expect(body.error).toMatch('Key doesn\'t');
+                expect(body.error).toMatch('Key has not been found');
                 expect(body.key).toBe('field1');
                 done();
               });

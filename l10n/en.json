@@ -1,0 +1,13 @@
+{
+  "AUTH": {
+    "ERR": {
+      "MUST_BE": "You must be authenticated",
+      "NOT_AUTH": "Not authenticated"
+    }
+  },
+  "CONFIG": {
+    "ERR": {
+      "KEY_NOT_FOUND": "Key has not been found"
+    }
+  }
+}

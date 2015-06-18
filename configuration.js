@@ -43,8 +43,8 @@ module.exports = (function() {
   var configuration = {
 
     /**
-    * The closure contains a private `DEFAULTS` field, holding defaults
-    * settings.  Configuration data is taken from the database, applying
+    * The object contains a private `DEFAULTS` field, holding defaults
+    * settings. Configuration data is taken from the database, applying
     * defaults when necessary, for example at the plugin initialization.
     */
 
@@ -52,8 +52,16 @@ module.exports = (function() {
       title: 'MyPads',
       passwordMin: 8,
       passwordMax: 30,
-      languages: { en: 'English', fr: 'Français' }
+      languages: { en: 'English', fr: 'Français' },
+      defaultLanguage: 'en'
     },
+
+    /**
+    * cache object` stored current configuration for faster access than
+    * database
+    */
+
+    cache: {},
 
     /**
     * `init` is called when mypads plugin is initialized. It fixes the default
@@ -67,33 +75,23 @@ module.exports = (function() {
       if (!ld.isFunction(callback)) {
         throw new TypeError('callback must be a function');
       }
+      configuration.cache = ld.clone(configuration.DEFAULTS, true);
       // Would like to use doBulk but not supported for all *ueberDB* backends
       storage.fn.setKeys(ld.transform(configuration.DEFAULTS,
         function (memo, val, key) { memo[DBPREFIX + key] = val; }), callback);
     },
 
     /**
-    * `get` is an asynchronous function taking :
-    *
-    * - a mandatory `key` string argument,
-    * - a mandatory `callback` function argument returning *Error* if error,
-    *   *null* otherwise and the result
+    * `get` is an synchronous function taking : a mandatory `key` string
+    * argument.  It throws *Error* if error, returns *undefined* if key does
+    * not exist and the result otherwise.
     */
 
-    get: function (key, callback) {
+    get: function (key) {
       if (!ld.isString(key)) {
         throw new TypeError('key must be a string');
       }
-      if (!ld.isFunction(callback)) {
-        throw new TypeError('callback must be a function');
-      }
-      db.get(DBPREFIX + key, function (err, res) {
-        if (err) { return callback(err); }
-        if (ld.isUndefined(res)) {
-          return callback(new Error('Key doesn\'t exist'));
-        }
-        callback(null, res);
-      });
+      return configuration.cache[key];
     },
 
     /**
@@ -104,7 +102,8 @@ module.exports = (function() {
     * - `callback` function argument returning *Error* if error, *null*
     *   otherwise
     *
-    * `set` sets the `value` for the configuration `key`.
+    * `set` sets the `value` for the configuration `key` and takes care of
+    * `cache`.
     */
 
     set: function (key, value, callback) {
@@ -117,7 +116,11 @@ module.exports = (function() {
       if (!ld.isFunction(callback)) {
         throw new TypeError('callback must be a function');
       }
-      db.set(DBPREFIX + key, value, callback);
+      db.set(DBPREFIX + key, value, function (err) {
+        if (err) { return callback(err); }
+        configuration.cache[key] = value;
+        callback();
+      });
     },
 
     /**
@@ -126,6 +129,8 @@ module.exports = (function() {
     *
     * - a `key` string,
     * - a `callback` function argument returning *Error* if error
+    *
+    * It takes care of config `cache`.
     */
 
     del: function (key, callback) {
@@ -135,49 +140,28 @@ module.exports = (function() {
       if (!ld.isFunction(callback)) {
         throw new TypeError('callback must be a function');
       }
-      db.remove(DBPREFIX + key, callback);
-    },
-
-    /**
-    * `all` is an asynchronous function that returns the whole configuration
-    * from database. Fields / keys are unprefixed. It needs a `callback`
-    * function returning *Error* if error, *null* otherwise and the result
-    * object.
-    */
-
-    all: function (callback) {
-      if (!ld.isFunction(callback)) {
-        throw new TypeError('callback must be a function');
-      }
-      db.findKeys(DBPREFIX + '*', null, function (err, keys) {
+      db.remove(DBPREFIX + key, function (err) {
         if (err) { return callback(err); }
-        storage.fn.getKeys(keys, function (err, results) {
-          if (err) { return callback(err); }
-          results = ld.transform(results, function (memo, val, key) {
-            memo[key.replace(DBPREFIX, '')] = val;
-          });
-          callback(null, results);
-        });
+        delete configuration.cache[key];
+        callback();
       });
     },
 
     /**
-    * `public` is an asynchronous function that returns the whole publicly
-    * available configuration from database. Fields / keys are unprefixed. It
-    * needs a `callback` function returning *Error* if error, *null* and the
-    * result object otherwise.
+    * `all` is a synchronous function that returns the whole configuration
+    * from `cache`. Fields / keys are unprefixed.
     */
 
-    public: function (callback) {
-      if (!ld.isFunction(callback)) {
-        throw new TypeError('callback must be a function');
-      }
-      configuration.all(function (err, all) {
-        if (err) { return callback(err); }
-        var filtered = ld.pick(all, 'title', 'passwordMin', 'passwordMax',
-          'languages');
-        return callback(null, filtered);
-      });
+    all: function () { return configuration.cache; },
+
+    /**
+    * `public` is a synchronous function that returns the whole publicly
+    * available configuration from `cache`. Fields / keys are unprefixed.
+    */
+
+    public: function () {
+      var all = configuration.all();
+      return ld.pick(all, 'title', 'passwordMin', 'passwordMax', 'languages');
     }
   };
 

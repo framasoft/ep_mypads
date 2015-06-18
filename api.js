@@ -57,12 +57,26 @@ module.exports = (function () {
 
   /**
   * `init` is the first function that takes an Express app as argument.
-  * It initializes all API requirements, particularly mypads routes.
+  * It loads locales definitions, then it initializes all API requirements,
+  * particularly mypads routes.
   */
 
-  api.init = function (app, callback) {
+  api.init = function (app, language, callback) {
+    api.app = app;
+    app.locals.language = language;
+    app.locals.languages = {};
+    var fs = require('fs');
+    var ldir = 'l10n';
+    var locales = fs.readdirSync(ldir);
+    locales.forEach(function (f) {
+      var prefix = f.split('.')[0];
+      var data = fs.readFileSync(ldir + '/' + f);
+      app.locals.languages[prefix] = JSON.parse(data);
+    });
+    // Use this for .JSON storage
     app.use(bodyParser.json());
     app.use('/mypads', express.static(__dirname + '/static'));
+    app.use(fn.handleLanguage);
     if (testMode) {
       // Only allow functional testing in testing mode
       app.use('/mypads/functest', express.static(__dirname + '/spec/frontend'));
@@ -153,10 +167,28 @@ module.exports = (function () {
 
   fn.ensureAuthentificated = function (req, res, next) {
     if (!req.isAuthenticated() && !req.session.login) {
-      res.status(401).send({ error: 'you must be authenticated' });
+      var l = res.locals.language;
+      res.status(401).send({ error: l.AUTH.ERR.MUST_BE });
     } else {
       return next();
     }
+  };
+
+  /**
+  * `handleLanguage` internal is an Express middleware that takes `req`, `res`
+  * and `next` classic request, result and callback chaining arguments.
+  * The function uses `app.locals.language` for default language choice. It
+  * sets this language with default if no one has been sent, using server-side
+  * `req.session`.
+  *
+  * TODO : really handle lang changes, and test it !
+  * Handle old and new for global change or not
+  * Use req.session if possible ?
+  */
+
+  fn.handleLanguage = function (req, res, next) {
+    res.locals.language = api.app.locals.languages[api.app.locals.language];
+    return next();
   };
 
   /**
@@ -228,7 +260,8 @@ module.exports = (function () {
         req.session.destroy();
         res.status(200).send({ success: true });
       } else {
-        res.status(400).send({ error: 'not authenticated' });
+        var l = res.locals.language;
+        res.status(400).send({ error: l.AUTH.ERR.NOT_AUTH });
       }
     });
 
@@ -254,19 +287,17 @@ module.exports = (function () {
     app.get(confRoute, function (req, res) {
       var isAuth = (req.isAuthenticated() || !!req.session.login);
       var action = isAuth ? 'all' : 'public';
-      conf[action](function (err, value) {
-        if (err) { return res.status(400).send({ error: err }); }
-        var resp = { value: value, auth: isAuth };
-        if (isAuth) {
-          user.get(req.session.login, function (err, u) {
-            if (err) { return res.status(400).send({ error: err }); }
-            resp.user = u;
-            res.send(resp);
-          });
-        } else {
+      var value = conf[action]();
+      var resp = { value: value, auth: isAuth };
+      if (isAuth) {
+        user.get(req.session.login, function (err, u) {
+          if (err) { return res.status(400).send({ error: err }); }
+          resp.user = u;
           res.send(resp);
-        }
-      });
+        });
+      } else {
+        res.send(resp);
+      }
     });
 
     /**
@@ -277,15 +308,14 @@ module.exports = (function () {
     */
 
     app.get(confRoute + '/:key', fn.ensureAuthentificated, function (req, res) {
-      conf.get(req.params.key, function (err, value) {
-        if (err) {
-          return res.status(404).send({
-            error: err.message,
-            key: req.params.key 
-          });
-        }
-        res.send({ key: req.params.key, value: value });
-      });
+      var value = conf.get(req.params.key);
+      if (ld.isUndefined(value)) {
+        return res.status(404).send({
+          error: res.locals.language.CONFIG.ERR.KEY_NOT_FOUND,
+          key: req.params.key 
+        });
+      }
+      res.send({ key: req.params.key, value: value });
     });
 
     /**

@@ -2,12 +2,22 @@
   "BACKEND": {
     "ERROR": {
       "TYPE": {
+        "PARAMS_REQUIRED": "Parameters are mandatory",
+        "PARAM_STR": "Some parameter must be a string",
         "CALLBACK_FN": "Callback must be a function",
         "KEY_STR": "Key must be a string",
         "VALUE_REQUIRED": "Value is mandatory",
         "LOGIN_STR": "Login must be a string",
         "PASSWORD_STR": "Password must be a string",
-        "PASSWORD_MISSING": "Missing password"
+        "PASSWORD_MISSING": "Missing password",
+        "PASSWORD_SIZE": "Password size is too short or too long",
+        "ID_STR": "_id, when defined, must be a string",
+        "USER_INVALID": "User is invalid",
+        "WITHEXTRA_BOOL": "withExtra must be a boolean",
+        "INVITE_BOOL": "Invite must be a boolean",
+        "GID_STR": "gid must be a string",
+        "LOGINS_ARR": "logins must be an array",
+        "TYPE_PADSORGROUPS": "Type must be either pads or groups"
       },
       "CONFIGURATION": {
         "KEY_NOT_FOUND": "Key has not been found"
@@ -20,6 +30,20 @@
       "PERMISSION": {
         "UNEXPECTED": "Sorry, an unexpected has error has occured",
         "UNAUTHORIZED": "You are not allowed to access to this pad.",
+      },
+      "GROUP": {
+        "INEXISTENT": "Group does not exist",
+        "CASCADE_REMOVAL_PROBLEM": "Something goes wrong with cascade pads removal",
+        "ITEMS_NOT_FOUND": "Some users, admins or pads have not been found"
+      },
+      "USER": {
+        "ALREADY_EXISTS": "User already exists, please choose another login",
+        "NOT_FOUND": "User not found",
+        "BOOKMARK_NOT_FOUND": "bookmark id not found"
+      },
+      "PAD": {
+        "INEXISTENT": "Pad does not exist",
+        "ITEMS_NOT_FOUND": "Pad group or at least one of the users are not found"
       }
     }
   },

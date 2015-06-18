@@ -126,7 +126,7 @@
         group.set({ name: 'g', admin: 'inexistent' },
           function (err, g) {
             expect(ld.isError(err)).toBeTruthy();
-            expect(err).toMatch('Some users, admins');
+            expect(err).toMatch('ITEMS_NOT_FOUND');
             expect(g).toBeUndefined();
             done();
           }
@@ -243,7 +243,7 @@
         group.set({ _id: gparams._id, name: 'college', admin: 'inexist' },
           function (err, g) {
             expect(ld.isError(err)).toBeTruthy();
-            expect(err).toMatch('Some users, admins');
+            expect(err).toMatch('ITEMS_NOT_FOUND');
             expect(g).toBeUndefined();
             done();
           }
@@ -253,7 +253,7 @@
       it('should return an error if group _id is not found', function (done) {
         group.set({ _id: 'i', name: 'g', admin: gadm._id }, function (err, g) {
           expect(ld.isError(err)).toBeTruthy();
-          expect(err).toMatch('group does not exist');
+          expect(err).toMatch('GROUP.INEXISTENT');
           expect(g).toBeUndefined();
           done();
         });
@@ -268,12 +268,12 @@
         };
         group.set(params, function (err, g) {
           expect(ld.isError(err)).toBeTruthy();
-          expect(err).toMatch('password is invalid');
+          expect(err).toMatch('PASSWORD_INCORRECT');
           expect(g).toBeUndefined();
           params.password = 123;
           group.set(params, function (err, g) {
             expect(ld.isError(err)).toBeTruthy();
-            expect(err).toMatch('password is invalid');
+            expect(err).toMatch('PASSWORD_INCORRECT');
             expect(g).toBeUndefined();
             done();
           });
@@ -410,7 +410,7 @@
           .toThrow();
         expect(ld.partial(group.getByUser, gadm, false, 'notAFunc')).toThrow();
         expect(ld.partial(group.getByUser, { login: 'inexistant' }, false,
-          function () {})).toThrowError(/is invalid/);
+          function () {})).toThrowError(/USER_INVALID/);
       });
 
       it('should return groups otherwise', function (done) {

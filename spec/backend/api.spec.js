@@ -78,7 +78,7 @@
         it('should return an error if params are inexistent', function (done) {
           rq.post(authRoute + '/check', {}, function (err, resp, body) {
             expect(resp.statusCode).toBe(400);
-            expect(body.error).toBe('login must be a string');
+            expect(body.error).toMatch('LOGIN_STR');
             done();
           });
         });
@@ -87,7 +87,7 @@
           var params = { body: { login: 'guest' } };
           rq.post(authRoute + '/check', params, function (err, resp, body) {
             expect(resp.statusCode).toBe(400);
-            expect(body.error).toBe('missing password');
+            expect(body.error).toMatch('PASSWORD_MISSING');
             done();
           });
         });
@@ -96,7 +96,7 @@
           var params = { body: { login: 'inexistent', password: 'pass' } };
           rq.post(authRoute + '/check', params, function (err, resp, body) {
             expect(resp.statusCode).toBe(400);
-            expect(body.error).toBe('user not found');
+            expect(body.error).toMatch('USER.NOT_FOUND');
             done();
           });
         });
@@ -106,7 +106,7 @@
             var params = { body: { login: 'guest', password: 'pass' } };
             rq.post(authRoute + '/check', params, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toBe('password is not correct');
+              expect(body.error).toMatch('PASSWORD_INCORRECT');
               done();
             });
           }
@@ -139,7 +139,7 @@
           var params = { body: { login: 'inexistent', password: 123 } };
           rq.post(authRoute + '/login', params, function (err, resp, body) {
             expect(resp.statusCode).toBe(400);
-            expect(body.error).toBe('password must be a string');
+            expect(body.error).toMatch('PASSWORD_STR');
             done();
           });
         });
@@ -148,7 +148,7 @@
           var params = { body: { login: 'inexistent', password: 'pass' } };
           rq.post(authRoute + '/login', params, function (err, resp, body) {
             expect(resp.statusCode).toBe(400);
-            expect(body.error).toBe('user not found');
+            expect(body.error).toMatch('USER.NOT_FOUND');
             done();
           });
         });
@@ -158,7 +158,7 @@
             var params = { body: { login: 'guest', password: 'pass' } };
             rq.post(authRoute + '/login', params, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toBe('password is not correct');
+              expect(body.error).toMatch('PASSWORD_INCORRECT');
               done();
             });
           }
@@ -314,11 +314,11 @@
           function (done) {
             rq.post(confRoute, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toBe('key must be a string');
+              expect(body.error).toMatch('KEY_STR');
               var b = { body: { key: 'field1' } };
               rq.post(confRoute, b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
-                expect(body.error).toBe('value is mandatory');
+                expect(body.error).toMatch('VALUE_REQUIRED');
                 done();
               });
             });
@@ -332,7 +332,7 @@
               expect(body).toMatch('Cannot PUT');
               rq.put(confRoute + '/field1', function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
-                expect(body.error).toBe('value is mandatory');
+                expect(body.error).toMatch('VALUE_REQUIRED');
                 done();
               });
             });
@@ -430,15 +430,15 @@
           function (done) {
             rq.post(userRoute, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('must be a string');
+              expect(body.error).toMatch('PARAM_STR');
               var b = { body: { login: 'parker', password: '' } };
               rq.post(userRoute, b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
-                expect(body.error).toMatch('must be a string');
+                expect(body.error).toMatch('PARAM_STR');
                 b = { body: { login: 'parker', password: 'secret' } };
                 rq.post(userRoute, b, function (err, resp, body) {
                   expect(resp.statusCode).toBe(400);
-                  expect(body.error).toMatch('password length must be');
+                  expect(body.error).toMatch('PASSWORD_SIZE');
                   done();
                 });
               });
@@ -451,7 +451,7 @@
             var b = { body: { login: 'parker', password: '1' } };
             rq.post(userRoute, b, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('between');
+              expect(body.error).toMatch('PASSWORD_SIZE');
               done();
             });
           }
@@ -489,7 +489,7 @@
             rq.post(userRoute, b, function () {
               rq.post(userRoute, b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
-                expect(body.error).toMatch('user already exists');
+                expect(body.error).toMatch('USER.ALREADY_EXISTS');
                 done();
               });
             });
@@ -504,15 +504,15 @@
           function (done) {
             rq.put(userRoute + '/parker', function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('must be a string');
+              expect(body.error).toMatch('PARAM_STR');
               var b = { body: { login: 'parker', password: '' } };
               rq.put(userRoute + '/parker', b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
-                expect(body.error).toMatch('must be a string');
+                expect(body.error).toMatch('PARAM_STR');
                 b = { body: { login: 'parker', password: 'secret' } };
                 rq.put(userRoute + '/parker', b, function (err, resp, body) {
                   expect(resp.statusCode).toBe(400);
-                  expect(body.error).toMatch('password length must be');
+                  expect(body.error).toMatch('PASSWORD_SIZE');
                   done();
                 });
               });
@@ -525,7 +525,7 @@
             var b = { body: { login: 'parker', password: '1' } };
             rq.put(userRoute + '/parker', b, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('between');
+              expect(body.error).toMatch('PASSWORD_SIZE');
               done();
             });
           }
@@ -596,7 +596,7 @@
           function (done) {
             rq.get(userRoute + '/inexistent', function (err, resp, body) {
               expect(resp.statusCode).toBe(404);
-              expect(body.error).toMatch('user not found');
+              expect(body.error).toMatch('USER.NOT_FOUND');
               expect(body.key).toBe('inexistent');
               done();
             });
@@ -625,7 +625,7 @@
           function (done) {
             rq.post(userRoute + '/mark', function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('must be either pads or groups');
+              expect(body.error).toMatch('TYPE_PADSORGROUPS');
               done();
             });
           }
@@ -636,7 +636,7 @@
             var b = { body: { type: 'pads', key:'xxx' } };
             rq.post(userRoute + '/mark', b, function (err, resp, body) {
               expect(resp.statusCode).toBe(404);
-              expect(body.error).toMatch('bookmark id not found');
+              expect(body.error).toMatch('BOOKMARK_NOT_FOUND');
               done();
             });
           }
@@ -672,7 +672,7 @@
           function (done) {
             rq.del(userRoute + '/inexistent', function (err, resp, body) {
               expect(resp.statusCode).toBe(404);
-              expect(body.error).toMatch('user not found');
+              expect(body.error).toMatch('USER.NOT_FOUND');
               done();
             });
           }
@@ -686,7 +686,7 @@
               expect(body.key).toBe('guest');
               rq.get(userRoute + '/guest', function (err, resp, body) {
                 expect(resp.statusCode).toBe(404);
-                expect(body.error).toMatch('user not found');
+                expect(body.error).toMatch('USER.NOT_FOUND');
                 done();
               });
             });
@@ -729,7 +729,7 @@
           function (done) {
             rq.post(groupRoute + '/invite', function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('invite must be a boolean');
+              expect(body.error).toMatch('INVITE_BOOL');
               done();
             });
           }
@@ -746,7 +746,7 @@
             };
             rq.post(groupRoute + '/invite', b, function (err, resp, body) {
               expect(resp.statusCode).toBe(401);
-              expect(body.error).toMatch('key is not found');
+              expect(body.error).toMatch('KEY_NOT_FOUND');
               done();
             });
           }
@@ -811,7 +811,7 @@
           function (done) {
             rq.get(groupRoute + '/ginexistent', function (err, resp, body) {
               expect(resp.statusCode).toBe(404);
-              expect(body.error).toMatch('key is not found');
+              expect(body.error).toMatch('KEY_NOT_FOUND');
               expect(body.key).toBe('ginexistent');
               done();
             });
@@ -844,11 +844,11 @@
           function (done) {
             rq.post(groupRoute, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('must be a string');
+              expect(body.error).toMatch('PARAM_STR');
               var b = { body: { name: 'group1' } };
               rq.post(groupRoute, b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
-                expect(body.error).toMatch('must be a string');
+                expect(body.error).toMatch('PARAM_STR');
                 done();
               });
             });
@@ -860,7 +860,7 @@
             var b = { body: { name: 'group1', admin: 'inexistentId' } };
             rq.post(groupRoute, b, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('Some users');
+              expect(body.error).toMatch('ITEMS_NOT_FOUND');
               done();
             });
           }
@@ -877,7 +877,7 @@
             };
             rq.post(groupRoute, b, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('password is invalid');
+              expect(body.error).toMatch('PASSWORD_INCORRECT');
               done();
             });
           }
@@ -927,15 +927,15 @@
           function (done) {
             rq.put(groupRoute + '/' + gid, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('must be a string');
+              expect(body.error).toMatch('PARAM_STR');
               var b = { body: { name: 'group1' } };
               rq.put(groupRoute + '/' + gid, b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
-                expect(body.error).toMatch('must be a string');
+                expect(body.error).toMatch('PARAM_STR');
                 b = { body: { name: 'group1', admin: 'inexistentId' } };
                 rq.put(groupRoute + '/' + gid, b, function (err, resp, body) {
                   expect(resp.statusCode).toBe(400);
-                  expect(body.error).toMatch('Some users');
+                  expect(body.error).toMatch('ITEMS_NOT_FOUND');
                   done();
                 });
               });
@@ -1017,7 +1017,7 @@
           function (done) {
             rq.del(groupRoute + '/inexistentId', function (err, resp, body) {
               expect(resp.statusCode).toBe(404);
-              expect(body.error).toMatch('key is not found');
+              expect(body.error).toMatch('KEY_NOT_FOUND');
               done();
             });
           }
@@ -1031,7 +1031,7 @@
               expect(body.key).toBe(gid);
               rq.get(groupRoute + '/' + gid, function (err, resp, body) {
                 expect(resp.statusCode).toBe(404);
-                expect(body.error).toMatch('key is not found');
+                expect(body.error).toMatch('KEY_NOT_FOUND');
                 done();
               });
             });
@@ -1077,7 +1077,7 @@
           function (done) {
             rq.get(padRoute + '/pinexistent', function (err, resp, body) {
               expect(resp.statusCode).toBe(404);
-              expect(body.error).toMatch('key is not found');
+              expect(body.error).toMatch('KEY_NOT_FOUND');
               expect(body.key).toBe('pinexistent');
               done();
             });
@@ -1108,11 +1108,11 @@
           function (done) {
             rq.post(padRoute, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('must be a string');
+              expect(body.error).toMatch('PARAM_STR');
               var b = { body: { name: 'pad1' } };
               rq.post(padRoute, b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
-                expect(body.error).toMatch('must be a string');
+                expect(body.error).toMatch('PARAM_STR');
                 done();
               });
             });
@@ -1124,7 +1124,7 @@
             var b = { body: { name: 'pad1', group: gid, _id: 'inexistent' } };
             rq.post(padRoute, b, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('pad does not');
+              expect(body.error).toMatch('PAD.INEXISTENT');
               done();
             });
           }
@@ -1135,7 +1135,7 @@
             var b = { body: { name: 'pad1', group: 'inexistentId' } };
             rq.post(padRoute, b, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('pad group');
+              expect(body.error).toMatch('PAD.ITEMS_NOT_FOUND');
               done();
             });
           }
@@ -1153,7 +1153,7 @@
             };
             rq.post(padRoute, b, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('users are not found');
+              expect(body.error).toMatch('PAD.ITEMS_NOT_FOUND');
               done();
             });
           }
@@ -1203,7 +1203,7 @@
               var b = { body: { name: 'pad1' } };
               rq.put(padRoute + '/' + pid, b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
-                expect(body.error).toMatch('must be a string');
+                expect(body.error).toMatch('PARAM_STR');
                 done();
               });
             });
@@ -1277,7 +1277,7 @@
           function (done) {
             rq.del(padRoute + '/inexistentId', function (err, resp, body) {
               expect(resp.statusCode).toBe(404);
-              expect(body.error).toMatch('key is not found');
+              expect(body.error).toMatch('KEY_NOT_FOUND');
               done();
             });
           }
@@ -1291,7 +1291,7 @@
               expect(body.key).toBe(pid);
               rq.get(padRoute + '/' + pid, function (err, resp, body) {
                 expect(resp.statusCode).toBe(404);
-                expect(body.error).toMatch('key is not found');
+                expect(body.error).toMatch('KEY_NOT_FOUND');
                 done();
               });
             });

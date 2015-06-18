@@ -94,8 +94,7 @@ module.exports = (function () {
     var min = params[CPREFIX + 'passwordMin'];
     var max = params[CPREFIX + 'passwordMax'];
     if (pass.length < min || pass.length > max) {
-      return new TypeError('password length must be between ' + min + ' and ' +
-      max + ' characters');
+      return new TypeError('BACKEND.ERROR.TYPE.PASSWORD_SIZE');
     }
   };
 
@@ -220,8 +219,8 @@ module.exports = (function () {
       var exists = (!ld.isUndefined(user.ids[u.login]) ||
         (ld.includes(ld.values(user.ids), u._id)));
       if (exists) {
-        var e = 'user already exists, please choose another login';
-        return callback(new Error(e));
+        var e = new Error('BACKEND.ERROR.USER.ALREADY_EXISTS');
+        return callback(e);
       }
       return callback(null);
     } else {
@@ -251,10 +250,10 @@ module.exports = (function () {
 
   user.fn.getIdsFromLogins = function (logins, callback) {
     if (!ld.isArray(logins)) {
-      throw new TypeError('logins must be an array');
+      throw new TypeError('BACKEND.ERROR.TYPE.LOGINS_ARR');
     }
     if (!ld.isFunction(callback)) {
-      throw new TypeError('callback must be a function');
+      throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
     }
     callback(null, ld.reduce(logins, function (memo, login) {
       var key = user.ids[login];
@@ -277,10 +276,10 @@ module.exports = (function () {
 
   user.fn.getDel = function (del, login, callback) {
     if (!ld.isString(login) || ld.isEmpty(login)) {
-      throw new TypeError('login must be a string');
+      throw new TypeError('BACKEND.ERROR.TYPE.LOGIN_STR');
     }
     if (ld.isUndefined(user.ids[login])) {
-      return callback(new Error('user not found'));
+      return callback(new Error('BACKEND.ERROR.USER.NOT_FOUND'));
     }
     var cb = callback;
     if (del) {
@@ -442,14 +441,16 @@ module.exports = (function () {
 
   user.mark = function (login, type, key, callback) {
     if (!ld.includes(['pads', 'groups'], type)) {
-      throw new TypeError('type must be either pads or groups');
+      throw new TypeError('BACKEND.ERROR.TYPE.TYPE_PADSORGROUPS');
     }
     user.get(login, function (err, u) {
       if (err) { return callback(err); }
       var p = (type === 'pads') ? storage.DBPREFIX.PAD : storage.DBPREFIX.GROUP;
       common.checkExistence(p + key, function (err, res) {
         if (err) { return callback(err); }
-        if (!res) { return callback(new Error('bookmark id not found')); }
+        if (!res) {
+          return callback(new Error('BACKEND.ERROR.USER.BOOKMARK_NOT_FOUND'));
+        }
         if (ld.includes(u.bookmarks[type], key)) {
           ld.pull(u.bookmarks[type], key);
         } else {

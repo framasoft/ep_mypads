@@ -88,13 +88,13 @@ module.exports = (function () {
 
   group.getByUser = function (user, withExtra, callback) {
     if (!ld.isObject(user) || !ld.isArray(user.groups)) {
-      throw new TypeError('user is invalid');
+      throw new TypeError('BACKEND.ERROR.TYPE.USER_INVALID');
     }
     if (!ld.isBoolean(withExtra)) {
-      throw new TypeError('withExtra must be a boolean'); 
+      throw new TypeError('BACKEND.ERROR.TYPE.WITHEXTRA_BOOL');
     }
     if (!ld.isFunction(callback)) {
-      throw new TypeError('callback must be a function');
+      throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
     }
     storage.fn.getKeys(
       ld.map(user.groups, function (g) { return GPREFIX + g; }),
@@ -161,7 +161,9 @@ module.exports = (function () {
       g._id = params._id;
       storage.db.get(GPREFIX + g._id, function (err, res) {
         if (err) { return callback(err); }
-        if (!res) { return callback(new Error('group does not exist')); }
+        if (!res) {
+          return callback(new Error('BACKEND.ERROR.GROUP.INEXISTENT'));
+        }
         g.pads = res.pads;
         if ((res.visibility === 'private') && !g.password) {
           g.password = res.password;
@@ -191,7 +193,7 @@ module.exports = (function () {
 
   group.del = function (key, callback) {
     if (!ld.isFunction(callback)) {
-      throw new TypeError('callback must be a function');
+      throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
     }
     common.getDel(true, GPREFIX, key, function (err, g) {
       if (err) { return callback(err); }
@@ -223,16 +225,16 @@ module.exports = (function () {
 
   group.inviteOrShare = function (invite, gid, logins, callback) {
     if (!ld.isBoolean(invite)) {
-      throw new TypeError('invite must be a boolean');
+      throw new TypeError('BACKEND.ERROR.TYPE.INVITE_BOOL');
     }
     if (!ld.isString(gid)) {
-      throw new TypeError('gid must be a string');
+      throw new TypeError('BACKEND.ERROR.TYPE.GID_STR');
     }
     if (!ld.isArray(logins)) {
-      throw new TypeError('logins must be an array');
+      throw new TypeError('BACKEND.ERROR.TYPE.LOGINS_ARR');
     }
     if (!ld.isFunction(callback)) {
-      throw new TypeError('callback must be a function');
+      throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
     }
     user.fn.getIdsFromLogins(logins, function (err, uids) {
       if (err) { return callback(err); }
@@ -369,7 +371,8 @@ module.exports = (function () {
       return callback(null);
     }
     if (!ld.isString(params.password) || ld.isEmpty(params.password)) {
-      return callback(new Error('password is invalid'));
+      var err = new Error('BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT');
+      return callback(err);
     }
     hashPassword(undefined, params.password, function (err, res) {
       if (err) { return callback(err); }
@@ -393,8 +396,8 @@ module.exports = (function () {
       var padsKeys = ld.map(group.pads, function (p) { return PPREFIX + p; });
       storage.fn.delKeys(padsKeys, function (err, res) {
         if (err) { return callback(err); }
-        var e = 'something goes wrong with cascade pads removal';
-        if (!res) { return callback(new Error(e)); }
+        var e = new Error('BACKEND.ERROR.GROUP.CASCADE_REMOVAL_PROBLEM');
+        if (!res) { return callback(e); }
         callback(null);
       });
     } else {
@@ -478,8 +481,8 @@ module.exports = (function () {
     common.checkMultiExist(allKeys, function (err, res) {
       if (err) { return callback(err); }
       if (!res) {
-        var e = 'Some users, admins or pads have not been found';
-        return callback(new Error(e));
+        var e = new Error('BACKEND.ERROR.GROUP.ITEMS_NOT_FOUND');
+        return callback(e);
       }
       group.fn.set(g, callback);
     });

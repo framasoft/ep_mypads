@@ -71,7 +71,7 @@
         var params = { name: 'name', group: 'group1', _id: 'inexistent' };
         pad.set(params, function (err, p) {
           expect(ld.isError(err)).toBeTruthy();
-          expect(err).toMatch('pad does not exist');
+          expect(err).toMatch('PAD.INEXISTENT');
           expect(p).toBeUndefined();
           done();
         });
@@ -81,7 +81,7 @@
         var params = { name: 'name', group: 'inexistent' };
         pad.set(params, function (err, p) {
           expect(ld.isError(err)).toBeTruthy();
-          expect(err).toMatch('pad group');
+          expect(err).toMatch('PAD.ITEMS_NOT_FOUND');
           expect(p).toBeUndefined();
           done();
         });
@@ -97,7 +97,7 @@
           };
           pad.set(params, function (err, p) {
             expect(ld.isError(err)).toBeTruthy();
-            expect(err).toMatch('users are not found');
+            expect(err).toMatch('PAD.ITEMS_NOT_FOUND');
             expect(p).toBeUndefined();
             done();
           });
@@ -113,7 +113,7 @@
           };
           pad.set(params, function (err, p) {
             expect(ld.isError(err)).toBeTruthy();
-            expect(err).toMatch('pad does not exist');
+            expect(err).toMatch('PAD.INEXISTENT');
             expect(p).toBeUndefined();
             done();
           });

@@ -120,8 +120,8 @@ module.exports = (function () {
     keys.push(GPREFIX + p.group);
     common.checkMultiExist(keys, function (err, res) {
       if (err) { return callback(err); }
-      var e = 'pad group or at least one of the users are not found';
-      if (!res) { return callback(new Error(e)); }
+      var e = new Error('BACKEND.ERROR.PAD.ITEMS_NOT_FOUND');
+      if (!res) { return callback(e); }
       pad.fn.set(p, callback);
     });
   };
@@ -225,7 +225,9 @@ module.exports = (function () {
       p._id = params._id;
       common.checkExistence(PPREFIX + p._id, function (err, res) {
         if (err) { return callback(err); }
-        if (!res) { return callback(new Error('pad does not exist')); }
+        if (!res) {
+          return callback(new Error('BACKEND.ERROR.PAD.INEXISTENT'));
+        }
         pad.fn.checkSet(p, callback);
       });
     } else {
@@ -247,7 +249,7 @@ module.exports = (function () {
 
   pad.del = function (key, callback) {
     if (!ld.isFunction(callback)) {
-      throw new TypeError('callback must be a function');
+      throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
     }
     common.getDel(true, PPREFIX, key, function (err, p) {
       if (err) { return callback(err); }

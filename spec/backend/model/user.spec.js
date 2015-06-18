@@ -345,7 +345,7 @@
     it('should return an Error if the user is not found', function (done) {
       user.mark('inexistent', 'pads', 'pid', function (err) {
         expect(ld.isError(err)).toBeTruthy();
-        expect(err).toMatch('user not found');
+        expect(err).toMatch('USER.NOT_FOUND');
         done();
       });
     });
@@ -354,7 +354,7 @@
       function (done) {
         user.mark('parker', 'pads', 'pid', function (err) {
           expect(ld.isError(err)).toBeTruthy();
-          expect(err).toMatch('bookmark id not found');
+          expect(err).toMatch('BOOKMARK_NOT_FOUND');
           done();
         });
       }
@@ -582,11 +582,11 @@
           var u = { login: 'l', _id: '087654321' };
           user.fn.checkLogin(undefined, u, function (err) {
             expect(ld.isError(err)).toBeTruthy();
-            expect(err).toMatch('user already exists');
+            expect(err).toMatch('USER.ALREADY_EXISTS');
             u = { login: 'jerry', _id: 'anotherone' };
             user.fn.checkLogin(undefined, u, function (err) {
               expect(ld.isError(err)).toBeTruthy();
-              expect(err).toMatch('user already exists');
+              expect(err).toMatch('USER.ALREADY_EXISTS');
               done();
             });
           });

@@ -50,21 +50,21 @@ module.exports = (function() {
 
   common.addSetInit = function (params, callback, strFields) {
     if (!ld.isObject(params)) {
-      throw(new TypeError('parameters are mandatory for creation'));
+      throw new TypeError('BACKEND.ERROR.TYPE.PARAMS_REQUIRED');
     }
     if (!ld.isFunction(callback)) {
-      throw(new TypeError('callback must be a function'));
+      throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
     }
     if (!ld.isUndefined(params._id)) {
       if (!ld.isString(params._id) || (ld.isEmpty(params._id))) {
-        throw new TypeError('_id, when defined, must be a string');
+        throw new TypeError('BACKEND.ERROR.TYPE.ID_STR');
       }
     }
     if (strFields) {
       var isFS = function (s) { return (ld.isString(s) && !ld.isEmpty(s)); };
       ld.forEach(strFields, function (s) {
         if (!isFS(params[s])) {
-          throw new TypeError(s + ' must be a string');
+          throw new TypeError('BACKEND.ERROR.TYPE.PARAM_STR');
         }
       });
     }
@@ -130,15 +130,17 @@ module.exports = (function() {
   */
 
   common.getDel = function (del, PREFIX, key, callback) {
-    if (!ld.isString(key)) { throw new TypeError('key must be a string'); }
+    if (!ld.isString(key)) {
+      throw new TypeError('BACKEND.ERROR.TYPE.KEY_STR');
+    }
     if (!ld.isFunction(callback)) {
-      throw new TypeError('callback must be a function');
+      throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
     }
     key = PREFIX + key;
     storage.db.get(key, function (err, obj) {
       if (err) { return callback(err); }
       if (ld.isUndefined(obj)) {
-        return callback(new Error('key is not found'));
+        return callback(new Error('BACKEND.ERROR.CONFIGURATION.KEY_NOT_FOUND'));
       }
       if (!del) {
         return callback(null, obj);

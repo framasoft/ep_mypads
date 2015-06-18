@@ -82,7 +82,7 @@
       it('should not auth if user does not exist', function (done) {
         auth.fn.localFn('inexistent', 'none', function (err) {
           expect(ld.isError(err)).toBeTruthy();
-          expect(err).toMatch('user not found');
+          expect(err).toMatch('USER.NOT_FOUND');
           done();
         });
       });

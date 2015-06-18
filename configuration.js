@@ -165,6 +165,20 @@ module.exports = (function() {
     }
   };
 
+  /**
+  * Classic bootstrap : get configuration values from cache
+  */
+
+  db.findKeys(DBPREFIX + '*', null, function (err, keys) {
+    if (err) { return console.error(err); }
+    storage.fn.getKeys(keys, function (err, results) {
+      if (err) { return console.error(err); }
+      configuration.cache = ld.transform(results, function (memo, val, key) {
+        memo[key.replace(DBPREFIX, '')] = val;
+      });
+    });
+  });
+
   return configuration;
 
 }).call(this);

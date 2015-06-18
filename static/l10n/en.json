@@ -9,13 +9,17 @@
         "PASSWORD_STR": "Password must be a string",
         "PASSWORD_MISSING": "Missing password"
       },
+      "CONFIGURATION": {
+        "KEY_NOT_FOUND": "Key has not been found"
+      },
       "AUTHENTICATION": {
         "MUST_BE": "You must be authenticated",
         "NOT_AUTH": "Not authenticated",
         "PASSWORD_INCORRECT": "Password is not correct"
       },
-      "CONFIGURATION": {
-        "KEY_NOT_FOUND": "Key has not been found"
+      "PERMISSION": {
+        "UNEXPECTED": "Sorry, an unexpected has error has occured",
+        "UNAUTHORIZED": "You are not allowed to access to this pad.",
       }
     }
   },

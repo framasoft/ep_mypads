@@ -86,10 +86,14 @@ module.exports = (function () {
 
   perm.fn.check = function (req, res, next) {
     var unexpectedErr = function (err) {
-      return res.status(401).send('Sorry, an error has occured : ' + err);
+      return res.status(401).send({
+        error: 'BACKEND.ERROR.PERMISSION.UNEXPECTED',
+        extra: err
+      });
     };
     var refuse = function () {
-      res.status(403).send('You are not allowed to access to this pad.');
+      return res.status(403)
+        .send({ error: 'BACKEND.ERROR.PERMISSION.UNAUTHORIZED' });
     };
     var uid = req.session.uid || false;
     perm.fn.getPadAndGroup(req.params.pid, function (err, pg) {
@@ -124,7 +128,10 @@ module.exports = (function () {
 
   perm.fn.readonly = function (req, res, next) {
     var unexpectedErr = function (err) {
-      return res.status(401).send('Sorry, an error has occured : ' + err);
+      return res.status(401).send({
+        error: 'BACKEND.ERROR.PERMISSION.UNEXPECTED',
+        extra: err
+      });
     };
     perm.fn.getPadAndGroup(req.params.pid, function (err, pg) {
       if (err) { return unexpectedErr(err); }

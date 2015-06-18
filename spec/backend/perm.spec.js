@@ -141,12 +141,12 @@
         req.params.pid = pads.memories._id;
         perm.fn.check(req, res, next);
         expect(res.code).toBe(403);
-        expect(res.msg).toMatch('You are not allowed');
+        expect(res.msg.error).toMatch('UNAUTHORIZED');
 
         req.session.uid = users.jerry._id;
         perm.fn.check(req, res, next);
         expect(res.code).toBe(403);
-        expect(res.msg).toMatch('You are not allowed');
+        expect(res.msg.error).toMatch('UNAUTHORIZED');
       });
 
       it('should allow access for user invited', function (done) {
@@ -172,7 +172,7 @@
 
         perm.fn.check(req, res, next);
         expect(res.code).toBe(403);
-        expect(res.msg).toMatch('You are not allowed');
+        expect(res.msg.error).toMatch('UNAUTHORIZED');
       });
 
       it('should forbid access for private with bad password', function (done) {
@@ -185,7 +185,7 @@
         perm.fn.check(req, res, next);
         setTimeout(function () {
           expect(res.code).toBe(403);
-          expect(res.msg).toMatch('You are not allowed');
+          expect(res.msg.error).toMatch('UNAUTHORIZED');
           done();
         }, 200);
       });

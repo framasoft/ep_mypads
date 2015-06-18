@@ -29,7 +29,7 @@
       },
       "PERMISSION": {
         "UNEXPECTED": "Sorry, an unexpected has error has occured",
-        "UNAUTHORIZED": "You are not allowed to access to this pad.",
+        "UNAUTHORIZED": "You are not allowed to access to this pad"
       },
       "GROUP": {
         "INEXISTENT": "Group does not exist",
@@ -39,7 +39,7 @@
       "USER": {
         "ALREADY_EXISTS": "User already exists, please choose another login",
         "NOT_FOUND": "User not found",
-        "BOOKMARK_NOT_FOUND": "bookmark id not found"
+        "BOOKMARK_NOT_FOUND": "Bookmark not found"
       },
       "PAD": {
         "INEXISTENT": "Pad does not exist",

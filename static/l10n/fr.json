@@ -1,4 +1,52 @@
 {
+  "BACKEND": {
+    "ERROR": {
+      "TYPE": {
+        "PARAMS_REQUIRED": "Des paramètres sont obligatoires",
+        "PARAM_STR": "L'un des arguments devrait être une chaîne de caractères",
+        "CALLBACK_FN": "Callback doit être une fonction",
+        "KEY_STR": "Key doit être une chaîne de caractères",
+        "VALUE_REQUIRED": "Value est obligatoire",
+        "LOGIN_STR": "Login doit être une chaîne de caractères",
+        "PASSWORD_STR": "Password doit être une chaîne de caractères",
+        "PASSWORD_MISSING": "Le mot de passe est manquant",
+        "PASSWORD_SIZE": "La taille du mot de passe est invalide",
+        "ID_STR": "_id, lorsque défini, doit être une chaîne de caractères",
+        "USER_INVALID": "User n'est pas valide",
+        "WITHEXTRA_BOOL": "withExtra doit être un booléen",
+        "INVITE_BOOL": "Invite doit être un booléen",
+        "GID_STR": "gid doit être une chaîne de caractères",
+        "LOGINS_ARR": "logins doit être un tableau JavaScript",
+        "TYPE_PADSORGROUPS": "Type doit être soit pads, soit groups"
+      },
+      "CONFIGURATION": {
+        "KEY_NOT_FOUND": "Key n'a pas été trouvé"
+      },
+      "AUTHENTICATION": {
+        "MUST_BE": "Vous devez être authentifié",
+        "NOT_AUTH": "Pas authentifié",
+        "PASSWORD_INCORRECT": "Le mot de passe n'est pas correct"
+      },
+      "PERMISSION": {
+        "UNEXPECTED": "Désolé, une erreur inattendue s'est produite",
+        "UNAUTHORIZED": "Vous n'êtes pas autorisé à accéder à ce pad"
+      },
+      "GROUP": {
+        "INEXISTENT": "Le group n'existe pas",
+        "CASCADE_REMOVAL_PROBLEM": "Quelque chose s'est mal déroulé avec la suppression en cascade des pads",
+        "ITEMS_NOT_FOUND": "Des utilisateurs, administrateurs ou pads n'ont pas été trouvés"
+      },
+      "USER": {
+        "ALREADY_EXISTS": "L'utilisateur existe déjà, merci de choisir un autre identifiant",
+        "NOT_FOUND": "Utilisateur non trouvé",
+        "BOOKMARK_NOT_FOUND": "Favori non trouvé"
+      },
+      "PAD": {
+        "INEXISTENT": "Le pad n'existe pas",
+        "ITEMS_NOT_FOUND": "Le groupe rattaché à ce pad ou au moins l'un de ses utilisateurs n'a pas été trouvé"
+      }
+    }
+  },
   "GLOBAL": {
     "LANG": "Français",
     "DESCRIPTION": "MyPads est un plugin Etherpad qui a été financé en 2014 par une campagne sur Ulule. Il prend en charge<ul><li>des utilisateurs et leur authentification;</li><li>des groupes de pads par utilisateur, illimités et partageables;</li><li>les pads qui leur sont attachés, donne la possibilité d'inviter des utilisateurs connus à les utiliser, les rendre privés sous contrainte de mot de passe ou les fixer en accès public.</li></ul>",

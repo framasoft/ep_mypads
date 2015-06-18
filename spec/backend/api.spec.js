@@ -23,12 +23,10 @@
   var ld = require('lodash');
   var request = require('request');
   var api = require('../../api.js');
-  var storage = require('../../storage.js');
   var user = require('../../model/user.js');
   var group = require('../../model/group.js');
   var pad = require('../../model/pad.js');
   var specCommon = require('./common.js');
-  var CPREFIX = storage.DBPREFIX.CONF;
 
   describe('MyPads API', function () {
     /**
@@ -226,7 +224,6 @@
         var confRoute = route + 'configuration';
 
         beforeAll(function (done) {
-          var kv = { title: 'Amigo', field: 3 };
           conf.set('title', 'Amigo', function () {
             conf.set('field', 3, done);
           });

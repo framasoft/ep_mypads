@@ -62,21 +62,9 @@ module.exports = (function () {
   */
 
   api.init = function (app, language, callback) {
-    api.app = app;
-    app.locals.language = language;
-    app.locals.languages = {};
-    var fs = require('fs');
-    var ldir = 'l10n';
-    var locales = fs.readdirSync(ldir);
-    locales.forEach(function (f) {
-      var prefix = f.split('.')[0];
-      var data = fs.readFileSync(ldir + '/' + f);
-      app.locals.languages[prefix] = JSON.parse(data);
-    });
     // Use this for .JSON storage
     app.use(bodyParser.json());
     app.use('/mypads', express.static(__dirname + '/static'));
-    app.use(fn.handleLanguage);
     if (testMode) {
       // Only allow functional testing in testing mode
       app.use('/mypads/functest', express.static(__dirname + '/spec/frontend'));
@@ -167,28 +155,10 @@ module.exports = (function () {
 
   fn.ensureAuthentificated = function (req, res, next) {
     if (!req.isAuthenticated() && !req.session.login) {
-      var l = res.locals.language;
-      res.status(401).send({ error: l.AUTH.ERR.MUST_BE });
+      res.status(401).send({ error: 'BACKEND.ERROR.AUTHENTICATION.MUST_BE' });
     } else {
       return next();
     }
-  };
-
-  /**
-  * `handleLanguage` internal is an Express middleware that takes `req`, `res`
-  * and `next` classic request, result and callback chaining arguments.
-  * The function uses `app.locals.language` for default language choice. It
-  * sets this language with default if no one has been sent, using server-side
-  * `req.session`.
-  *
-  * TODO : really handle lang changes, and test it !
-  * Handle old and new for global change or not
-  * Use req.session if possible ?
-  */
-
-  fn.handleLanguage = function (req, res, next) {
-    res.locals.language = api.app.locals.languages[api.app.locals.language];
-    return next();
   };
 
   /**
@@ -260,8 +230,8 @@ module.exports = (function () {
         req.session.destroy();
         res.status(200).send({ success: true });
       } else {
-        var l = res.locals.language;
-        res.status(400).send({ error: l.AUTH.ERR.NOT_AUTH });
+        res.status(400)
+          .send({ error: 'BACKEND.ERROR.AUTHENTICATION.NOT_AUTH' });
       }
     });
 
@@ -311,7 +281,7 @@ module.exports = (function () {
       var value = conf.get(req.params.key);
       if (ld.isUndefined(value)) {
         return res.status(404).send({
-          error: res.locals.language.CONFIG.ERR.KEY_NOT_FOUND,
+          error: 'BACKEND.ERROR.CONFIGURATION.KEY_NOT_FOUND',
           key: req.params.key 
         });
       }

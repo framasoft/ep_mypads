@@ -4,11 +4,15 @@
       "TYPE": {
         "CALLBACK_FN": "Callback must be a function",
         "KEY_STR": "Key must be a string",
-        "VALUE_REQUIRED": "Value is mandatory"
+        "VALUE_REQUIRED": "Value is mandatory",
+        "LOGIN_STR": "Login must be a string",
+        "PASSWORD_STR": "Password must be a string",
+        "PASSWORD_MISSING": "Missing password"
       },
       "AUTHENTICATION": {
         "MUST_BE": "You must be authenticated",
-        "NOT_AUTH": "Not authenticated"
+        "NOT_AUTH": "Not authenticated",
+        "PASSWORD_INCORRECT": "Password is not correct"
       },
       "CONFIGURATION": {
         "KEY_NOT_FOUND": "Key has not been found"

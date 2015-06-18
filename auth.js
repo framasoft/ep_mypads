@@ -86,10 +86,12 @@ module.exports = (function () {
       passwordField: 'password'
     }, function (login, password, callback) {
       var isFS = function (s) { return (ld.isString(s) && !ld.isEmpty(s)); };
-      if (!isFS(login)) { throw new TypeError('login must be a string'); }
-      if (!isFS(password)) { throw new TypeError('password must be a string'); }
+      if (!isFS(login)) { throw new TypeError('BACKEND.ERROR.TYPE.LOGIN_STR'); }
+      if (!isFS(password)) {
+        throw new TypeError('BACKEND.ERROR.TYPE.PASSWORD_STR');
+      }
       if (!ld.isFunction(callback)) {
-        throw new TypeError('callback must be a function');
+        throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
       }
       auth.fn.localFn.apply(this, arguments);
     }));
@@ -116,7 +118,8 @@ module.exports = (function () {
       auth.fn.isPasswordValid(u, password, function (err, isValid) {
         if (err) { return callback(err); }
         if (!isValid) {
-          callback(new Error('password is not correct'), false);
+          var emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
+          callback(new Error(emsg), false);
         } else {
           callback(null, u);
         }
@@ -138,7 +141,7 @@ module.exports = (function () {
 
   auth.fn.isPasswordValid = function (u, password, callback) {
     if (!ld.isString(password)) {
-      return callback(new TypeError('missing password'));
+      return callback(new TypeError('BACKEND.ERROR.TYPE.PASSWORD_MISSING'));
     }
     user.fn.hashPassword(u.password.salt, password, function (err, res) {
       if (err) { callback(err); }

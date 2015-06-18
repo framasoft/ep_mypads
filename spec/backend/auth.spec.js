@@ -41,7 +41,7 @@
       it('should return an Error if password is not given', function (done) {
         expect(auth.fn.isPasswordValid(params, undefined, function (err) {
           expect(ld.isError(err));
-          expect(err).toMatch('password');
+          expect(err).toMatch('PASSWORD_MISSING');
           done();
         }));
       });
@@ -90,7 +90,7 @@
       it('should not auth if password does not match', function (done) {
         auth.fn.localFn(params.login, 'anotherOne', function (err, res) {
           expect(ld.isError(err)).toBeTruthy();
-          expect(err).toMatch('password is not correct');
+          expect(err).toMatch('PASSWORD_INCORRECT');
           expect(res).toBeFalsy();
           done();
         });

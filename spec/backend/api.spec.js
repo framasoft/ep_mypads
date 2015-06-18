@@ -187,7 +187,7 @@
             function (err, resp, body) {
               expect(err).toBeNull();
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toBe('Not authenticated');
+              expect(body.error).toMatch('AUTHENTICATION.NOT_AUTH');
               done();
             }
           );
@@ -207,7 +207,7 @@
               rq.get(route + 'configuration/inexistent',
                 function (err, resp, body) {
                   expect(err).toBeNull();
-                  expect(body.error).toMatch('must be authenticated');
+                  expect(body.error).toMatch('AUTHENTICATION.MUST_BE');
                   done();
                 }
               );
@@ -291,7 +291,7 @@
           function (done) {
             rq.get(confRoute + '/inexistent', function (err, resp, body) {
               expect(resp.statusCode).toBe(404);
-              expect(body.error).toMatch('Key has not been found');
+              expect(body.error).toMatch('CONFIGURATION.KEY_NOT_FOUND');
               expect(body.key).toBe('inexistent');
               done();
             });
@@ -397,7 +397,7 @@
               expect(body.key).toBe('field1');
               rq.get(confRoute + '/field1', function (err, resp, body) {
                 expect(resp.statusCode).toBe(404);
-                expect(body.error).toMatch('Key has not been found');
+                expect(body.error).toMatch('CONFIGURATION.KEY_NOT_FOUND');
                 expect(body.key).toBe('field1');
                 done();
               });

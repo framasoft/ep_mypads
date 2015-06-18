@@ -2,7 +2,9 @@
   "BACKEND": {
     "ERROR": {
       "TYPE": {
-        "CALLBACK_FN": "Callback must be a function"
+        "CALLBACK_FN": "Callback must be a function",
+        "KEY_STR": "Key must be a string",
+        "VALUE_REQUIRED": "Value is mandatory"
       },
       "AUTHENTICATION": {
         "MUST_BE": "You must be authenticated",

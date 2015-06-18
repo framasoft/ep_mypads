@@ -73,7 +73,7 @@ module.exports = (function() {
     init: function (callback) {
       callback = callback || function () {};
       if (!ld.isFunction(callback)) {
-        throw new TypeError('callback must be a function');
+        throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
       }
       configuration.cache = ld.clone(configuration.DEFAULTS, true);
       // Would like to use doBulk but not supported for all *ueberDB* backends
@@ -89,7 +89,7 @@ module.exports = (function() {
 
     get: function (key) {
       if (!ld.isString(key)) {
-        throw new TypeError('key must be a string');
+        throw new TypeError('BACKEND.ERROR.TYPE.KEY_STR');
       }
       return configuration.cache[key];
     },
@@ -108,13 +108,13 @@ module.exports = (function() {
 
     set: function (key, value, callback) {
       if (!ld.isString(key)) {
-        throw new TypeError('key must be a string');
+        throw new TypeError('BACKEND.ERROR.TYPE.KEY_STR');
       }
       if (ld.isUndefined(value)) {
-        throw new TypeError('value is mandatory');
+        throw new TypeError('BACKEND.ERROR.TYPE.VALUE_REQUIRED');
       }
       if (!ld.isFunction(callback)) {
-        throw new TypeError('callback must be a function');
+        throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
       }
       db.set(DBPREFIX + key, value, function (err) {
         if (err) { return callback(err); }
@@ -135,10 +135,10 @@ module.exports = (function() {
 
     del: function (key, callback) {
       if (!ld.isString(key)) {
-        throw new TypeError('key must be a string');
+        throw new TypeError('BACKEND.ERROR.TYPE.KEY_STR');
       }
       if (!ld.isFunction(callback)) {
-        throw new TypeError('callback must be a function');
+        throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
       }
       db.remove(DBPREFIX + key, function (err) {
         if (err) { return callback(err); }

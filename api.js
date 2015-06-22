@@ -205,13 +205,18 @@ module.exports = (function () {
         if (err) { return res.status(400).send({ error: err.message }); }
         if (!user) { return res.status(400).send({ error: info.message }); }
         req.login(user, function (err) {
-          req.session.uid = user._id;
-          req.session.login = user.login;
           if (err) { return res.status(400).send({ error: err }); }
-          res.status(200).send({
-            success: true,
-            user: ld.omit(user, 'password')
-          });
+          var finish = function () {
+            req.session.uid = user._id;
+            req.session.login = user.login;
+            req.session.color = user.color;
+            req.session.useLoginAndColorInPads = user.useLoginAndColorInPads;
+            res.status(200).send({
+              success: true,
+              user: ld.omit(user, 'password')
+            });
+          };
+          finish();
         });
       })(req, res, next);
     });
@@ -347,6 +352,11 @@ module.exports = (function () {
         key = req.params.key;
         value.login = req.body.login || key;
         value._id = user.ids[key];
+      }
+      // Update needed session values
+      req.session.color = req.body.color || req.session.color;
+      if (!ld.isUndefined(req.body.useLoginAndColorInPads)) {
+        req.session.useLoginAndColorInPads = req.body.useLoginAndColorInPads;
       }
       var setFn = ld.partial(user.set, value);
       fn.set(setFn, key, value, req, res);

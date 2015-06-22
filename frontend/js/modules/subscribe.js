@@ -55,8 +55,10 @@ module.exports = (function () {
       return m.route('/login');
     }
     c.fields = ['login', 'password', 'passwordConfirm', 'email', 'firstname',
-      'lastname', 'organization', 'lang'];
-    if (c.profileView()) { c.fields.push('passwordCurrent'); }
+      'lastname', 'organization', 'lang', 'color'];
+    if (c.profileView()) {
+      c.fields.push('passwordCurrent', 'useLoginAndColorInPads');
+    }
     form.initFields(c, c.fields);
     if (c.profileView()) {
       ld.map(c.fields, function (f) {
@@ -186,6 +188,9 @@ module.exports = (function () {
     if (c.profileView()) {
       var passC = user.view.field.passwordCurrent(c);
       requiredFields.splice(0, 0, passC.label, passC.input, passC.icon);
+      requiredFields.push(fields.useLoginAndColorInPads.label,
+        fields.useLoginAndColorInPads.input,
+        fields.useLoginAndColorInPads.icon);
     } else {
       var log = fields.login;
       requiredFields.splice(0, 0, log.label, log.input, log.icon);
@@ -204,7 +209,8 @@ module.exports = (function () {
         fields.firstname.label, fields.firstname.input, fields.firstname.icon,
         fields.lastname.label, fields.lastname.input, fields.lastname.icon,
         fields.organization.label, fields.organization.input,
-        fields.organization.icon
+        fields.organization.icon,
+        fields.color.label, fields.color.input, fields.color.icon
       ]),
       m('input.block.send', {
         form: 'subscribe-form',

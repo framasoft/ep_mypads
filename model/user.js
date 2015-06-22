@@ -182,7 +182,7 @@ module.exports = (function () {
 
   user.fn.assignProps = function (params) {
     var p = params;
-    var u = ld.reduce(['firstname', 'lastname', 'organization'],
+    var u = ld.reduce(['firstname', 'lastname', 'organization', 'color'],
       function (res, v) {
         res[v] = ld.isString(p[v]) ? p[v] : '';
         return res;
@@ -190,6 +190,11 @@ module.exports = (function () {
     u.email = (ld.isEmail(p.email)) ? p.email : '';
     u.groups = [];
     u.bookmarks = { groups: [], pads: [] };
+    if (ld.isBoolean(p.useLoginAndColorInPads)) {
+      u.useLoginAndColorInPads = p.useLoginAndColorInPads;
+    } else {
+      u.useLoginAndColorInPads = true;
+    }
     var langs = ld.keys(conf.cache.languages);
     u.lang = (ld.includes(langs, p.lang) ? p.lang : 'en');
     return ld.assign({ _id: p._id, login: p.login, password: p.password }, u);
@@ -370,6 +375,8 @@ module.exports = (function () {
   *   - optional `firstname` string
   *   - optional `lastname` string
   *   - optional `organization` string
+  *   - optional `color` string
+  *   - optional `useLoginAndColorInPads` boolean
   *
   * - a classic `callback` function returning *Error* if error, *null* otherwise
   *   and the user object

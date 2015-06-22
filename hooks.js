@@ -32,6 +32,7 @@ module.exports = (function () {
 
   // Dependencies
   var configuration = require('./configuration.js');
+  var padAndAuthor = require('./perm.js').padAndAuthor;
 
   var hooks = {};
 
@@ -71,6 +72,17 @@ module.exports = (function () {
       var lang = configuration.get('defaultLanguage');
       api.init(args.app, lang, callback);
     });
+  };
+
+  /**
+  * `clientVars` hook will use user login per default for pad `authorName` and
+  * profile selected `userColor`. Authenticated user can overwrite default
+  * values.
+  */
+
+  hooks.clientVars = function (name, context, callback) {
+    var opts = padAndAuthor[context.pad.id];
+    return callback(opts);
   };
 
   return hooks;

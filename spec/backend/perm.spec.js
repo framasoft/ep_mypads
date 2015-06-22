@@ -20,6 +20,7 @@
 (function () {
   'use strict';
 
+  var ld = require('lodash');
   var specCommon = require('./common.js');
   var perm = require('../../perm.js');
   var user = require('../../model/user.js');
@@ -245,6 +246,94 @@
           done();
         });
       });
+
+    });
+
+    describe('local function set name and color', function () {
+      var req = { params: {}, session: {} };
+      var res = {};
+
+      beforeEach(function () {
+        perm.padAndAuthor = {};
+      });
+
+      it('should do nothing if user does not want to use its params',
+        function (done) {
+          expect(ld.isObject(perm.padAndAuthor)).toBeTruthy();
+          expect(ld.isEmpty(perm.padAndAuthor)).toBeTruthy();
+          req.session.useLoginAndColorInPads = false;
+          perm.fn.setNameAndColor(req, res, function () {
+            expect(ld.isObject(perm.padAndAuthor)).toBeTruthy();
+            expect(ld.isEmpty(perm.padAndAuthor)).toBeTruthy();
+            done();
+          });
+        }
+      );
+
+      it('should use login but not color if no color is defined',
+        function (done) {
+          expect(ld.isObject(perm.padAndAuthor)).toBeTruthy();
+          expect(ld.isEmpty(perm.padAndAuthor)).toBeTruthy();
+          req.params.pid = 'azerty';
+          req.session = {
+            useLoginAndColorInPads: true,
+            login: 'parker',
+            color: null
+          };
+          perm.fn.setNameAndColor(req, res, function () {
+            expect(ld.size(ld.keys(perm.padAndAuthor))).toBe(1);
+            expect(ld.first(ld.keys(perm.padAndAuthor))).toBe('azerty');
+            var opts = perm.padAndAuthor.azerty;
+            expect(opts.userName).toBe('parker');
+            expect(opts.userColor).toBeUndefined();
+            done();
+          });
+        }
+      );
+
+      it('should use login and color if all are defined', function (done) {
+        expect(ld.isObject(perm.padAndAuthor)).toBeTruthy();
+        expect(ld.isEmpty(perm.padAndAuthor)).toBeTruthy();
+        req.params.pid = 'azerty';
+        req.session = {
+          useLoginAndColorInPads: true,
+          login: 'parker',
+          color: '#00ff00'
+        };
+        perm.fn.setNameAndColor(req, res, function () {
+          expect(ld.size(ld.keys(perm.padAndAuthor))).toBe(1);
+          expect(ld.first(ld.keys(perm.padAndAuthor))).toBe('azerty');
+          var opts = perm.padAndAuthor.azerty;
+          expect(opts.userName).toBe('parker');
+          expect(opts.userColor).toBe('#00ff00');
+          done();
+        });
+      });
+
+      it('should remember only the last options for a given pad',
+        function (done) {
+          req.params.pid = 'azerty';
+          req.session = {
+            useLoginAndColorInPads: true,
+            login: 'parker',
+            color: '#00ff00'
+          };
+          perm.fn.setNameAndColor(req, res, function () {
+            expect(ld.size(ld.keys(perm.padAndAuthor))).toBe(1);
+            expect(ld.first(ld.keys(perm.padAndAuthor))).toBe('azerty');
+            var opts = perm.padAndAuthor.azerty;
+            expect(opts.userName).toBe('parker');
+            expect(opts.userColor).toBe('#00ff00');
+            req.session.login = 'jerry';
+            perm.fn.setNameAndColor(req, res, function () {
+              expect(ld.size(ld.keys(perm.padAndAuthor))).toBe(1);
+              expect(ld.first(ld.keys(perm.padAndAuthor))).toBe('azerty');
+              expect(perm.padAndAuthor.azerty.userName).toBe('jerry');
+              done();
+            });
+          });
+        }
+      );
 
     });
 

@@ -542,7 +542,8 @@
             firstname: true,
             irrelevant: 123,
             email: 'brian@sample.net',
-            lang: 'fr'
+            lang: 'fr',
+            useLoginAndColorInPads: false
           };
           var u = user.fn.assignProps(params);
           expect(u._id).toBe('aMadeID');
@@ -557,6 +558,8 @@
           expect(ld.isString(ul) && ld.isEmpty(ul)).toBeTruthy();
           expect(ld.isArray(u.groups)).toBeTruthy();
           expect(ld.isEmpty(u.groups)).toBeTruthy();
+          expect(ld.isEmpty(u.color)).toBeTruthy();
+          expect(u.useLoginAndColorInPads).toBeFalsy();
           expect(u.irrelevant).toBeUndefined();
           params.email = 'notenamail@@@@';
           params.lang = 'notAValidOne';

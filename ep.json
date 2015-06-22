@@ -2,9 +2,11 @@
   "parts": [
     {
       "name": "ep_mypads",
+      "post": ["ep_etherpad-lite/static"],
       "hooks": {
         "expressCreateServer": "ep_mypads/hooks:expressCreateServer",
-        "init_ep_mypads": "ep_mypads/hooks:init"
+        "init_ep_mypads": "ep_mypads/hooks:init",
+        "clientVars": "ep_mypads/hooks:clientVars"
       },
       "client_hooks": {}
     }

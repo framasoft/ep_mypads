@@ -154,6 +154,30 @@ module.exports = (function () {
   };
 
   /**
+  * ### setNameAndColor
+  *
+  * Internal function `setNameAndColor` is an Express middleware used in
+  * conjunction with `padAndAuthor` public JS object. According to
+  * *req.session* values and user preference for `useLoginAndColorInPads`, it
+  * passes, for a given pad identifier, the last `login` and user `color`
+  * values.
+  */
+
+  perm.padAndAuthor = {};
+
+  perm.fn.setNameAndColor = function (req, res, next) {
+    if (req.session.useLoginAndColorInPads) {
+      var opts = { userName: req.session.login };
+      if (req.session.color) { opts.userColor = req.session.color; }
+      perm.padAndAuthor[req.params.pid] = opts;
+    } else {
+      delete perm.padAndAuthor[req.params.pid];
+    }
+    return next();
+  };
+
+
+  /**
   * ## Public functions
   *
   * ### init
@@ -169,6 +193,7 @@ module.exports = (function () {
   perm.init = function (app) {
     app.all('/p/:pid', perm.fn.check);
     app.all('/p/:pid', perm.fn.readonly);
+    app.all('/p/:pid', perm.fn.setNameAndColor);
   };
 
   return perm;

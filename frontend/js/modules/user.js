@@ -109,6 +109,15 @@ module.exports = (function () {
   };
 
   /**
+  * #### color icon
+  */
+
+  user.view.icon.color = function (c) {
+    return form.icon(c, 'color', conf.LANG.USER.INFO.COLOR,
+      conf.LANG.USER.ERR.COLOR);
+  };
+
+  /**
   * ### Fields
   *
   * Each `field` is a view returning three vdom elements :
@@ -251,6 +260,28 @@ module.exports = (function () {
   };
 
   /**
+  * #### useLoginAndColorInPads field
+  */
+
+  user.view.field.useLoginAndColorInPads = function (c) {
+    return {
+      label: m('label.block', { for: 'useLoginAndColorInPads' },
+        conf.LANG.USER.USELOGINANDCOLORINPADS),
+      icon: m('i',{
+        class: 'block tooltip icon-info-circled',
+        'data-msg': conf.LANG.USER.INFO.USELOGINANDCOLORINPADS
+      }),
+      input: m('input', {
+        type: 'checkbox',
+        name: 'useLoginAndColorInPads',
+        class: 'block',
+        checked: c.data.useLoginAndColorInPads(),
+        onchange: m.withAttr('checked', c.data.useLoginAndColorInPads)
+      })
+    };
+  };
+
+  /**
   * #### firstname field
   */
 
@@ -288,6 +319,22 @@ module.exports = (function () {
     ld.assign(fields.input.attrs, {
         type: 'text',
         placeholder: conf.LANG.USER.ORGANIZATION
+    });
+    return fields;
+  };
+
+  /**
+  * #### color field
+  */
+
+  user.view.field.color = function (c) {
+    var fields = form.field(c, 'color', conf.LANG.USER.COLOR,
+      user.view.icon.color(c));
+    ld.assign(fields.input.attrs, {
+      type: 'color',
+      placeholder: conf.LANG.USER.COLOR_SAMPLE,
+      maxlength: 7,
+      pattern: '#[0-9,a-f]{6}'
     });
     return fields;
   };

@@ -84,6 +84,7 @@ module.exports = (function () {
           firstname: first('input[name=firstname]'),
           lastname: first('input[name=lastname]'),
           organization: first('input[name=organization]'),
+          color: first('input[name=color]'),
           submit: first('input[type=submit]')
         }
       });

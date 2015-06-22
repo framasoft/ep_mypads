@@ -52,10 +52,12 @@ module.exports = (function () {
             common.user.beforeAll(app, 'a[href$=myprofile]',
               function (res) {
                 $el = res.$el; first = res.first; hash = res.hash;
-                ld.assign(
-                  $el,
-                  { passwordCurrent: first('input[name=passwordCurrent]') }
-                );
+                $el.color.type = 'text';
+                var uLCP = first('input[name=useLoginAndColorInPads]');
+                ld.assign($el, {
+                    passwordCurrent: first('input[name=passwordCurrent]'),
+                    useLoginAndColorInPads: uLCP
+                });
                 app.document.querySelector('body > section p').click();
                 done();
               }
@@ -96,6 +98,9 @@ module.exports = (function () {
           fill($el.password, 'lovesKubiaka');
           fill($el.passwordConfirm, 'badOne!!!!');
           fill($el.organization, 'Santo Domingo High');
+          fill($el.color, '#ff0000');
+          $el.useLoginAndColorInPads.checked = false;
+          $el.useLoginAndColorInPads.onchange($el.useLoginAndColorInPads);
           expect($el.form.checkValidity()).toBeTruthy();
           $el.submit.click();
           window.setTimeout(function () {

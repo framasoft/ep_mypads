@@ -41,6 +41,7 @@ module.exports = (function () {
     common.user.beforeAll(app, 'header nav > ul > li:last-child > a',
       function (res) {
         $el = res.$el; first = res.first; hash = res.hash;
+        $el.color.type = 'text';
         ld.assign($el, { login: first('input[name=login]') });
         done();
       }
@@ -64,6 +65,7 @@ module.exports = (function () {
         expect($el.firstname.checkValidity()).toBeTruthy();
         expect($el.lastname.checkValidity()).toBeTruthy();
         expect($el.organization.checkValidity()).toBeTruthy();
+        expect($el.color.checkValidity()).toBeTruthy();
         done();
       });
 
@@ -71,10 +73,12 @@ module.exports = (function () {
         fill($el.login, 'mikey');
         fill($el.password, 'short');
         fill($el.email, 'notamail');
+        fill($el.color, 'badHexCode');
         expect($el.form.checkValidity()).toBeFalsy();
         expect($el.login.checkValidity()).toBeTruthy();
         expect($el.password.checkValidity()).toBeFalsy();
         expect($el.email.checkValidity()).toBeFalsy();
+        expect($el.color.checkValidity()).toBeFalsy();
         done();
       });
 
@@ -84,6 +88,7 @@ module.exports = (function () {
           fill($el.password, 'betterPassword');
           fill($el.passwordConfirm, 'betterPassword123');
           fill($el.email, 'mikey@randall.me');
+          fill($el.color, '');
           expect($el.form.checkValidity()).toBeTruthy();
           expect($el.login.checkValidity()).toBeTruthy();
           expect($el.password.checkValidity()).toBeTruthy();
@@ -130,12 +135,14 @@ module.exports = (function () {
         fill($el.password, 'betterPassword123');
         fill($el.passwordConfirm, 'betterPassword123');
         fill($el.email, 'mikey@randall.me');
+        fill($el.color, '#00ff00');
         $el.lang.value = 'fr';
         $el.lang.onchange($el.lang);
         expect($el.form.checkValidity()).toBeTruthy();
         expect($el.login.checkValidity()).toBeTruthy();
         expect($el.password.checkValidity()).toBeTruthy();
         expect($el.email.checkValidity()).toBeTruthy();
+        expect($el.color.checkValidity()).toBeTruthy();
         $el.submit.click();
         window.setTimeout(function () {
           expect(app.location.search).not.toBe(hash);

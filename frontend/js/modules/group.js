@@ -41,6 +41,35 @@ module.exports = (function () {
   var group = {};
 
   /**
+  * ### mark
+  *
+  * `mark` public function takes a group object and adds or removes it from the
+  * bookmarks of the current user. It also can have a `successFn` function that
+  * is called after success.
+  */
+
+  group.mark = function (gid, successFn) {
+    var user = u();
+    var errfn = function (err) {
+      return notif.error({ body: ld.result(conf.LANG, err.error) });
+    };
+    if (ld.includes(user.bookmarks.groups, gid)) {
+      ld.pull(user.bookmarks.groups, gid);
+    } else {
+      user.bookmarks.groups.push(gid);
+    }
+    m.request({
+      url: conf.URLS.USERMARK,
+      method: 'POST',
+      data: { type: 'groups', key: gid }
+    }).then(function () {
+      notif.success({ body: conf.LANG.GROUP.MARK_SUCCESS });
+      if (successFn) { successFn(); }
+    }, errfn);
+  };
+
+
+  /**
   * ## Controller
   *
   * Used for module state and actions.
@@ -179,33 +208,6 @@ module.exports = (function () {
     };
 
 
-    /**
-    * ### mark
-    *
-    * `mark` function takes a group object and adds or removes it from the
-    * bookmarks of the current user.
-    */
-
-    c.mark = function (gid) {
-      var user = u();
-      var errfn = function (err) {
-        return notif.error({ body: ld.result(conf.LANG, err.error) });
-      };
-      if (ld.includes(user.bookmarks.groups, gid)) {
-        ld.pull(user.bookmarks.groups, gid);
-      } else {
-        user.bookmarks.groups.push(gid);
-      }
-      m.request({
-        url: conf.URLS.USERMARK,
-        method: 'POST',
-        data: { type: 'groups', key: gid }
-      }).then(function () {
-        c.computeGroups();
-        notif.success({ body: conf.LANG.GROUP.MARK_SUCCESS });
-      }, errfn);
-    };
-
     // Bootstrapping
     if (ld.isEmpty(model.data())) {
       model.fetch(c.computeGroups);
@@ -329,7 +331,7 @@ module.exports = (function () {
         }, g.name) ]),
         m('section.block', [
           m('a', {
-            onclick: c.mark.bind(c, g._id),
+            onclick: group.mark.bind(c, g._id, c.computeGroups),
             href: '/mypads',
             config: m.route,
             title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK)

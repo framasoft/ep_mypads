@@ -130,7 +130,7 @@ module.exports = (function () {
               m('span.block.actions', [
                 m('button', {
                   title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK),
-                  onclick: padMark.bind(c, p._id)
+                  onclick: function () { padMark(p._id); }
                 }, [
                   m('i',
                     { class: 'icon-star' + (isBookmarked ? '' : '-empty') })

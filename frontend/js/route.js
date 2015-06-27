@@ -34,6 +34,7 @@ module.exports = (function () {
   var login = require('./modules/login.js');
   var logout = require('./modules/logout.js');
   var subscribe = require('./modules/subscribe.js');
+  var bookmark = require('./modules/bookmark.js');
   var group = require('./modules/group.js');
   var groupView = require('./modules/group-view.js');
   var groupForm = require('./modules/group-form.js');
@@ -58,6 +59,7 @@ module.exports = (function () {
     '/logout': logout,
     '/subscribe': subscribe,
     '/myprofile': subscribe,
+    '/mybookmarks': bookmark,
     '/mypads': group,
     '/mypads/group': group,
     '/mypads/group/list': group,

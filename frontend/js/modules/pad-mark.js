@@ -38,10 +38,11 @@ module.exports = (function () {
   * ## Main function
   *
   * Used for authentication enforcement and confirmation before removal. In all
-  * cases, redirection to parent group view.
+  * cases, redirection to parent group view. An optional `successFn` can be
+  * given, called with no argument after successfull operation.
   */
 
-  return function (pid) {
+  return function (pid, successFn) {
     var user = auth.userInfo();
     if (ld.includes(user.bookmarks.pads, pid)) {
       ld.pull(user.bookmarks.pads, pid);
@@ -54,6 +55,7 @@ module.exports = (function () {
       data: { type: 'pads', key: pid }
     }).then(function () {
       notif.success({ body: conf.LANG.GROUP.MARK_SUCCESS });
+      if (successFn) { successFn(); }
     }, function (err) {
       return notif.error({ body: ld.result(conf.LANG, err.error) });
     });

@@ -448,7 +448,7 @@ module.exports = (function () {
               );
               data.pads = ld.transform(data.pads,
                 function (memo, val, key) {
-                  memo[key] = ld.pick(val, '_id', 'name');
+                  memo[key] = ld.pick(val, '_id', 'name', 'group');
                 }
               );
               data.users = ld.transform(data.users, function (memo, val, key) {

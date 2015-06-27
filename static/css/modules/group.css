@@ -20,7 +20,7 @@ section.group h3.title {
   padding: 0.25em;
 }
 
-section.group h3.title.bookmark { background-color: #52632a; }
+section.group h3.title.bookmark, section.group h3.title.pad { background-color: #52632a; }
 section.group h3.title.group, section.props h3.title { background-color: #3e3363; }
 section.group h3.title.archive { background-color: #666666; }
 section.pads h3.title { background-color: #0c5b7a; }
@@ -58,7 +58,7 @@ header.group > section {
   text-align: right;
 }
 
-header.group a, footer.group > a.add, dl.group dd a, section.pad li a, section.pad li button {
+header.group a, footer.group > a.add, dl.group dd a, section.pad li a, section.pad li button, ul.mark li button, ul.mark li a {
   color: #3e3363;
   font-weight: bold;
   text-decoration: none;
@@ -66,10 +66,10 @@ header.group a, footer.group > a.add, dl.group dd a, section.pad li a, section.p
   border: 0;
 }
 
-header.group a, section.pad li a, dl.group dd a, section.pad li button, section.pad {
+header.group a, section.pad li a, dl.group dd a, section.pad li button, section.pad, ul.mark li button, ul.mark li a {
   background: none;
 }
-header.group > a:focus, header.group a:hover, section.pad li a:hover, section.pad li button:hover, section.pad li a:focus, section.pad li button:focus {
+header.group > a:focus, header.group a:hover, section.pad li a:hover, section.pad li button:hover, ul.mark li button:hover, ul.mark li a:hover, section.pad li a:focus, section.pad li button:focus, ul.mark li button:focus, ul.mark li a:focus {
   background-color: #3e3363;
   color: #e0e0e0;
 }

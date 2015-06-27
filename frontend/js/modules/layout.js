@@ -54,11 +54,11 @@ module.exports = (function () {
           icon: 'doc-text',
           txt: conf.LANG.MENU.PAD
         },
-        /*{
+        {
           route: '/mybookmarks',
           icon: 'bookmarks',
           txt: conf.LANG.MENU.BOOKMARK
-        },*/
+        },
         {
           route: '/myprofile',
           icon: 'user',

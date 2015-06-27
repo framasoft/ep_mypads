@@ -417,7 +417,174 @@ module.exports = (function () {
 module.exports = (function () {
 }).call(this);
 
-},{}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js":[function(require,module,exports){
+},{}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/bookmark.js":[function(require,module,exports){
+/**
+*  # Bookmark List module
+*
+*  ## License
+*
+*  Licensed to the Apache Software Foundation (ASF) under one
+*  or more contributor license agreements.  See the NOTICE file
+*  distributed with this work for additional information
+*  regarding copyright ownership.  The ASF licenses this file
+*  to you under the Apache License, Version 2.0 (the
+*  "License"); you may not use this file except in compliance
+*  with the License.  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+*  Unless required by applicable law or agreed to in writing,
+*  software distributed under the License is distributed on an
+*  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+*  KIND, either express or implied.  See the License for the
+*  specific language governing permissions and limitations
+*  under the License.
+*
+*  ## Description
+*
+*  This module regroups all bookmarks from a logged users : groups, pads and,
+*  _soon_, other users.
+*/
+
+module.exports = (function () {
+  'use strict';
+  // Global dependencies
+  var m = require('mithril');
+  var ld = require('lodash');
+  // Local dependencies
+  var conf = require('../configuration.js');
+  var auth = require('../auth.js');
+  var u = auth.userInfo;
+  var layout = require('./layout.js');
+  var groupMark = require('./group.js').mark;
+  var padMark = require('./pad-mark.js');
+  var model = require('../model/group.js');
+
+  var bookmark = {};
+
+  /**
+  * ## Controller
+  *
+  * Used for module state and actions.
+  */
+
+  bookmark.controller = function () {
+    if (!auth.isAuthenticated()) {
+      return m.route('/login');
+    }
+
+    var c = {};
+
+    /**
+    * ### computeBookmarks
+    *
+    * `computeBookmarks` is an internal function that gathers bookmarks groups
+    * and pads.
+    */
+
+    c.computeBookmarks = function () {
+      var uMarks = u().bookmarks;
+      var items = function (data, marks) {
+        return  ld(data)
+          .values()
+          .filter(function (v) { return ld.includes(marks, v._id); })
+          .sortBy('name')
+          .value();
+      };
+      c.bookmarks = {
+        groups: items(model.data(), uMarks.groups),
+        pads: items(model.pads(), uMarks.pads)
+      };
+    };
+
+    /**
+    * ### unmark
+    *
+    * `unmark` function redirects to unmarking according to the type of the
+    * bookmark.
+    */
+
+    c.unmark = function (itemId, type) {
+      var action = (type === 'groups') ? groupMark : padMark;
+      action(itemId, c.computeBookmarks);
+    };
+
+    // Bootstrapping
+    if (ld.isEmpty(model.data())) {
+      model.fetch(c.computeBookmarks);
+    } else {
+      c.computeBookmarks();
+    }
+
+    return c;
+  };
+
+  /**
+  * ## Views
+  *
+  */
+
+  var view = {};
+
+  /**
+  * ### groups and pads
+  */
+
+  view._items = function (c, type, noneMsg) {
+    if (ld.size(c.bookmarks[type]) === 0) {
+      return m('p', noneMsg);
+    } else {
+      return m('ul.mark', ld.map(c.bookmarks[type], function (item) {
+        var route;
+        if (type === 'groups') {
+          route = '/mypads/group/' + item._id + '/view';
+        } else {
+          route = '/mypads/group/' + item.group + '/pad/view/' + item._id;
+        }
+        return m('li', [
+          m('a', { href: route, config: m.route }, item.name),
+          m('button', {
+            title: conf.LANG.GROUP.UNMARK,
+            onclick: ld.partial(c.unmark, item._id, type)
+          }, [ m('i.icon-star') ])
+        ]);
+      }));
+    }
+  };
+
+  view.groups = ld.partialRight(view._items, 'groups', conf.LANG.GROUP.NONE);
+  view.pads = ld.partialRight(view._items, 'pads', conf.LANG.GROUP.PAD.NONE);
+
+  view.aside = function () {
+    return m('section.user-aside', [
+      m('h2', conf.LANG.ACTIONS.HELP),
+      m('article', m.trust(conf.LANG.BOOKMARK.HELP))
+    ]);
+  };
+
+  view.main = function (c) {
+    return m('section', { class: 'block-group group' }, [
+      m('h2.block', conf.LANG.BOOKMARK.TITLE),
+      m('section.block pads', [
+        m('h3.title', conf.LANG.GROUP.GROUPS),
+        view.groups(c)
+      ]),
+      m('section.block users', [
+        m('h3.title', conf.LANG.GROUP.PAD.PADS),
+        view.pads(c)
+      ])
+    ]);
+  };
+
+  bookmark.view = function (c) {
+    return layout.view(view.main(c), view.aside(c));
+  };
+
+  return bookmark;
+
+}).call(this);
+
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","./group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./pad-mark.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-mark.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js":[function(require,module,exports){
 /**
 *  # Group form module
 *
@@ -900,7 +1067,7 @@ module.exports = (function () {
               m('span.block.actions', [
                 m('button', {
                   title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK),
-                  onclick: padMark.bind(c, p._id)
+                  onclick: function () { padMark(p._id); }
                 }, [
                   m('i',
                     { class: 'icon-star' + (isBookmarked ? '' : '-empty') })
@@ -1080,6 +1247,35 @@ module.exports = (function () {
   var group = {};
 
   /**
+  * ### mark
+  *
+  * `mark` public function takes a group object and adds or removes it from the
+  * bookmarks of the current user. It also can have a `successFn` function that
+  * is called after success.
+  */
+
+  group.mark = function (gid, successFn) {
+    var user = u();
+    var errfn = function (err) {
+      return notif.error({ body: ld.result(conf.LANG, err.error) });
+    };
+    if (ld.includes(user.bookmarks.groups, gid)) {
+      ld.pull(user.bookmarks.groups, gid);
+    } else {
+      user.bookmarks.groups.push(gid);
+    }
+    m.request({
+      url: conf.URLS.USERMARK,
+      method: 'POST',
+      data: { type: 'groups', key: gid }
+    }).then(function () {
+      notif.success({ body: conf.LANG.GROUP.MARK_SUCCESS });
+      if (successFn) { successFn(); }
+    }, errfn);
+  };
+
+
+  /**
   * ## Controller
   *
   * Used for module state and actions.
@@ -1218,33 +1414,6 @@ module.exports = (function () {
     };
 
 
-    /**
-    * ### mark
-    *
-    * `mark` function takes a group object and adds or removes it from the
-    * bookmarks of the current user.
-    */
-
-    c.mark = function (gid) {
-      var user = u();
-      var errfn = function (err) {
-        return notif.error({ body: ld.result(conf.LANG, err.error) });
-      };
-      if (ld.includes(user.bookmarks.groups, gid)) {
-        ld.pull(user.bookmarks.groups, gid);
-      } else {
-        user.bookmarks.groups.push(gid);
-      }
-      m.request({
-        url: conf.URLS.USERMARK,
-        method: 'POST',
-        data: { type: 'groups', key: gid }
-      }).then(function () {
-        c.computeGroups();
-        notif.success({ body: conf.LANG.GROUP.MARK_SUCCESS });
-      }, errfn);
-    };
-
     // Bootstrapping
     if (ld.isEmpty(model.data())) {
       model.fetch(c.computeGroups);
@@ -1368,7 +1537,7 @@ module.exports = (function () {
         }, g.name) ]),
         m('section.block', [
           m('a', {
-            onclick: c.mark.bind(c, g._id),
+            onclick: group.mark.bind(c, g._id, c.computeGroups),
             href: '/mypads',
             config: m.route,
             title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK)
@@ -1581,11 +1750,11 @@ module.exports = (function () {
           icon: 'doc-text',
           txt: conf.LANG.MENU.PAD
         },
-        /*{
+        {
           route: '/mybookmarks',
           icon: 'bookmarks',
           txt: conf.LANG.MENU.BOOKMARK
-        },*/
+        },
         {
           route: '/myprofile',
           icon: 'user',
@@ -2007,10 +2176,11 @@ module.exports = (function () {
   * ## Main function
   *
   * Used for authentication enforcement and confirmation before removal. In all
-  * cases, redirection to parent group view.
+  * cases, redirection to parent group view. An optional `successFn` can be
+  * given, called with no argument after successfull operation.
   */
 
-  return function (pid) {
+  return function (pid, successFn) {
     var user = auth.userInfo();
     if (ld.includes(user.bookmarks.pads, pid)) {
       ld.pull(user.bookmarks.pads, pid);
@@ -2023,6 +2193,7 @@ module.exports = (function () {
       data: { type: 'pads', key: pid }
     }).then(function () {
       notif.success({ body: conf.LANG.GROUP.MARK_SUCCESS });
+      if (successFn) { successFn(); }
     }, function (err) {
       return notif.error({ body: ld.result(conf.LANG, err.error) });
     });
@@ -3209,6 +3380,7 @@ module.exports = (function () {
   var login = require('./modules/login.js');
   var logout = require('./modules/logout.js');
   var subscribe = require('./modules/subscribe.js');
+  var bookmark = require('./modules/bookmark.js');
   var group = require('./modules/group.js');
   var groupView = require('./modules/group-view.js');
   var groupForm = require('./modules/group-form.js');
@@ -3233,6 +3405,7 @@ module.exports = (function () {
     '/logout': logout,
     '/subscribe': subscribe,
     '/myprofile': subscribe,
+    '/mybookmarks': bookmark,
     '/mypads': group,
     '/mypads/group': group,
     '/mypads/group/list': group,
@@ -3253,7 +3426,7 @@ module.exports = (function () {
   return route;
 }).call(this);
 
-},{"./modules/admin.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/group-form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./modules/group-remove.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js","./modules/group-view.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-view.js","./modules/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/pad-add.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-add.js","./modules/pad-remove.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-remove.js","./modules/pad-view.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-view.js","./modules/subscribe.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","./modules/user-invitation.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/user-invitation.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js":[function(require,module,exports){
+},{"./modules/admin.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/bookmark.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/bookmark.js","./modules/group-form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./modules/group-remove.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js","./modules/group-view.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-view.js","./modules/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/pad-add.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-add.js","./modules/pad-remove.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-remove.js","./modules/pad-view.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-view.js","./modules/subscribe.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","./modules/user-invitation.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/user-invitation.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js":[function(require,module,exports){
 /**
 *  # Notification module
 *
@@ -16801,7 +16974,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/home/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {
@@ -16944,6 +17117,7 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
     "HELP": "Groups contain pads, you need at least to create one of them",
     "GROUP": "Group",
     "GROUPS": "Groups",
+    "NONE": "No group",
     "BOOKMARKED": "Bookmarked groups",
     "ARCHIVED": "Archived groups",
     "ADD": "Add a new group",
@@ -17031,6 +17205,10 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
     "ERR": {
       "NAME": "The name of the group is required"
     }
+  },
+  "BOOKMARK": {
+    "TITLE": "My Bookmarks",
+    "HELP": "<p>Bookmark page offers you the ability to see all your bookmarked elements from MyPads. You can remove them from bookmarks if you want to.</p>"
   }
 }
 

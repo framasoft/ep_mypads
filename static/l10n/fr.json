@@ -141,6 +141,7 @@
     "HELP": "Les groupes contiennent des pads. Vous avez besoin de créer au moins un groupe.",
     "GROUP": "Groupe",
     "GROUPS": "Groupes",
+    "NONE": "Aucun groupe",
     "BOOKMARKED": "Favoris",
     "ARCHIVED": "Archivés",
     "ADD": "Créer un nouveau groupe",
@@ -228,5 +229,9 @@
     "ERR": {
       "NAME": "Le nom du groupe est nécessaire"
     }
+  },
+  "BOOKMARK": {
+    "TITLE": "Mes favoris",
+    "HELP": "<p>La page de favoris vous permet de voir l'ensemble des éléments de MyPads que vous avez mis en favori et éventuellement de les en supprimer.</p>"
   }
 }

@@ -272,7 +272,8 @@ module.exports = (function () {
   *
   * Local `getDel` wrapper that uses `user.ids` object to ensure uniqueness of
   * login and _id fields before returning `common.getDel` with *UPREFIX* fixed.
-  * It also handles secondary indexes for *model.group* elements.
+  * It also handles secondary indexes for *model.group* elements and removes
+  * all groups where the user was the only administrator.
   *
   * It takes the mandatory `login` string as argument and return an error if
   * login already exists. It also takes a mandatory `callback` function.
@@ -297,14 +298,21 @@ module.exports = (function () {
             function (err, groups) {
               if (err) { return callback(err); }
               groups = ld.reduce(groups, function (memo, g) {
-                ld.pull(g.users, u._id);
-                ld.pull(g.admins, u._id);
-                memo[GPREFIX + g._id] = g;
+                if (g.admins.length === 1) {
+                  memo.del.push(GPREFIX + g._id);
+                } else {
+                  ld.pull(g.users, u._id);
+                  ld.pull(g.admins, u._id);
+                  memo.set[GPREFIX + g._id] = g;
+                }
                 return memo;
-              }, {});
-              storage.fn.setKeys(groups, function (err) {
+              }, { set: {}, del: [] });
+              storage.fn.setKeys(groups.set, function (err) {
                 if (err) { return callback(err); }
-                callback(null, u);
+                storage.fn.delKeys(groups.del, function (err) {
+                  if (err) { return callback(err); }
+                  callback(null, u);
+                });
               });
             }
           );

@@ -262,9 +262,23 @@
           password: 'lovesKubiak',
           firstname: 'Parker',
           lastname: 'Lewis'
-        }, function (err, u) {
+        }, function (err, parker) {
           if (err) { console.log(err); }
-          group.set({ name: 'college', admin: u._id }, done);
+          user.set({
+            login: 'frank',
+            password: 'frankfrank'
+          }, function (err, frank) {
+            if (err) { console.log(err); }
+            group.set({
+              name: 'withFrank',
+              admin: parker._id,
+              admins: [frank._id]
+            }, function (err) {
+                if (err) { console.log(err); }
+                group.set({ name: 'college', admin: parker._id }, done);
+              }
+            );
+          });
         });
       });
     });
@@ -287,7 +301,8 @@
       });
     });
 
-    it('should delete the user otherwise and pops it from its eventual groups',
+    it('should delete the user otherwise and pops it from shared groups, ' +
+      'and removes from unique owner groups',
       function (done) {
         user.del('parker', function (err, _u) {
           expect(err).toBeNull();
@@ -300,7 +315,11 @@
             group.get(_u.groups[0], function (err, g) {
               expect(err).toBeNull();
               expect(ld.includes(g.admins, _u._id)).toBeFalsy();
-              done();
+              group.get(_u.groups[1], function (err, g) {
+                expect(err).toMatch('KEY_NOT_FOUND');
+                expect(g).toBeUndefined();
+                done();
+              });
             });
           });
         });

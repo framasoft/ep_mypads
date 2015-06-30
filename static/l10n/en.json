@@ -106,6 +106,7 @@
     "UNDEF": "********",
     "OK": "Ok",
     "REGISTER": "Register",
+    "REMOVE_ACCOUNT": "Remove my account",
     "INFO": {
       "LOGIN": "The unique login you choose when you have subscribed",
       "EMAIL": "The email is required for password recovery",
@@ -116,7 +117,10 @@
       "PASSWORD_END": " characters",
       "PASSWORD_CHECK": "For verification : must be the same as password",
       "PASSWORD_CURRENT": "Security check : required for all profile changes",
-      "OPTIONAL": "Optional field"
+      "OPTIONAL": "Optional field",
+      "REMOVE_ACCOUNT": "Remove definitively your account and all the groups and pads on which you are the unique administrator",
+      "REMOVE_ACCOUNT_SURE": "You are on the verge of removing definitively your account and all the groups and pads on which you are the unique administrator. If you are really sure about what you are doing, please enter your current password and click OK",
+      "REMOVE_ACCOUNT_SUCCESS": "Account removed with success"
     },
     "ERR": {
       "LOGIN": "Login is required",

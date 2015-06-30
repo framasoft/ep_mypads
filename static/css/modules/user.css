@@ -40,6 +40,25 @@ i.icon-cancel {
   cursor: pointer;
 } 
 
+section.remove-account {
+  padding-top: 1em;
+  width: 100%;
+}
+section.remove-account button {
+  padding: 0.7em;
+  margin-left: 2em;
+  width: 90%;
+  border: 0.1em solid #e0e0e0;
+  border-radius: 0.3em;
+  color: #fde0dc;
+  background-color: #cc2d18;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+section.remove-account button:hover, section.remove-account button:focus {
+  background-color: #4e342e;
+}
+
 /* Tablet and Up */
 @media (min-width: 40em) {
   section.user { width: 80%; }

@@ -56,7 +56,8 @@ module.exports = (function () {
                 var uLCP = first('input[name=useLoginAndColorInPads]');
                 ld.assign($el, {
                     passwordCurrent: first('input[name=passwordCurrent]'),
-                    useLoginAndColorInPads: uLCP
+                    useLoginAndColorInPads: uLCP,
+                    removeAccount: first('section.remove-account button')
                 });
                 app.document.querySelector('body > section p').click();
                 done();
@@ -64,6 +65,14 @@ module.exports = (function () {
             );
           }, 200);
         }, 200);
+      });
+
+      afterAll(function (done) {
+        first('a[href$=logout]').click();
+        window.setTimeout(function () {
+          first('body > section p').click();
+          done();
+        }, 100);
       });
 
       it('should displays login name into the page title', function () {
@@ -108,12 +117,21 @@ module.exports = (function () {
             var $notif = first('body > section p');
             expect($notif.innerHTML).toMatch('Profile successfully updated');
             $notif.click();
-            first('a[href$=logout]').click();
-            window.setTimeout(function () {
-              first('body > section p').click();
-              done();
-            }, 100);
+            done();
           }, 200);
+        }
+      );
+
+      it('should cancel an account removal if canceled or bad password',
+        function (done) {
+          app.window.prompt = function () { return 'badPassword'; };
+          $el.removeAccount.click();
+          window.setTimeout(function () {
+            var $err = first('body > section p');
+            expect($err.innerHTML).toMatch('Password is not correct');
+            $err.click();
+            done();
+          }, 100);
         }
       );
 

@@ -106,6 +106,7 @@
     "UNDEF": "********",
     "OK": "Ok",
     "REGISTER": "S'enregistrer",
+    "REMOVE_ACCOUNT": "Supprimer mon compte",
     "INFO": {
       "LOGIN": "L'identifiant unique que vous avez choisi lorsque vous vous êtes inscrit",
       "EMAIL": "L'adresse mail est nécessaire pour la procédure de récupération de mot de passe",
@@ -116,7 +117,10 @@
       "PASSWORD_END": " caractères",
       "PASSWORD_CHECK": "Pour confirmer : doit être le même que le mot de passe",
       "PASSWORD_CURRENT": "Mesure de sécurité : nécessaire pour tout changement sur le profil",
-      "OPTIONAL": "Champ optionnel"
+      "OPTIONAL": "Champ optionnel",
+      "REMOVE_ACCOUNT": "Supprimer définitivement votre compte et tous les groupes et pads desquels vous êtes l'unique administrateur",
+      "REMOVE_ACCOUNT_SURE": "Vous êtes sur le point de supprimer définitivement votre compte ainsi que tous les groupes et pads dont vous êtes l'unique administrateur. Si vous êtes réellement sûr de ce que vous faisez, merci de saisir votre mot de passe et de cliquer sur OK",
+      "REMOVE_ACCOUNT_SUCCESS": "Compte supprimé avec succès"
     },
     "ERR": {
       "LOGIN": "Un identifiant est nécessaire",

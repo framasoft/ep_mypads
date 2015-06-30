@@ -74,12 +74,14 @@ module.exports = (function () {
     * ### submit
     *
     * Submissions of forms.
+    * `errfn` helper with error notification
     */
 
-    c.submit = {};
     var errfn = function (err) {
       return notif.error({ body: ld.result(conf.LANG, err.error) });
     };
+
+    c.submit = {};
 
     /**
     * #### submit.subscribe
@@ -158,6 +160,37 @@ module.exports = (function () {
       }, errfn);
     };
 
+    /**
+    * #### removeAccount
+    *
+    * This function :
+    *
+    * - inform the user about that no return will be possible
+    * - asks for the current password and checks it
+    * - remove the user and its groupds and pads, server-side
+    * - logout the user
+    * - and redirects him to the homepage
+    */
+
+    c.removeAccount = function () {
+      var password = window.prompt(conf.LANG.USER.INFO.REMOVE_ACCOUNT_SURE);
+      if (password) {
+        m.request({
+          method: 'POST',
+          url: conf.URLS.CHECK,
+          data: { login: auth.userInfo().login, password: password }
+        }).then(function () {
+          m.request({
+            method: 'DELETE',
+            url: conf.URLS.USER + '/' + auth.userInfo().login
+          }).then(function () {
+            m.route('/logout');
+            notif.success({ body: conf.LANG.USER.INFO.REMOVE_ACCOUNT_SUCCESS });
+          }, errfn);
+        }, errfn);
+      }
+    };
+
     return c;
   };
 
@@ -221,6 +254,27 @@ module.exports = (function () {
   };
 
   /**
+  * ### removeAccount
+  *
+  * `removeAccount` is the view intended to allow user to erase completely its
+  * account.
+  *
+  * TODO: window.input? for password check and go
+  */
+
+  view.removeAccount = function (c) {
+    return m('section.remove-account.block-group', [
+      m('button.block', {
+        onclick: c.removeAccount
+      }, conf.LANG.USER.REMOVE_ACCOUNT),
+      m('i', {
+        class: 'icon-info-circled tooltip block',
+        'data-msg': conf.LANG.USER.INFO.REMOVE_ACCOUNT
+      })
+    ]);
+  };
+
+  /**
   * ### main and global view
   *
   * Views with cosmetic and help changes according to the current page.
@@ -235,7 +289,8 @@ module.exports = (function () {
     }
     return m('section', { class: 'block-group user' }, [
       m('h2.block', h2txt),
-      view.form(c)
+      view.form(c),
+      view.removeAccount(c)
     ]);
   };
 

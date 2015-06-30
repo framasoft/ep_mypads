@@ -212,6 +212,9 @@
       "ADD": "Créer un nouveau pad",
       "ADD_PROMPT": "Saisissez le nom du nouveau pad",
       "EDIT_PROMPT": "Saisissez le nouveau nom du pad",
+      "MOVE": "Déplacer tous les pads vers un autre groupe",
+      "MOVE_TITLE": "Migration des pads du groupe ",
+      "MOVE_HELP": "<p>Merci de sélectionner le groupe souhaité pour votre migration. Seuls les groupes pour lesquels vous êtes administrateur apparaisent.</p><p>Une fois choisi, cliquez sur le bouton d'envoi et attendez un moment</p>",
       "FROM_GROUP": "groupe :",
       "VIEW_HELP": "<p>Vous voici sur l'interface principale du pad affiché.</p><p>Si le groupe ou le pad est privé, vous aurez besoin de saisir le mot de passe pour y avoir accès.</p><p>Si vous voulez revenir au groupe, vous pouvez cliquer sur le nom de celui-ci.</p>",
       "OPEN_TAB": "Ouvrir dans un nouvel onglet"
@@ -228,7 +231,10 @@
       "PAD_REMOVE_SUCCESS": "Le pad a été supprimé avec succès",
       "PAD_REMOVE_SURE": "Êtes-vous sûr de vouloir supprimer ce pad ?",
       "PAD_ADD_SUCCESS": "Le pad a été créé avec succès",
-      "PAD_EDIT_SUCCESS": "Le pad a été mis à jour avec succès"
+      "PAD_EDIT_SUCCESS": "Le pad a été mis à jour avec succès",
+      "PAD_MOVE": "Choisissez le groupe souhaité pour votre migration",
+      "PAD_MOVE_NOGROUP": "Désolé mais aucun autre groupe n'est disponible. Vous devriez en créer un d'abord.",
+      "PAD_MOVE_SUCCESS": "Tous les pads ont été déplacés avec succès"
     },
     "ERR": {
       "NAME": "Le nom du groupe est nécessaire"

@@ -109,9 +109,17 @@ module.exports = (function () {
     var route = '/mypads/group/' + c.group._id;
     var GROUP = conf.LANG.GROUP;
     return m('section.pad', [
-      m('a.add', { href: route + '/pad/add', config: m.route }, [
-        m('i.icon-plus-squared'),
-        conf.LANG.GROUP.PAD.ADD
+      m('p', [
+        m('a.add', { href: route + '/pad/add', config: m.route }, [
+          m('i.icon-plus-squared'),
+          conf.LANG.GROUP.PAD.ADD
+        ])
+      ]),
+      m('p', [
+        m('a.move', { href: route + '/pad/move', config: m.route }, [
+          m('i.icon-forward'),
+          conf.LANG.GROUP.PAD.MOVE
+        ])
       ]),
       (function () {
         if (ld.size(c.group.pads) === 0) {

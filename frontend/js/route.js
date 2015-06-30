@@ -42,6 +42,7 @@ module.exports = (function () {
   var padAdd = require('./modules/pad-add.js');
   var padRemove = require('./modules/pad-remove.js');
   var padView = require('./modules/pad-view.js');
+  var padMove = require('./modules/pad-move.js');
   var userInvite = require('./modules/user-invitation.js');
   var admin = require('./modules/admin.js');
 
@@ -68,6 +69,7 @@ module.exports = (function () {
     '/mypads/group/:key/edit': groupForm,
     '/mypads/group/:key/remove': groupRemove,
     '/mypads/group/:group/pad/add': padAdd,
+    '/mypads/group/:group/pad/move': padMove,
     '/mypads/group/:group/pad/edit/:pad': padAdd,
     '/mypads/group/:group/pad/remove/:pad': padRemove,
     '/mypads/group/:group/pad/view/:pad': padView,

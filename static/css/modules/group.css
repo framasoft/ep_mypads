@@ -119,7 +119,7 @@ footer.group > ul > li.active {
 
 /* Pads specific */
 
-a.add {
+a.add, a.move {
   font-weight: bold;
   background: none;
 }
@@ -128,7 +128,7 @@ section.pad a.add:focus, section.pad a.add:hover {
   color: #e1f8fc;
   background: #0c5b7a;
 }
-section.users a.add { color: #757575; }
+section.users a.add, a.move { color: #757575; }
 
 section.pad li span.block.name { width: 65%; }
 section.pad li span.block.actions { width: 35%; }

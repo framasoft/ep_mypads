@@ -175,10 +175,18 @@ module.exports = (function () {
   pad.fn.set = function (p, callback) {
     storage.db.set(PPREFIX + p._id, p, function (err) {
       if (err) { return callback(err); }
-      pad.fn.indexGroups(false, p, function (err) {
+      var indexFn = function (err) {
         if (err) { return callback(err); }
-        callback(null, p);
-      });
+        pad.fn.indexGroups(false, p, function (err) {
+          if (err) { return callback(err); }
+          callback(null, p);
+        });
+      };
+      if (p.moveGroup) {
+        pad.fn.indexGroups(true, { _id: p._id, group: p.moveGroup }, indexFn);
+      } else {
+        indexFn(null);
+      }
     });
   };
 
@@ -198,8 +206,9 @@ module.exports = (function () {
   * ### set
   *
   * This function adds a new pad or updates properties of an existing one.
-  * It checks the fields, throws error if needed, sets defaults options. As
-  * arguments, it takes mandatory :
+  * It fixes a flag if the group has changed, to ensure correct local index
+  * updates. It checks the fields, throws error if needed, sets defaults
+  * options. As arguments, it takes mandatory :
   *
   * - `params` object, with
   *
@@ -223,11 +232,12 @@ module.exports = (function () {
     var p = pad.fn.assignProps(params);
     if (params._id) {
       p._id = params._id;
-      common.checkExistence(PPREFIX + p._id, function (err, res) {
+      storage.db.get(PPREFIX + p._id, function(err, res) {
         if (err) { return callback(err); }
         if (!res) {
           return callback(new Error('BACKEND.ERROR.PAD.INEXISTENT'));
         }
+        if (res.group !== p.group) { p.moveGroup = res.group; }
         pad.fn.checkSet(p, callback);
       });
     } else {

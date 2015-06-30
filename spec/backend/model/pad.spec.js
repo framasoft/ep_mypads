@@ -216,6 +216,29 @@
           });
         });
       });
+
+      it('should handle gracefully group changing', function (done) {
+        group.set({ name: 'memories', admin: guser._id }, function (err, g) {
+          expect(err).toBeNull();
+          var oldGroup = gpad.group;
+          gpad.group = g._id;
+          pad.set(gpad, function (err, p) {
+            expect(err).toBeNull();
+            expect(p._id).toBe(gpad._id);
+            expect(p.name).toBe('shellyNator');
+            group.get(p.group, function (err, g) {
+              expect(err).toBeNull();
+              expect(ld.includes(g.pads, p._id)).toBeTruthy();
+              group.get(oldGroup, function (err, g) {
+                expect(err).toBeNull();
+                expect(ld.includes(g.pads, p._id)).toBeFalsy();
+                done();
+              });
+            });
+          });
+        });
+      });
+
     });
 
     describe('pad get', function () {

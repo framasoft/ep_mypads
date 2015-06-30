@@ -17029,7 +17029,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {

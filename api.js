@@ -162,6 +162,21 @@ module.exports = (function () {
   };
 
   /**
+  * `ensureAdmin` internal is an Express middleware that takes classic `req`,
+  * `res` and `next`. It returns an error if the connected user is not
+  * autenticated by Etherpad as the instance admin (ATM via /admin).
+  */
+
+  fn.ensureAdmin = function (req, res, next) {
+    var isAdmin = (req.session.user && req.session.user.isAdmin);
+    if (!isAdmin) {
+      res.status(401).send({ error: 'BACKEND.ERROR.AUTHENTICATION.ADMIN' });
+    } else {
+      return next();
+    }
+  };
+
+  /**
   * ## Authentication API
   */
 
@@ -266,7 +281,8 @@ module.exports = (function () {
 
     app.get(confRoute, function (req, res) {
       var isAuth = (req.isAuthenticated() || !!req.session.mypadsLogin);
-      var action = isAuth ? 'all' : 'public';
+      var isAdmin = (req.session.user && req.session.user.isAdmin);
+      var action = isAdmin ? 'all' : 'public';
       var value = conf[action]();
       var resp = { value: value, auth: isAuth };
       if (isAuth) {

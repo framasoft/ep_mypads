@@ -164,6 +164,7 @@ module.exports = (function () {
   * - uses of passport middlwares for express
   * - launch session middleware bundled with express, using secret phrase saved
   *   in database
+  * - mocks admin behavior if in testingMode
   */
 
   auth.init = function (app) {
@@ -180,6 +181,16 @@ module.exports = (function () {
         saveUninitialized: false,
         cookie: { maxAge: hour }
       }));
+      app.get('/admin', function (req, res) {
+        if (!req.session) { req.session = {}; }
+        req.session.user = { isAdmin: true };
+        return res.status(200).send({ success: true });
+      });
+      app.get('/admin/logout', function (req, res) {
+        if (!req.session) { req.session = {}; }
+        req.session.user = { isAdmin: false };
+        return res.status(200).send({ success: true });
+      });
     }
   };
 

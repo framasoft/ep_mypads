@@ -34,6 +34,8 @@
     * initializate API routes.
     */
     var route = 'http://127.0.0.1:8042' + api.initialRoute;
+    var adminRoute = 'http://127.0.0.1:8042/admin';
+    var adminLogoutRoute = adminRoute + '/logout';
     var rq;
     var conf = require('../../configuration.js');
     var j = request.jar();
@@ -271,17 +273,39 @@
           });
         });
 
-        it('should reply with all settings with GET method', function (done) {
-          rq.get(confRoute, function (err, resp, body) {
-            expect(err).toBeNull();
-            expect(resp.statusCode).toBe(200);
-            expect(ld.isObject(body.value)).toBeTruthy();
-            expect(body.value.field1).toBe(8);
-            expect(body.value.field2).toBe(3);
-            expect(ld.size(body.value.field3)).toBe(2);
-            done();
-          });
-        });
+        it('should reply with filtered settings with GET and no admin role',
+          function (done) {
+            rq.get(confRoute, function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(200);
+              expect(ld.isObject(body.value)).toBeTruthy();
+              expect(body.value.title).toBeDefined();
+              expect(body.value.field1).toBeUndefined();
+              expect(body.value.field2).toBeUndefined();
+              done();
+            });
+          }
+        );
+
+        it('should reply with all settings with GET method if admin',
+          function (done) {
+            rq.get(adminRoute, function (err) {
+              expect(err).toBeNull();
+              rq.get(confRoute, function (err, resp, body) {
+                expect(err).toBeNull();
+                expect(resp.statusCode).toBe(200);
+                expect(ld.isObject(body.value)).toBeTruthy();
+                expect(body.value.field1).toBe(8);
+                expect(body.value.field2).toBe(3);
+                expect(ld.size(body.value.field3)).toBe(2);
+                rq.get(adminLogoutRoute, function (err) {
+                  expect(err).toBeNull();
+                  done();
+                });
+              });
+            });
+          }
+        );
       });
 
       describe('configuration.get GET key', function () {

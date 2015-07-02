@@ -274,9 +274,6 @@ module.exports = (function () {
     *
     * Sample URL:
     * http://etherpad.ndd/mypads/api/configuration
-    *
-    * TODO: disallow whole configuration when authenticated ~> filter only
-    * relevant things if not admin
     */
 
     app.get(confRoute, function (req, res) {
@@ -298,14 +295,13 @@ module.exports = (function () {
 
     /**
     * GET method : `configuration.get` key
+    * Reserved to Etherpad administrators
     *
     * Sample URL:
     * http://etherpad.ndd/mypads/api/configuration/something
-    *
-    * TODO: same TODO as before
     */
 
-    app.get(confRoute + '/:key', fn.ensureAuthenticated, function (req, res) {
+    app.get(confRoute + '/:key', fn.ensureAdmin, function (req, res) {
       var value = conf.get(req.params.key);
       if (ld.isUndefined(value)) {
         return res.status(404).send({
@@ -318,13 +314,12 @@ module.exports = (function () {
 
     /**
     * POST/PUT methods : `configuration.set` key and value on initial
+    * Reserved to Etherpad administrators
     *
     * Sample URL for POST:
     * http://etherpad.ndd/mypads/api/configuration
     * for PUT
     * http://etherpad.ndd/mypads/api/configuration/something
-    *
-    * TODO: same TODO as before, plus only planned keys?
     */
 
     var _set = function (req, res) {
@@ -334,19 +329,18 @@ module.exports = (function () {
       fn.set(setFn, key, value, req, res);
     };
 
-    app.post(confRoute, fn.ensureAuthenticated, _set);
-    app.put(confRoute + '/:key', fn.ensureAuthenticated, _set);
+    app.post(confRoute, fn.ensureAdmin, _set);
+    app.put(confRoute + '/:key', fn.ensureAdmin, _set);
 
     /**
     * DELETE method : `configuration.del` key
+    * Reserved to Etherpad administrators
     *
     * Sample URL:
     * http://etherpad.ndd/mypads/api/configuration/something
-    *
-    * TODO: same TODO as before
     */
 
-    app.delete(confRoute + '/:key', fn.ensureAuthenticated,
+    app.delete(confRoute + '/:key', fn.ensureAdmin,
       ld.partial(fn.del, conf.del));
   };
 

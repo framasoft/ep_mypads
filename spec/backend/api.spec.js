@@ -228,7 +228,7 @@
               expect(err).toBeNull();
               expect(resp.statusCode).toBe(200);
               expect(body.success).toBeTruthy();
-              rq.get(route + 'configuration/inexistent',
+              rq.get(route + 'group/inexistent',
                 function (err, resp, body) {
                   expect(err).toBeNull();
                   expect(body.error).toMatch('AUTHENTICATION.MUST_BE');
@@ -328,24 +328,38 @@
 
       describe('configuration.get GET key', function () {
 
-        it('should return an error if the field does not exist',
+        it('should return an error if the user if not an etherpad admin',
           function (done) {
-            rq.get(confRoute + '/inexistent', function (err, resp, body) {
-              expect(resp.statusCode).toBe(404);
-              expect(body.error).toMatch('CONFIGURATION.KEY_NOT_FOUND');
-              expect(body.key).toBe('inexistent');
+            rq.get(confRoute + '/whatever', function (err, resp, body) {
+              expect(resp.statusCode).toBe(401);
+              expect(body.error).toMatch('AUTHENTICATION.ADMIN');
               done();
             });
           }
         );
 
+        it('should return an error if the field does not exist',
+          function (done) {
+            withAdmin(function (after) {
+              rq.get(confRoute + '/inexistent', function (err, resp, body) {
+                expect(resp.statusCode).toBe(404);
+                expect(body.error).toMatch('CONFIGURATION.KEY_NOT_FOUND');
+                expect(body.key).toBe('inexistent');
+                after();
+              });
+            }, done);
+          }
+        );
+
         it('should give the key and the value otherwise', function (done) {
-          rq.get(confRoute + '/field1', function (err, resp, body) {
-            expect(resp.statusCode).toBe(200);
-            expect(body.key).toBe('field1');
-            expect(body.value).toBe(8);
-            done();
-          });
+          withAdmin(function (after) {
+            rq.get(confRoute + '/field1', function (err, resp, body) {
+              expect(resp.statusCode).toBe(200);
+              expect(body.key).toBe('field1');
+              expect(body.value).toBe(8);
+              after();
+            });
+          }, done);
         });
       });
 
@@ -353,65 +367,73 @@
 
         it('post : should return an error if key and/or value are not provided',
           function (done) {
-            rq.post(confRoute, function (err, resp, body) {
-              expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('KEY_STR');
-              var b = { body: { key: 'field1' } };
-              rq.post(confRoute, b, function (err, resp, body) {
+            withAdmin(function (after) {
+              rq.post(confRoute, function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
-                expect(body.error).toMatch('VALUE_REQUIRED');
-                done();
+                expect(body.error).toMatch('KEY_STR');
+                var b = { body: { key: 'field1' } };
+                rq.post(confRoute, b, function (err, resp, body) {
+                  expect(resp.statusCode).toBe(400);
+                  expect(body.error).toMatch('VALUE_REQUIRED');
+                  after();
+                });
               });
-            });
+            }, done);
           }
         );
 
         it('put : should return an error if key is not in URL and if no value',
           function (done) {
-            rq.put(confRoute, function (err, resp, body) {
-              expect(resp.statusCode).toBe(404);
-              expect(body).toMatch('Cannot PUT');
-              rq.put(confRoute + '/field1', function (err, resp, body) {
-                expect(resp.statusCode).toBe(400);
-                expect(body.error).toMatch('VALUE_REQUIRED');
-                done();
+            withAdmin(function (after) {
+              rq.put(confRoute, function (err, resp, body) {
+                expect(resp.statusCode).toBe(404);
+                expect(body).toMatch('Cannot PUT');
+                rq.put(confRoute + '/field1', function (err, resp, body) {
+                  expect(resp.statusCode).toBe(400);
+                  expect(body.error).toMatch('VALUE_REQUIRED');
+                  after();
+                });
               });
-            });
+            }, done);
           }
         );
 
         it('post : should save good request like expected', function (done) {
           var b = { body: { key: 'field1', value: 'éèà' } };
-          rq.post(confRoute, b, function (err, resp, body) {
-            expect(err).toBeNull();
-            expect(resp.statusCode).toBe(200);
-            expect(body.success).toBeTruthy();
-            expect(body.key).toBe(b.body.key);
-            expect(body.value).toBe(b.body.value);
-            rq.get(confRoute + '/' + b.body.key, function (err, resp, body) {
+          withAdmin(function (after) {
+            rq.post(confRoute, b, function (err, resp, body) {
+              expect(err).toBeNull();
               expect(resp.statusCode).toBe(200);
+              expect(body.success).toBeTruthy();
               expect(body.key).toBe(b.body.key);
               expect(body.value).toBe(b.body.value);
-              done();
+              rq.get(confRoute + '/' + b.body.key, function (err, resp, body) {
+                expect(resp.statusCode).toBe(200);
+                expect(body.key).toBe(b.body.key);
+                expect(body.value).toBe(b.body.value);
+                after();
+              });
             });
-          });
+          }, done);
         });
 
         it('put : should save good request like expected', function (done) {
           var b = { body: { value: 42 } };
-          rq.put(confRoute + '/field1', b, function (err, resp, body) {
-            expect(err).toBeNull();
-            expect(resp.statusCode).toBe(200);
-            expect(body.success).toBeTruthy();
-            expect(body.key).toBe('field1');
-            expect(body.value).toBe(b.body.value);
-            rq.get(confRoute + '/field1', function (err, resp, body) {
+          withAdmin(function (after) {
+            rq.put(confRoute + '/field1', b, function (err, resp, body) {
+              expect(err).toBeNull();
               expect(resp.statusCode).toBe(200);
+              expect(body.success).toBeTruthy();
               expect(body.key).toBe('field1');
               expect(body.value).toBe(b.body.value);
-              done();
+              rq.get(confRoute + '/field1', function (err, resp, body) {
+                expect(resp.statusCode).toBe(200);
+                expect(body.key).toBe('field1');
+                expect(body.value).toBe(b.body.value);
+                after();
+              });
             });
-          });
+          }, done);
         });
 
 
@@ -421,17 +443,20 @@
 
         it('will not return an error if the field does not exist',
           function (done) {
-            rq.del(confRoute + '/inexistent', function (err, resp, body) {
-              expect(resp.statusCode).toBe(200);
-              expect(body.success).toBeTruthy();
-              expect(body.key).toBe('inexistent');
-              done();
-            });
+            withAdmin(function (after) {
+              rq.del(confRoute + '/inexistent', function (err, resp, body) {
+                expect(resp.statusCode).toBe(200);
+                expect(body.success).toBeTruthy();
+                expect(body.key).toBe('inexistent');
+                after();
+              });
+            }, done);
           }
         );
 
         it('should deletes the record and returns the key, value and success' +
          ' otherwise', function (done) {
+           withAdmin(function (after) {
             rq.del(confRoute + '/field1', function (err, resp, body) {
               expect(resp.statusCode).toBe(200);
               expect(body.success).toBeTruthy();
@@ -440,11 +465,13 @@
                 expect(resp.statusCode).toBe(404);
                 expect(body.error).toMatch('CONFIGURATION.KEY_NOT_FOUND');
                 expect(body.key).toBe('field1');
-                done();
+                after();
               });
             });
+           }, done);
           }
         );
+
       });
     });
 

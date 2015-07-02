@@ -17281,7 +17281,8 @@ module.exports={
         "MUST_BE": "You must be authenticated",
         "NOT_AUTH": "Not authenticated",
         "PASSWORD_INCORRECT": "Password is not correct",
-        "ADMIN": "Access denied : you must be an authenticated Etherpad instance admin."
+        "ADMIN": "Access denied : you must be an authenticated Etherpad instance admin.",
+        "DENIED": "Access denied"
       },
       "PERMISSION": {
         "UNEXPECTED": "Sorry, an unexpected has error has occured",

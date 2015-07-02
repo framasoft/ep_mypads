@@ -26,7 +26,8 @@
         "MUST_BE": "Vous devez être authentifié",
         "NOT_AUTH": "Pas authentifié",
         "PASSWORD_INCORRECT": "Le mot de passe n'est pas correct",
-        "ADMIN": "Accès interdit : vous devez être un administrateur authentifié de l'instance Etherpad"
+        "ADMIN": "Accès interdit : vous devez être un administrateur authentifié de l'instance Etherpad",
+        "DENIED": "Accès interdit"
       },
       "PERMISSION": {
         "UNEXPECTED": "Désolé, une erreur inattendue s'est produite",

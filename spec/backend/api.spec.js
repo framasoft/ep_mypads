@@ -541,13 +541,15 @@
             expect(body.key).toBe('parker');
             expect(body.value.login).toBe('parker');
             expect(body.value.lastname).toBe('Lewis');
-            rq.get(userRoute + '/parker', function (err, resp, body) {
-              expect(resp.statusCode).toBe(200);
-              expect(body.value.login).toBe('parker');
-              expect(body.value.firstname).toBe('Parker');
-              expect(ld.isArray(body.value.groups)).toBeTruthy();
-              done();
-            });
+            withAdmin(function (after) {
+              rq.get(userRoute + '/parker', function (err, resp, body) {
+                expect(resp.statusCode).toBe(200);
+                expect(body.value.login).toBe('parker');
+                expect(body.value.firstname).toBe('Parker');
+                expect(ld.isArray(body.value.groups)).toBeTruthy();
+                after();
+              });
+            }, done);
           });
         });
 
@@ -570,36 +572,40 @@
 
         it('should return error when arguments are not as expected',
           function (done) {
-            rq.put(userRoute + '/parker', function (err, resp, body) {
-              expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('PARAM_STR');
-              var b = { body: { login: 'parker', password: '' } };
-              rq.put(userRoute + '/parker', b, function (err, resp, body) {
+            withAdmin(function (after) {
+              rq.put(userRoute + '/parker', function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
                 expect(body.error).toMatch('PARAM_STR');
-                b = { body: { login: 'parker', password: 'secret' } };
+                var b = { body: { login: 'parker', password: '' } };
                 rq.put(userRoute + '/parker', b, function (err, resp, body) {
                   expect(resp.statusCode).toBe(400);
-                  expect(body.error).toMatch('PASSWORD_SIZE');
-                  done();
+                  expect(body.error).toMatch('PARAM_STR');
+                  b = { body: { login: 'parker', password: 'secret' } };
+                  rq.put(userRoute + '/parker', b, function (err, resp, body) {
+                    expect(resp.statusCode).toBe(400);
+                    expect(body.error).toMatch('PASSWORD_SIZE');
+                    after();
+                  });
                 });
               });
-            });
+            }, done);
           }
         );
 
         it('should return an error if password size is not correct',
           function (done) {
             var b = { body: { login: 'parker', password: '1' } };
-            rq.put(userRoute + '/parker', b, function (err, resp, body) {
-              expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('PASSWORD_SIZE');
-              done();
-            });
+            withAdmin(function (after) {
+              rq.put(userRoute + '/parker', b, function (err, resp, body) {
+                expect(resp.statusCode).toBe(400);
+                expect(body.error).toMatch('PASSWORD_SIZE');
+                after();
+              });
+            }, done);
           }
         );
 
-        it('should create a user otherwise', function (done) {
+        it('should not be allowed to create a user', function (done) {
           var b = {
             body: {
               password: 'lovesKubiak',
@@ -609,30 +615,48 @@
           };
           rq.put(userRoute + '/parker', b, function (err, resp, body) {
             expect(err).toBeNull();
-            expect(resp.statusCode).toBe(200);
-            expect(body.success).toBeTruthy();
-            expect(body.key).toBe('parker');
-            expect(body.value.login).toBe('parker');
-            expect(body.value.lastname).toBe('Lewis');
-            rq.get(userRoute + '/parker', function (err, resp, body) {
-              expect(resp.statusCode).toBe(200);
-              expect(body.value.login).toBe('parker');
-              expect(body.value.firstname).toBe('Parker');
-              expect(ld.isArray(body.value.groups)).toBeTruthy();
-              done();
-            });
+            expect(resp.statusCode).toBe(401);
+            expect(body.error).toMatch('DENIED');
+            done();
           });
         });
 
-        it('should accept updates on an existing user',
+        it('should create a user, if admin, otherwise', function (done) {
+          var b = {
+            body: {
+              password: 'lovesKubiak',
+              firstname: 'Parker',
+              lastname: 'Lewis'
+            }
+          };
+          withAdmin(function (after) {
+            rq.put(userRoute + '/parker', b, function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(200);
+              expect(body.success).toBeTruthy();
+              expect(body.key).toBe('parker');
+              expect(body.value.login).toBe('parker');
+              expect(body.value.lastname).toBe('Lewis');
+              rq.get(userRoute + '/parker', function (err, resp, body) {
+                expect(resp.statusCode).toBe(200);
+                expect(body.value.login).toBe('parker');
+                expect(body.value.firstname).toBe('Parker');
+                expect(ld.isArray(body.value.groups)).toBeTruthy();
+                after();
+              });
+            });
+          }, done);
+        });
+
+        it('should accept updates on an existing user, if he is logged himself',
           function (done) {
             var b = { body: { password: 'missMusso', } };
-            rq.put(userRoute + '/mikey', b, function () {
+            rq.put(userRoute + '/guest', b, function () {
               b.body.email = 'mikey@randall.com';
-              rq.put(userRoute + '/mikey', b, function (err, resp, body) {
+              rq.put(userRoute + '/guest', b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(200);
                 expect(body.success).toBeTruthy();
-                expect(body.key).toBe('mikey');
+                expect(body.key).toBe('guest');
                 expect(body.value.email).toBe('mikey@randall.com');
                 done();
               });
@@ -662,26 +686,30 @@
 
         it('should return an error if the login does not exist',
           function (done) {
-            rq.get(userRoute + '/inexistent', function (err, resp, body) {
-              expect(resp.statusCode).toBe(404);
-              expect(body.error).toMatch('USER.NOT_FOUND');
-              expect(body.key).toBe('inexistent');
-              done();
-            });
+            withAdmin(function (after) {
+              rq.get(userRoute + '/inexistent', function (err, resp, body) {
+                expect(resp.statusCode).toBe(404);
+                expect(body.error).toMatch('USER.NOT_FOUND');
+                expect(body.key).toBe('inexistent');
+                after();
+              });
+            }, done);
           }
         );
 
         it('should give the login/key and the user attributes, password' +
           ' excepted otherwise',
           function (done) {
-            rq.get(userRoute + '/parker', function (err, resp, body) {
-              expect(resp.statusCode).toBe(200);
-              expect(resp.statusCode).toBe(200);
-              expect(body.value.login).toBe('parker');
-              expect(body.value.firstname).toBe('Parker');
-              expect(ld.isArray(body.value.groups)).toBeTruthy();
-              done();
-            });
+            withAdmin(function (after) {
+              rq.get(userRoute + '/parker', function (err, resp, body) {
+                expect(resp.statusCode).toBe(200);
+                expect(resp.statusCode).toBe(200);
+                expect(body.value.login).toBe('parker');
+                expect(body.value.firstname).toBe('Parker');
+                expect(ld.isArray(body.value.groups)).toBeTruthy();
+                after();
+              });
+            }, done);
           }
         );
 
@@ -691,22 +719,26 @@
 
         it('should return error when arguments are not as expected',
           function (done) {
-            rq.post(userRoute + '/mark', function (err, resp, body) {
-              expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('TYPE_PADSORGROUPS');
-              done();
-            });
+            withAdmin(function (after) {
+              rq.post(userRoute + '/mark', function (err, resp, body) {
+                expect(resp.statusCode).toBe(400);
+                expect(body.error).toMatch('TYPE_PADSORGROUPS');
+                after();
+              });
+            }, done);
           }
         );
 
         it('will return an error if the bookmark id does not exist',
           function (done) {
-            var b = { body: { type: 'pads', key:'xxx' } };
-            rq.post(userRoute + '/mark', b, function (err, resp, body) {
-              expect(resp.statusCode).toBe(404);
-              expect(body.error).toMatch('BOOKMARK_NOT_FOUND');
-              done();
-            });
+            withAdmin(function (after) {
+              var b = { body: { type: 'pads', key:'xxx' } };
+              rq.post(userRoute + '/mark', b, function (err, resp, body) {
+                expect(resp.statusCode).toBe(404);
+                expect(body.error).toMatch('BOOKMARK_NOT_FOUND');
+                after();
+              });
+            }, done);
           }
         );
 
@@ -738,11 +770,13 @@
 
         it('will return an error if the user does not exist',
           function (done) {
-            rq.del(userRoute + '/inexistent', function (err, resp, body) {
-              expect(resp.statusCode).toBe(404);
-              expect(body.error).toMatch('USER.NOT_FOUND');
-              done();
-            });
+            withAdmin(function (after) {
+              rq.del(userRoute + '/inexistent', function (err, resp, body) {
+                expect(resp.statusCode).toBe(404);
+                expect(body.error).toMatch('USER.NOT_FOUND');
+                after();
+              });
+            }, done);
           }
         );
 

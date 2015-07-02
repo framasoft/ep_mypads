@@ -177,6 +177,23 @@ module.exports = (function () {
   };
 
   /**
+  * `ensureAdminOrSelf` internal Express middleware takes the classic `req`,
+  * `res` and `next`. It returns an error if the connected user tries to manage
+  * users other than himself and he is not an Etherpad logged admin.
+  */
+
+  fn.ensureAdminOrSelf = function (req, res, next) {
+    var isAdmin = (req.session.user && req.session.user.isAdmin);
+    var login = req.params.key || req.body.login;
+    var isSelf = (login === req.session.mypadsLogin);
+    if (!isAdmin && !isSelf) {
+      res.status(401).send({ error: 'BACKEND.ERROR.AUTHENTICATION.DENIED' });
+    } else {
+      return next();
+    }
+  };
+
+  /**
   * ## Authentication API
   */
 
@@ -347,7 +364,7 @@ module.exports = (function () {
   /**
   *  ## User API
   *
-  * All methods needs `fn.ensureAuthenticated`
+  * Most methods need `fn.ensureAdminOrSelf`
   */
 
   var userAPI = function (app) {
@@ -360,7 +377,7 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/user/someone
     */
 
-    app.get(userRoute + '/:key', fn.ensureAuthenticated,
+    app.get(userRoute + '/:key', fn.ensureAdminOrSelf,
       ld.partial(fn.get, user));
 
     // `set` for POST and PUT, see below
@@ -386,6 +403,7 @@ module.exports = (function () {
 
     /**
     * POST method : `user.set` with user value for user creation
+    * Only method without AdminOrSelf
     *
     * Sample URL:
     * http://etherpad.ndd/mypads/api/user
@@ -400,7 +418,7 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/user/someone
     */
 
-    app.put(userRoute + '/:key', fn.ensureAuthenticated, _set);
+    app.put(userRoute + '/:key', fn.ensureAdminOrSelf, _set);
 
     /**
     * DELETE method : `user.del` with user key/login
@@ -409,11 +427,12 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/user/someone
     */
 
-    app.delete(userRoute + '/:key', fn.ensureAuthenticated,
+    app.delete(userRoute + '/:key', fn.ensureAdminOrSelf,
       ld.partial(fn.del, user.del));
 
     /**
     * POST method : `user.mark` with user session login, bookmark type and key
+    * Only need ensureAuthenticated because use own login for marking
     *
     * Sample URL:
     * http://etherpad.ndd/mypads/api/user/mark

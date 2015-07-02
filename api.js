@@ -154,7 +154,7 @@ module.exports = (function () {
   */
 
   fn.ensureAuthenticated = function (req, res, next) {
-    if (!req.isAuthenticated() && !req.session.login) {
+    if (!req.isAuthenticated() && !req.session.mypadsLogin) {
       res.status(401).send({ error: 'BACKEND.ERROR.AUTHENTICATION.MUST_BE' });
     } else {
       return next();
@@ -207,10 +207,12 @@ module.exports = (function () {
         req.login(user, function (err) {
           if (err) { return res.status(400).send({ error: err }); }
           var finish = function () {
-            req.session.uid = user._id;
-            req.session.login = user.login;
-            req.session.color = user.color;
-            req.session.useLoginAndColorInPads = user.useLoginAndColorInPads;
+            ld.assign(req.session, {
+              mypadsUid: user._id,
+              mypadsLogin: user.login,
+              mypadsColor: user.color,
+              mypadsUseLoginAndColorInPads: user.useLoginAndColorInPads
+            });
             res.status(200).send({
               success: true,
               user: ld.omit(user, 'password')
@@ -230,7 +232,7 @@ module.exports = (function () {
     */
 
     app.get(authRoute + '/logout', function (req, res) {
-      if (req.isAuthenticated() || req.session.login) {
+      if (req.isAuthenticated() || !!req.session.mypadsLogin) {
         req.logout();
         req.session.destroy();
         res.status(200).send({ success: true });
@@ -257,15 +259,18 @@ module.exports = (function () {
     *
     * Sample URL:
     * http://etherpad.ndd/mypads/api/configuration
+    *
+    * TODO: disallow whole configuration when authenticated ~> filter only
+    * relevant things if not admin
     */
 
     app.get(confRoute, function (req, res) {
-      var isAuth = (req.isAuthenticated() || !!req.session.login);
+      var isAuth = (req.isAuthenticated() || !!req.session.mypadsLogin);
       var action = isAuth ? 'all' : 'public';
       var value = conf[action]();
       var resp = { value: value, auth: isAuth };
       if (isAuth) {
-        user.get(req.session.login, function (err, u) {
+        user.get(req.session.mypadsLogin, function (err, u) {
           if (err) { return res.status(400).send({ error: err }); }
           resp.user = u;
           res.send(resp);
@@ -280,6 +285,8 @@ module.exports = (function () {
     *
     * Sample URL:
     * http://etherpad.ndd/mypads/api/configuration/something
+    *
+    * TODO: same TODO as before
     */
 
     app.get(confRoute + '/:key', fn.ensureAuthenticated, function (req, res) {
@@ -300,6 +307,8 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/configuration
     * for PUT
     * http://etherpad.ndd/mypads/api/configuration/something
+    *
+    * TODO: same TODO as before, plus only planned keys?
     */
 
     var _set = function (req, res) {
@@ -317,6 +326,8 @@ module.exports = (function () {
     *
     * Sample URL:
     * http://etherpad.ndd/mypads/api/configuration/something
+    *
+    * TODO: same TODO as before
     */
 
     app.delete(confRoute + '/:key', fn.ensureAuthenticated,
@@ -354,9 +365,10 @@ module.exports = (function () {
         value._id = user.ids[key];
       }
       // Update needed session values
-      req.session.color = req.body.color || req.session.color;
+      req.session.mypadsColor = req.body.color || req.session.mypadsColor;
       if (!ld.isUndefined(req.body.useLoginAndColorInPads)) {
-        req.session.useLoginAndColorInPads = req.body.useLoginAndColorInPads;
+        req.session.mypadsUseLoginAndColorInPads =
+          req.body.useLoginAndColorInPads;
       }
       var setFn = ld.partial(user.set, value);
       fn.set(setFn, key, value, req, res);
@@ -400,7 +412,7 @@ module.exports = (function () {
     app.post(userRoute + '/mark', fn.ensureAuthenticated,
       function (req, res) {
         try {
-          user.mark(req.session.login, req.body.type, req.body.key,
+          user.mark(req.session.mypadsLogin, req.body.type, req.body.key,
             function (err) {
               if (err) { return res.status(404).send({ error: err.message }); }
               res.send({ success: true });
@@ -432,7 +444,7 @@ module.exports = (function () {
 
     app.get(groupRoute, fn.ensureAuthenticated,
       function (req, res) {
-        user.get(req.session.login, function (err, u) {
+        user.get(req.session.mypadsLogin, function (err, u) {
           if (err) { return res.status(400).send({ error: err }); }
           try {
             group.getByUser(u, true, function (err, data) {

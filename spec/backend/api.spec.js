@@ -40,6 +40,28 @@
     var conf = require('../../configuration.js');
     var j = request.jar();
 
+    /**
+    * `withAdmin` decorator function, that :
+    *
+    * - uses mocked admin login first
+    * - launch given `fn` as argument; this function must take an `after`
+    *   callback function
+    * - calls the `after` function and finally the jasmine `done` end of test
+    */
+
+    var withAdmin = function (fn, done) {
+      var after = function () {
+        rq.get(adminLogoutRoute, function (err) {
+          expect(err).toBeNull();
+          done();
+        });
+      };
+      rq.get(adminRoute, function (err) {
+        expect(err).toBeNull();
+        fn(after);
+      });
+    };
+
     beforeAll(function (done) {
       specCommon.mockupExpressServer();
       specCommon.reInitDatabase(function () {
@@ -289,8 +311,7 @@
 
         it('should reply with all settings with GET method if admin',
           function (done) {
-            rq.get(adminRoute, function (err) {
-              expect(err).toBeNull();
+            withAdmin(function (after) {
               rq.get(confRoute, function (err, resp, body) {
                 expect(err).toBeNull();
                 expect(resp.statusCode).toBe(200);
@@ -298,12 +319,9 @@
                 expect(body.value.field1).toBe(8);
                 expect(body.value.field2).toBe(3);
                 expect(ld.size(body.value.field3)).toBe(2);
-                rq.get(adminLogoutRoute, function (err) {
-                  expect(err).toBeNull();
-                  done();
-                });
+                after();
               });
-            });
+            }, done);
           }
         );
       });

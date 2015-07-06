@@ -441,13 +441,17 @@ module.exports = (function () {
 
     /**
     * DELETE method : `user.del` with user key/login
+    * Destroy session if self account removal
     *
     * Sample URL:
     * http://etherpad.ndd/mypads/api/user/someone
     */
 
-    app.delete(userRoute + '/:key', fn.ensureAdminOrSelf,
-      ld.partial(fn.del, user.del));
+    app.delete(userRoute + '/:key', fn.ensureAdminOrSelf, function (req, res) {
+      var isSelf = (req.params.key === req.session.mypadsLogin);
+      if (isSelf) { req.session.destroy(); }
+      fn.del(user.del, req, res);
+    });
 
     /**
     * POST method : `user.mark` with user session login, bookmark type and key

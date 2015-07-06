@@ -2795,6 +2795,7 @@ module.exports = (function () {
   // Local Dependencies
   var conf = require('../configuration.js');
   var form = require('../helpers/form.js');
+  var model = require('../model/group.js');
   var notif = require('../widgets/notification.js');
   var auth = require('../auth.js');
   var layout = require('./layout.js');
@@ -2938,17 +2939,24 @@ module.exports = (function () {
     c.removeAccount = function () {
       var password = window.prompt(conf.LANG.USER.INFO.REMOVE_ACCOUNT_SURE);
       if (password) {
+        var login = auth.userInfo().login;
         m.request({
           method: 'POST',
           url: conf.URLS.CHECK,
-          data: { login: auth.userInfo().login, password: password }
+          data: { login: login, password: password }
         }).then(function () {
           m.request({
             method: 'DELETE',
-            url: conf.URLS.USER + '/' + auth.userInfo().login
+            url: conf.URLS.USER + '/' + login
           }).then(function () {
-            m.route('/logout');
-            notif.success({ body: conf.LANG.USER.INFO.REMOVE_ACCOUNT_SUCCESS });
+            auth.isAuthenticated(false);
+            auth.userInfo(null);
+            model.init();
+            document.title = conf.SERVER.title;
+            m.route('/');
+            notif.success({
+              body: conf.LANG.USER.INFO.REMOVE_ACCOUNT_SUCCESS
+            });
           }, errfn);
         }, errfn);
       }
@@ -3065,7 +3073,7 @@ module.exports = (function () {
   return subscribe;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./user.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user-invitation.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./user.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user-invitation.js":[function(require,module,exports){
 /**
 *  # User invitation and admin sharing module
 *
@@ -17251,7 +17259,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {

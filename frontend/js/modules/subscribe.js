@@ -32,6 +32,7 @@ module.exports = (function () {
   // Local Dependencies
   var conf = require('../configuration.js');
   var form = require('../helpers/form.js');
+  var model = require('../model/group.js');
   var notif = require('../widgets/notification.js');
   var auth = require('../auth.js');
   var layout = require('./layout.js');
@@ -175,17 +176,24 @@ module.exports = (function () {
     c.removeAccount = function () {
       var password = window.prompt(conf.LANG.USER.INFO.REMOVE_ACCOUNT_SURE);
       if (password) {
+        var login = auth.userInfo().login;
         m.request({
           method: 'POST',
           url: conf.URLS.CHECK,
-          data: { login: auth.userInfo().login, password: password }
+          data: { login: login, password: password }
         }).then(function () {
           m.request({
             method: 'DELETE',
-            url: conf.URLS.USER + '/' + auth.userInfo().login
+            url: conf.URLS.USER + '/' + login
           }).then(function () {
-            m.route('/logout');
-            notif.success({ body: conf.LANG.USER.INFO.REMOVE_ACCOUNT_SUCCESS });
+            auth.isAuthenticated(false);
+            auth.userInfo(null);
+            model.init();
+            document.title = conf.SERVER.title;
+            m.route('/');
+            notif.success({
+              body: conf.LANG.USER.INFO.REMOVE_ACCOUNT_SUCCESS
+            });
           }, errfn);
         }, errfn);
       }

@@ -1270,8 +1270,11 @@
     describe('pad API', function () {
       var padRoute = route + 'pad';
       var uid;
+      var uotherid;
       var gid;
+      var gotherid;
       var pid;
+      var potherid;
 
       beforeAll(function (done) {
         specCommon.reInitDatabase(function () {
@@ -1285,7 +1288,24 @@
               pad.set({ name: 'p1', group: g._id }, function (err, p) {
                 if (err) { console.log(err); }
                 pid = p._id;
-                rq.post(route + 'auth/login', { body: params }, done);
+                var oparams = { login: 'other', password: 'willnotlivelong' };
+                user.set(oparams, function (err, u) {
+                  if (err) { console.log(err); }
+                  uotherid = u._id;
+                  group.set({ name: 'gother1', admin: u._id },
+                    function (err, g) {
+                      if (err) { console.log(err); }
+                      gotherid = g._id;
+                      pad.set({ name: 'pother1', group: g._id },
+                        function (err, p) {
+                          if (err) { console.log(err); }
+                          potherid = p._id;
+                          rq.post(route + 'auth/login', { body: params }, done);
+                        }
+                      );
+                    }
+                  );
+                });
               });
             });
           });
@@ -1304,11 +1324,30 @@
             rq.get(padRoute + '/pinexistent', function (err, resp, body) {
               expect(resp.statusCode).toBe(404);
               expect(body.error).toMatch('KEY_NOT_FOUND');
-              expect(body.key).toBe('pinexistent');
               done();
             });
           }
         );
+
+        it('should forbid access to other pads', function (done) {
+          rq.get(padRoute + '/' + potherid, function (err, resp, body) {
+            expect(resp.statusCode).toBe(401);
+            expect(body.error).toMatch('DENIED_RECORD');
+            done();
+          });
+        });
+
+        it('should allow access to other pads if admin', function (done) {
+          withAdmin(function (after) {
+            rq.get(padRoute + '/' + potherid, function (err, resp, body) {
+              expect(resp.statusCode).toBe(200);
+              expect(body.key).toBe(potherid);
+              expect(body.value._id).toBe(potherid);
+              expect(body.value.name).toBe('pother1');
+              after();
+            });
+          }, done);
+        });
 
         it('should give the key and the pad attributes otherwise',
           function (done) {
@@ -1436,6 +1475,64 @@
           }
         );
 
+        it('should forbid update of existing other pad', function (done) {
+          var b = {
+            body: {
+              name: 'pother1',
+              group: gotherid,
+              visibility: 'public',
+              readonly: true
+            }
+          };
+          rq.put(padRoute + '/' + potherid, b, function (err, resp, body) {
+            expect(err).toBeNull();
+            expect(resp.statusCode).toBe(401);
+            expect(body.error).toMatch('DENIED_RECORD_EDIT');
+            done();
+          });
+        });
+
+        it('should allow update of all pads for global admin', function (done) {
+          var b = {
+            body: {
+              _id: potherid,
+              name: 'pother1',
+              group: gotherid,
+              visibility: 'public',
+              readonly: true
+            }
+          };
+          withAdmin(function (after) {
+            rq.put(padRoute + '/' + potherid, b, function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(200);
+              expect(body.success).toBeTruthy();
+              expect(body.key).toBe(potherid);
+              expect(body.value._id).toBe(potherid);
+              expect(body.value.visibility).toBe('public');
+              expect(body.value.readonly).toBeTruthy();
+              after();
+            });
+          }, done);
+        });
+
+        it('should also not create a non existent pad', function (done) {
+          var b = {
+            body: {
+              name: 'pCreated',
+              group: gid,
+              visibility: 'public',
+              readonly: true
+            }
+          };
+          rq.put(padRoute + '/newpid', b, function (err, resp, body) {
+            expect(err).toBeNull();
+            expect(resp.statusCode).toBe(404);
+            expect(body.error).toMatch('KEY_NOT_FOUND');
+            done();
+          });
+        });
+
         it('should update an existing pad otherwise', function (done) {
           var b = {
             body: {
@@ -1467,35 +1564,6 @@
           });
         });
 
-        it('should also create a non existent pad', function (done) {
-          var b = {
-            body: {
-              name: 'pCreated',
-              group: gid,
-              visibility: 'public',
-              readonly: true
-            }
-          };
-          rq.put(padRoute + '/newpid', b, function (err, resp, body) {
-            expect(err).toBeNull();
-            expect(resp.statusCode).toBe(200);
-            expect(body.success).toBeTruthy();
-            expect(body.key).toBeDefined();
-            expect(body.value.name).toBe('pCreated');
-            rq.get(padRoute + '/' + pid,
-              function (err, resp, body) {
-                expect(resp.statusCode).toBe(200);
-                expect(body.key).toBe(pid);
-                expect(body.value._id).toBe(pid);
-                expect(body.value.group).toBe(gid);
-                expect(body.value.name).toBe('pUpdated');
-                expect(body.value.visibility).toBe('public');
-                expect(ld.isArray(body.value.users)).toBeTruthy();
-                done();
-              }
-            );
-          });
-        });
       });
 
       describe('pad.del DELETE and id', function () {
@@ -1506,6 +1574,29 @@
               expect(body.error).toMatch('KEY_NOT_FOUND');
               done();
             });
+          }
+        );
+
+        it('should forbid removal for other pads', function (done) {
+          rq.del(padRoute + '/' + potherid, function (err, resp, body) {
+            expect(err).toBeNull();
+            expect(resp.statusCode).toBe(401);
+            expect(body.error).toMatch('DENIED_RECORD_EDIT');
+            done();
+          });
+        });
+
+        it('should allow removal of all pads if the user is global admin',
+          function (done) {
+            withAdmin(function (after) {
+              rq.del(padRoute + '/' + potherid, function (err, resp, body) {
+                expect(err).toBeNull();
+                expect(resp.statusCode).toBe(200);
+                expect(body.success).toBeTruthy();
+                expect(body.key).toBe(potherid);
+                after();
+              });
+            }, done);
           }
         );
 

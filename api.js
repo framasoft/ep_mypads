@@ -653,21 +653,54 @@ module.exports = (function () {
   /**
   * ## Pad API
   *
-  * All methods needs `fn.ensureAuthenticated`
+  * All methods needs special permissions
   */
 
   var padAPI = function (app) {
     var padRoute = api.initialRoute + 'pad';
 
     /**
+    * `canAct` is a pad internal fucntion that checks permissions to allow or
+    * not interaction with the pad object.
+    *
+    * It takes :
+    *
+    * - `edit` boolean, if the pad should be only read or updated
+    * - `successFn` functional, to be called if allowed, that takes req, res
+    *   and value
+    * - classic `req`uest and `res`ponse Express objects
+    */
+
+    var canAct = function (edit, successFn, req, res) {
+      pad.get(req.params.key, function (err, p) {
+        if (err) { return res.status(404).send({ error: err.message }); }
+        group.get(p.group, function (err, g) {
+          if (err) { return res.status(400).send({ error: err.message }); }
+          var users = edit ? g.admins : ld.union(g.admins, g.users);
+          var isAllowed = ld.includes(users, req.session.mypadsUid);
+          var isAdmin = (req.session.user && req.session.user.isAdmin);
+          if (isAdmin || isAllowed) {
+            return successFn(req, res, p);
+          } else {
+            var msg = edit ? 'DENIED_RECORD_EDIT' : 'DENIED_RECORD';
+            return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.' + msg);
+          }
+        });
+      });
+    };
+
+    /**
     * GET method : `pad.get` unique id
+    * Only for group admin or users, and global admin
     *
     * Sample URL:
     * http://etherpad.ndd/mypads/api/pad/xxxx
     */
 
     app.get(padRoute + '/:key', fn.ensureAuthenticated,
-      ld.partial(fn.get, pad));
+      ld.partial(canAct, false, function (req, res, val) {
+        return res.send({ key: req.params.key, value: val });
+      }));
 
     // `set` for POST and PUT, see below
     var _set = function (req, res) {
@@ -691,7 +724,8 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/pad/xxx
     */
 
-    app.put(padRoute + '/:key', fn.ensureAuthenticated, _set);
+    app.put(padRoute + '/:key', fn.ensureAuthenticated,
+      ld.partial(canAct, true, _set));
 
     /**
     * DELETE method : `pad.del` with pad id
@@ -701,7 +735,7 @@ module.exports = (function () {
     */
 
     app.delete(padRoute + '/:key', fn.ensureAuthenticated,
-      ld.partial(fn.del, pad.del));
+      ld.partial(canAct, true, ld.partial(fn.del, pad.del)));
 
   };
 

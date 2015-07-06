@@ -803,22 +803,35 @@
       var groupRoute = route + 'group';
       var uid;
       var gid;
+      var uotherid;
+      var gotherid;
 
       beforeAll(function (done) {
         specCommon.reInitDatabase(function () {
           var params = { login: 'guest', password: 'willnotlivelong' };
+          var oparams = { login: 'other', password: 'willnotlivelong' };
           user.set(params, function (err, u) {
             if (err) { console.log(err); }
             uid = u._id;
-            group.set({ name: 'g1', admin: u._id },
-              function (err, res) {
-                if (err) { console.log(err); }
-                gid = res._id;
-                rq.post(route + 'auth/login', { body: params }, done);
+            user.set(oparams, function (err, u) {
+              if (err) { console.log(err); }
+              uotherid = u._id;
+              group.set({ name: 'g1', admin: uid },
+                function (err, res) {
+                  if (err) { console.log(err); }
+                  gid = res._id;
+                  group.set({ name: 'gother1', admin: uotherid },
+                    function (err, res) {
+                    if (err) { console.log(err); }
+                    gotherid = res._id;
+                    rq.post(route + 'auth/login', { body: params }, done);
+                  });
+                });
+              });
             });
           });
         });
-      });
+
       afterAll(function (done) {
         rq.get(route + 'auth/logout', function () {
           specCommon.reInitDatabase(done);
@@ -831,7 +844,7 @@
           function (done) {
             rq.post(groupRoute + '/invite', function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('INVITE_BOOL');
+              expect(body.error).toMatch('PARAMS_REQUIRED');
               done();
             });
           }
@@ -847,12 +860,46 @@
               }
             };
             rq.post(groupRoute + '/invite', b, function (err, resp, body) {
-              expect(resp.statusCode).toBe(401);
+              expect(resp.statusCode).toBe(400);
               expect(body.error).toMatch('KEY_NOT_FOUND');
               done();
             });
           }
         );
+
+        it('forbid invitation if the user is not group admin', function (done) {
+          var b = {
+            body: {
+              invite: true,
+              gid: gotherid,
+              logins: ['one', 'two']
+            }
+          };
+          rq.post(groupRoute + '/invite', b, function (err, resp, body) {
+            expect(resp.statusCode).toBe(401);
+            expect(body.error).toMatch('DENIED_RECORD_EDIT');
+            done();
+          });
+        });
+
+        it('allow invitation if the user is global admin', function (done) {
+          var b = {
+            body: {
+              invite: true,
+              gid: gotherid,
+              logins: ['one', 'two']
+            }
+          };
+          withAdmin(function (after) {
+            rq.post(groupRoute + '/invite', b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(200);
+              expect(body.success).toBeTruthy();
+              expect(ld.isObject(body.value)).toBeTruthy();
+              expect(body.value._id).toBe(gotherid);
+              after();
+            });
+          }, done);
+        });
 
         it('should invite successfully otherwise', function (done) {
           var params = { login: 'franky', password: 'willnotlivelong' };
@@ -920,6 +967,28 @@
           }
         );
 
+        it('should forbid access to others groups for regular users',
+          function (done) {
+            rq.get(groupRoute + '/' + gotherid, function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(401);
+              expect(body.error).toMatch('DENIED_RECORD');
+              done();
+            });
+          }
+        );
+
+        it('should allow access to all groups for admin', function (done) {
+          withAdmin(function (after) {
+            rq.get(groupRoute + '/' + gotherid, function (err, resp, body) {
+              expect(resp.statusCode).toBe(200);
+              expect(body.key).toBe(gotherid);
+              expect(body.value.name).toBe('gother1');
+              after();
+            });
+          }, done);
+        });
+
         it('should give the key and the group attributes otherwise',
           function (done) {
             rq.get(groupRoute + '/' + gid, function (err, resp, body) {
@@ -938,6 +1007,7 @@
             });
           }
         );
+
       });
 
       describe('group.set/add POST and value as params', function () {
@@ -1079,7 +1149,7 @@
           });
         });
 
-        it('should also create a non existent group', function (done) {
+        it('should not create a non existent group', function (done) {
           var b = {
             body: {
               name: 'gCreated',
@@ -1090,35 +1160,63 @@
           };
           rq.put(groupRoute + '/newgid', b, function (err, resp, body) {
             expect(err).toBeNull();
-            expect(resp.statusCode).toBe(200);
-            expect(body.success).toBeTruthy();
-            expect(body.key).toBeDefined();
-            expect(body.value.name).toBe('gCreated');
-            var key = body.key;
-            rq.get(groupRoute + '/' + key,
-              function (err, resp, body) {
-                expect(resp.statusCode).toBe(200);
-                expect(body.key).toBe(key);
-                expect(body.value._id).toBe(key);
-                expect(body.value.name).toBe('gCreated');
-                expect(body.value.visibility).toBe('public');
-                expect(ld.isArray(body.value.users)).toBeTruthy();
-                expect(ld.isArray(body.value.pads)).toBeTruthy();
-                expect(body.value.readonly).toBeTruthy();
-                expect(ld.size(body.value.admins)).toBe(1);
-                expect(body.value.admins[0]).toBe(uid);
-                done();
-              }
-            );
+            expect(resp.statusCode).toBe(400);
+            expect(body.error).toMatch('NOT_FOUND');
+            done();
           });
         });
+
+        it('shouldn\'t allow update of a group when the user is not admin',
+          function (done) {
+            var b = {
+              body: {
+                _id: gotherid,
+                name: 'gOtherUpdated',
+                admin: uotherid,
+                visibility: 'public'
+              }
+            };
+            rq.put(groupRoute + '/' + gotherid, b, function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(401);
+              expect(body.error).toMatch('DENIED_RECORD_EDIT');
+              done();
+            });
+          }
+        );
+
+        it('should allow update all groups when the user is global admin',
+          function (done) {
+            var goid = gotherid;
+            var b = {
+              body: {
+                _id: goid,
+                name: 'gOtherUpdated',
+                admin: uotherid,
+                visibility: 'public'
+              }
+            };
+            withAdmin(function (after) {
+              rq.put(groupRoute + '/' + goid, b, function (err, resp, body) {
+                expect(err).toBeNull();
+                expect(resp.statusCode).toBe(200);
+                expect(body.key).toBe(goid);
+                expect(body.value._id).toBe(goid);
+                expect(body.value.name).toBe('gOtherUpdated');
+                expect(body.value.visibility).toBe('public');
+                after();
+              });
+            }, done);
+          }
+        );
+
       });
 
       describe('group.del DELETE and id', function () {
         it('will return an error if the group does not exist',
           function (done) {
             rq.del(groupRoute + '/inexistentId', function (err, resp, body) {
-              expect(resp.statusCode).toBe(404);
+              expect(resp.statusCode).toBe(400);
               expect(body.error).toMatch('KEY_NOT_FOUND');
               done();
             });
@@ -1139,6 +1237,32 @@
             });
           }
         );
+
+        it('should forbid deleting a record when the user is not an admin of' +
+          ' the group', function (done) {
+            rq.del(groupRoute + '/' + gotherid, function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(401);
+              expect(body.error).toMatch('DENIED_RECORD_EDIT');
+              done();
+            });
+          }
+        );
+
+        it('should allow deleting a record if the user is a global admin',
+          function (done) {
+            withAdmin(function (after) {
+              rq.del(groupRoute + '/' + gotherid, function (err, resp, body) {
+                expect(err).toBeNull();
+                expect(resp.statusCode).toBe(200);
+                expect(body.success).toBeTruthy();
+                expect(body.key).toBe(gotherid);
+                after();
+              });
+            }, done);
+          }
+        );
+
       });
 
     });

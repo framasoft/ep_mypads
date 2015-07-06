@@ -90,10 +90,13 @@ module.exports = (function () {
 
   /**
   * `get` internal takes a mandatory `module` argument to call its `get` method.
-  * Otherwise, it will use `req.params.key` to get the database record.
+  * It will use `req.params.key` to get the database record and returns an
+  * according response. By the way, an optional `cond`ition can be passed. It
+  * is a function that takes the result of the module.get and *true* or
+  * *false*. If *false*, an error will be returned.
   */
 
-  fn.get = function (module, req, res) {
+  fn.get = function (module, req, res, next, cond) {
     try {
       module.get(req.params.key, function (err, val) {
         if (err) {
@@ -102,7 +105,11 @@ module.exports = (function () {
             key: req.params.key
           });
         }
-        res.send({ key: req.params.key, value: val });
+        if (cond && !cond(val)) {
+          return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.DENIED_RECORD');
+        } else {
+          return res.send({ key: req.params.key, value: val });
+        }
       });
     }
     catch (e) {
@@ -149,13 +156,25 @@ module.exports = (function () {
   };
 
   /**
+  * `denied` is an internal helper that just takes `res` express response and
+  * an `errorCode` string. It returns an unothorized status.
+  */
+
+  fn.denied = function (res, errCode) {
+    return res
+    .status(401)
+    .send({ error: errCode });
+  };
+
+
+  /**
   * `ensureAuthenticated` internal is an Express middleware takes `req`,
   * `res` and `next`. It returns error or lets the next middleware go.
   */
 
   fn.ensureAuthenticated = function (req, res, next) {
     if (!req.isAuthenticated() && !req.session.mypadsLogin) {
-      res.status(401).send({ error: 'BACKEND.ERROR.AUTHENTICATION.MUST_BE' });
+      return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.MUST_BE');
     } else {
       return next();
     }
@@ -170,7 +189,7 @@ module.exports = (function () {
   fn.ensureAdmin = function (req, res, next) {
     var isAdmin = (req.session.user && req.session.user.isAdmin);
     if (!isAdmin) {
-      res.status(401).send({ error: 'BACKEND.ERROR.AUTHENTICATION.ADMIN' });
+      return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.ADMIN');
     } else {
       return next();
     }
@@ -187,7 +206,7 @@ module.exports = (function () {
     var login = req.params.key || req.body.login;
     var isSelf = (login === req.session.mypadsLogin);
     if (!isAdmin && !isSelf) {
-      res.status(401).send({ error: 'BACKEND.ERROR.AUTHENTICATION.DENIED' });
+      return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.DENIED');
     } else {
       return next();
     }
@@ -457,7 +476,7 @@ module.exports = (function () {
   /**
   * ## Group API
   *
-  * All methods needs `fn.ensureAuthenticated`
+  * All methods except `invite` and creation need special permissions.
   */
 
   var groupAPI = function (app) {
@@ -466,6 +485,8 @@ module.exports = (function () {
     /**
     * GET method : `group.getByUser` via user login. passwords are omitted
     * Returns all groups and pads, filtered from sensitive data.
+    *
+    * Only for authenticated users.
     *
     * Sample URL:
     * http://etherpad.ndd/mypads/api/group
@@ -520,7 +541,41 @@ module.exports = (function () {
     */
 
     app.get(groupRoute + '/:key', fn.ensureAuthenticated,
-      ld.partial(fn.get, group));
+      function (req, res, next) {
+        var cond = function (val) {
+          var isAdmin = (req.session.user && req.session.user.isAdmin);
+          var isAllowed = ld.includes(ld.union(val.admins, val.users),
+            req.session.mypadsUid);
+          return (isAdmin || isAllowed);
+        };
+        return fn.get(group, req, res, next, cond);
+      }
+    );
+
+    /**
+    * `canEdit` is an asynchronous internal group helper to check common
+    * permissions for edit methods used here (set && delete ones). It ensures
+    * that the current user is either an Etherpad admin or a group admin.
+    *
+    * It takes the `req` and `res` request and response Express objects, and a
+    * `successFn` function, called if the user is allowed. Otherwise, it uses
+    * response to return statusCode and Error messages.
+    */
+
+    var canEdit = function (req, res, successFn) {
+      var isAdmin = (req.session.user && req.session.user.isAdmin);
+      if (isAdmin) { return successFn(); }
+      group.get(req.params.key, function (err, g) {
+        if (err) { return res.status(400).send({ error: err.message }); }
+        var isAllowed = ld.includes(g.admins, req.session.mypadsUid);
+        if (isAllowed) {
+          return successFn();
+        } else {
+          return fn.denied(res,
+            'BACKEND.ERROR.AUTHENTICATION.DENIED_RECORD_EDIT');
+        }
+      });
+    };
 
     // `set` for POST and PUT, see below
     var _set = function (req, res) {
@@ -544,7 +599,9 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/group/xxx
     */
 
-    app.put(groupRoute + '/:key', fn.ensureAuthenticated, _set);
+    app.put(groupRoute + '/:key', fn.ensureAuthenticated, function (req, res) {
+      canEdit(req, res, ld.partial(_set, req, res));
+    });
 
     /**
     * DELETE method : `group.del` with group id
@@ -554,11 +611,15 @@ module.exports = (function () {
     */
 
     app.delete(groupRoute + '/:key', fn.ensureAuthenticated,
-      ld.partial(fn.del, group.del));
+      function (req, res) {
+        canEdit(req, res, ld.partial(fn.del, group.del, req, res));
+      }
+    );
 
     /**
     * POST method : `group.inviteOrShare` with gid group id, array of logins
     * and invite boolean
+    * This method is open to all authenticated users.
     *
     * Sample URL:
     * http://etherpad.ndd/mypads/api/group/invite
@@ -566,14 +627,24 @@ module.exports = (function () {
 
     app.post(groupRoute + '/invite', fn.ensureAuthenticated,
       function (req, res) {
-        try {
-          group.inviteOrShare(req.body.invite, req.body.gid, req.body.logins,
-            function (err, g) {
-              if (err) { return res.status(401).send({ error: err.message }); }
-              res.send({ success: true, value: g });
-          });
+        if (!req.body.gid) {
+          return res.status(400)
+            .send({ error: 'BACKEND.ERROR.TYPE.PARAMS_REQUIRED' });
         }
-        catch (e) { res.status(400).send({ error: e.message }); }
+        req.params.key = req.body.gid;
+        var successFn = ld.partial(function (req, res) {
+          try {
+            group.inviteOrShare(req.body.invite, req.body.gid, req.body.logins,
+              function (err, g) {
+                if (err) {
+                  return res.status(401).send({ error: err.message });
+                }
+                return res.send({ success: true, value: g });
+            });
+          }
+          catch (e) { res.status(400).send({ error: e.message }); }
+        }, req, res);
+        canEdit(req, res, successFn);
       }
     );
 

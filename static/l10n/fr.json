@@ -27,7 +27,9 @@
         "NOT_AUTH": "Pas authentifié",
         "PASSWORD_INCORRECT": "Le mot de passe n'est pas correct",
         "ADMIN": "Accès interdit : vous devez être un administrateur authentifié de l'instance Etherpad",
-        "DENIED": "Accès interdit"
+        "DENIED": "Accès interdit",
+        "DENIED_RECORD": "Vous n'êtes pas autorisé à voir cet enregistrement",
+        "DENIED_RECORD_EDIT": "Vous n'êtes pas autorisé à modifier cet enregistrement"
       },
       "PERMISSION": {
         "UNEXPECTED": "Désolé, une erreur inattendue s'est produite",

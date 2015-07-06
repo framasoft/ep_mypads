@@ -1045,70 +1045,82 @@ module.exports = (function () {
   view.pads = function (c) {
     var route = '/mypads/group/' + c.group._id;
     var GROUP = conf.LANG.GROUP;
-    return m('section.pad', [
-      m('p', [
-        m('a.add', { href: route + '/pad/add', config: m.route }, [
-          m('i.icon-plus-squared'),
-          conf.LANG.GROUP.PAD.ADD
-        ])
-      ]),
-      m('p', [
-        m('a.move', { href: route + '/pad/move', config: m.route }, [
-          m('i.icon-forward'),
-          conf.LANG.GROUP.PAD.MOVE
-        ])
-      ]),
-      (function () {
-        if (ld.size(c.group.pads) === 0) {
-          return m('p', conf.LANG.GROUP.PAD.NONE);
-        } else {
-          return m('ul', ld.map(c.pads, function (p) {
-            var isBookmarked = ld.includes(c.bookmarks, p._id);
-            return m('li.block-group', [
-              m('span.block.name', [
-                m('a', {
-                  href: route + '/pad/view/' + p._id,
-                  config: m.route,
-                  title: conf.LANG.GROUP.VIEW
-                }, p.name)
-              ]),
-              m('span.block.actions', [
-                m('button', {
-                  title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK),
-                  onclick: function () { padMark(p._id); }
-                }, [
-                  m('i',
-                    { class: 'icon-star' + (isBookmarked ? '' : '-empty') })
-                ]),
-                (function () {
-                  if (c.group.visibility !== 'restricted') {
-                    return m('button', {
-                      title: conf.LANG.GROUP.SHARE,
-                      onclick: padShare.bind(c, c.group._id, p._id)
-                    }, [ m('i.icon-link') ]);
-                  }
-                })(),
-                m('a', {
-                  href: route + '/pad/view/' + p._id,
-                  config: m.route,
-                  title: conf.LANG.GROUP.VIEW
-                }, [ m('i.icon-book-open') ]),
-                m('a', {
-                  href: route + '/pad/edit/' + p._id,
-                  config: m.route,
-                  title: conf.LANG.GROUP.EDIT
-                }, [ m('i.icon-pencil') ]),
-                m('a', {
-                  href: route + '/pad/remove/' + p._id,
-                  config: m.route,
-                  title: conf.LANG.GROUP.REMOVE
-                }, [ m('i.icon-trash') ]),
-              ])
-            ]); 
-          }));
-        }
-      })()
+    var isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
+    var addView = m('p', [
+      m('a.add', { href: route + '/pad/add', config: m.route }, [
+        m('i.icon-plus-squared'),
+        conf.LANG.GROUP.PAD.ADD
+      ])
     ]);
+    var moveView = m('p', [
+      m('a.move', { href: route + '/pad/move', config: m.route }, [
+        m('i.icon-forward'),
+        conf.LANG.GROUP.PAD.MOVE
+      ])
+    ]);
+    var padView = (function () {
+      if (ld.size(c.group.pads) === 0) {
+        return m('p', conf.LANG.GROUP.PAD.NONE);
+      } else {
+        return m('ul', ld.map(c.pads, function (p) {
+          var isBookmarked = ld.includes(c.bookmarks, p._id);
+          var actions = [
+            m('button', {
+              title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK),
+              onclick: function () { padMark(p._id); }
+            }, [
+              m('i',
+                { class: 'icon-star' + (isBookmarked ? '' : '-empty') })
+              ]),
+              (function () {
+                if (c.group.visibility !== 'restricted') {
+                  return m('button', {
+                    title: conf.LANG.GROUP.SHARE,
+                    onclick: padShare.bind(c, c.group._id, p._id)
+                  }, [ m('i.icon-link') ]);
+                }
+              })(),
+              m('a', {
+                href: route + '/pad/view/' + p._id,
+                config: m.route,
+                title: conf.LANG.GROUP.VIEW
+              }, [ m('i.icon-book-open') ])
+          ];
+          if (isAdmin) {
+            actions.push(
+              m('a', {
+                href: route + '/pad/edit/' + p._id,
+                config: m.route,
+                title: conf.LANG.GROUP.EDIT
+              }, [ m('i.icon-pencil') ]),
+              m('a', {
+                href: route + '/pad/remove/' + p._id,
+                config: m.route,
+                title: conf.LANG.GROUP.REMOVE
+              }, [ m('i.icon-trash') ])
+            );
+          }
+          return m('li.block-group', [
+            m('span.block.name', [
+              m('a', {
+                href: route + '/pad/view/' + p._id,
+                config: m.route,
+                title: conf.LANG.GROUP.VIEW
+              }, p.name)
+              ]),
+            m('span.block.actions', actions)
+          ]);
+        }));
+      }
+    })();
+    var padBlocks;
+    if (isAdmin) {
+      padBlocks = [addView, moveView];
+    } else {
+      padBlocks = [];
+    }
+    padBlocks.push(padView);
+    return m('section.pad', padBlocks);
   };
 
   /**
@@ -1139,18 +1151,21 @@ module.exports = (function () {
       }
     };
     var route = '/mypads/group/' + c.group._id;
-    var sectionElements = [
-      m('h4.block', conf.LANG.GROUP.PAD.ADMINS),
-      m('a.add', { href: route + '/user/share', config: m.route },
-        [ m('i.icon-plus-squared'), conf.LANG.GROUP.SHARE_ADMIN ]),
-      list(c.admins) 
-    ];
-    if (c.group.visibility === 'restricted') {
-      sectionElements.push(m('h4.block', conf.LANG.GROUP.PAD.USERS),
-        m('a.add', { href: route + '/user/invite', config: m.route },
-          [ m('i.icon-plus-squared'), conf.LANG.GROUP.INVITE_USER.IU ]),
-        list(c.users));
+    var sectionElements = [ m('h4.block', conf.LANG.GROUP.PAD.ADMINS) ];
+    var isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
+    if (isAdmin) {
+      sectionElements.push(
+        m('a.add', { href: route + '/user/share', config: m.route },
+          [ m('i.icon-plus-squared'), conf.LANG.GROUP.SHARE_ADMIN ]));
     }
+    sectionElements.push(list(c.admins));
+    sectionElements.push(m('h4.block', conf.LANG.GROUP.PAD.USERS));
+    if (isAdmin && (c.group.visibility === 'restricted')) {
+        sectionElements.push(
+          m('a.add', { href: route + '/user/invite', config: m.route },
+            [ m('i.icon-plus-squared'), conf.LANG.GROUP.INVITE_USER.IU ]));
+    }
+    sectionElements.push(list(c.users));
     return m('section', sectionElements);
   };
 
@@ -1536,6 +1551,35 @@ module.exports = (function () {
     var padRoute = '/mypads/group/' + g._id;
     var isBookmarked = (ld.includes(u().bookmarks.groups, g._id));
     var GROUP = conf.LANG.GROUP;
+    var isAdmin = ld.includes(g.admins, u()._id);
+    var actions = [
+      m('a', {
+        onclick: group.mark.bind(c, g._id, c.computeGroups),
+        href: '/mypads',
+        config: m.route,
+        title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK)
+      }, [
+        m('i',
+          { class: 'icon-star' + (isBookmarked ? '' : '-empty') })
+        ]),
+        m('a', {
+          href: padRoute + '/view',
+          config: m.route,
+          title: conf.LANG.GROUP.VIEW_MANAGE
+        }, [ m('i.icon-book-open') ])
+      ];
+      if (isAdmin) {
+        actions.push(m('a', {
+          href: padRoute + '/edit',
+          config: m.route,
+          title: conf.LANG.GROUP.EDIT
+        }, [ m('i.icon-pencil') ]),
+        m('a', {
+          href: padRoute + '/remove',
+          config: m.route,
+          title: conf.LANG.GROUP.REMOVE
+        }, [ m('i.icon-trash') ]));
+      }
     return m('li.block', [
       m('header.group.block-group', [
         m('h4.block', [ m('a', {
@@ -1543,55 +1587,45 @@ module.exports = (function () {
           config: m.route,
           title: conf.LANG.GROUP.VIEW_MANAGE
         }, g.name) ]),
-        m('section.block', [
-          m('a', {
-            onclick: group.mark.bind(c, g._id, c.computeGroups),
-            href: '/mypads',
-            config: m.route,
-            title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK)
-          }, [
-            m('i',
-              { class: 'icon-star' + (isBookmarked ? '' : '-empty') })
-            ]),
-          m('a', {
-            href: padRoute + '/view',
-            config: m.route,
-            title: conf.LANG.GROUP.VIEW_MANAGE
-          }, [ m('i.icon-book-open') ]),
-          m('a', {
-            href: padRoute + '/edit',
-            config: m.route,
-            title: conf.LANG.GROUP.EDIT
-          }, [ m('i.icon-pencil') ]),
-          m('a', {
-            href: padRoute + '/remove',
-            config: m.route,
-            title: conf.LANG.GROUP.REMOVE
-          }, [ m('i.icon-trash') ])
-        ])
+        m('section.block', actions)
       ]),
       m('dl.block-group.group', [
         m('dt.block', conf.LANG.GROUP.PAD.PADS),
         m('dd.block', [
-          ld.size(g.pads),
-          m('a', { href: padRoute + '/pad/add', config: m.route }, [
-            m('i.icon-plus-squared', { title: conf.LANG.GROUP.PAD.ADD }) ])
+          ld.size(g.pads), (function () {
+            if (isAdmin) {
+              return m('a', { href: padRoute + '/pad/add', config: m.route }, [
+                m('i.icon-plus-squared', { title: conf.LANG.GROUP.PAD.ADD }) ]);
+            }
+          })()
         ]),
         m('dt.block', conf.LANG.GROUP.PAD.VISIBILITY),
         m('dd.block', g.visibility),
         m('dt.block', conf.LANG.GROUP.PAD.ADMINS),
-        m('dd.block', [ ld.size(g.admins),
-          m('a', { href: padRoute + '/user/share', config: m.route }, [
-            m('i.icon-plus-squared', { title: conf.LANG.GROUP.SHARE_ADMIN }) ])
+        m('dd.block', [ ld.size(g.admins), (function () {
+          if (isAdmin) {
+            return m('a', { href: padRoute + '/user/share', config: m.route }, [
+              m('i.icon-plus-squared',
+                { title: conf.LANG.GROUP.SHARE_ADMIN }) ]);
+          }
+        })()
         ]),
         (function () {
           if (g.visibility === 'restricted') {
             return m('div', [
               m('dt.block', conf.LANG.GROUP.PAD.USERS),
-              m('dd.block', [ ld.size(g.users),
-                m('a', { href: padRoute + '/user/invite', config: m.route }, [
-                  m('i.icon-plus-squared',
-                    { title: conf.LANG.GROUP.INVITE_USER.IU }) ])
+              m('dd.block', [ ld.size(g.users), (function () {
+                if (isAdmin) {
+                  return m(
+                    'a',
+                    { href: padRoute + '/user/invite', config: m.route },
+                    [
+                      m('i.icon-plus-squared',
+                        { title: conf.LANG.GROUP.INVITE_USER.IU })
+                    ]
+                  );
+                }
+              })()
               ])
             ]);
           }
@@ -2691,6 +2725,7 @@ module.exports = (function () {
 
   view.main = function (c) {
     var isBookmarked = ld.includes(c.bookmarks, c.pad._id);
+    var isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
     var route = '/mypads/group/' + c.group._id;
     var GROUP = conf.LANG.GROUP;
     return m('section', { class: 'block-group group' }, [
@@ -2710,7 +2745,7 @@ module.exports = (function () {
     m('p.actions', [
       m('button', {
         title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK),
-        onclick: function () { padMark(c.pad._id) }
+        onclick: function () { padMark(c.pad._id); }
       }, [
         m('i',
           { class: 'icon-star' + (isBookmarked ? '' : '-empty') }),
@@ -2724,16 +2759,24 @@ module.exports = (function () {
           }, [ m('i.icon-link'), m('span', conf.LANG.GROUP.SHARE) ]);
         }
       })(),
-      m('a', {
-        href: route + '/pad/edit/' + c.pad._id,
-        config: m.route,
-        title: conf.LANG.GROUP.EDIT
-      }, [ m('i.icon-pencil'), m('span', conf.LANG.GROUP.EDIT) ]),
-      m('a', {
-        href: route + '/pad/remove/' + c.pad._id,
-        config: m.route,
-        title: conf.LANG.GROUP.REMOVE
-      }, [ m('i.icon-trash'), m('span', conf.LANG.GROUP.REMOVE) ])
+      (function () {
+        if (isAdmin) {
+          return m('a', {
+            href: route + '/pad/edit/' + c.pad._id,
+            config: m.route,
+            title: conf.LANG.GROUP.EDIT
+          }, [ m('i.icon-pencil'), m('span', conf.LANG.GROUP.EDIT) ]);
+          }
+      })(),
+      (function () {
+        if (isAdmin) {
+          return m('a', {
+            href: route + '/pad/remove/' + c.pad._id,
+            config: m.route,
+            title: conf.LANG.GROUP.REMOVE
+          }, [ m('i.icon-trash'), m('span', conf.LANG.GROUP.REMOVE) ]);
+        }
+      })()
     ]),
     m('section.block.pad', view.pad(c))
     ]);
@@ -17259,7 +17302,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {

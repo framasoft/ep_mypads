@@ -137,6 +137,7 @@ module.exports = (function () {
 
   view.main = function (c) {
     var isBookmarked = ld.includes(c.bookmarks, c.pad._id);
+    var isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
     var route = '/mypads/group/' + c.group._id;
     var GROUP = conf.LANG.GROUP;
     return m('section', { class: 'block-group group' }, [
@@ -156,7 +157,7 @@ module.exports = (function () {
     m('p.actions', [
       m('button', {
         title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK),
-        onclick: function () { padMark(c.pad._id) }
+        onclick: function () { padMark(c.pad._id); }
       }, [
         m('i',
           { class: 'icon-star' + (isBookmarked ? '' : '-empty') }),
@@ -170,16 +171,24 @@ module.exports = (function () {
           }, [ m('i.icon-link'), m('span', conf.LANG.GROUP.SHARE) ]);
         }
       })(),
-      m('a', {
-        href: route + '/pad/edit/' + c.pad._id,
-        config: m.route,
-        title: conf.LANG.GROUP.EDIT
-      }, [ m('i.icon-pencil'), m('span', conf.LANG.GROUP.EDIT) ]),
-      m('a', {
-        href: route + '/pad/remove/' + c.pad._id,
-        config: m.route,
-        title: conf.LANG.GROUP.REMOVE
-      }, [ m('i.icon-trash'), m('span', conf.LANG.GROUP.REMOVE) ])
+      (function () {
+        if (isAdmin) {
+          return m('a', {
+            href: route + '/pad/edit/' + c.pad._id,
+            config: m.route,
+            title: conf.LANG.GROUP.EDIT
+          }, [ m('i.icon-pencil'), m('span', conf.LANG.GROUP.EDIT) ]);
+          }
+      })(),
+      (function () {
+        if (isAdmin) {
+          return m('a', {
+            href: route + '/pad/remove/' + c.pad._id,
+            config: m.route,
+            title: conf.LANG.GROUP.REMOVE
+          }, [ m('i.icon-trash'), m('span', conf.LANG.GROUP.REMOVE) ]);
+        }
+      })()
     ]),
     m('section.block.pad', view.pad(c))
     ]);

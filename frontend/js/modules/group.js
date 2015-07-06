@@ -322,6 +322,35 @@ module.exports = (function () {
     var padRoute = '/mypads/group/' + g._id;
     var isBookmarked = (ld.includes(u().bookmarks.groups, g._id));
     var GROUP = conf.LANG.GROUP;
+    var isAdmin = ld.includes(g.admins, u()._id);
+    var actions = [
+      m('a', {
+        onclick: group.mark.bind(c, g._id, c.computeGroups),
+        href: '/mypads',
+        config: m.route,
+        title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK)
+      }, [
+        m('i',
+          { class: 'icon-star' + (isBookmarked ? '' : '-empty') })
+        ]),
+        m('a', {
+          href: padRoute + '/view',
+          config: m.route,
+          title: conf.LANG.GROUP.VIEW_MANAGE
+        }, [ m('i.icon-book-open') ])
+      ];
+      if (isAdmin) {
+        actions.push(m('a', {
+          href: padRoute + '/edit',
+          config: m.route,
+          title: conf.LANG.GROUP.EDIT
+        }, [ m('i.icon-pencil') ]),
+        m('a', {
+          href: padRoute + '/remove',
+          config: m.route,
+          title: conf.LANG.GROUP.REMOVE
+        }, [ m('i.icon-trash') ]));
+      }
     return m('li.block', [
       m('header.group.block-group', [
         m('h4.block', [ m('a', {
@@ -329,55 +358,45 @@ module.exports = (function () {
           config: m.route,
           title: conf.LANG.GROUP.VIEW_MANAGE
         }, g.name) ]),
-        m('section.block', [
-          m('a', {
-            onclick: group.mark.bind(c, g._id, c.computeGroups),
-            href: '/mypads',
-            config: m.route,
-            title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK)
-          }, [
-            m('i',
-              { class: 'icon-star' + (isBookmarked ? '' : '-empty') })
-            ]),
-          m('a', {
-            href: padRoute + '/view',
-            config: m.route,
-            title: conf.LANG.GROUP.VIEW_MANAGE
-          }, [ m('i.icon-book-open') ]),
-          m('a', {
-            href: padRoute + '/edit',
-            config: m.route,
-            title: conf.LANG.GROUP.EDIT
-          }, [ m('i.icon-pencil') ]),
-          m('a', {
-            href: padRoute + '/remove',
-            config: m.route,
-            title: conf.LANG.GROUP.REMOVE
-          }, [ m('i.icon-trash') ])
-        ])
+        m('section.block', actions)
       ]),
       m('dl.block-group.group', [
         m('dt.block', conf.LANG.GROUP.PAD.PADS),
         m('dd.block', [
-          ld.size(g.pads),
-          m('a', { href: padRoute + '/pad/add', config: m.route }, [
-            m('i.icon-plus-squared', { title: conf.LANG.GROUP.PAD.ADD }) ])
+          ld.size(g.pads), (function () {
+            if (isAdmin) {
+              return m('a', { href: padRoute + '/pad/add', config: m.route }, [
+                m('i.icon-plus-squared', { title: conf.LANG.GROUP.PAD.ADD }) ]);
+            }
+          })()
         ]),
         m('dt.block', conf.LANG.GROUP.PAD.VISIBILITY),
         m('dd.block', g.visibility),
         m('dt.block', conf.LANG.GROUP.PAD.ADMINS),
-        m('dd.block', [ ld.size(g.admins),
-          m('a', { href: padRoute + '/user/share', config: m.route }, [
-            m('i.icon-plus-squared', { title: conf.LANG.GROUP.SHARE_ADMIN }) ])
+        m('dd.block', [ ld.size(g.admins), (function () {
+          if (isAdmin) {
+            return m('a', { href: padRoute + '/user/share', config: m.route }, [
+              m('i.icon-plus-squared',
+                { title: conf.LANG.GROUP.SHARE_ADMIN }) ]);
+          }
+        })()
         ]),
         (function () {
           if (g.visibility === 'restricted') {
             return m('div', [
               m('dt.block', conf.LANG.GROUP.PAD.USERS),
-              m('dd.block', [ ld.size(g.users),
-                m('a', { href: padRoute + '/user/invite', config: m.route }, [
-                  m('i.icon-plus-squared',
-                    { title: conf.LANG.GROUP.INVITE_USER.IU }) ])
+              m('dd.block', [ ld.size(g.users), (function () {
+                if (isAdmin) {
+                  return m(
+                    'a',
+                    { href: padRoute + '/user/invite', config: m.route },
+                    [
+                      m('i.icon-plus-squared',
+                        { title: conf.LANG.GROUP.INVITE_USER.IU })
+                    ]
+                  );
+                }
+              })()
               ])
             ]);
           }

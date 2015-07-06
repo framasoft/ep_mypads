@@ -108,70 +108,82 @@ module.exports = (function () {
   view.pads = function (c) {
     var route = '/mypads/group/' + c.group._id;
     var GROUP = conf.LANG.GROUP;
-    return m('section.pad', [
-      m('p', [
-        m('a.add', { href: route + '/pad/add', config: m.route }, [
-          m('i.icon-plus-squared'),
-          conf.LANG.GROUP.PAD.ADD
-        ])
-      ]),
-      m('p', [
-        m('a.move', { href: route + '/pad/move', config: m.route }, [
-          m('i.icon-forward'),
-          conf.LANG.GROUP.PAD.MOVE
-        ])
-      ]),
-      (function () {
-        if (ld.size(c.group.pads) === 0) {
-          return m('p', conf.LANG.GROUP.PAD.NONE);
-        } else {
-          return m('ul', ld.map(c.pads, function (p) {
-            var isBookmarked = ld.includes(c.bookmarks, p._id);
-            return m('li.block-group', [
-              m('span.block.name', [
-                m('a', {
-                  href: route + '/pad/view/' + p._id,
-                  config: m.route,
-                  title: conf.LANG.GROUP.VIEW
-                }, p.name)
-              ]),
-              m('span.block.actions', [
-                m('button', {
-                  title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK),
-                  onclick: function () { padMark(p._id); }
-                }, [
-                  m('i',
-                    { class: 'icon-star' + (isBookmarked ? '' : '-empty') })
-                ]),
-                (function () {
-                  if (c.group.visibility !== 'restricted') {
-                    return m('button', {
-                      title: conf.LANG.GROUP.SHARE,
-                      onclick: padShare.bind(c, c.group._id, p._id)
-                    }, [ m('i.icon-link') ]);
-                  }
-                })(),
-                m('a', {
-                  href: route + '/pad/view/' + p._id,
-                  config: m.route,
-                  title: conf.LANG.GROUP.VIEW
-                }, [ m('i.icon-book-open') ]),
-                m('a', {
-                  href: route + '/pad/edit/' + p._id,
-                  config: m.route,
-                  title: conf.LANG.GROUP.EDIT
-                }, [ m('i.icon-pencil') ]),
-                m('a', {
-                  href: route + '/pad/remove/' + p._id,
-                  config: m.route,
-                  title: conf.LANG.GROUP.REMOVE
-                }, [ m('i.icon-trash') ]),
-              ])
-            ]); 
-          }));
-        }
-      })()
+    var isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
+    var addView = m('p', [
+      m('a.add', { href: route + '/pad/add', config: m.route }, [
+        m('i.icon-plus-squared'),
+        conf.LANG.GROUP.PAD.ADD
+      ])
     ]);
+    var moveView = m('p', [
+      m('a.move', { href: route + '/pad/move', config: m.route }, [
+        m('i.icon-forward'),
+        conf.LANG.GROUP.PAD.MOVE
+      ])
+    ]);
+    var padView = (function () {
+      if (ld.size(c.group.pads) === 0) {
+        return m('p', conf.LANG.GROUP.PAD.NONE);
+      } else {
+        return m('ul', ld.map(c.pads, function (p) {
+          var isBookmarked = ld.includes(c.bookmarks, p._id);
+          var actions = [
+            m('button', {
+              title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK),
+              onclick: function () { padMark(p._id); }
+            }, [
+              m('i',
+                { class: 'icon-star' + (isBookmarked ? '' : '-empty') })
+              ]),
+              (function () {
+                if (c.group.visibility !== 'restricted') {
+                  return m('button', {
+                    title: conf.LANG.GROUP.SHARE,
+                    onclick: padShare.bind(c, c.group._id, p._id)
+                  }, [ m('i.icon-link') ]);
+                }
+              })(),
+              m('a', {
+                href: route + '/pad/view/' + p._id,
+                config: m.route,
+                title: conf.LANG.GROUP.VIEW
+              }, [ m('i.icon-book-open') ])
+          ];
+          if (isAdmin) {
+            actions.push(
+              m('a', {
+                href: route + '/pad/edit/' + p._id,
+                config: m.route,
+                title: conf.LANG.GROUP.EDIT
+              }, [ m('i.icon-pencil') ]),
+              m('a', {
+                href: route + '/pad/remove/' + p._id,
+                config: m.route,
+                title: conf.LANG.GROUP.REMOVE
+              }, [ m('i.icon-trash') ])
+            );
+          }
+          return m('li.block-group', [
+            m('span.block.name', [
+              m('a', {
+                href: route + '/pad/view/' + p._id,
+                config: m.route,
+                title: conf.LANG.GROUP.VIEW
+              }, p.name)
+              ]),
+            m('span.block.actions', actions)
+          ]);
+        }));
+      }
+    })();
+    var padBlocks;
+    if (isAdmin) {
+      padBlocks = [addView, moveView];
+    } else {
+      padBlocks = [];
+    }
+    padBlocks.push(padView);
+    return m('section.pad', padBlocks);
   };
 
   /**
@@ -202,18 +214,21 @@ module.exports = (function () {
       }
     };
     var route = '/mypads/group/' + c.group._id;
-    var sectionElements = [
-      m('h4.block', conf.LANG.GROUP.PAD.ADMINS),
-      m('a.add', { href: route + '/user/share', config: m.route },
-        [ m('i.icon-plus-squared'), conf.LANG.GROUP.SHARE_ADMIN ]),
-      list(c.admins) 
-    ];
-    if (c.group.visibility === 'restricted') {
-      sectionElements.push(m('h4.block', conf.LANG.GROUP.PAD.USERS),
-        m('a.add', { href: route + '/user/invite', config: m.route },
-          [ m('i.icon-plus-squared'), conf.LANG.GROUP.INVITE_USER.IU ]),
-        list(c.users));
+    var sectionElements = [ m('h4.block', conf.LANG.GROUP.PAD.ADMINS) ];
+    var isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
+    if (isAdmin) {
+      sectionElements.push(
+        m('a.add', { href: route + '/user/share', config: m.route },
+          [ m('i.icon-plus-squared'), conf.LANG.GROUP.SHARE_ADMIN ]));
     }
+    sectionElements.push(list(c.admins));
+    sectionElements.push(m('h4.block', conf.LANG.GROUP.PAD.USERS));
+    if (isAdmin && (c.group.visibility === 'restricted')) {
+        sectionElements.push(
+          m('a.add', { href: route + '/user/invite', config: m.route },
+            [ m('i.icon-plus-squared'), conf.LANG.GROUP.INVITE_USER.IU ]));
+    }
+    sectionElements.push(list(c.users));
     return m('section', sectionElements);
   };
 

@@ -281,17 +281,15 @@ module.exports = (function () {
   */
 
   view.main = function (c) {
-    var h2txt;
+    var elements = [view.form(c)];
     if (c.profileView()) {
-      h2txt =  conf.LANG.USER.PROFILE + ' : ' + auth.userInfo().login;
+      elements.splice(0, 0, m('h2.block',
+        conf.LANG.USER.PROFILE + ' : ' + auth.userInfo().login));
+      elements.push(view.removeAccount(c));
     } else {
-      h2txt = conf.LANG.USER.SUBSCRIBE;
+      elements.splice(0, 0, m('h2.block', conf.LANG.USER.SUBSCRIBE));
     }
-    return m('section', { class: 'block-group user' }, [
-      m('h2.block', h2txt),
-      view.form(c),
-      view.removeAccount(c)
-    ]);
+    return m('section', { class: 'block-group user' }, elements);
   };
 
   subscribe.view = function (c) {

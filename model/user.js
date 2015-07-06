@@ -360,7 +360,7 @@ module.exports = (function () {
       storage.fn.getKeys(keys, function (err, results) {
         if (results) {
           user.ids = ld.transform(results, function (memo, val, key) {
-            memo[val.login] = key.replace(UPREFIX, '');
+            if (val) { memo[val.login] = key.replace(UPREFIX, ''); }
           });
         }
         callback(null);

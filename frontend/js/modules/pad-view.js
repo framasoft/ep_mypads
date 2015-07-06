@@ -156,7 +156,7 @@ module.exports = (function () {
     m('p.actions', [
       m('button', {
         title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK),
-        onclick: padMark.bind(c, c.pad._id)
+        onclick: function () { padMark(c.pad._id) }
       }, [
         m('i',
           { class: 'icon-star' + (isBookmarked ? '' : '-empty') }),

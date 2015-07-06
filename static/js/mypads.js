@@ -2710,7 +2710,7 @@ module.exports = (function () {
     m('p.actions', [
       m('button', {
         title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK),
-        onclick: padMark.bind(c, c.pad._id)
+        onclick: function () { padMark(c.pad._id) }
       }, [
         m('i',
           { class: 'icon-star' + (isBookmarked ? '' : '-empty') }),
@@ -17259,7 +17259,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {

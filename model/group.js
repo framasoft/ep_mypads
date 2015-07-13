@@ -205,9 +205,52 @@ module.exports = (function () {
   };
 
   /**
+  * ### resign
+  *
+  * `resign` os an asynchronous function that resigns current user from the
+  * given group. It checks if the user is currently a user or administrator of
+  * the group and accept resignation, except if the user is the unique
+  * administrator.
+  *
+  * It takes :
+  *
+  * - `gid` group unique identifier;
+  * - 'uid' user unique identifier;
+  * - `callback` function calling with  *error* if error or *null* and the
+  *   updated group otherwise.
+  */
+
+  group.resign = function (gid, uid, callback) {
+    if (!ld.isString(gid) || !(ld.isString(uid))) {
+      throw new TypeError('BACKEND.ERROR.TYPE.ID_STR');
+    }
+    if (!ld.isFunction(callback)) {
+      throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
+    }
+    group.get(gid, function (err, g) {
+      if (err) { return callback(err); }
+      var users = ld.union(g.admins, g.users);
+      if (!ld.includes(users, uid)) {
+        var e = new Error('BACKEND.ERROR.GROUP.NOT_USER');
+        return callback(e);
+      }
+      if ((ld.size(g.admins) === 1) && (ld.first(g.admins) === uid)) {
+        var e = new Error('BACKEND.ERROR.GROUP.RESIGN_UNIQUE_ADMIN');
+        return callback(e);
+      }
+      ld.pull(g.admins, uid);
+      ld.pull(g.users, uid);
+      group.fn.set(g, function (err, g) {
+        if (err) { return callback(err); }
+        return callback(null, g);
+      });
+    });
+  };
+
+  /**
   * ### inviteOrShare
   *
-  * `inviteOrShare` is a asynchronous function that checks if given data, users
+  * `inviteOrShare` is an asynchronous function that check if given data, users
   * or admins logins, are correct and transforms it to expected values : unique
   * identifiers, before saving it to database.
   *

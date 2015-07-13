@@ -546,6 +546,73 @@
 
     });
 
+    describe('group resign', function () {
+
+      beforeAll(initGroupUsersAndPads);
+      afterAll(specCommon.reInitDatabase);
+
+      it('should throw errors if arguments are not as expected', function () {
+        expect(group.resign).toThrow();
+        expect(ld.partial(group.resign, false)).toThrow();
+        expect(ld.partial(group.resign, false, false, ld.noop)).toThrow();
+        expect(ld.partial(group.resign, 'gid')).toThrow();
+        expect(ld.partial(group.resign, 'gid', 'uid')).toThrow();
+        expect(ld.partial(group.resign, 'gid', false)).toThrow();
+        expect(ld.partial(group.resign, 'gid', 'uid', false)).toThrow();
+      });
+
+      it('should return an error if group does not exist', function (done) {
+        group.resign('fakeGid', gadm._id, function (err) {
+          expect(ld.isError(err)).toBeTruthy();
+          expect(err).toMatch('KEY_NOT_FOUND');
+          done();
+        });
+      });
+
+      it('should forbid resignation from non user or non admin',
+        function (done) {
+          group.resign(gparams._id, 'fakeUid', function (err) {
+            expect(ld.isError(err)).toBeTruthy();
+            expect(err).toMatch('GROUP.NOT_USER');
+            done();
+          }
+        );
+      });
+
+      it('should forbid resignation from unique group admin', function (done) {
+        group.set({
+          name: 'new Group',
+          admin: gadm._id
+        }, function (err, g) {
+          expect(err).toBeNull();
+          group.resign(g._id, gadm._id, function (err) {
+            expect(ld.isError(err)).toBeTruthy();
+            expect(err).toMatch('RESIGN_UNIQUE_ADMIN');
+            done();
+          });
+        });
+      });
+
+      it('should allow resignation for user and admin otherwise',
+        function (done) {
+          var uid = ld.first(gusers);
+          group.resign(gparams._id, uid, function (err, g) {
+            expect(err).toBeNull();
+            var users = ld.union(g.admins, g.users);
+            expect(ld.includes(users, uid)).toBeFalsy();
+            uid = ld.last(gusers);
+            group.resign(gparams._id, uid, function (err, g) {
+              expect(err).toBeNull();
+              users = ld.union(g.admins, g.users);
+              expect(ld.includes(users, uid)).toBeFalsy();
+              done();
+            });
+          });
+        }
+      );
+
+    });
+
   });
 
 }).call(this);

@@ -480,7 +480,7 @@ module.exports = (function () {
   /**
   * ## Group API
   *
-  * All methods except `invite` and creation need special permissions.
+  * All methods except creation need special permissions.
   */
 
   var groupAPI = function (app) {
@@ -649,6 +649,25 @@ module.exports = (function () {
           catch (e) { res.status(400).send({ error: e.message }); }
         }, req, res);
         canEdit(req, res, successFn);
+      }
+    );
+
+    /**
+    * POST method : `group.resign` with gid group id and current session uid.
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/group/resign
+    */
+
+    app.post(groupRoute + '/resign', fn.ensureAuthenticated,
+      function (req, res) {
+        try {
+          group.resign(req.body.gid, req.session.mypadsUid, function (err, g) {
+            if (err) { return res.status(400).send({ error: err.message }); }
+            return res.send({ success: true, value: g });
+          });
+        }
+        catch (e) { return res.status(400).send({ error: e.message }); }
       }
     );
 

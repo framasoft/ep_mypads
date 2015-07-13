@@ -210,7 +210,7 @@ module.exports = (function () {
   * `resign` os an asynchronous function that resigns current user from the
   * given group. It checks if the user is currently a user or administrator of
   * the group and accept resignation, except if the user is the unique
-  * administrator.
+  * administrator. It takes care of internal index for the user.
   *
   * It takes :
   *
@@ -231,18 +231,24 @@ module.exports = (function () {
       if (err) { return callback(err); }
       var users = ld.union(g.admins, g.users);
       if (!ld.includes(users, uid)) {
-        var e = new Error('BACKEND.ERROR.GROUP.NOT_USER');
-        return callback(e);
+        return callback(new Error('BACKEND.ERROR.GROUP.NOT_USER'));
       }
       if ((ld.size(g.admins) === 1) && (ld.first(g.admins) === uid)) {
-        var e = new Error('BACKEND.ERROR.GROUP.RESIGN_UNIQUE_ADMIN');
-        return callback(e);
+        return callback(new Error('BACKEND.ERROR.GROUP.RESIGN_UNIQUE_ADMIN'));
       }
       ld.pull(g.admins, uid);
       ld.pull(g.users, uid);
-      group.fn.set(g, function (err, g) {
+      storage.db.set(GPREFIX + g._id, g, function (err) {
         if (err) { return callback(err); }
-        return callback(null, g);
+        storage.db.get(UPREFIX + uid, function (err, u) {
+          if (err) { return callback(err); }
+          ld.pull(u.groups, gid);
+          ld.pull(u.bookmarks.groups, gid);
+          storage.db.set(UPREFIX + uid, u, function (err) {
+            if (err) { return callback(err); }
+            return callback(null, g);
+          });
+        });
       });
     });
   };

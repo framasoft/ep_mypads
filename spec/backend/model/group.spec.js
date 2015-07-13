@@ -596,16 +596,25 @@
       it('should allow resignation for user and admin otherwise',
         function (done) {
           var uid = ld.first(gusers);
-          group.resign(gparams._id, uid, function (err, g) {
+          var UPREFIX = storage.DBPREFIX.USER;
+          storage.db.get(UPREFIX + uid, function (err, u) {
             expect(err).toBeNull();
-            var users = ld.union(g.admins, g.users);
-            expect(ld.includes(users, uid)).toBeFalsy();
-            uid = ld.last(gusers);
+            expect(ld.includes(u.groups, gparams._id)).toBeTruthy();
             group.resign(gparams._id, uid, function (err, g) {
               expect(err).toBeNull();
-              users = ld.union(g.admins, g.users);
+              var users = ld.union(g.admins, g.users);
               expect(ld.includes(users, uid)).toBeFalsy();
-              done();
+              storage.db.get(UPREFIX + uid, function (err, u) {
+                expect(err).toBeNull();
+                expect(ld.includes(u.groups, gparams._id)).toBeFalsy();
+                uid = ld.last(gusers);
+                group.resign(gparams._id, uid, function (err, g) {
+                  expect(err).toBeNull();
+                  users = ld.union(g.admins, g.users);
+                  expect(ld.includes(users, uid)).toBeFalsy();
+                  done();
+                });
+              });
             });
           });
         }

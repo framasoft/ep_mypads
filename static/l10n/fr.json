@@ -38,7 +38,9 @@
       "GROUP": {
         "INEXISTENT": "Le group n'existe pas",
         "CASCADE_REMOVAL_PROBLEM": "Quelque chose s'est mal déroulé avec la suppression en cascade des pads",
-        "ITEMS_NOT_FOUND": "Des utilisateurs, administrateurs ou pads n'ont pas été trouvés"
+        "ITEMS_NOT_FOUND": "Des utilisateurs, administrateurs ou pads n'ont pas été trouvés",
+        "NOT_USER": "Vous n'êtes pas utilisateur de ce groupe",
+        "RESIGN_UNIQUE_ADMIN": "Vous ne pouvez pas désinscrire cet utilisateur du groupe s'il est l'unique administrateur"
       },
       "USER": {
         "ALREADY_EXISTS": "L'utilisateur existe déjà, merci de choisir un autre identifiant",
@@ -167,6 +169,7 @@
     "UNMARK": "Supprimer des favoris",
     "MARK_SUCCESS": "Favori réalisé avec succès",
     "SHARE_ADMIN": "Partager l'administration",
+    "QUIT_GROUP": "Quitter le groupe",
     "INVITE_USER": {
       "IU": "Inviter des utilisateurs",
       "HELP": "<p>Ce champ accepte un identifiant à la fois. Quand vous pressez ENTRÉE ou cliquez sur OK, l'identifiant est ajouté à la liste des utilisateurs invités. Une liste d'utilisateurs connus vous aide à saisir.</p><h3>La liste des utilisateurs</h3><p>Cette liste contient tous les utilisateurs sélectionnés. Vous pouvez les supprimer en cliquant sur le signe derrière chaque identifiant.</p><h3>Note</h3><p>Merci de noter que, pour le moment, seuls les utilisateurs enregistrés pourront être ajoutés à votre groupe. Cela signifie que les utilisateurs externes à Mypads ne recevront pas de mail pour les inviter à créer un compte.</p>",
@@ -231,7 +234,8 @@
       "ADD_SUCCESS": "Le groupe a été ajouté avec succès",
       "EDIT_SUCCESS": "Le groupe a été mis à jour avec succès",
       "REMOVE_SUCCESS": "Le groupe a été supprimé avec succès",
-      "REMOVE_SURE": "Ëtes-vous sûr de vouloir supprimer ce groupe ?",
+      "REMOVE_SURE": "Êtes-vous sûr de vouloir supprimer ce groupe ?",
+      "RESIGN": "Êtes-vous sûr de vouloir quitter ce groupe ?",
       "PAD_REMOVE_SUCCESS": "Le pad a été supprimé avec succès",
       "PAD_REMOVE_SURE": "Êtes-vous sûr de vouloir supprimer ce pad ?",
       "PAD_ADD_SUCCESS": "Le pad a été créé avec succès",

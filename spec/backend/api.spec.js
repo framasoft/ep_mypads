@@ -780,17 +780,19 @@
           }
         );
 
-        it('should deletes the record and returns the key and success' +
+        it('should delete the record and returns the key and success' +
          ' otherwise', function (done) {
             rq.del(userRoute + '/guest', function (err, resp, body) {
               expect(resp.statusCode).toBe(200);
               expect(body.success).toBeTruthy();
               expect(body.key).toBe('guest');
-              rq.get(userRoute + '/guest', function (err, resp, body) {
-                expect(resp.statusCode).toBe(404);
-                expect(body.error).toMatch('USER.NOT_FOUND');
-                done();
-              });
+              withAdmin(function (after) {
+                rq.get(userRoute + '/guest', function (err, resp, body) {
+                  expect(resp.statusCode).toBe(404);
+                  expect(body.error).toMatch('USER.NOT_FOUND');
+                  after();
+                });
+              }, done);
             });
           }
         );
@@ -923,6 +925,75 @@
             });
           }
         );
+
+      });
+
+      describe('group.resign POST', function () {
+
+        it('should return error when arguments are not as expected',
+          function (done) {
+            rq.post(groupRoute + '/resign', function (err, resp, body) {
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('TYPE.ID_STR');
+              done();
+            });
+          }
+        );
+
+        it('will return an error if the group or user id does not exist',
+          function (done) {
+            var b = { body: { gid:'xxx', uid: 'xxx' } };
+            rq.post(groupRoute + '/resign', b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('KEY_NOT_FOUND');
+              done();
+            });
+          }
+        );
+
+        it('should forbid resignation if the user is not part of the group',
+          function (done) {
+            var b = { body: { gid: gotherid } };
+            rq.post(groupRoute + '/resign', b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('GROUP.NOT_USER');
+              done();
+            });
+          }
+        );
+
+        it('should forbid resignation if the user is the unique admin',
+          function (done) {
+            var b = { body: { gid: gid } };
+            rq.post(groupRoute + '/resign', b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('RESIGN_UNIQUE_ADMIN');
+              done();
+            });
+          }
+        );
+
+        it('should allow resignation otherwise', function (done) {
+          group.set({ name: 'newg', admin: uid, admins: [ uotherid ] },
+            function (err, g) {
+              expect(err).toBeNull();
+              var b = { body: { gid: g._id } };
+              rq.post(groupRoute + '/resign', b, function (err, resp, body) {
+                expect(err).toBeNull();
+                expect(resp.statusCode).toBe(200);
+                expect(body.success).toBeTruthy();
+                expect(ld.isObject(body.value)).toBeTruthy();
+                var users = ld.union(body.value.users, body.value.admins);
+                expect(ld.includes(users, uid)).toBeFalsy();
+                done();
+                group.del(g._id, function (err) {
+                  expect(err).toBeNull();
+                  done();
+                });
+              });
+            }
+          );
+        });
 
       });
 

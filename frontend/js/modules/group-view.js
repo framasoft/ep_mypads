@@ -33,11 +33,11 @@ module.exports = (function () {
   // Local dependencies
   var conf = require('../configuration.js');
   var auth = require('../auth.js');
+  var notif = require('../widgets/notification.js');
   var layout = require('./layout.js');
   var model = require('../model/group.js');
   var padMark = require('./pad-mark.js');
   var padShare = require('./pad-share.js');
-  var userInvite = require('./user-invitation.js');
 
   var group = {};
 
@@ -75,11 +75,19 @@ module.exports = (function () {
 
     c.quit = function () {
       if (window.confirm(conf.LANG.GROUP.INFO.RESIGN)) {
-        var users = c.isAdmin ? c.admins : c.users;
-        users = ld.pull(ld.pluck(users, 'login'), auth.userInfo().login);
-        c.isInvite = !c.isAdmin;
-        c.tag = { current: users };
-        userInvite.invite(c, ld.partial(m.route, '/mypads'));
+        m.request({
+          method: 'POST',
+          url: conf.URLS.GROUP + '/resign',
+          data: { gid: c.group._id }
+        }).then(function (resp) {
+          var data = model.data();
+          delete data[resp.value._id];
+          model.data(data);
+          notif.success({ body: conf.LANG.GROUP.INFO.RESIGN_SUCCESS });
+          m.route('/mypads/group/list');
+        }, function (err) {
+          notif.error({ body: ld.result(conf.LANG, err.error) });
+        });
       }
     };
 

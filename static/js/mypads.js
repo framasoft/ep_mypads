@@ -973,11 +973,11 @@ module.exports = (function () {
   // Local dependencies
   var conf = require('../configuration.js');
   var auth = require('../auth.js');
+  var notif = require('../widgets/notification.js');
   var layout = require('./layout.js');
   var model = require('../model/group.js');
   var padMark = require('./pad-mark.js');
   var padShare = require('./pad-share.js');
-  var userInvite = require('./user-invitation.js');
 
   var group = {};
 
@@ -1015,11 +1015,19 @@ module.exports = (function () {
 
     c.quit = function () {
       if (window.confirm(conf.LANG.GROUP.INFO.RESIGN)) {
-        var users = c.isAdmin ? c.admins : c.users;
-        users = ld.pull(ld.pluck(users, 'login'), auth.userInfo().login);
-        c.isInvite = !c.isAdmin;
-        c.tag = { current: users };
-        userInvite.invite(c, ld.partial(m.route, '/mypads'));
+        m.request({
+          method: 'POST',
+          url: conf.URLS.GROUP + '/resign',
+          data: { gid: c.group._id }
+        }).then(function (resp) {
+          var data = model.data();
+          delete data[resp.value._id];
+          model.data(data);
+          notif.success({ body: conf.LANG.GROUP.INFO.RESIGN_SUCCESS });
+          m.route('/mypads/group/list');
+        }, function (err) {
+          notif.error({ body: ld.result(conf.LANG, err.error) });
+        });
       }
     };
 
@@ -1253,7 +1261,7 @@ module.exports = (function () {
   return group;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./pad-mark.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-mark.js","./pad-share.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-share.js","./user-invitation.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user-invitation.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./pad-mark.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-mark.js","./pad-share.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-share.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js":[function(require,module,exports){
 /**
 *  # Group List module
 *
@@ -17347,7 +17355,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {
@@ -17585,6 +17593,7 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
       "REMOVE_SUCCESS": "Group has been successfully removed",
       "REMOVE_SURE": "Are you sure you want to remove this group ?",
       "RESIGN": "Are you sure you want to resign from this group ?",
+      "RESIGN_SUCCESS": "You have left the group successfully",
       "PAD_REMOVE_SUCCESS": "Pad has been successfully removed",
       "PAD_REMOVE_SURE": "Are you sure you want to remove this pad ?",
       "PAD_ADD_SUCCESS": "Pad has been successfully created",

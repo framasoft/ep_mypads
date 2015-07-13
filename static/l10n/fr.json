@@ -236,6 +236,7 @@
       "REMOVE_SUCCESS": "Le groupe a été supprimé avec succès",
       "REMOVE_SURE": "Êtes-vous sûr de vouloir supprimer ce groupe ?",
       "RESIGN": "Êtes-vous sûr de vouloir quitter ce groupe ?",
+      "RESIGN_SUCCESS": "Groupe quitté avec succès",
       "PAD_REMOVE_SUCCESS": "Le pad a été supprimé avec succès",
       "PAD_REMOVE_SURE": "Êtes-vous sûr de vouloir supprimer ce pad ?",
       "PAD_ADD_SUCCESS": "Le pad a été créé avec succès",

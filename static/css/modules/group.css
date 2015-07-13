@@ -7,11 +7,18 @@ section.group {
 }
 
 section.group > h2 { color: #333333; }
-section.group h2 a, section.group h2 span.subtitle {
+section.group h2 a, section.group h2 button, section.group h2 span.subtitle {
   font-size: smaller;
   color: #949494;
   background: none;
   margin-left: 1em;
+}
+
+section.group h2 button {
+  padding: 0;
+  border: 0;
+  text-decoration: underline;
+  text-decoration-style: dotted;
 }
 
 section.group h3.title {

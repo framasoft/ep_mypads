@@ -37,6 +37,7 @@ module.exports = (function () {
   var model = require('../model/group.js');
   var padMark = require('./pad-mark.js');
   var padShare = require('./pad-share.js');
+  var userInvite = require('./user-invitation.js');
 
   var group = {};
 
@@ -58,12 +59,29 @@ module.exports = (function () {
     var init = function () {
       var key = m.route.param('key');
       c.group = model.data()[key];
+      c.isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
       ld.forEach(['pads', 'admins', 'users'], function (f) {
         c[f] = ld.map(c.group[f], function (x) { return model[f]()[x]; });
       });
     };
 
     if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
+
+    /**
+    * ### quit
+    * `c.quit` function is used to resign user from administration or usage of
+    * a group. It is based on `user-invitation` to proceed.
+    */
+
+    c.quit = function () {
+      if (window.confirm(conf.LANG.GROUP.INFO.RESIGN)) {
+        var users = c.isAdmin ? c.admins : c.users;
+        users = ld.pull(ld.pluck(users, 'login'), auth.userInfo().login);
+        c.isInvite = !c.isAdmin;
+        c.tag = { current: users };
+        userInvite.invite(c, ld.partial(m.route, '/mypads'));
+      }
+    };
 
     return c;
   };
@@ -108,7 +126,6 @@ module.exports = (function () {
   view.pads = function (c) {
     var route = '/mypads/group/' + c.group._id;
     var GROUP = conf.LANG.GROUP;
-    var isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
     var addView = m('p', [
       m('a.add', { href: route + '/pad/add', config: m.route }, [
         m('i.icon-plus-squared'),
@@ -149,7 +166,7 @@ module.exports = (function () {
                 title: conf.LANG.GROUP.VIEW
               }, [ m('i.icon-book-open') ])
           ];
-          if (isAdmin) {
+          if (c.isAdmin) {
             actions.push(
               m('a', {
                 href: route + '/pad/edit/' + p._id,
@@ -177,7 +194,7 @@ module.exports = (function () {
       }
     })();
     var padBlocks;
-    if (isAdmin) {
+    if (c.isAdmin) {
       padBlocks = [addView, moveView];
     } else {
       padBlocks = [];
@@ -215,15 +232,14 @@ module.exports = (function () {
     };
     var route = '/mypads/group/' + c.group._id;
     var sectionElements = [ m('h4.block', conf.LANG.GROUP.PAD.ADMINS) ];
-    var isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
-    if (isAdmin) {
+    if (c.isAdmin) {
       sectionElements.push(
         m('a.add', { href: route + '/user/share', config: m.route },
           [ m('i.icon-plus-squared'), conf.LANG.GROUP.SHARE_ADMIN ]));
     }
     sectionElements.push(list(c.admins));
     sectionElements.push(m('h4.block', conf.LANG.GROUP.PAD.USERS));
-    if (isAdmin && (c.group.visibility === 'restricted')) {
+    if (c.isAdmin && (c.group.visibility === 'restricted')) {
         sectionElements.push(
           m('a.add', { href: route + '/user/invite', config: m.route },
             [ m('i.icon-plus-squared'), conf.LANG.GROUP.INVITE_USER.IU ]));
@@ -239,9 +255,9 @@ module.exports = (function () {
   */
 
   view.main = function (c) {
-    return m('section', { class: 'block-group group' }, [
-      m('h2.block', [
-        m('span', conf.LANG.GROUP.GROUP + ' ' + c.group.name),
+    var h2Elements = [ m('span', conf.LANG.GROUP.GROUP + ' ' + c.group.name) ];
+    if (c.isAdmin) {
+      h2Elements.push(
         m('a', {
           href: '/mypads/group/' + c.group._id + '/edit',
           config: m.route,
@@ -252,7 +268,15 @@ module.exports = (function () {
           config: m.route,
           title: conf.LANG.GROUP.REMOVE
         }, [ m('i.icon-trash'), m('span', conf.LANG.GROUP.REMOVE) ])
-      ]),
+      );
+    }
+    var canQuit = (c.isAdmin && c.admins.length > 1) || (!c.isAdmin);
+    if (canQuit) {
+      h2Elements.push(m('button.cancel', { onclick: c.quit },
+          [ m('i.icon-cancel'), conf.LANG.GROUP.QUIT_GROUP ]));
+    }
+    return m('section', { class: 'block-group group' }, [
+      m('h2.block', h2Elements),
       m('section.block.props', [
         m('h3.title', conf.LANG.GROUP.PROPERTIES),
         view.properties(c)

@@ -41,6 +41,36 @@ module.exports = (function () {
   var invite = {};
 
   /**
+  * `submit` function calls the public API to update the group with new users
+  * or admins. It displays errors if needed or success.
+  *
+  * It takes the instantiated `c` controller and an optional `successFn`
+  * function called with `resp`onse and filters user invitation by known users
+  * only.
+  */
+
+  invite.invite = function (c, successFn) {
+    var data = {
+      invite: c.isInvite,
+      gid: c.group._id,
+      logins: c.tag.current
+    };
+    m.request({
+      method: 'POST',
+      url: conf.URLS.GROUP + '/invite',
+      data: data
+    }).then(function (resp) {
+      model.fetch(function () {
+        var lpfx = c.isInvite ? 'INVITE_USER' : 'ADMIN_SHARE';
+        notif.success({ body: conf.LANG.GROUP[lpfx].SUCCESS });
+        if (successFn) { successFn(resp); }
+      });
+    }, function (err) {
+      notif.error({ body: ld.result(conf.LANG, err.error) });
+    });
+  };
+
+  /**
   * ## Controller
   *
   * Used to check authentication, init data for tag like widget with users and
@@ -90,22 +120,10 @@ module.exports = (function () {
 
     c.submit = function (e) {
       e.preventDefault();
-      var data = {
-        invite: c.isInvite,
-        gid: c.group._id,
-        logins: c.tag.current
+      var successFn = function (resp) {
+        m.route('/mypads/group/' + resp.value._id + '/view');
       };
-      m.request({
-        method: 'POST',
-        url: conf.URLS.GROUP + '/invite',
-        data: data
-      }).then(function (resp) {
-        model.fetch(function () {
-          var lpfx = c.isInvite ? 'INVITE_USER' : 'ADMIN_SHARE';
-          notif.success({ body: conf.LANG.GROUP[lpfx].SUCCESS });
-          m.route('/mypads/group/' + resp.value._id + '/view');
-        });
-      }, function (err) { notif.error({ body: err.error }); });
+      invite.invite(c, successFn);
     };
 
     return c;

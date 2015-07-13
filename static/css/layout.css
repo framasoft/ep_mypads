@@ -62,7 +62,8 @@ footer {
 a, a:visited, a:link {
   background-color: #6a5687;
   color: #ffffff;
-  text-decoration: underline dotted;
+  text-decoration: underline;
+  text-decoration-style: dotted;
 }
 
 fieldset {

@@ -29,6 +29,7 @@ module.exports = (function () {
   'use strict';
   // Dependencies
   var m = require('mithril');
+  var ld = require('lodash');
   var auth = require('../auth.js');
   var conf = require('../configuration.js');
   var model = require('../model/group.js');
@@ -55,7 +56,9 @@ module.exports = (function () {
         model.data(data);
         notif.success({ body: conf.LANG.GROUP.INFO.REMOVE_SUCCESS });
         m.route('/mypads/group/list');
-      }, function (err) { notif.error({ body: err.error }); });
+      }, function (err) {
+        notif.error({ body: ld.result(conf.LANG, err.error) });
+      });
     } else {
       m.route('/mypads/group/' + m.route.param('key') + '/view');
     }

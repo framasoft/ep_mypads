@@ -293,6 +293,10 @@ module.exports = (function () {
           g.users = ld.reject(uids, ld.partial(ld.includes, g.admins));
         } else {
           g.admins = ld.reject(uids, ld.partial(ld.includes, g.users));
+          if ((ld.size(g.admins)) === 0) {
+            var e = new Error('BACKEND.ERROR.GROUP.RESIGN_UNIQUE_ADMIN');
+            return callback(e);
+          }
         }
         group.fn.set(g, function (err, g) {
           if (err) { return callback(err); }

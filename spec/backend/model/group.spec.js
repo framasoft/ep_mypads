@@ -523,6 +523,16 @@
         }
       );
 
+      it('should return an error if there is no admin anymore',
+        function (done) {
+          group.inviteOrShare(false, gparams._id, [], function (err) {
+            expect(ld.isError(err)).toBeTruthy();
+            expect(err).toMatch('GROUP.RESIGN_UNIQUE_ADMIN');
+            done();
+          });
+        }
+      );
+
       it('should return an array of uid otherwise, filtering not found users',
         function (done) {
           var users = ['shelly', 'mikey', 'inexist'];

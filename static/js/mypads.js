@@ -897,6 +897,7 @@ module.exports = (function () {
   'use strict';
   // Dependencies
   var m = require('mithril');
+  var ld = require('lodash');
   var auth = require('../auth.js');
   var conf = require('../configuration.js');
   var model = require('../model/group.js');
@@ -923,7 +924,9 @@ module.exports = (function () {
         model.data(data);
         notif.success({ body: conf.LANG.GROUP.INFO.REMOVE_SUCCESS });
         m.route('/mypads/group/list');
-      }, function (err) { notif.error({ body: err.error }); });
+      }, function (err) {
+        notif.error({ body: ld.result(conf.LANG, err.error) });
+      });
     } else {
       m.route('/mypads/group/' + m.route.param('key') + '/view');
     }
@@ -934,7 +937,7 @@ module.exports = (function () {
   return remove;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-view.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-view.js":[function(require,module,exports){
 /**
 *  # Group View module
 *
@@ -974,6 +977,7 @@ module.exports = (function () {
   var model = require('../model/group.js');
   var padMark = require('./pad-mark.js');
   var padShare = require('./pad-share.js');
+  var userInvite = require('./user-invitation.js');
 
   var group = {};
 
@@ -995,12 +999,29 @@ module.exports = (function () {
     var init = function () {
       var key = m.route.param('key');
       c.group = model.data()[key];
+      c.isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
       ld.forEach(['pads', 'admins', 'users'], function (f) {
         c[f] = ld.map(c.group[f], function (x) { return model[f]()[x]; });
       });
     };
 
     if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
+
+    /**
+    * ### quit
+    * `c.quit` function is used to resign user from administration or usage of
+    * a group. It is based on `user-invitation` to proceed.
+    */
+
+    c.quit = function () {
+      if (window.confirm(conf.LANG.GROUP.INFO.RESIGN)) {
+        var users = c.isAdmin ? c.admins : c.users;
+        users = ld.pull(ld.pluck(users, 'login'), auth.userInfo().login);
+        c.isInvite = !c.isAdmin;
+        c.tag = { current: users };
+        userInvite.invite(c, ld.partial(m.route, '/mypads'));
+      }
+    };
 
     return c;
   };
@@ -1045,7 +1066,6 @@ module.exports = (function () {
   view.pads = function (c) {
     var route = '/mypads/group/' + c.group._id;
     var GROUP = conf.LANG.GROUP;
-    var isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
     var addView = m('p', [
       m('a.add', { href: route + '/pad/add', config: m.route }, [
         m('i.icon-plus-squared'),
@@ -1086,7 +1106,7 @@ module.exports = (function () {
                 title: conf.LANG.GROUP.VIEW
               }, [ m('i.icon-book-open') ])
           ];
-          if (isAdmin) {
+          if (c.isAdmin) {
             actions.push(
               m('a', {
                 href: route + '/pad/edit/' + p._id,
@@ -1114,7 +1134,7 @@ module.exports = (function () {
       }
     })();
     var padBlocks;
-    if (isAdmin) {
+    if (c.isAdmin) {
       padBlocks = [addView, moveView];
     } else {
       padBlocks = [];
@@ -1152,15 +1172,14 @@ module.exports = (function () {
     };
     var route = '/mypads/group/' + c.group._id;
     var sectionElements = [ m('h4.block', conf.LANG.GROUP.PAD.ADMINS) ];
-    var isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
-    if (isAdmin) {
+    if (c.isAdmin) {
       sectionElements.push(
         m('a.add', { href: route + '/user/share', config: m.route },
           [ m('i.icon-plus-squared'), conf.LANG.GROUP.SHARE_ADMIN ]));
     }
     sectionElements.push(list(c.admins));
     sectionElements.push(m('h4.block', conf.LANG.GROUP.PAD.USERS));
-    if (isAdmin && (c.group.visibility === 'restricted')) {
+    if (c.isAdmin && (c.group.visibility === 'restricted')) {
         sectionElements.push(
           m('a.add', { href: route + '/user/invite', config: m.route },
             [ m('i.icon-plus-squared'), conf.LANG.GROUP.INVITE_USER.IU ]));
@@ -1176,9 +1195,9 @@ module.exports = (function () {
   */
 
   view.main = function (c) {
-    return m('section', { class: 'block-group group' }, [
-      m('h2.block', [
-        m('span', conf.LANG.GROUP.GROUP + ' ' + c.group.name),
+    var h2Elements = [ m('span', conf.LANG.GROUP.GROUP + ' ' + c.group.name) ];
+    if (c.isAdmin) {
+      h2Elements.push(
         m('a', {
           href: '/mypads/group/' + c.group._id + '/edit',
           config: m.route,
@@ -1189,7 +1208,15 @@ module.exports = (function () {
           config: m.route,
           title: conf.LANG.GROUP.REMOVE
         }, [ m('i.icon-trash'), m('span', conf.LANG.GROUP.REMOVE) ])
-      ]),
+      );
+    }
+    var canQuit = (c.isAdmin && c.admins.length > 1) || (!c.isAdmin);
+    if (canQuit) {
+      h2Elements.push(m('button.cancel', { onclick: c.quit },
+          [ m('i.icon-cancel'), conf.LANG.GROUP.QUIT_GROUP ]));
+    }
+    return m('section', { class: 'block-group group' }, [
+      m('h2.block', h2Elements),
       m('section.block.props', [
         m('h3.title', conf.LANG.GROUP.PROPERTIES),
         view.properties(c)
@@ -1226,7 +1253,7 @@ module.exports = (function () {
   return group;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./pad-mark.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-mark.js","./pad-share.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-share.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./pad-mark.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-mark.js","./pad-share.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-share.js","./user-invitation.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user-invitation.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js":[function(require,module,exports){
 /**
 *  # Group List module
 *
@@ -3160,6 +3187,36 @@ module.exports = (function () {
   var invite = {};
 
   /**
+  * `submit` function calls the public API to update the group with new users
+  * or admins. It displays errors if needed or success.
+  *
+  * It takes the instantiated `c` controller and an optional `successFn`
+  * function called with `resp`onse and filters user invitation by known users
+  * only.
+  */
+
+  invite.invite = function (c, successFn) {
+    var data = {
+      invite: c.isInvite,
+      gid: c.group._id,
+      logins: c.tag.current
+    };
+    m.request({
+      method: 'POST',
+      url: conf.URLS.GROUP + '/invite',
+      data: data
+    }).then(function (resp) {
+      model.fetch(function () {
+        var lpfx = c.isInvite ? 'INVITE_USER' : 'ADMIN_SHARE';
+        notif.success({ body: conf.LANG.GROUP[lpfx].SUCCESS });
+        if (successFn) { successFn(resp); }
+      });
+    }, function (err) {
+      notif.error({ body: ld.result(conf.LANG, err.error) });
+    });
+  };
+
+  /**
   * ## Controller
   *
   * Used to check authentication, init data for tag like widget with users and
@@ -3209,22 +3266,10 @@ module.exports = (function () {
 
     c.submit = function (e) {
       e.preventDefault();
-      var data = {
-        invite: c.isInvite,
-        gid: c.group._id,
-        logins: c.tag.current
+      var successFn = function (resp) {
+        m.route('/mypads/group/' + resp.value._id + '/view');
       };
-      m.request({
-        method: 'POST',
-        url: conf.URLS.GROUP + '/invite',
-        data: data
-      }).then(function (resp) {
-        model.fetch(function () {
-          var lpfx = c.isInvite ? 'INVITE_USER' : 'ADMIN_SHARE';
-          notif.success({ body: conf.LANG.GROUP[lpfx].SUCCESS });
-          m.route('/mypads/group/' + resp.value._id + '/view');
-        });
-      }, function (err) { notif.error({ body: err.error }); });
+      invite.invite(c, successFn);
     };
 
     return c;
@@ -17302,7 +17347,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {
@@ -17342,7 +17387,9 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
       "GROUP": {
         "INEXISTENT": "Group does not exist",
         "CASCADE_REMOVAL_PROBLEM": "Something goes wrong with cascade pads removal",
-        "ITEMS_NOT_FOUND": "Some users, admins or pads have not been found"
+        "ITEMS_NOT_FOUND": "Some users, admins or pads have not been found",
+        "NOT_USER": "You are not an user of this group",
+        "RESIGN_UNIQUE_ADMIN": "You can't resign the unique administrator"
       },
       "USER": {
         "ALREADY_EXISTS": "User already exists, please choose another login",
@@ -17471,6 +17518,7 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
     "UNMARK": "Unmark",
     "MARK_SUCCESS": "Marking successfully",
     "SHARE_ADMIN": "Share administration",
+    "QUIT_GROUP": "Quit the group",
     "INVITE_USER": {
       "IU": "Invite users",
       "HELP": "<p>This field accepts one login at a time. When ENTER is typed, or OK is clicked, the login is added to the list of invited users. A list of known users helps you to fill the login.</p><h3>List of users</h3><p>This list contains all selected users. You can remove one by clicking the sign after each login.</p><h3>Note</h3><p>Please note that, for instance, registered users will be automatically added to your group. In short term, external users will receive a mail for creating an account.</p>",
@@ -17536,6 +17584,7 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
       "EDIT_SUCCESS": "Group has been successfully updated",
       "REMOVE_SUCCESS": "Group has been successfully removed",
       "REMOVE_SURE": "Are you sure you want to remove this group ?",
+      "RESIGN": "Are you sure you want to resign from this group ?",
       "PAD_REMOVE_SUCCESS": "Pad has been successfully removed",
       "PAD_REMOVE_SURE": "Are you sure you want to remove this pad ?",
       "PAD_ADD_SUCCESS": "Pad has been successfully created",

@@ -303,18 +303,30 @@
         });
       });
 
-      it('should removes and returns null otherwise, removes indexes',
-        function (done) {
-          pad.del(gpad._id, function (err, p) {
+      it('should removes and returns null otherwise, removes indexes,' +
+        ' including bookmarks', function (done) {
+          user.mark('parker', 'pads', gpad._id, function (err) {
             expect(err).toBeNull();
-            expect(p).toBeUndefined();
-            pad.get(gpad._id, function (err, p) {
-              expect(ld.isError(err)).toBeTruthy();
-              expect(p).toBeUndefined();
-              group.get(gpad.group, function (err, g) {
+            user.get('parker', function (err, u) {
+              expect(err).toBeNull();
+              expect(ld.includes(u.bookmarks.pads, gpad._id)).toBeTruthy();
+              pad.del(gpad._id, function (err, p) {
                 expect(err).toBeNull();
-                expect(ld.includes(g.pads, gpad._id)).toBeFalsy();
-                done();
+                expect(p).toBeUndefined();
+                pad.get(gpad._id, function (err, p) {
+                  expect(ld.isError(err)).toBeTruthy();
+                  expect(p).toBeUndefined();
+                  group.get(gpad.group, function (err, g) {
+                    expect(err).toBeNull();
+                    expect(ld.includes(g.pads, gpad._id)).toBeFalsy();
+                    user.get('parker', function (err, u) {
+                      expect(err).toBeNull();
+                      var isMarked = ld.includes(u.bookmarks.pads, gpad._id);
+                      expect(isMarked).toBeFalsy();
+                      done();
+                    });
+                  });
+                });
               });
             });
           });

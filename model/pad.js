@@ -130,7 +130,8 @@ module.exports = (function () {
   * ### indexGroups
   *
   * `indexGroups` is an asynchronous function which handles secondary indexes
-  * for *group.pads* after pad creation, update, removal. It takes :
+  * for *group.pads* and *user.bookmarks.pads* after pad creation, update,
+  * removal. It takes :
   *
   * - a `del` boolean to know if we have to delete key from index or add it
   * - the `pad` object
@@ -138,6 +139,24 @@ module.exports = (function () {
   */
 
   pad.fn.indexGroups = function (del, pad, callback) {
+    var removeFromBookmarks = function (g) {
+      var uids = ld.union(g.admins, g.users);
+      var ukeys = ld.map(uids, function (u) { return UPREFIX + u; });
+      storage.fn.getKeys(ukeys, function (err, users) {
+        if (err) { return callback(err); }
+        users = ld.reduce(users, function (memo, u, k) {
+          if (ld.includes(u.bookmarks.pads, pad._id)) {
+            ld.pull(u.bookmarks.pads, pad._id);
+            memo[k] = u;
+          }
+          return memo;
+        }, {});
+        storage.fn.setKeys(users, function (err) {
+          if (err) { return callback(err); }
+          _set(g);
+        });
+      });
+    };
     var _set = function (g) {
       storage.db.set(GPREFIX + g._id, g, function (err) {
         if (err) { return callback(err); }
@@ -148,7 +167,7 @@ module.exports = (function () {
       if (err) { return callback(err); }
       if (del) {
         ld.pull(g.pads, pad._id);
-        _set(g);
+        removeFromBookmarks(g);
       } else {
         if (!ld.includes(g.pads, pad._id)) {
           g.pads.push(pad._id);

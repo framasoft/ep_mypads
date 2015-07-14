@@ -554,6 +554,26 @@
         }
       );
 
+      it('should handle secondary indexed correctly', function (done) {
+        group.get(gparams._id, function (err, g) {
+          expect(err).toBeNull();
+          expect(ld.size(g.users)).toBe(2);
+          var uid = g.users[0];
+          var UPREFIX = storage.DBPREFIX.USER;
+          storage.db.get(UPREFIX + uid, function (err, u) {
+            expect(err).toBeNull();
+            expect(ld.includes(u.groups, g._id)).toBeTruthy();
+            ld.pull(g.users, u._id);
+            group.inviteOrShare(true, g._id, ['mikey'], function (err, g) {
+              expect(err).toBeNull();
+              expect(ld.includes(g.users, u._id)).toBeFalsy();
+              expect(ld.size(g.users)).toBe(1);
+              done();
+            });
+          });
+        });
+      });
+
     });
 
     describe('group resign', function () {

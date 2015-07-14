@@ -197,7 +197,8 @@ module.exports = (function () {
     }
     common.getDel(true, GPREFIX, key, function (err, g) {
       if (err) { return callback(err); }
-      group.fn.indexUsers(true, g, function (err) {
+      var uids = ld.union(g.admins, g.users);
+      group.fn.indexUsers(true, g._id, uids, function (err) {
         if (err) { return callback(err); }
         group.fn.cascadePads(g, callback);
       });
@@ -264,12 +265,15 @@ module.exports = (function () {
   *
   * - `invite` boolean, *true* for user invitation, *false* for admin sharing;
   * - `gid` group unique identifier;
-  * - array of users  `logins`;
+  * - array of users `logins`;
   * - `callback` function calling with  *error* if error or *null* and the
   *   updated group otherwise.
   *
   * It takes care of exclusion of admins and users : admin status is a
   * escalation of user.
+  *
+  * As login list should be exhaustive, it also takes care or reindexing user
+  * local groups.
   */
 
   group.inviteOrShare = function (invite, gid, logins, callback) {
@@ -289,18 +293,25 @@ module.exports = (function () {
       if (err) { return callback(err); }
       group.get(gid, function (err, g) {
         if (err) { return callback(err); }
+        var removed;
         if (invite) {
+          removed = ld.difference(g.users, uids);
           g.users = ld.reject(uids, ld.partial(ld.includes, g.admins));
         } else {
+          removed = ld.difference(g.admins, uids);
           g.admins = ld.reject(uids, ld.partial(ld.includes, g.users));
           if ((ld.size(g.admins)) === 0) {
             var e = new Error('BACKEND.ERROR.GROUP.RESIGN_UNIQUE_ADMIN');
             return callback(e);
           }
         }
-        group.fn.set(g, function (err, g) {
+        // indexUsers with deletion for full reindexation process
+        group.fn.indexUsers(true, g._id, removed, function (err) {
           if (err) { return callback(err); }
-          callback(null, g);
+          group.fn.set(g, function (err, g) {
+            if (err) { return callback(err); }
+            callback(null, g);
+          });
         });
       });
     });
@@ -465,21 +476,22 @@ module.exports = (function () {
   * for *users.groups* after group creation, update, removal. It takes :
   *
   * - a `del` boolean to know if we have to delete key from index or add it
-  * - the `group` object
+  * - the group `gid` unique identifier
+  * - `uids`, an array of user keys
   * - a `callback` function, returning *Error* or *null* if succeeded
   */
 
-  group.fn.indexUsers = function (del, group, callback) {
-    var usersKeys = ld.map(ld.union(group.admins, group.users),
-      function (u) { return UPREFIX + u; });
+  group.fn.indexUsers = function (del, gid, uids, callback) {
+    var usersKeys = ld.map(uids, function (u) { return UPREFIX + u; });
     storage.fn.getKeys(usersKeys, function (err, users) {
       if (err) { return callback(err); }
       ld.forIn(users, function (u, k) {
         if (del) {
-          ld.pull(u.groups, group._id);
+          ld.pull(u.groups, gid);
+          ld.pull(u.bookmarks.groups, gid);
         } else {
-          if (!ld.includes(u.groups, group._id)) {
-            u.groups.push(group._id);
+          if (!ld.includes(u.groups, gid)) {
+            u.groups.push(gid);
           }
         }
         users[k] = u;
@@ -508,7 +520,8 @@ module.exports = (function () {
   group.fn.set = function (g, callback) {
     storage.db.set(GPREFIX + g._id, g, function (err) {
       if (err) { return callback(err); }
-      group.fn.indexUsers(false, g, function (err) {
+      var uids = ld.union(g.admins, g.users);
+      group.fn.indexUsers(false, g._id, uids, function (err) {
         if (err) { return callback(err); }
         return callback(null, g);
       });

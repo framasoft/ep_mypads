@@ -621,8 +621,8 @@ module.exports = (function () {
     );
 
     /**
-    * POST method : `group.inviteOrShare` with gid group id, array of logins
-    * and invite boolean
+    * POST method : `group.inviteOrShare` with gid group id, array of all
+    * concerned logins and invite boolean
     * This method is open to all authenticated users.
     *
     * Sample URL:

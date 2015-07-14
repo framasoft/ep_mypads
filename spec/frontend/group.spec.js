@@ -3,7 +3,7 @@
 *
 *  ## License
 *
-*  Licensed to the Apache Software Foundation (ASF) under one
+*x  Licensed to the Apache Software Foundation (ASF) under one
 *  or more contributor license agreements.  See the NOTICE file
 *  distributed with this work for additional information
 *  regarding copyright ownership.  The ASF licenses this file
@@ -88,7 +88,7 @@ module.exports = (function () {
           function (done) {
             expect($el.bookmarked.children.length).toBe(0);
             expect($el.archived.children.length).toBe(0);
-            expect($el.common.children.length).toBe(2);
+            expect($el.common.children.length).toBe(3);
             var g = $el.common.children[0];
             var name = g.querySelector('header h4').textContent;
             var btn = g.querySelector('header.group a[title$=mark]');
@@ -98,7 +98,7 @@ module.exports = (function () {
             window.setTimeout(function () {
               first('body > section > div p').click();
               expect($el.bookmarked.children.length).toBe(1);
-              expect($el.common.children.length).toBe(1);
+              expect($el.common.children.length).toBe(2);
               g = $el.bookmarked.children[0];
               name = g.querySelector('header h4').textContent;
               expect(name).toBe('Santa Fe');
@@ -110,7 +110,7 @@ module.exports = (function () {
               g.querySelector('header.group a[title$=mark]').click();
               window.setTimeout(function () {
                 expect($el.bookmarked.children.length).toBe(2);
-                expect($el.common.children.length).toBe(0);
+                expect($el.common.children.length).toBe(1);
                 first('body > section > div p').click();
                 window.setTimeout(done, 100); 
               }, 200);
@@ -120,14 +120,14 @@ module.exports = (function () {
 
         it('should allow unmarking of marked groups', function (done) {
           expect($el.bookmarked.children.length).toBe(2);
-          expect($el.common.children.length).toBe(0);
+          expect($el.common.children.length).toBe(1);
           var g = $el.bookmarked.children[1];
           var name = g.querySelector('header h4').textContent;
           expect(name).toBe('memories');
           g.querySelector('header.group a[title$=mark]').click();
           window.setTimeout(function () {
             expect($el.bookmarked.children.length).toBe(1);
-            expect($el.common.children.length).toBe(1);
+            expect($el.common.children.length).toBe(2);
             first('body > section > div p').click();
             window.setTimeout(done, 100); 
           }, 200);
@@ -141,7 +141,7 @@ module.exports = (function () {
         var btnActive;
 
         it('should filter by clicked tag all groups', function (done) {
-          expect(groupsCount()).toBe(2);
+          expect(groupsCount()).toBe(3);
           g = $el.bookmarked.children[0];
           tags = g.querySelector('footer ul').children;
           var cool = tags[0];
@@ -168,7 +168,7 @@ module.exports = (function () {
           weird.click();
           window.setTimeout(function () {
             expect(weird.className).toBe('');
-            expect(groupsCount()).toBe(2);
+            expect(groupsCount()).toBe(3);
             expect(btnActive.className).toBe('');
             window.setTimeout(done, 100);
           }, 200);
@@ -191,7 +191,7 @@ module.exports = (function () {
 
           it('should allow text search otherwise, here without case impact',
             function (done) {
-              expect(groupsCount()).toBe(2);
+              expect(groupsCount()).toBe(3);
               fill($el.searchInput, 'MORI');
               $el.searchOk.click();
               window.setTimeout(function () {
@@ -206,7 +206,7 @@ module.exports = (function () {
             fill($el.searchInput, '');
             $el.searchOk.click();
             window.setTimeout(function () {
-              expect(groupsCount()).toBe(2);
+              expect(groupsCount()).toBe(3);
               done();
             }, 200);
           });
@@ -228,15 +228,15 @@ module.exports = (function () {
           });
 
           it('should filter when admin', function (done) {
-            expect(groupsCount()).toBe(2);
+            expect(groupsCount()).toBe(3);
             expect(f.admin.className).toBe('admin');
             f.admin.click();
             window.setTimeout(function () {
-              expect(groupsCount()).toBe(2);
+              expect(groupsCount()).toBe(3);
               expect(f.admin.className).toBe('admin active');
               f.admin.click();
               window.setTimeout(function () {
-                expect(groupsCount()).toBe(2);
+                expect(groupsCount()).toBe(3);
                 expect(f.admin.className).toBe('admin');
                 done();
               }, 200);
@@ -244,7 +244,7 @@ module.exports = (function () {
           });
 
           it('should filter when user', function (done) {
-            expect(groupsCount()).toBe(2);
+            expect(groupsCount()).toBe(3);
             expect(f.user.className).toBe('user');
             f.user.click();
             window.setTimeout(function () {
@@ -252,7 +252,7 @@ module.exports = (function () {
               expect(f.user.className).toBe('user active');
               f.user.click();
               window.setTimeout(function () {
-                expect(groupsCount()).toBe(2);
+                expect(groupsCount()).toBe(3);
                 expect(f.user.className).toBe('user');
                 done();
               }, 200);
@@ -260,7 +260,7 @@ module.exports = (function () {
           });
 
           it('should filter when visibility is restricted', function (done) {
-            expect(groupsCount()).toBe(2);
+            expect(groupsCount()).toBe(3);
             expect(f.restricted.className).toBe('user');
             f.restricted.click();
             window.setTimeout(function () {
@@ -268,7 +268,7 @@ module.exports = (function () {
               expect(f.restricted.className).toBe('user active');
               f.restricted.click();
               window.setTimeout(function () {
-                expect(groupsCount()).toBe(2);
+                expect(groupsCount()).toBe(3);
                 expect(f.restricted.className).toBe('user');
                 done();
               }, 200);
@@ -276,7 +276,7 @@ module.exports = (function () {
           });
 
           it('should filter when visibility is private', function (done) {
-            expect(groupsCount()).toBe(2);
+            expect(groupsCount()).toBe(3);
             expect(f.private.className).toBe('user');
             f.private.click();
             window.setTimeout(function () {
@@ -284,7 +284,7 @@ module.exports = (function () {
               expect(f.private.className).toBe('user active');
               f.private.click();
               window.setTimeout(function () {
-                expect(groupsCount()).toBe(2);
+                expect(groupsCount()).toBe(3);
                 expect(f.private.className).toBe('user');
                 done();
               }, 200);
@@ -292,15 +292,15 @@ module.exports = (function () {
           });
 
           it('should filter when visibility is public', function (done) {
-            expect(groupsCount()).toBe(2);
+            expect(groupsCount()).toBe(3);
             expect(f.public.className).toBe('user');
             f.public.click();
             window.setTimeout(function () {
-              expect(groupsCount()).toBe(1);
+              expect(groupsCount()).toBe(2);
               expect(f.public.className).toBe('user active');
               f.public.click();
               window.setTimeout(function () {
-                expect(groupsCount()).toBe(2);
+                expect(groupsCount()).toBe(3);
                 expect(f.public.className).toBe('user');
                 done();
               }, 200);
@@ -322,7 +322,7 @@ module.exports = (function () {
           });
 
           it('should filter with one tag', function (done) {
-            expect(groupsCount()).toBe(2);
+            expect(groupsCount()).toBe(3);
             expect(t.funky.className).toBe('');
             t.funky.click();
             window.setTimeout(function () {
@@ -330,7 +330,7 @@ module.exports = (function () {
               expect(t.funky.className).toBe('active');
               t.funky.click();
               window.setTimeout(function () {
-                expect(groupsCount()).toBe(2);
+                expect(groupsCount()).toBe(3);
                 expect(t.funky.className).toBe('');
                 done();
               }, 200);
@@ -338,7 +338,7 @@ module.exports = (function () {
           });
 
           it('should filter with multiple tags', function (done) {
-            expect(groupsCount()).toBe(2);
+            expect(groupsCount()).toBe(3);
             expect(t.cool.className).toBe('');
             expect(t.weird.className).toBe('');
             t.cool.click();
@@ -350,7 +350,7 @@ module.exports = (function () {
               t.cool.click();
               t.weird.click();
               window.setTimeout(function () {
-                expect(groupsCount()).toBe(2);
+                expect(groupsCount()).toBe(3);
                 expect(t.cool.className).toBe('');
                 expect(t.weird.className).toBe('');
                 done();
@@ -364,7 +364,7 @@ module.exports = (function () {
 
           it('should filter with combined filters, here search and admin', 
             function (done) {
-              expect(groupsCount()).toBe(2);
+              expect(groupsCount()).toBe(3);
               fill($el.searchInput, 'MORI');
               $el.searchOk.click();
               var filterAdmin = $el.filter.querySelector('button');
@@ -378,7 +378,7 @@ module.exports = (function () {
                 filterAdmin.click();
                 window.setTimeout(function () {
                   expect(filterAdmin.className).toBe('admin');
-                  expect(groupsCount()).toBe(2);
+                  expect(groupsCount()).toBe(3);
                   done();
                 }, 200);
               }, 200);

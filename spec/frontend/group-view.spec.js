@@ -53,6 +53,7 @@ module.exports = (function () {
             window.setTimeout(function () {
               $el = {
                 group: first('dl.group'),
+                groupQuit: first('button.cancel'),
                 padAdd: first('section.pad a'),
                 pads: first('section.pad ul'),
                 users: first('section.users ul')
@@ -213,6 +214,32 @@ module.exports = (function () {
               window.setTimeout(done, 100);
             }, 100);
           }, 100);
+        });
+
+      });
+
+      describe('group leaving', function () {
+
+        beforeAll(function (done) {
+          app.document.querySelector('a[href$=mypads]').click();
+          window.setTimeout(function () {
+            app.document.querySelectorAll('a[href$=view]')[4].click();
+            window.setTimeout(function () {
+              $el = { groupQuit: first('button.cancel') };
+              window.setTimeout(done, 100);
+            }, 200);
+          }, 100);
+        });
+
+        it('should allow pad quitting', function (done) {
+          app.window.confirm = function () { return true; };
+          $el.groupQuit.click();
+          window.setTimeout(function () {
+            app.document.querySelector('body > section p').click();
+            var g = app.document.querySelectorAll('ul.group > li');
+            expect(g.length).toBe(2);
+            done();
+          }, 200);
         });
 
       });

@@ -49,7 +49,8 @@
             login: 'frank',
             password: 'reallyLikesGrace',
             email: 'frank@gracefanclub.org'
-          }, function () {
+          }, function (err, frank) {
+            if (err) { console.log(err); }
             var g = { name: 'Santa Fe', admin: u._id, tags: ['cool', 'weird'] };
             group.set(g, function () {
               g.name = 'memories';
@@ -59,8 +60,17 @@
                 if (err) { console.log(err); }
                 pad.set({ name: 'Loving Annie', group: g._id }, function () {
                   pad.set({ name: 'Watch sync', group: g._id }, function () {
-                    api.init(specCommon.express.app, 'en',
-                      console.log.bind(null, 'MockupServer runs on port 8042'));
+                    g = {
+                      name: 'shared notes',
+                      admin: u._id,
+                      admins: [ frank._id ],
+                      visibility: 'public'
+                    };
+                    group.set(g, function () {
+                      api.init(specCommon.express.app, 'en',
+                        console.log.bind(null,
+                          'MockupServer runs on port 8042'));
+                    });
                   });
                 });
               });

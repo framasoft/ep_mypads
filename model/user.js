@@ -174,9 +174,10 @@ module.exports = (function () {
   /**
   * ### assignProps
   *
-  * `assignProps` takes `params` object and assign defaults if needed. It adds a
-  * `groups` array field, which will hold `model.group` of pads ids. It
-  * returns the user object.
+  * `assignProps` takes `params` object and assign defaults if needed. It adds
+  * a `groups` array field, which will hold `model.group` of pads ids. It also
+  * adds a `userlists` object, with uid keys and userlist Object (name field,
+  * users array). It returns the user object.
   *
   */
 
@@ -190,6 +191,7 @@ module.exports = (function () {
     u.email = (ld.isEmail(p.email)) ? p.email : '';
     u.groups = [];
     u.bookmarks = { groups: [], pads: [] };
+    u.userlists = {};
     if (ld.isBoolean(p.useLoginAndColorInPads)) {
       u.useLoginAndColorInPads = p.useLoginAndColorInPads;
     } else {
@@ -440,6 +442,82 @@ module.exports = (function () {
   *  *true* . It takes mandatory `login` string and `callback` function.
   */
   user.del = ld.partial(user.fn.getDel, true);
+
+  /**
+  * ### userlist
+  *
+  * This asynchronous function handles creation, update, removal of user lists.
+  * It takes:
+  *
+  * - a JS object with fields :
+  *
+  *   - `crud` element, that must be either *add*, *set*, or *del* for
+  *   creation, update and removal;
+  *   - `login`, mandatory for the targeted user;
+  *   - `ulistid`, mandatory in case of *set* or *del*;
+  *   - optional `uids` element, an array of user unique identifiers. If
+  *   absent, creation will be done without users and update won't update
+  *   current list of users;
+  *   - a `name` for the group, required in case of creation, optional
+  *   otherwise (only usefull in case of *set*)
+  *
+  * - a `callback` function, for error and result
+  */
+
+  user.userlist = function (opts, callback) {
+    if (!ld.isFunction(callback)) {
+      throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
+    }
+    var crudType = ['add', 'set', 'del'];
+    if (!ld.includes(crudType, opts.crud)) {
+      throw new TypeError('BACKEND.ERROR.TYPE.USERLIST_CRUD');
+    }
+    if ((opts.crud !== 'add') && (ld.isUndefined(opts.ulistid))) {
+      throw new TypeError('BACKEND.ERROR.TYPE.USERLIST_ID');
+    }
+    if ((opts.crud === 'add') && (ld.isUndefined(opts.name))) {
+      throw new TypeError('BACKEND.ERROR.TYPE.USERLIST_NAME');
+    }
+    if ((opts.crud === 'set') && 
+      (ld.every([opts.name, opts.uids], ld.isUndefined))) {
+      return callback(new Error('BACKEND.ERROR.USER.USERLIST_SET_PARAMS'));
+    }
+    user.get(opts.login, function (err, u) {
+      if (err) { return callback(err); }
+      switch (opts.crud) {
+        case 'add':
+          opts.ulistid = cuid();
+          u.userlists[opts.ulistid] = {
+            name: opts.name,
+            uids: opts.uids || []
+          };
+          break;
+        case 'set':
+          if (!u.userlists[opts.ulistid]) {
+            return callback(new Error('BACKEND.ERROR.USER.USERLIST_NOT_FOUND'));
+          }
+          if (opts.name) {
+            u.userlists[opts.ulistid].name = opts.name;
+          }
+          if (opts.uids) {
+            var allUids = ld.values(user.ids);
+            var uids = ld.filter(opts.uids, ld.partial(ld.includes, allUids));
+            u.userlists[opts.ulistid].uids = uids;
+          }
+          break;
+        case 'del':
+          if (!u.userlists[opts.ulistid]) {
+            return callback(new Error('BACKEND.ERROR.USER.USERLIST_NOT_FOUND'));
+          }
+          delete u.userlists[opts.ulistid];
+          break;
+      }
+      user.fn.set(u, function (err, u) {
+        if (err) { return callback(err); }
+        return callback(null, u);
+      });
+    });
+  };
 
   /**
   * ### mark

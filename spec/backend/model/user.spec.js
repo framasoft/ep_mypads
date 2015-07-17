@@ -104,6 +104,8 @@
             expect(ld.isObject(u.bookmarks)).toBeTruthy();
             expect(ld.isArray(u.bookmarks.groups)).toBeTruthy();
             expect(ld.isArray(u.bookmarks.pads)).toBeTruthy();
+            var okUls = (ld.isObject(u.userlists) && ld.isEmpty(u.userlists));
+            expect(okUls).toBeTruthy();
             expect(ld.includes(ld.values(user.ids), u._id)).toBeTruthy();
             expect((user.ids[u.login])).toBe(u._id);
             done();
@@ -111,22 +113,27 @@
         }
       );
 
-      it('should ignore fixing groups for a valid creation', function (done) {
-        user.set({
-          login: 'grace',
-          password: 'isTheDirector',
-          groups: ['one', 'two']
-        }, function (err, u) {
-          expect(err).toBeNull();
-          expect(u._id).toBeDefined();
-          expect(u.login).toBe('grace');
-          expect(ld.isObject(u.password)).toBeTruthy();
-          expect((ld.isArray(u.groups) && ld.isEmpty(u.groups))).toBeTruthy();
-          expect(ld.includes(ld.values(user.ids), u._id)).toBeTruthy();
-          expect((user.ids[u.login])).toBe(u._id);
-          done();
-        });
-      });
+      it('should ignore fixing groups and userlists for a valid creation',
+        function (done) {
+          user.set({
+            login: 'grace',
+            password: 'isTheDirector',
+            groups: ['one', 'two'],
+            userlists: { uidxxxx: { name: 'u1', users: [] } }
+          }, function (err, u) {
+            expect(err).toBeNull();
+            expect(u._id).toBeDefined();
+            expect(u.login).toBe('grace');
+            expect(ld.isObject(u.password)).toBeTruthy();
+            expect((ld.isArray(u.groups) && ld.isEmpty(u.groups))).toBeTruthy();
+            var okUls = (ld.isObject(u.userlists) && ld.isEmpty(u.userlists));
+            expect(okUls).toBeTruthy();
+            expect(ld.includes(ld.values(user.ids), u._id)).toBeTruthy();
+            expect((user.ids[u.login])).toBe(u._id);
+            done();
+          });
+        }
+      );
 
       it('should deny usage of an existing login', function (done) {
         user.set({ login: 'parker', password: 'lovesKubiak' },
@@ -398,6 +405,161 @@
             });
           });
         });
+      });
+    });
+
+  });
+
+  describe('user userlists', function () {
+
+    var parker;
+
+    beforeAll(function (done) {
+      specCommon.reInitDatabase(function () {
+        user.set({
+          login: 'parker',
+          password: 'lovesKubiak',
+          firstname: 'Parker',
+          lastname: 'Lewis'
+        }, function (err, u) {
+          if (err) { console.log(err); }
+          parker = u;
+          user.set({ login: 'jerry', password: 'likesParker' },
+            function (err) {
+              if (err) { console.log(err); }
+              user.set({ login: 'mikey', password: 'likesParker' },
+                function (err) {
+                  if (err) { console.log(err); }
+                  done();
+                }
+              );
+            }
+          );
+        });
+      });
+    });
+
+    afterAll(specCommon.reInitDatabase);
+
+    it('should throw errors if params are incorrect', function () {
+      expect(user.userlist).toThrow();
+      expect(ld.partial(user.userlist, {})).toThrowError(/CALLBACK/);
+      expect(ld.partial(user.userlist, { crud: 'aloa' }, ld.noop))
+        .toThrowError(/USERLIST_CRUD/);
+      expect(ld.partial(user.userlist, { crud: 'set' }, ld.noop))
+        .toThrowError(/USERLIST_ID/);
+    });
+
+    it('should throw an error for add if the name is not given', function () {
+      var opts = { crud: 'add', login: 'parker', name: undefined };
+      expect(ld.partial(user.userlist, opts, ld.noop))
+        .toThrowError(/USERLIST_NAME/);
+    });
+
+    it('should return an error if the login is not found', function (done) {
+      var opts = { crud: 'add', name: 'friends', login: 'inexistent' };
+      user.userlist(opts, function (err) {
+        expect(ld.isError(err)).toBeTruthy();
+        expect(err).toMatch('NOT_FOUND');
+        done();
+      });
+    });
+
+    it('should return an error for set and del if the ulistid doesnt exist',
+      function (done) {
+        var opts = { crud: 'del', login: 'parker', ulistid: 'inexistent' };
+        user.userlist(opts, function (err) {
+          expect(ld.isError(err)).toBeTruthy();
+          expect(err).toMatch('NOT_FOUND');
+          done();
+        });
+      }
+    );
+
+    it('should return an error for set if no uids or no name are given',
+      function (done) {
+        var opts = {
+          crud: 'set',
+          login: 'parker',
+          ulistid: 'shouldBeRealUid',
+          uids: undefined,
+          name: undefined
+        };
+        user.userlist(opts, function (err) {
+          expect(ld.isError(err)).toBeTruthy();
+          expect(err).toMatch('USERLIST_SET_PARAMS');
+          done();
+        });
+      }
+    );
+
+    it('should create a new userlist', function (done) {
+      var opts = { crud: 'add', login: 'parker', name: 'friends' };
+      user.userlist(opts, function (err, u) {
+        expect(err).toBeNull();
+        var ulists = ld.values(u.userlists);
+        expect(ld.size(ulists)).toBe(1);
+        var ul = ld.first(ulists);
+        expect(ul.name).toBe('friends');
+        expect(ld.isArray(ul.uids)).toBeTruthy();
+        expect(ld.size(ul.uids)).toBe(0);
+        parker = u;
+        done();
+      });
+    });
+
+    it('should update a list name', function (done) {
+      var ulistid = ld.first(ld.keys(parker.userlists));
+      var opts = {
+        crud: 'set',
+        login: 'parker',
+        ulistid: ulistid,
+        name: 'Good friends'
+      };
+      user.userlist(opts, function (err, u) {
+        expect(err).toBeNull();
+        var ulists = ld.values(u.userlists);
+        expect(ld.size(ulists)).toBe(1);
+        var ul = ld.first(ulists);
+        expect(ul.name).toBe('Good friends');
+        expect(ld.isArray(ul.uids)).toBeTruthy();
+        expect(ld.size(ul.uids)).toBe(0);
+        parker = u;
+        done();
+      });
+    });
+
+    it('should update a list with filtered uids', function (done) {
+      var ulistid = ld.first(ld.keys(parker.userlists));
+      var opts = {
+        crud: 'set',
+        login: 'parker',
+        ulistid: ulistid,
+        uids: [ user.ids.mikey, user.ids.jerry, 'fakeOne' ]
+      };
+      user.userlist(opts, function (err, u) {
+        expect(err).toBeNull();
+        var ulists = ld.values(u.userlists);
+        expect(ld.size(ulists)).toBe(1);
+        var ul = ld.first(ulists);
+        expect(ul.name).toBe('Good friends');
+        expect(ld.isArray(ul.uids)).toBeTruthy();
+        expect(ld.size(ul.uids)).toBe(2);
+        expect(ul.uids[0]).toBe(user.ids.mikey);
+        expect(ul.uids[1]).toBe(user.ids.jerry);
+        parker = u;
+        done();
+      });
+    });
+
+    it('should delete a list', function (done) {
+      var ulistid = ld.first(ld.keys(parker.userlists));
+      var opts = { crud: 'del', login: 'parker', ulistid: ulistid };
+      user.userlist(opts, function (err, u) {
+        expect(err).toBeNull();
+        expect(ld.size(u.userlists)).toBe(0);
+        parker = u;
+        done();
       });
     });
 

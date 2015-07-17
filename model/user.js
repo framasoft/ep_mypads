@@ -461,7 +461,12 @@ module.exports = (function () {
   *   - a `name` for the group, required in case of creation, optional
   *   otherwise (only usefull in case of *set*)
   *
-  * - a `callback` function, for error and result
+  * - a `callback` function, for error and result.
+  *
+  *   `userlist` takes care of arguments, user existence and filters them on
+  *   creation and update. For performance reason, all userlists are not
+  *   updated when an user is removed from MyPads but only when the userlist
+  *   itself is updated.
   */
 
   user.userlist = function (opts, callback) {
@@ -484,13 +489,20 @@ module.exports = (function () {
     }
     user.get(opts.login, function (err, u) {
       if (err) { return callback(err); }
+      var setUids = function () {
+        var allUids = ld.values(user.ids);
+        var uids = ld.filter(opts.uids, ld.partial(ld.includes, allUids));
+        u.userlists[opts.ulistid].uids = uids;
+      };
       switch (opts.crud) {
         case 'add':
           opts.ulistid = cuid();
-          u.userlists[opts.ulistid] = {
-            name: opts.name,
-            uids: opts.uids || []
-          };
+          u.userlists[opts.ulistid] = { name: opts.name };
+          if (opts.uids) {
+            setUids();
+          } else {
+            u.userlists[opts.ulistid].uids = [];
+          }
           break;
         case 'set':
           if (!u.userlists[opts.ulistid]) {
@@ -499,11 +511,7 @@ module.exports = (function () {
           if (opts.name) {
             u.userlists[opts.ulistid].name = opts.name;
           }
-          if (opts.uids) {
-            var allUids = ld.values(user.ids);
-            var uids = ld.filter(opts.uids, ld.partial(ld.includes, allUids));
-            u.userlists[opts.ulistid].uids = uids;
-          }
+          if (opts.uids) { setUids(); }
           break;
         case 'del':
           if (!u.userlists[opts.ulistid]) {

@@ -552,6 +552,28 @@
       });
     });
 
+    it('should return detailed lists for a given login', function (done) {
+      user.userlist({ crud: 'get', login: 'jerry' }, function (err, u) {
+        expect(err).toBeNull();
+        expect(ld.size(u.userlists)).toBe(0);
+        user.userlist({ crud: 'get', login: 'parker' }, function (err, u) {
+          expect(ld.size(u.userlists)).toBe(1);
+          var ul = ld.first(ld.values(u.userlists));
+          expect(ul.name).toBe('Good friends');
+          expect(ld.size(ul.uids)).toBe(2);
+          expect(ld.isArray(ul.users)).toBeTruthy();
+          expect(ld.size(ul.users)).toBe(2);
+          expect(ul.users[0].login).toBe('mikey');
+          expect(ul.users[0].email).toBeDefined();
+          expect(ul.users[0].firstname).toBeDefined();
+          expect(ul.users[0].lastname).toBeDefined();
+          expect(ul.users[0].password).toBeUndefined();
+          expect(ul.users[1].login).toBe('jerry');
+          done();
+        });
+      });
+    });
+
     it('should delete a list', function (done) {
       var ulistid = ld.first(ld.keys(parker.userlists));
       var opts = { crud: 'del', login: 'parker', ulistid: ulistid };

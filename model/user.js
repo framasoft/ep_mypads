@@ -447,11 +447,12 @@ module.exports = (function () {
   * ### userlist
   *
   * This asynchronous function handles creation, update, removal of user lists.
+  * It also return all userlists with readable users when needed.
   * It takes:
   *
   * - a JS object with fields :
   *
-  *   - `crud` element, that must be either *add*, *set*, or *del* for
+  *   - `crud` element, that must be either *get*, *add*, *set*, or *del* for
   *   creation, update and removal;
   *   - `login`, mandatory for the targeted user;
   *   - `ulistid`, mandatory in case of *set* or *del*;
@@ -473,19 +474,20 @@ module.exports = (function () {
     if (!ld.isFunction(callback)) {
       throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
     }
-    var crudType = ['add', 'set', 'del'];
+    var crudType = ['get', 'add', 'set', 'del'];
     if (!ld.includes(crudType, opts.crud)) {
       throw new TypeError('BACKEND.ERROR.TYPE.USERLIST_CRUD');
     }
-    if ((opts.crud !== 'add') && (ld.isUndefined(opts.ulistid))) {
-      throw new TypeError('BACKEND.ERROR.TYPE.USERLIST_ID');
+    if ((ld.includes(['set', 'del'], opts.crud)) &&
+      (ld.isUndefined(opts.ulistid))) {
+        throw new TypeError('BACKEND.ERROR.TYPE.USERLIST_ID');
     }
     if ((opts.crud === 'add') && (ld.isUndefined(opts.name))) {
       throw new TypeError('BACKEND.ERROR.TYPE.USERLIST_NAME');
     }
     if ((opts.crud === 'set') && 
       (ld.every([opts.name, opts.uids], ld.isUndefined))) {
-      return callback(new Error('BACKEND.ERROR.USER.USERLIST_SET_PARAMS'));
+        return callback(new Error('BACKEND.ERROR.USER.USERLIST_SET_PARAMS'));
     }
     user.get(opts.login, function (err, u) {
       if (err) { return callback(err); }
@@ -495,6 +497,27 @@ module.exports = (function () {
         u.userlists[opts.ulistid].uids = uids;
       };
       switch (opts.crud) {
+        case 'get':
+          var keys = ld.reduce(u.userlists, function (memo, ul) {
+            return memo.concat(ul.uids);
+          }, []);
+          keys = ld.map(ld.uniq(keys), function (k) { return UPREFIX + k; });
+          storage.fn.getKeys(keys, function (err, results) {
+            if (err) { return callback(err); }
+            results = ld.transform(results, function (memo, v, k) {
+              memo[k] = ld.pick(v, '_id', 'login', 'firstname', 'lastname',
+                'email');
+            });
+            u.userlists = ld.reduce(u.userlists, function (memo, ul, k) {
+              ul.users = ld.map(ul.uids, function (uid) {
+                return results[UPREFIX + uid];
+              });
+              memo[k] = ul;
+              return memo;
+            }, {});
+            return callback(null, u);
+          });
+          break;
         case 'add':
           opts.ulistid = cuid();
           u.userlists[opts.ulistid] = { name: opts.name };
@@ -520,10 +543,12 @@ module.exports = (function () {
           delete u.userlists[opts.ulistid];
           break;
       }
-      user.fn.set(u, function (err, u) {
-        if (err) { return callback(err); }
-        return callback(null, u);
-      });
+      if (opts.crud !== 'get') {
+        user.fn.set(u, function (err, u) {
+          if (err) { return callback(err); }
+          return callback(null, u);
+        });
+      }
     });
   };
 

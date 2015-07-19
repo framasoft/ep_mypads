@@ -416,7 +416,6 @@ module.exports = (function () {
     *
     * Sample URL :
     * http://etherpad.ndd/mypads/api/userlist
-    *
     */
 
     app.post(userlistRoute, fn.ensureAuthenticated,
@@ -426,6 +425,39 @@ module.exports = (function () {
             crud: 'add',
             login: req.session.mypadsLogin,
             name: req.body.name
+          };
+          user.userlist(opts, function (err, u) {
+            if (err) { return res.status(400).send({ error: err.message }); }
+            res.send({ success: true, value: u.userlists });
+          });
+        }
+        catch (e) { return res.status(400).send({ error: e.message }); }
+      }
+    );
+
+    /**
+    * PUT method : `user.userlist` creaton with crud fixed to *set*, current
+    * login, mandatory `ulistid` via request parameter and userlist arguments,
+    * `name` or user `logins`
+    * ensureAuthenticated needed
+    *
+    * Sample URL :
+    * http://etherpad.ndd/mypads/api/userlist/xxx
+    */
+
+    app.put(userlistRoute + '/:key', fn.ensureAuthenticated,
+      function (req, res) {
+        try {
+          var uids;
+          if (req.body.logins) {
+            uids = ld.map(req.body.logins, ld.partial(ld.get, user.ids));
+          }
+          var opts = {
+            crud: 'set',
+            login: req.session.mypadsLogin,
+            ulistid: req.params.key,
+            name: req.body.name,
+            uids: uids
           };
           user.userlist(opts, function (err, u) {
             if (err) { return res.status(400).send({ error: err.message }); }

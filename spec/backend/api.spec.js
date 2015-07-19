@@ -484,7 +484,11 @@
           var set = require('../../model/user.js').set;
           var u = { login: 'guest', password: 'willnotlivelong' };
           set(u, function () {
-            rq.post(route + 'auth/login', { body: u }, done);
+            set({ login: 'jerry', password: 'willnotlivelong' }, function () {
+              set({ login: 'mikey', password: 'willnotlivelong' }, function () {
+                rq.post(route + 'auth/login', { body: u }, done);
+              });
+            });
           });
         });
       });
@@ -716,6 +720,7 @@
       });
 
       describe('userlist testing', function () {
+        var ulists;
 
         describe('userlist GET', function () {
 
@@ -723,7 +728,7 @@
             function (done) {
               rq.get(userlistRoute, function (err, resp, body) {
                 expect(resp.statusCode).toBe(200);
-                var ulists = body.value;
+                ulists = body.value;
                 expect(ld.isObject(ulists)).toBeTruthy();
                 expect(ld.isEmpty(ulists)).toBeTruthy();
                 done();
@@ -748,9 +753,69 @@
             rq.post(userlistRoute, b, function (err, resp, body) {
               expect(resp.statusCode).toBe(200);
               expect(body.success).toBeTruthy();
+              ulists = body.value;
               expect(body.value).toBeDefined();
               expect(ld.size(body.value)).toBe(1);
-              expect(ld.values(body.value)[0].name).toBe('friends');
+              expect(ld.values(ulists)[0].name).toBe('friends');
+              done();
+            });
+          });
+
+        });
+
+        describe('userlist PUT', function () {
+
+          it('should return an error if the userlist is not found',
+            function (done) {
+              var b = { body: { name: 'Useless' } };
+              rq.put(userlistRoute + '/inexistent', b,
+                function (err, resp, body) {
+                  expect(resp.statusCode).toBe(400);
+                  expect(body.error).toMatch('NOT_FOUND');
+                  done();
+                }
+              );
+            }
+          );
+
+          it('should return an error for set if no uids or no name are given',
+            function (done) {
+              rq.put(userlistRoute + '/' + ld.keys(ulists)[0], {},
+                function (err, resp, body) {
+                  expect(resp.statusCode).toBe(400);
+                  expect(body.error).toMatch('USERLIST_SET_PARAMS');
+                  done();
+                }
+              );
+            }
+          );
+
+          it('should update a list name', function (done) {
+            var ulkey = ld.keys(ulists)[0];
+            var b = { body: { name: 'Good friends' } };
+            rq.put(userlistRoute + '/' + ulkey, b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(200);
+              expect(body.success).toBeTruthy();
+              ulists = body.value;
+              expect(ld.isObject(ulists)).toBeTruthy();
+              var ul = ld.values(ulists)[0];
+              expect(ul.name).toBe('Good friends');
+              done();
+            });
+          });
+
+          it('should update a list with filtered logins', function (done) {
+            var ulkey = ld.keys(ulists)[0];
+            var b = { body: { logins: ['inexistent', 'mikey', 'jerry'] } };
+            rq.put(userlistRoute + '/' + ulkey, b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(200);
+              expect(body.success).toBeTruthy();
+              ulists = body.value;
+              expect(ld.isObject(ulists)).toBeTruthy();
+              var ul = ld.values(ulists)[0];
+              expect(ul.name).toBe('Good friends');
+              expect(ld.isArray(ul.uids)).toBeTruthy();
+              expect(ld.size(ul.uids)).toBe(2);
               done();
             });
           });

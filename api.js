@@ -388,6 +388,53 @@ module.exports = (function () {
 
   var userAPI = function (app) {
     var userRoute = api.initialRoute + 'user';
+    var userlistRoute = api.initialRoute + 'userlist';
+
+    /**
+    * GET method : `user.userlist` with crud fixed to *get* and current login.
+    * Returns user userlists
+    * ensureAuthenticated needed
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/userlist
+    */
+
+    app.get(userlistRoute, fn.ensureAuthenticated,
+      function (req, res) {
+        var opts = { crud: 'get', login: req.session.mypadsLogin };
+        user.userlist(opts, function (err, u) {
+          if (err) { return res.status(400).send({ error: err.message }); }
+          res.send({ value: u.userlists });
+        });
+      }
+    );
+
+    /**
+    * POST method : `user.userlist` creaton with crud fixed to *add*, current
+    * login and userlist parameters, name and optionnally user logins
+    * ensureAuthenticated needed
+    *
+    * Sample URL :
+    * http://etherpad.ndd/mypads/api/userlist
+    *
+    */
+
+    app.post(userlistRoute, fn.ensureAuthenticated,
+      function (req, res) {
+        try {
+          var opts = {
+            crud: 'add',
+            login: req.session.mypadsLogin,
+            name: req.body.name
+          };
+          user.userlist(opts, function (err, u) {
+            if (err) { return res.status(400).send({ error: err.message }); }
+            res.send({ success: true, value: u.userlists });
+          });
+        }
+        catch (e) { return res.status(400).send({ error: e.message }); }
+      }
+    );
 
     /**
     * GET method : `user.get` login (key)

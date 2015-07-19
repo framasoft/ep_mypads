@@ -477,6 +477,7 @@
 
     describe('user API', function () {
       var userRoute = route + 'user';
+      var userlistRoute = route + 'userlist';
 
       beforeAll(function (done) {
         conf.init(function () {
@@ -703,7 +704,6 @@
             withAdmin(function (after) {
               rq.get(userRoute + '/parker', function (err, resp, body) {
                 expect(resp.statusCode).toBe(200);
-                expect(resp.statusCode).toBe(200);
                 expect(body.value.login).toBe('parker');
                 expect(body.value.firstname).toBe('Parker');
                 expect(ld.isArray(body.value.groups)).toBeTruthy();
@@ -712,6 +712,50 @@
             }, done);
           }
         );
+
+      });
+
+      describe('userlist testing', function () {
+
+        describe('userlist GET', function () {
+
+          it('should return userlists of the current logged user',
+            function (done) {
+              rq.get(userlistRoute, function (err, resp, body) {
+                expect(resp.statusCode).toBe(200);
+                var ulists = body.value;
+                expect(ld.isObject(ulists)).toBeTruthy();
+                expect(ld.isEmpty(ulists)).toBeTruthy();
+                done();
+              });
+            }
+          );
+
+        });
+
+        describe('userlist POST', function () {
+
+          it('should return an error if no name is sent', function (done) {
+            rq.post(userlistRoute, {}, function (err, resp, body) {
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('USERLIST_NAME');
+              done();
+            });
+          });
+
+          it('should allow creation otherwise', function (done) {
+            var b = { body: { name: 'friends' } };
+            rq.post(userlistRoute, b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(200);
+              expect(body.success).toBeTruthy();
+              expect(body.value).toBeDefined();
+              expect(ld.size(body.value)).toBe(1);
+              expect(ld.values(body.value)[0].name).toBe('friends');
+              done();
+            });
+          });
+
+        });
 
       });
 

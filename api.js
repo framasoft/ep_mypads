@@ -565,10 +565,10 @@ module.exports = (function () {
     * Only need ensureAuthenticated because use own login for marking
     *
     * Sample URL:
-    * http://etherpad.ndd/mypads/api/user/mark
+    * http://etherpad.ndd/mypads/api/usermark
     */
 
-    app.post(userRoute + '/mark', fn.ensureAuthenticated,
+    app.post(userRoute + 'mark', fn.ensureAuthenticated,
       function (req, res) {
         try {
           user.mark(req.session.mypadsLogin, req.body.type, req.body.key,

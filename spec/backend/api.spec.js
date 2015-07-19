@@ -869,7 +869,7 @@
         it('should return error when arguments are not as expected',
           function (done) {
             withAdmin(function (after) {
-              rq.post(userRoute + '/mark', function (err, resp, body) {
+              rq.post(userRoute + 'mark', function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
                 expect(body.error).toMatch('TYPE_PADSORGROUPS');
                 after();
@@ -882,7 +882,7 @@
           function (done) {
             withAdmin(function (after) {
               var b = { body: { type: 'pads', key:'xxx' } };
-              rq.post(userRoute + '/mark', b, function (err, resp, body) {
+              rq.post(userRoute + 'mark', b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(404);
                 expect(body.error).toMatch('BOOKMARK_NOT_FOUND');
                 after();
@@ -903,7 +903,7 @@
               };
               rq.post(route + 'group', b, function (err, resp, body) {
                 b = { body: { type: 'groups', key: body.value._id } };
-                rq.post(userRoute + '/mark', b, function (err, resp, body) {
+                rq.post(userRoute + 'mark', b, function (err, resp, body) {
                   expect(resp.statusCode).toBe(200);
                   expect(body.success).toBeTruthy();
                   done();

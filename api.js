@@ -410,7 +410,7 @@ module.exports = (function () {
     );
 
     /**
-    * POST method : `user.userlist` creaton with crud fixed to *add*, current
+    * POST method : `user.userlist` creation with crud fixed to *add*, current
     * login and userlist parameters, name and optionnally user logins
     * ensureAuthenticated needed
     *
@@ -436,7 +436,7 @@ module.exports = (function () {
     );
 
     /**
-    * PUT method : `user.userlist` creaton with crud fixed to *set*, current
+    * PUT method : `user.userlist` update with crud fixed to *set*, current
     * login, mandatory `ulistid` via request parameter and userlist arguments,
     * `name` or user `logins`
     * ensureAuthenticated needed
@@ -450,7 +450,8 @@ module.exports = (function () {
         try {
           var uids;
           if (req.body.logins) {
-            uids = ld.map(req.body.logins, ld.partial(ld.get, user.ids));
+            uids = ld.compact(ld.map(req.body.logins,
+              function (l) { return user.ids[l]; }));
           }
           var opts = {
             crud: 'set',
@@ -467,6 +468,33 @@ module.exports = (function () {
         catch (e) { return res.status(400).send({ error: e.message }); }
       }
     );
+
+    /**
+    * DELETE method : `user.userlist` removal with crud fixed to *del*, current
+    * login, mandatory `ulistid` via request parameter
+    * ensureAuthenticated needed
+    *
+    * Sample URL :
+    * http://etherpad.ndd/mypads/api/userlist/xxx
+    */
+
+    app.delete(userlistRoute + '/:key', fn.ensureAuthenticated,
+      function (req, res) {
+        try {
+          var opts = {
+            crud: 'del',
+            login: req.session.mypadsLogin,
+            ulistid: req.params.key
+          };
+          user.userlist(opts, function (err, u) {
+            if (err) { return res.status(400).send({ error: err.message }); }
+            res.send({ success: true, value: u.userlists });
+          });
+        }
+        catch (e) { return res.status(400).send({ error: e.message }); }
+      }
+    );
+
 
     /**
     * GET method : `user.get` login (key)

@@ -722,22 +722,6 @@
       describe('userlist testing', function () {
         var ulists;
 
-        describe('userlist GET', function () {
-
-          it('should return userlists of the current logged user',
-            function (done) {
-              rq.get(userlistRoute, function (err, resp, body) {
-                expect(resp.statusCode).toBe(200);
-                ulists = body.value;
-                expect(ld.isObject(ulists)).toBeTruthy();
-                expect(ld.isEmpty(ulists)).toBeTruthy();
-                done();
-              });
-            }
-          );
-
-        });
-
         describe('userlist POST', function () {
 
           it('should return an error if no name is sent', function (done) {
@@ -816,9 +800,65 @@
               expect(ul.name).toBe('Good friends');
               expect(ld.isArray(ul.uids)).toBeTruthy();
               expect(ld.size(ul.uids)).toBe(2);
+              b = { body: { logins: [] } };
+              rq.put(userlistRoute + '/' + ulkey, b,
+                function (err, resp, body) {
+                  expect(resp.statusCode).toBe(200);
+                  expect(body.success).toBeTruthy();
+                  ulists = body.value;
+                  var ul = ld.values(ulists)[0];
+                  expect(ul.name).toBe('Good friends');
+                  expect(ld.isArray(ul.uids)).toBeTruthy();
+                  expect(ld.isEmpty(ul.uids)).toBeTruthy();
+                  done();
+                }
+              );
+            });
+          });
+
+        });
+
+        describe('userlist GET', function () {
+
+          it('should return userlists of the current logged user',
+            function (done) {
+              rq.get(userlistRoute, function (err, resp, body) {
+                expect(resp.statusCode).toBe(200);
+                ulists = body.value;
+                expect(ld.isObject(ulists)).toBeTruthy();
+                expect(ld.size(ulists)).toBe(1);
+                expect(ld.values(ulists)[0].name).toBe('Good friends');
+                done();
+              });
+            }
+          );
+
+        });
+
+        describe('userlist DELETE', function () {
+
+          it('should return an error if the userlist is not found',
+            function (done) {
+              rq.del(userlistRoute + '/inexistent', function (err, resp, body) {
+                expect(resp.statusCode).toBe(400);
+                expect(body.error).toMatch('NOT_FOUND');
+                done();
+              });
+            }
+          );
+
+          it('should otherwise delete an userlist', function (done) {
+            var ulkey = ld.keys(ulists)[0];
+            rq.del(userlistRoute + '/' + ulkey, function (err, resp, body) {
+              expect(resp.statusCode).toBe(200);
+              expect(body.success).toBeTruthy();
+              ulists = body.value;
+              expect(ld.isObject(ulists)).toBeTruthy();
+              expect(ld.isEmpty(ulists)).toBeTruthy();
               done();
             });
           });
+
 
         });
 

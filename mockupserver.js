@@ -38,38 +38,51 @@
     hooks.init(null, null, function () {
       storage.init(function () {
         user.set({
-          login: 'parker',
-          password: 'lovesKubiak',
-          firstname: 'Parker',
-          lastname: 'Lewis',
-          email: 'parker@lewis.me'
-        }, function (err, u) {
+          login: 'frank',
+          password: 'reallyLikesGrace',
+          email: 'frank@gracefanclub.org'
+        }, function (err, frank) {
           if (err) { console.log(err); }
           user.set({
-            login: 'frank',
-            password: 'reallyLikesGrace',
-            email: 'frank@gracefanclub.org'
-          }, function (err, frank) {
+            login: 'parker',
+            password: 'lovesKubiak',
+            firstname: 'Parker',
+            lastname: 'Lewis',
+            email: 'parker@lewis.me'
+          }, function (err, parker) {
             if (err) { console.log(err); }
-            var g = { name: 'Santa Fe', admin: u._id, tags: ['cool', 'weird'] };
-            group.set(g, function () {
-              g.name = 'memories';
-              g.visibility = 'public';
-              g.tags = ['cool', 'funky'];
-              group.set(g, function (err, g) {
-                if (err) { console.log(err); }
-                pad.set({ name: 'Loving Annie', group: g._id }, function () {
-                  pad.set({ name: 'Watch sync', group: g._id }, function () {
-                    g = {
-                      name: 'shared notes',
-                      admin: u._id,
-                      admins: [ frank._id ],
-                      visibility: 'public'
-                    };
-                    group.set(g, function () {
-                      api.init(specCommon.express.app, 'en',
-                        console.log.bind(null,
-                          'MockupServer runs on port 8042'));
+            var opts = {
+              crud: 'add',
+              login: 'parker',
+              name: 'enemies',
+              uids: [ frank._id ]
+            };
+            user.userlist(opts, function (err) {
+              if (err) { console.log(err); }
+              var g = {
+                name: 'Santa Fe',
+                admin: parker._id,
+                tags: ['cool', 'weird']
+              };
+              group.set(g, function () {
+                g.name = 'memories';
+                g.visibility = 'public';
+                g.tags = ['cool', 'funky'];
+                group.set(g, function (err, g) {
+                  if (err) { console.log(err); }
+                  pad.set({ name: 'Loving Annie', group: g._id }, function () {
+                    pad.set({ name: 'Watch sync', group: g._id }, function () {
+                      g = {
+                        name: 'shared notes',
+                        admin: parker._id,
+                        admins: [ frank._id ],
+                        visibility: 'public'
+                      };
+                      group.set(g, function () {
+                        api.init(specCommon.express.app, 'en',
+                          console.log.bind(null,
+                            'MockupServer runs on port 8042'));
+                      });
                     });
                   });
                 });

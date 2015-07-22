@@ -273,7 +273,9 @@
     "INFO": {
       "NAME": "Nom de la liste utilisateurs",
       "ADD_SUCCESS": "La liste utilisateurs a été créée avec succès",
-      "EDIT_SUCCESS": "La liste utilisateurs a été mise à jour avec succès"
+      "EDIT_SUCCESS": "La liste utilisateurs a été mise à jour avec succès",
+      "REMOVE_SURE": "Êtes-vous sûr de vouloir supprimer cette liste d'utilisateurs ?",
+      "REMOVE_SUCCESS": "La liste d'utilisateurs a été supprimée avec succès"
     },
     "ERR": {
       "NAME": "Le nom de la liste utilisateurs est obligatoire"

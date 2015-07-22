@@ -273,7 +273,9 @@
     "INFO": {
       "NAME": "Name of the userlist",
       "ADD_SUCCESS": "Userlist has been successfully created",
-      "EDIT_SUCCESS": "Userlist has been successfully updated"
+      "EDIT_SUCCESS": "Userlist has been successfully updated",
+      "REMOVE_SURE": "Are you sure you want to remove this userlist ?",
+      "REMOVE_SUCCESS": "Userlist has been successfully removed"
     },
     "ERR": {
       "NAME": "The name of the userlist is required"

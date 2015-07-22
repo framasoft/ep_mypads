@@ -258,5 +258,9 @@
   "BOOKMARK": {
     "TITLE": "My Bookmarks",
     "HELP": "<p>Bookmark page offers you the ability to see all your bookmarked elements from MyPads. You can remove them from bookmarks if you want to.</p>"
+  },
+  "USERLIST": {
+    "ADD": "Create a new userlist",
+    "HELP": ""
   }
 }

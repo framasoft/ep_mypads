@@ -63,7 +63,7 @@ module.exports = (function () {
       m('h2.block', [
         m('span', conf.LANG.MENU.USERLIST),
         m('a', {
-          href: '/mypads/myuserlists/add',
+          href: '/myuserlists/add',
           config: m.route
         }, [
           m('i.icon-plus-squared'),

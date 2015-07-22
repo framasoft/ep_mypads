@@ -258,5 +258,9 @@
   "BOOKMARK": {
     "TITLE": "Mes favoris",
     "HELP": "<p>La page de favoris vous permet de voir l'ensemble des éléments de MyPads que vous avez mis en favori et éventuellement de les en supprimer.</p>"
+  },
+  "USERLIST": {
+    "ADD": "Créer une nouvelle liste d'utilisateurs",
+    "HELP": ""
   }
 }

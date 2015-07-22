@@ -36,6 +36,7 @@ module.exports = (function () {
   var subscribe = require('./modules/subscribe.js');
   var bookmark = require('./modules/bookmark.js');
   var userlist = require('./modules/userlist.js');
+  var userlistForm = require('./modules/userlist-form.js');
   var group = require('./modules/group.js');
   var groupView = require('./modules/group-view.js');
   var groupForm = require('./modules/group-form.js');
@@ -63,6 +64,8 @@ module.exports = (function () {
     '/myprofile': subscribe,
     '/mybookmarks': bookmark,
     '/myuserlists': userlist,
+    '/myuserlists/add': userlistForm,
+    '/myuserlists/:key/edit': userlistForm,
     '/mypads': group,
     '/mypads/group': group,
     '/mypads/group/list': group,

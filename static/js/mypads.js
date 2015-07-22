@@ -3727,7 +3727,81 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist.js":[function(require,module,exports){
+},{"../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist-form.js":[function(require,module,exports){
+/**
+*  # Userlist form module
+*
+*  ## License
+*
+*  Licensed to the Apache Software Foundation (ASF) under one
+*  or more contributor license agreements.  See the NOTICE file
+*  distributed with this work for additional information
+*  regarding copyright ownership.  The ASF licenses this file
+*  to you under the Apache License, Version 2.0 (the
+*  "License"); you may not use this file except in compliance
+*  with the License.  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+*  Unless required by applicable law or agreed to in writing,
+*  software distributed under the License is distributed on an
+*  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+*  KIND, either express or implied.  See the License for the
+*  specific language governing permissions and limitations
+*  under the License.
+*
+*  ## Description
+*
+*  This module handles userlist creation and update.
+*/
+
+module.exports = (function () {
+  'use strict';
+  // Global dependencies
+  var m = require('mithril');
+  var ld = require('lodash');
+  // Local dependencies
+  var conf = require('../configuration.js');
+  var auth = require('../auth.js');
+  var layout = require('./layout.js');
+  var tag = require('../widgets/tag.js');
+
+  var ulistform = {};
+
+  /**
+  * ## Controller
+  *
+  * Used to check authentication, initialize data for tag like widget with
+  * known users.
+  */
+
+  ulistform.controller = function () {
+
+    if (!auth.isAuthenticated()) { return m.route('/login'); }
+
+    var c = {};
+
+    return c;
+  };
+
+  /**
+  * ## Views
+  */
+
+  var view = {};
+
+  view.main = function (c) {};
+  view.aside = function (c) {};
+
+  ulistform.view = function (c) {
+    return layout.view(view.main(c), view.aside(c)); 
+  };
+
+  return ulistform;
+
+}).call(this);
+
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/tag.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/tag.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist.js":[function(require,module,exports){
 /**
 *  # Userlists module
 *
@@ -3774,7 +3848,13 @@ module.exports = (function () {
   * Used for module state and actions.
   */
 
-  userlist.controller = function () {};
+  userlist.controller = function () {
+    if (!auth.isAuthenticated()) { return m.route('/login'); }
+
+    var c = {};
+
+    return c;
+  };
 
   /**
   * ## Views
@@ -3782,8 +3862,27 @@ module.exports = (function () {
 
   var view = {};
 
-  view.main = function (c) {};
-  view.aside = function (c) {};
+  view.main = function (c) {
+    return m('section', { class: 'block-group group' }, [
+      m('h2.block', [
+        m('span', conf.LANG.MENU.USERLIST),
+        m('a', {
+          href: '/myuserlists/add',
+          config: m.route
+        }, [
+          m('i.icon-plus-squared'),
+          m('span', conf.LANG.USERLIST.ADD)
+        ])
+      ]),
+    ]);
+  };
+
+  view.aside = function (c) {
+    return m('section.user-aside', [
+      m('h2', conf.LANG.ACTIONS.HELP),
+      m('article', m.trust(conf.LANG.USERLIST.HELP))
+    ]);
+  };
 
   userlist.view = function (c) {
     return layout.view(view.main(c), view.aside(c));
@@ -3832,6 +3931,7 @@ module.exports = (function () {
   var subscribe = require('./modules/subscribe.js');
   var bookmark = require('./modules/bookmark.js');
   var userlist = require('./modules/userlist.js');
+  var userlistForm = require('./modules/userlist-form.js');
   var group = require('./modules/group.js');
   var groupView = require('./modules/group-view.js');
   var groupForm = require('./modules/group-form.js');
@@ -3859,6 +3959,8 @@ module.exports = (function () {
     '/myprofile': subscribe,
     '/mybookmarks': bookmark,
     '/myuserlists': userlist,
+    '/myuserlists/add': userlistForm,
+    '/myuserlists/:key/edit': userlistForm,
     '/mypads': group,
     '/mypads/group': group,
     '/mypads/group/list': group,
@@ -3880,7 +3982,7 @@ module.exports = (function () {
   return route;
 }).call(this);
 
-},{"./modules/admin.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/bookmark.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/bookmark.js","./modules/group-form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./modules/group-remove.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js","./modules/group-view.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-view.js","./modules/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/pad-add.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-add.js","./modules/pad-move.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-move.js","./modules/pad-remove.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-remove.js","./modules/pad-view.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-view.js","./modules/subscribe.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","./modules/user-invitation.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/user-invitation.js","./modules/userlist.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js":[function(require,module,exports){
+},{"./modules/admin.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/bookmark.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/bookmark.js","./modules/group-form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./modules/group-remove.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js","./modules/group-view.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-view.js","./modules/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/pad-add.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-add.js","./modules/pad-move.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-move.js","./modules/pad-remove.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-remove.js","./modules/pad-view.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-view.js","./modules/subscribe.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","./modules/user-invitation.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/user-invitation.js","./modules/userlist-form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist-form.js","./modules/userlist.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js":[function(require,module,exports){
 /**
 *  # Notification module
 *
@@ -17428,7 +17530,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/home/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {
@@ -17688,6 +17790,10 @@ module.exports={
   "BOOKMARK": {
     "TITLE": "My Bookmarks",
     "HELP": "<p>Bookmark page offers you the ability to see all your bookmarked elements from MyPads. You can remove them from bookmarks if you want to.</p>"
+  },
+  "USERLIST": {
+    "ADD": "Create a new userlist",
+    "HELP": ""
   }
 }
 

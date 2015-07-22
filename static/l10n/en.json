@@ -263,7 +263,7 @@
     "USERLIST": "Userlist",
     "ADD": "Create a new userlist",
     "EDIT": "Edit userlist ",
-    "HELP": "",
+    "HELP": "<p>Here you can find all your userlists, ordered by creation date. Summary information are available with the name of each userlist and the number of users linked.</p><p>Through action icons, located on top right of each userlist, you can edit or remove lists. Details are available in the form view, via edit action.</p>",
     "FORM_HELP": "<h3>Name</h3><p>You must give a name to the userlist, in order to be able to identify it.</p><h3>Users</h3><p>You can add as many users as you want. To do it, please enter the login and click on the 'OK' button. Note that already known users can be selected from the input.</p><p>To remove users, click on the cross located at the right of each login.</p>",
     "FIELD": {
       "NAME": "Name",

@@ -35,6 +35,7 @@ module.exports = (function () {
   var conf = require('../configuration.js');
   var auth = require('../auth.js');
   var layout = require('./layout.js');
+  var model = require('../model/group.js');
 
   var userlist = {};
 
@@ -49,6 +50,11 @@ module.exports = (function () {
 
     var c = {};
 
+    var init = function () {
+      c.userlists = auth.userInfo().userlists;
+    };
+
+    if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
     return c;
   };
 
@@ -58,7 +64,38 @@ module.exports = (function () {
 
   var view = {};
 
+  view.userlist = function (c, ul, key) {
+    var ulistRoute = '/myuserlists/' + key;
+    console.log(ulistRoute);
+    var actions = [
+      m('a', {
+        href: ulistRoute + '/edit',
+        config: m.route,
+        title: conf.LANG.GROUP.EDIT
+      }, [ m('i.icon-pencil') ]),
+      m('a', {
+        href: ulistRoute + '/remove',
+        config: m.route,
+        title: conf.LANG.GROUP.REMOVE
+      }, [ m('i.icon-trash') ])
+    ];
+    return m('li.block', [
+      m('header.group.block-group', [
+        m('h4.block', ul.name),
+        m('section.block', actions)
+      ]),
+      m('dl.block-group.group', [
+        m('dt.block', conf.LANG.USERLIST.FIELD.USERS),
+        m('dd.block', ld.size(ul.uids))
+      ])
+    ]);
+  };
+
   view.main = function (c) {
+    var ulists = ld.reduce(c.userlists, function (memo, ul, key) {
+      memo.push(view.userlist(c, ul, key));
+      return memo;
+    }, []);
     return m('section', { class: 'block-group group' }, [
       m('h2.block', [
         m('span', conf.LANG.MENU.USERLIST),
@@ -68,12 +105,15 @@ module.exports = (function () {
         }, [
           m('i.icon-plus-squared'),
           m('span', conf.LANG.USERLIST.ADD)
-        ])
+        ]),
       ]),
+      m('section.block-group.group', [
+        m('ul.group', ulists)
+      ])
     ]);
   };
 
-  view.aside = function (c) {
+  view.aside = function () {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
       m('article', m.trust(conf.LANG.USERLIST.HELP))

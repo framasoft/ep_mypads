@@ -73,6 +73,7 @@
   "MENU": {
     "PAD": "My Groups & Pads",
     "BOOKMARK": "My Bookmarks",
+    "USERLIST": "My Userlists",
     "PROFILE": "My Profile",
     "ADMIN": "Administration",
     "LOGOUT": "Logout"

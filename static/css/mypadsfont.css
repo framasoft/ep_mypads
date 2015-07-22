@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'mypadsfont';
-  src: url('../font/mypadsfont.eot?65190875');
-  src: url('../font/mypadsfont.eot?65190875#iefix') format('embedded-opentype'),
-       url('../font/mypadsfont.woff?65190875') format('woff'),
-       url('../font/mypadsfont.ttf?65190875') format('truetype'),
-       url('../font/mypadsfont.svg?65190875#mypadsfont') format('svg');
+  src: url('../font/mypadsfont.eot?78646455');
+  src: url('../font/mypadsfont.eot?78646455#iefix') format('embedded-opentype'),
+       url('../font/mypadsfont.woff?78646455') format('woff'),
+       url('../font/mypadsfont.ttf?78646455') format('truetype'),
+       url('../font/mypadsfont.svg?78646455#mypadsfont') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -14,7 +14,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'mypadsfont';
-    src: url('../font/mypadsfont.svg?65190875#mypadsfont') format('svg');
+    src: url('../font/mypadsfont.svg?78646455#mypadsfont') format('svg');
   }
 }
 */
@@ -78,3 +78,4 @@
 .icon-help-circled:before { content: '\e815'; } /* '' */
 .icon-popup:before { content: '\e816'; } /* '' */
 .icon-forward:before { content: '\e817'; } /* '' */
+.icon-users:before { content: '\e818'; } /* '' */

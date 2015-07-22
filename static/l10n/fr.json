@@ -73,6 +73,7 @@
   "MENU": {
     "PAD": "Mes Groupes & Pads",
     "BOOKMARK": "Mes Favoris",
+    "USERLIST": "Mes listes utilisateurs",
     "PROFILE": "Mon Profil",
     "ADMIN": "Administration",
     "LOGOUT": "Déconnexion"

@@ -252,21 +252,21 @@ module.exports = (function () {
     */
 
     app.post(authRoute + '/login', function (req, res, next) {
-      passport.authenticate('local', function (err, user, info) {
+      passport.authenticate('local', function (err, u, info) {
         if (err) { return res.status(400).send({ error: err.message }); }
-        if (!user) { return res.status(400).send({ error: info.message }); }
-        req.login(user, function (err) {
+        if (!u) { return res.status(400).send({ error: info.message }); }
+        req.login(u, function (err) {
           if (err) { return res.status(400).send({ error: err }); }
           var finish = function () {
             ld.assign(req.session, {
-              mypadsUid: user._id,
-              mypadsLogin: user.login,
-              mypadsColor: user.color,
-              mypadsUseLoginAndColorInPads: user.useLoginAndColorInPads
+              mypadsUid: u._id,
+              mypadsLogin: u.login,
+              mypadsColor: u.color,
+              mypadsUseLoginAndColorInPads: u.useLoginAndColorInPads
             });
             res.status(200).send({
               success: true,
-              user: ld.omit(user, 'password')
+              user: ld.omit(u, 'password')
             });
           };
           finish();

@@ -27,6 +27,6 @@ nav.menu-main a {
 nav.menu-main span { display: none; }
 
 /* Responsivity : full menu items for large tablets and up */
-@media (min-width: 50em) {
+@media (min-width: 65em) {
   nav.menu-main span { display: inherit; }
 }

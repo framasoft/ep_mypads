@@ -66,7 +66,6 @@ module.exports = (function () {
 
   view.userlist = function (c, ul, key) {
     var ulistRoute = '/myuserlists/' + key;
-    console.log(ulistRoute);
     var actions = [
       m('a', {
         href: ulistRoute + '/edit',

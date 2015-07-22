@@ -47,6 +47,10 @@ module.exports = (function () {
   model.init();
 
   model.fetch = function (callback) {
+    var errFn = function (err) {
+      notif.error({ body: ld.result(conf.LANG, err.error) });
+      if (callback) { callback(); }
+    };
     m.request({
       url: conf.URLS.GROUP,
       method: 'GET'
@@ -55,8 +59,8 @@ module.exports = (function () {
         model.data(resp.value.groups); 
         model.pads(resp.value.pads);
         model.admins(resp.value.admins);
+        var u = auth.userInfo();
         if (ld.size(model.admins()) === 0) {
-          var u = auth.userInfo();
           var admins = {};
           admins[u._id] = u;
           model.admins(admins);
@@ -69,13 +73,15 @@ module.exports = (function () {
           .union()
           .value();
         model.tags(tags);
-        if (callback) { callback(); }
-      },
-      function (err) {
-        notif.error({ body: ld.result(conf.LANG, err.error) });
-        if (callback) { callback(); }
-      }
-    );
+        m.request({
+          url: conf.URLS.USERLIST,
+          method: 'GET'
+        }).then(function (resp) {
+          u.userlists = resp.value;
+          auth.userInfo(u);
+          if (callback) { callback(); }
+        }, errFn);
+      }, errFn);
   };
 
   return model;

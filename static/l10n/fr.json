@@ -260,7 +260,23 @@
     "HELP": "<p>La page de favoris vous permet de voir l'ensemble des éléments de MyPads que vous avez mis en favori et éventuellement de les en supprimer.</p>"
   },
   "USERLIST": {
+    "USERLIST": "Liste utilisateurs",
     "ADD": "Créer une nouvelle liste d'utilisateurs",
-    "HELP": ""
+    "EDIT": "Modifier la liste utilisateurs ",
+    "HELP": "",
+    "FORM_HELP": "<h3>Nom</h3><p>Vous devez saisir un nom pour la liste d'utilisateurs, afin de pouvoir l'identifier.</p><h3>Utilisateurs</h3><p>Vous pouvez ajouter autant d'utilisateurs que vous le souhaitez. Pour cela, entrez l'identifiant et cliquez sur le bouton 'OK'. Notez que les utilisateurs déjà connus peuvent être sélectionnés depuis la zone de saisie.</p><p>Pour supprimer des utilisateurs, cliquez sur le croix située à la droite de chaque identifiant.</p>",
+    "FIELD": {
+      "NAME": "Nom",
+      "USERS": "Utilisateurs",
+      "USERS_HELP": "Ajoutez autant d'utilisateurs que vous le souhaitez"
+    },
+    "INFO": {
+      "NAME": "Nom de la liste utilisateurs",
+      "ADD_SUCCESS": "La liste utilisateurs a été créée avec succès",
+      "EDIT_SUCCESS": "La liste utilisateurs a été mise à jour avec succès"
+    },
+    "ERR": {
+      "NAME": "Le nom de la liste utilisateurs est obligatoire"
+    }
   }
 }

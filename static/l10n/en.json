@@ -260,7 +260,23 @@
     "HELP": "<p>Bookmark page offers you the ability to see all your bookmarked elements from MyPads. You can remove them from bookmarks if you want to.</p>"
   },
   "USERLIST": {
+    "USERLIST": "Userlist",
     "ADD": "Create a new userlist",
-    "HELP": ""
+    "EDIT": "Edit userlist ",
+    "HELP": "",
+    "FORM_HELP": "<h3>Name</h3><p>You must give a name to the userlist, in order to be able to identify it.</p><h3>Users</h3><p>You can add as many users as you want. To do it, please enter the login and click on the 'OK' button. Note that already known users can be selected from the input.</p><p>To remove users, click on the cross located at the right of each login.</p>",
+    "FIELD": {
+      "NAME": "Name",
+      "USERS": "Users",
+      "USERS_HELP": "Add as many users as you want"
+    },
+    "INFO": {
+      "NAME": "Name of the userlist",
+      "ADD_SUCCESS": "Userlist has been successfully created",
+      "EDIT_SUCCESS": "Userlist has been successfully updated"
+    },
+    "ERR": {
+      "NAME": "The name of the userlist is required"
+    }
   }
 }

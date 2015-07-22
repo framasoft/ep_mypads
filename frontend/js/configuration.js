@@ -42,6 +42,7 @@ module.exports = (function () {
   config.URLS.USERMARK = config.URLS.USER + 'mark';
   config.URLS.GROUP = config.URLS.BASE + '/group';
   config.URLS.PAD = config.URLS.BASE + '/pad';
+  config.URLS.USERLIST = config.URLS.BASE + '/userlist';
   config.SERVER = m.prop();
   // default to en
   config.USERLANG = 'en';

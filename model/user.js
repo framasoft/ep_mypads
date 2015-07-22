@@ -544,7 +544,7 @@ module.exports = (function () {
           break;
       }
       if (opts.crud !== 'get') {
-        user.fn.set(u, function (err, u) {
+        user.fn.set(u, function (err) {
           if (err) { return callback(err); }
           user.userlist({ crud: 'get', login: opts.login }, function (err, u) {
             if (err) { return callback(err); }

@@ -421,10 +421,16 @@ module.exports = (function () {
     app.post(userlistRoute, fn.ensureAuthenticated,
       function (req, res) {
         try {
+          var uids;
+          if (req.body.logins) {
+            uids = ld.compact(ld.map(req.body.logins,
+              function (l) { return user.ids[l]; }));
+          }
           var opts = {
             crud: 'add',
             login: req.session.mypadsLogin,
-            name: req.body.name
+            name: req.body.name,
+            uids: uids
           };
           user.userlist(opts, function (err, u) {
             if (err) { return res.status(400).send({ error: err.message }); }

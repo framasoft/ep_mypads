@@ -524,6 +524,8 @@
         expect(ul.name).toBe('Good friends');
         expect(ld.isArray(ul.uids)).toBeTruthy();
         expect(ld.size(ul.uids)).toBe(0);
+        expect(ld.isArray(ul.users)).toBeTruthy();
+        expect(ld.size(ul.users)).toBe(0);
         parker = u;
         done();
       });
@@ -547,6 +549,8 @@
         expect(ld.size(ul.uids)).toBe(2);
         expect(ul.uids[0]).toBe(user.ids.mikey);
         expect(ul.uids[1]).toBe(user.ids.jerry);
+        expect(ld.size(ul.users)).toBe(2);
+        expect(ul.users[0].login).toBe('mikey');
         parker = u;
         done();
       });

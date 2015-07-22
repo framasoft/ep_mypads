@@ -462,7 +462,7 @@ module.exports = (function () {
   *   - a `name` for the group, required in case of creation, optional
   *   otherwise (only usefull in case of *set*)
   *
-  * - a `callback` function, for error and result.
+  * - a `callback` function, for error and result, the whole user object.
   *
   *   `userlist` takes care of arguments, user existence and filters them on
   *   creation and update. For performance reason, all userlists are not
@@ -546,7 +546,10 @@ module.exports = (function () {
       if (opts.crud !== 'get') {
         user.fn.set(u, function (err, u) {
           if (err) { return callback(err); }
-          return callback(null, u);
+          user.userlist({ crud: 'get', login: opts.login }, function (err, u) {
+            if (err) { return callback(err); }
+            return callback(null, u);
+          });
         });
       }
     });

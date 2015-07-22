@@ -800,6 +800,8 @@
               expect(ul.name).toBe('Good friends');
               expect(ld.isArray(ul.uids)).toBeTruthy();
               expect(ld.size(ul.uids)).toBe(2);
+              expect(ld.isArray(ul.users)).toBeTruthy();
+              expect(ld.size(ul.users)).toBe(2);
               b = { body: { logins: [] } };
               rq.put(userlistRoute + '/' + ulkey, b,
                 function (err, resp, body) {
@@ -810,6 +812,8 @@
                   expect(ul.name).toBe('Good friends');
                   expect(ld.isArray(ul.uids)).toBeTruthy();
                   expect(ld.isEmpty(ul.uids)).toBeTruthy();
+                  expect(ld.isArray(ul.users)).toBeTruthy();
+                  expect(ld.isEmpty(ul.users)).toBeTruthy();
                   done();
                 }
               );

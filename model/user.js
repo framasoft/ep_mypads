@@ -408,6 +408,7 @@ module.exports = (function () {
           if (err) { return callback(err); }
           u.groups = dbuser.groups;
           u.bookmarks = dbuser.bookmarks;
+          u.userlists = dbuser.userlists;
           user.fn.genPassword(dbuser, u, function (err, u) {
             if (err) { return callback(err); }
             user.fn.set(u, callback);

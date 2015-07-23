@@ -189,30 +189,37 @@
         });
       });
 
-      it('should allow setting of an existing user, and gets back its groups',
-        function (done) {
+      it('should allow setting of an existing user, and gets back its groups,' +
+        ' bookmarks and userlists', function (done) {
           group.set({ name: 'g1', admin: mikey._id }, function (err) {
             expect(err).toBeNull();
-            user.set({
-              _id: mikey._id,
-              login: 'mikey',
-              password: 'principalMusso',
-              email: 'mik@randall.com',
-              firstname: 'Michael',
-              lastname: 'Randall'
-            },
-              function (err, u) {
-                expect(err).toBeNull();
-                expect(u.login).toBe('mikey');
-                expect(u.email).toBe('mik@randall.com');
-                expect(u.firstname).toBe('Michael');
-                expect(u.lastname).toBe('Randall');
-                expect(ld.isArray(u.groups)).toBeTruthy();
-                expect(ld.isObject(u.bookmarks)).toBeTruthy();
-                done();
-              }
-            );
-        });
+            var opts = { crud: 'add', login: 'mikey', name: 'u1' };
+            user.userlist(opts, function (err) {
+              expect(err).toBeNull();
+              user.set({
+                _id: mikey._id,
+                login: 'mikey',
+                password: 'principalMusso',
+                email: 'mik@randall.com',
+                firstname: 'Michael',
+                lastname: 'Randall'
+              },
+                function (err, u) {
+                  expect(err).toBeNull();
+                  expect(u.login).toBe('mikey');
+                  expect(u.email).toBe('mik@randall.com');
+                  expect(u.firstname).toBe('Michael');
+                  expect(u.lastname).toBe('Randall');
+                  expect(ld.isArray(u.groups)).toBeTruthy();
+                  expect(u.groups.length).toBe(1);
+                  expect(ld.isObject(u.bookmarks)).toBeTruthy();
+                  expect(ld.isObject(u.userlists)).toBeTruthy();
+                  expect(ld.size(u.userlists)).toBe(1);
+                  done();
+                }
+              );
+            });
+          });
         }
       );
 

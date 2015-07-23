@@ -3003,11 +3003,15 @@ module.exports = (function () {
         data: { login: auth.userInfo().login, password: c.data.passwordCurrent }
       }).then(function () {
         passwordUpdate();
+        console.log(c.data);
+        console.log(auth.userInfo());
+        c.data.userlists = auth.userInfo().userlists;
         m.request({
           method: 'PUT',
           url: conf.URLS.USER + '/' + auth.userInfo().login,
           data: c.data
         }).then(function (resp) {
+          console.log(resp.value);
           auth.userInfo(resp.value);
           notif.success({ body: conf.LANG.USER.AUTH.PROFILE_SUCCESS });
         }, errfn);

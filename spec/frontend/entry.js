@@ -38,6 +38,7 @@
   var userInvite = require('./user-invitation.spec.js');
   var padView = require('./pad-view.spec.js');
   var padMove = require('./pad-move.spec.js');
+  var userlist = require('./userlist.spec.js');
   var tagWidget = require('./tag-widget.spec.js');
 
   describe('MyPads testing', function () {
@@ -57,6 +58,7 @@
     userInvite.run(app);
     padView.run(app);
     padMove.run(app);
+    userlist.run(app);
     tagWidget.run(app);
   });
 }).call(this);

@@ -60,7 +60,7 @@ module.exports = (function () {
                     removeAccount: first('section.remove-account button')
                 });
                 app.document.querySelector('body > section p').click();
-                done();
+                window.setTimeout(done, 100);
               }
             );
           }, 200);
@@ -117,7 +117,7 @@ module.exports = (function () {
             var $notif = first('body > section p');
             expect($notif.innerHTML).toMatch('Profile successfully updated');
             $notif.click();
-            done();
+            window.setTimeout(done, 100);
           }, 200);
         }
       );

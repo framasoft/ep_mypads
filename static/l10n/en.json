@@ -280,5 +280,15 @@
     "ERR": {
       "NAME": "The name of the userlist is required"
     }
+  },
+  "ADMIN": {
+    "FORM_LOGIN": "Administration login",
+    "FORM_SETTINGS": "MyPads settings",
+    "ETHERPAD_ACCOUNT": "Etherpad account",
+    "HELP_LOGIN": "<p>MyPads administration is tied to Etherpad administration. Please enter an authorized login and password, as fixed into Etherpad <em>settings.json</em> to be able to update MyPads settings.</p>",
+    "HELP_SETTINGS": "<p></p>",
+    "INFO": {
+      "LOGIN": "The etherpad settings.json fixed admin login"
+    }
   }
 }

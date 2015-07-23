@@ -187,7 +187,7 @@ module.exports = (function () {
   */
 
   fn.ensureAdmin = function (req, res, next) {
-    var isAdmin = (req.session.user && req.session.user.isAdmin);
+    var isAdmin = (req.session.user && req.session.user.is_admin);
     if (!isAdmin) {
       return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.ADMIN');
     } else {
@@ -202,7 +202,7 @@ module.exports = (function () {
   */
 
   fn.ensureAdminOrSelf = function (req, res, next) {
-    var isAdmin = (req.session.user && req.session.user.isAdmin);
+    var isAdmin = (req.session.user && req.session.user.is_admin);
     var login = req.params.key || req.body.login;
     var isSelf = (login === req.session.mypadsLogin);
     if (!isAdmin && !isSelf) {
@@ -314,7 +314,7 @@ module.exports = (function () {
 
     app.get(confRoute, function (req, res) {
       var isAuth = (req.isAuthenticated() || !!req.session.mypadsLogin);
-      var isAdmin = (req.session.user && req.session.user.isAdmin);
+      var isAdmin = (req.session.user && req.session.user.is_admin);
       var action = isAdmin ? 'all' : 'public';
       var value = conf[action]();
       var resp = { value: value, auth: isAuth };
@@ -660,7 +660,7 @@ module.exports = (function () {
     app.get(groupRoute + '/:key', fn.ensureAuthenticated,
       function (req, res, next) {
         var cond = function (val) {
-          var isAdmin = (req.session.user && req.session.user.isAdmin);
+          var isAdmin = (req.session.user && req.session.user.is_admin);
           var isAllowed = ld.includes(ld.union(val.admins, val.users),
             req.session.mypadsUid);
           return (isAdmin || isAllowed);
@@ -680,7 +680,7 @@ module.exports = (function () {
     */
 
     var canEdit = function (req, res, successFn) {
-      var isAdmin = (req.session.user && req.session.user.isAdmin);
+      var isAdmin = (req.session.user && req.session.user.is_admin);
       if (isAdmin) { return successFn(); }
       group.get(req.params.key, function (err, g) {
         if (err) { return res.status(400).send({ error: err.message }); }
@@ -814,7 +814,7 @@ module.exports = (function () {
           if (err) { return res.status(400).send({ error: err.message }); }
           var users = edit ? g.admins : ld.union(g.admins, g.users);
           var isAllowed = ld.includes(users, req.session.mypadsUid);
-          var isAdmin = (req.session.user && req.session.user.isAdmin);
+          var isAdmin = (req.session.user && req.session.user.is_admin);
           if (isAdmin || isAllowed) {
             return successFn(req, res, p);
           } else {

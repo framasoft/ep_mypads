@@ -280,5 +280,15 @@
     "ERR": {
       "NAME": "Le nom de la liste utilisateurs est obligatoire"
     }
+  },
+  "ADMIN": {
+    "FORM_LOGIN": "Identification pour l'administration",
+    "FORM_SETTINGS": "Paramètres MyPads",
+    "ETHERPAD_ACCOUNT": "Compte Etherpad",
+    "HELP_LOGIN": "<p>L'administration de MyPads utilise celle d'Etherpad. Merci de saisir un couple identifiant mot de passe autorisé, tel que fixé dans le fichier de configuration d'Etherpad, <em>settings.json</em>, afin de pouvoir modifier la configuration de MyPads.</p>",
+    "HELP_SETTINGS": "<p></p>",
+    "INFO": {
+      "LOGIN": "L'identifiant administrateur donné dans le fichier settings.json d'Etherpad"
+    }
   }
 }

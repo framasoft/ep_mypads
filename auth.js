@@ -183,12 +183,12 @@ module.exports = (function () {
       }));
       app.get('/admin', function (req, res) {
         if (!req.session) { req.session = {}; }
-        req.session.user = { isAdmin: true };
+        req.session.user = { is_admin: true };
         return res.status(200).send({ success: true });
       });
       app.get('/admin/logout', function (req, res) {
         if (!req.session) { req.session = {}; }
-        req.session.user = { isAdmin: false };
+        req.session.user = { is_admin: false };
         return res.status(200).send({ success: true });
       });
     }

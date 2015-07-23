@@ -143,7 +143,10 @@ module.exports = (function () {
         m('aside.block', aside || '')
       ]),
       m('section', { class: 'notification' }, notif.view(notif.controller())),
-      m('footer.block', m('p', m.trust(conf.LANG.GLOBAL.FOOTER)))
+      m('footer.block', m('p', [
+        m('span', m.trust(conf.LANG.GLOBAL.FOOTER + ' | ')),
+        m('a', { href: '/admin', config: m.route }, conf.LANG.MENU.ADMIN)
+      ]))
     ];
   };
 

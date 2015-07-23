@@ -120,7 +120,7 @@ module.exports = (function () {
         var u = auth.userInfo();
         u.userlists = resp.value;
         auth.userInfo(u);
-        notif.success({ body: conf.LANG.USERLIST.INFO.ADD_SUCCESS });
+        notif.success({ body: successMsg });
         m.route('/myuserlists');
       }, function (err) {
         notif.error({ body: ld.result(conf.LANG, err.error) });

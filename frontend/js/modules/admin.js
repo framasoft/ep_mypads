@@ -135,6 +135,7 @@ module.exports = (function () {
               _set(pairs.pop());
             } else {
               c.currentConf[resp.key] = resp.value;
+              conf.SERVER[resp.key] = resp.value;
               notif.success({ body: conf.LANG.ADMIN.INFO.SUCCESS });
             }
           }, function (err) {

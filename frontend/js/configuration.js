@@ -45,7 +45,8 @@ module.exports = (function () {
   config.URLS.USERLIST = config.URLS.BASE + '/userlist';
   config.SERVER = m.prop();
   // default to en
-  config.USERLANG = 'en';
+  var USERLANG_DEFAULT = 'en';
+  config.USERLANG = USERLANG_DEFAULT;
   config.LANG = require('../../static/l10n/en.json');
 
   /**
@@ -53,8 +54,6 @@ module.exports = (function () {
   *
   * `updateLang` is an asynchronous function that takes a lang *key* and
   * gathers the JSON language file to fix it into `config.LANG`.
-  *
-  * TODO: error handling
   */
 
   config.updateLang = function (key) {
@@ -64,6 +63,13 @@ module.exports = (function () {
     }).then(function (resp) {
       config.USERLANG = key;
       config.LANG = resp;
+    }, function (err) {
+      console.log('updatel:' + err);
+      config.USERLANG = USERLANG_DEFAULT;
+      var emsg = config.LANG.BACKEND.CONFIGURATION.LANG_PROBLEM +
+        ' (' + err + ')';
+      var notifErr = require('./widgets/notification.js').error;
+      notifErr({ body: emsg });
     });
   };
 
@@ -90,6 +96,11 @@ module.exports = (function () {
       });
       if (ulang && (ulang !== 'en')) { config.updateLang(ulang); }
       callback();
+    }, function (err) {
+      console.log('confinit:' + err);
+      var emsg = config.LANG.BACKEND.CONFIGURATION.CANTGET + ' (' + err + ')';
+      var notifErr = require('./widgets/notification.js').error;
+      notifErr({ body: emsg });
     });
   };
 

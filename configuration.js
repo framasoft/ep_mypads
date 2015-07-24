@@ -167,7 +167,7 @@ module.exports = (function() {
   };
 
   /**
-  * Classic bootstrap : get configuration values from cache
+  * Classic bootstrap : get configuration values from database to cache
   */
 
   db.findKeys(DBPREFIX + '*', null, function (err, keys) {

@@ -40,6 +40,7 @@
   var padMove = require('./pad-move.spec.js');
   var userlist = require('./userlist.spec.js');
   var tagWidget = require('./tag-widget.spec.js');
+  var admin = require('./admin.spec.js');
 
   describe('MyPads testing', function () {
     var app = frames[0];
@@ -60,5 +61,6 @@
     padMove.run(app);
     userlist.run(app);
     tagWidget.run(app);
+    admin.run(app);
   });
 }).call(this);

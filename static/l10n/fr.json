@@ -290,7 +290,7 @@
     "SETTINGS_PASSWORD": "Paramètres mot de passe",
     "ETHERPAD_ACCOUNT": "Compte Etherpad",
     "HELP_LOGIN": "<p>L'administration de MyPads utilise celle d'Etherpad. Merci de saisir un couple identifiant mot de passe autorisé, tel que fixé dans le fichier de configuration d'Etherpad, <em>settings.json</em>, afin de pouvoir modifier la configuration de MyPads.</p>",
-    "HELP_SETTINGS": "<p>Seuls les administrateurs de l'instance Etherpad ont accès à cette page.</p><p>Vous pouvez y éditer les paramètres généraux et appliquer vos changements.</p><p>Ceux-ci seront effectifs après rechargement de votre navigateur.</p>",
+    "HELP_SETTINGS": "<p>Seuls les administrateurs de l'instance Etherpad ont accès à cette page.</p><p>Vous pouvez y éditer les paramètres généraux et appliquer vos changements.</p><p>Ceux-ci seront effectifs directement.</p>",
     "FIELD": {
       "TITLE": "Titre",
       "PASSWORD_MIN": "Taille minimum",

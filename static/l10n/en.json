@@ -290,7 +290,7 @@
     "SETTINGS_PASSWORD": "Password settings",
     "ETHERPAD_ACCOUNT": "Etherpad account",
     "HELP_LOGIN": "<p>MyPads administration is tied to Etherpad administration. Please enter an authorized login and password, as fixed into Etherpad <em>settings.json</em> to be able to update MyPads settings.</p>",
-    "HELP_SETTINGS": "<p>Only Etherpad admins have access to this page.</p><p>You can edit the global settings here and apply them.</p><p>They will be effective after a simple browser refresh.</p>",
+    "HELP_SETTINGS": "<p>Only Etherpad admins have access to this page.</p><p>You can edit the global settings here and apply them.</p><p>They will be effective directly.</p>",
     "FIELD": {
       "TITLE": "Title",
       "PASSWORD_MIN": "Minimum size",

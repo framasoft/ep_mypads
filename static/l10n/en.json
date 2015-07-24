@@ -24,6 +24,8 @@
         "USERLIST_SET_PARAMS": "In set mode, name or uids is madantory"
       },
       "CONFIGURATION": {
+        "LANG_PROBLEM": "Lang update can not be done. Default lang will be used.",
+        "CANTGET": "Configuration loading has failed. Please contact your administrator.",
         "KEY_NOT_FOUND": "Key has not been found"
       },
       "AUTHENTICATION": {
@@ -283,12 +285,34 @@
   },
   "ADMIN": {
     "FORM_LOGIN": "Administration login",
-    "FORM_SETTINGS": "MyPads settings",
+    "FORM_SETTINGS": "MyPads configuration",
+    "SETTINGS_GENERAL": "General settings",
+    "SETTINGS_PASSWORD": "Password settings",
     "ETHERPAD_ACCOUNT": "Etherpad account",
     "HELP_LOGIN": "<p>MyPads administration is tied to Etherpad administration. Please enter an authorized login and password, as fixed into Etherpad <em>settings.json</em> to be able to update MyPads settings.</p>",
-    "HELP_SETTINGS": "<p></p>",
+    "HELP_SETTINGS": "<p>Only Etherpad admins have access to this page.</p><p>You can edit the global settings here and apply them.</p><p>They will be effective after a simple browser refresh.</p>",
+    "FIELD": {
+      "TITLE": "Title",
+      "PASSWORD_MIN": "Minimum size",
+      "PASSWORD_MAX": "Maximum size",
+      "LANGUAGE_DEFAULT": "Default language",
+      "APPLY": "Apply"
+    },
     "INFO": {
-      "LOGIN": "The etherpad settings.json fixed admin login"
+      "LOGIN": "The etherpad settings.json fixed admin login",
+      "TITLE": "Global title displayed on your MyPads instance",
+      "PASSWORD_MIN": "Password minimum number of characters",
+      "PASSWORD_MAX": "Password maximum number of characters",
+      "LANGUAGE_DEFAULT": "Default language for guest MyPads users",
+      "SUCCESS": "Configuration has been updated successfully",
+      "NOCHANGE": "Configuration have not changed, so no update has been sent"
+    },
+    "ERR": {
+      "TITLE": "Title is mandatory",
+      "PASSWORD_MIN": "Minimum password size is mandatory",
+      "PASSWORD_MAX": "Maximum password size is mandatory",
+      "PASSWORD_SIZE": "Min size can't be higher than max size. Please check your numbers.",
+      "LANGUAGE_DEFAULT": "A default language must be selected"
     }
   }
 }

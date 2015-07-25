@@ -112,7 +112,7 @@ module.exports = (function () {
       var route = '/admin/users';
       var actions = [
         m('a', {
-          href: route + '/edit/' + u._id,
+          href: route + '/' + u.login + '/edit',
           config: m.route,
           title: conf.LANG.GROUP.EDIT
         }, [ m('i.icon-pencil') ]),

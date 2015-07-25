@@ -529,7 +529,7 @@ module.exports = (function () {
         req.session.mypadsUseLoginAndColorInPads =
           req.body.useLoginAndColorInPads;
       }
-      if (req.session.user && req.session.user.is_admin && !value.password) {
+      if (req.session.user && req.session.user.is_admin) {
         user.get(value.login, function (err, u) {
           if (err) { return res.status(400).send({ error: err.message }); }
           ld.assign(u, value);

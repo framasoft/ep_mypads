@@ -50,7 +50,7 @@ module.exports = (function () {
   */
 
   subscribe.controller = function () {
-    var c = {};
+    var c = { adminView: m.prop(false) };
     c.profileView = m.prop((m.route() === '/myprofile'));
     if (c.profileView() && !auth.isAuthenticated()) {
       return m.route('/login');
@@ -207,6 +207,7 @@ module.exports = (function () {
   */
 
   var view = {};
+  subscribe.views = view;
 
   /**
   * ### form view
@@ -219,6 +220,10 @@ module.exports = (function () {
       memo[f] = user.view.field[f](c);
       return memo;
     }, {});
+    if (c.adminView()) {
+      delete fields.password.input.attrs.required;
+      delete fields.passwordConfirm.input.attrs.required;
+    }
     var requiredFields = [
         fields.password.label, fields.password.input, fields.password.icon,
         fields.passwordConfirm.label, fields.passwordConfirm.input,
@@ -232,14 +237,15 @@ module.exports = (function () {
       requiredFields.push(fields.useLoginAndColorInPads.label,
         fields.useLoginAndColorInPads.input,
         fields.useLoginAndColorInPads.icon);
-    } else {
+    } else if (!c.adminView()) {
       var log = fields.login;
       requiredFields.splice(0, 0, log.label, log.input, log.icon);
     }
     var USER = conf.LANG.USER;
+    var profOrAdm = (c.profileView() || c.adminView());
     return m('form.block', {
       id: 'subscribe-form',
-      onsubmit: c.profileView() ? c.submit.profileSave : c.submit.subscribe
+      onsubmit: profOrAdm ? c.submit.profileSave : c.submit.subscribe
       }, [
       m('fieldset.block-group', [
         m('legend', conf.LANG.USER.MANDATORY_FIELDS),
@@ -256,7 +262,7 @@ module.exports = (function () {
       m('input.block.send', {
         form: 'subscribe-form',
         type: 'submit',
-        value: c.profileView() ? conf.LANG.ACTIONS.SAVE : USER.REGISTER
+        value: profOrAdm ? conf.LANG.ACTIONS.SAVE : USER.REGISTER
       })
     ]);
   };

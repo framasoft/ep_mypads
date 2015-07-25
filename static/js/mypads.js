@@ -458,7 +458,154 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users-remove.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users-form.js":[function(require,module,exports){
+/**
+*  # Admin Users Form edition module
+*
+*  ## License
+*
+*  Licensed to the Apache Software Foundation (ASF) under one
+*  or more contributor license agreements.  See the NOTICE file
+*  distributed with this work for additional information
+*  regarding copyright ownership.  The ASF licenses this file
+*  to you under the Apache License, Version 2.0 (the
+*  "License"); you may not use this file except in compliance
+*  with the License.  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+*  Unless required by applicable law or agreed to in writing,
+*  software distributed under the License is distributed on an
+*  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+*  KIND, either express or implied.  See the License for the
+*  specific language governing permissions and limitations
+*  under the License.
+*
+*  ## Description
+*
+*  This module, reserved to admins, allows to edit user profile.
+*  It relies heavily on subscription module.
+*/
+
+module.exports = (function () {
+  // Global dependencies
+  var m = require('mithril');
+  var ld = require('lodash');
+  // Local dependencies
+  var conf = require('../configuration.js');
+  var auth = require('../auth.js');
+  var notif = require('../widgets/notification.js');
+  var layout = require('./layout.js');
+  var form = require('../helpers/form.js');
+  var subscribe = require('./subscribe.js');
+
+  var admin = {};
+
+  /**
+  * ## Controller
+  *
+  * Used to check authentication and state.
+  */
+
+  admin.controller = function () {
+    if (!auth.isAdmin()) { return m.route('/admin'); }
+    var c = {
+      adminView: m.prop(true),
+      profileView: m.prop(false),
+      user: m.prop(false)
+    };
+
+    var init = function () {
+      c.fields = ['login', 'password', 'passwordConfirm', 'email', 'firstname',
+        'lastname', 'organization', 'lang', 'color'];
+      form.initFields(c, c.fields);
+      var u = c.user();
+      ld.forEach(c.fields, function (f) {
+        if (!ld.startsWith(f, 'password')) {
+          c.data[f] = m.prop(u[f]);
+        }
+      });
+    };
+
+    /**
+    * #### submit
+    *
+    * This function :
+    *
+    * - uses the public API to check if given `passwordCurrent` is valid;
+    * - then updates data as filled, taking care of password change with the
+    *   help of the `passwordUpdate` function;
+    * - notifies *errors* and *success*;
+    * - updates the local cache of `auth.userInfo`.
+    */
+
+    var errfn = function (err) {
+      m.route('/admin/users');
+      return notif.error({ body: ld.result(conf.LANG, err.error) });
+    };
+
+    c.submit = {
+        profileSave: function (e) {
+        e.preventDefault();
+        var pass = c.data.password();
+        if (pass && (pass !== c.data.passwordConfirm())) {
+          return notif.warning({ body: conf.LANG.USER.ERR.PASSWORD_MISMATCH });
+        }
+        m.request({
+          method: 'PUT',
+          url: conf.URLS.USER + '/' + c.data.login(),
+          data: c.data
+        }).then(function (resp) {
+          auth.userInfo(resp.value);
+          notif.success({ body: conf.LANG.USER.AUTH.PROFILE_SUCCESS });
+        }, errfn);
+      }
+    };
+
+    m.request({
+      method: 'GET',
+      url: conf.URLS.USER + '/' + m.route.param('login')
+    }).then(function (resp) {
+      c.user(resp.value);
+      init();
+    }, errfn);
+
+    return c;
+  };
+
+  /**
+  * ## Views
+  */
+
+  var view = {};
+
+  view.main = function (c) {
+    var elements = [
+      m('h2.block', conf.LANG.ADMIN.FORM_USER_EDIT),
+      subscribe.views.form(c)
+    ];
+    return m('section', { class: 'block-group user' }, elements);
+  };
+
+  view.aside = function () {
+    return m('section.user-aside', [
+      m('h2', conf.LANG.ACTIONS.HELP),
+      m('article', m.trust(conf.LANG.ADMIN.HELP_USER_EDIT))
+    ]);
+  };
+
+  admin.view = function (c) {
+    return layout.view(
+      view.main(c),
+      view.aside()
+    );
+  };
+
+  return admin;
+
+}).call(this);
+
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./subscribe.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users-remove.js":[function(require,module,exports){
 /**
 *  # Admin user remove module
 *
@@ -641,7 +788,7 @@ module.exports = (function () {
       var route = '/admin/users';
       var actions = [
         m('a', {
-          href: route + '/edit/' + u._id,
+          href: route + '/' + u.login + '/edit',
           config: m.route,
           title: conf.LANG.GROUP.EDIT
         }, [ m('i.icon-pencil') ]),
@@ -3489,7 +3636,7 @@ module.exports = (function () {
   */
 
   subscribe.controller = function () {
-    var c = {};
+    var c = { adminView: m.prop(false) };
     c.profileView = m.prop((m.route() === '/myprofile'));
     if (c.profileView() && !auth.isAuthenticated()) {
       return m.route('/login');
@@ -3646,6 +3793,7 @@ module.exports = (function () {
   */
 
   var view = {};
+  subscribe.views = view;
 
   /**
   * ### form view
@@ -3658,6 +3806,10 @@ module.exports = (function () {
       memo[f] = user.view.field[f](c);
       return memo;
     }, {});
+    if (c.adminView()) {
+      delete fields.password.input.attrs.required;
+      delete fields.passwordConfirm.input.attrs.required;
+    }
     var requiredFields = [
         fields.password.label, fields.password.input, fields.password.icon,
         fields.passwordConfirm.label, fields.passwordConfirm.input,
@@ -3671,14 +3823,15 @@ module.exports = (function () {
       requiredFields.push(fields.useLoginAndColorInPads.label,
         fields.useLoginAndColorInPads.input,
         fields.useLoginAndColorInPads.icon);
-    } else {
+    } else if (!c.adminView()) {
       var log = fields.login;
       requiredFields.splice(0, 0, log.label, log.input, log.icon);
     }
     var USER = conf.LANG.USER;
+    var profOrAdm = (c.profileView() || c.adminView());
     return m('form.block', {
       id: 'subscribe-form',
-      onsubmit: c.profileView() ? c.submit.profileSave : c.submit.subscribe
+      onsubmit: profOrAdm ? c.submit.profileSave : c.submit.subscribe
       }, [
       m('fieldset.block-group', [
         m('legend', conf.LANG.USER.MANDATORY_FIELDS),
@@ -3695,7 +3848,7 @@ module.exports = (function () {
       m('input.block.send', {
         form: 'subscribe-form',
         type: 'submit',
-        value: c.profileView() ? conf.LANG.ACTIONS.SAVE : USER.REGISTER
+        value: profOrAdm ? conf.LANG.ACTIONS.SAVE : USER.REGISTER
       })
     ]);
   };
@@ -4808,6 +4961,7 @@ module.exports = (function () {
   var admin = require('./modules/admin.js');
   var adminLogout = require('./modules/admin-logout.js');
   var adminUsers = require('./modules/admin-users.js');
+  var adminUserForm = require('./modules/admin-users-form.js');
   var adminUserRemove = require('./modules/admin-users-remove.js');
 
   var route = { model: {} };
@@ -4845,6 +4999,7 @@ module.exports = (function () {
     '/admin': admin,
     '/admin/logout': adminLogout,
     '/admin/users': adminUsers,
+    '/admin/users/:login/edit': adminUserForm,
     '/admin/users/:login/remove': adminUserRemove
   };
 
@@ -4853,7 +5008,7 @@ module.exports = (function () {
   return route;
 }).call(this);
 
-},{"./modules/admin-logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-logout.js","./modules/admin-users-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users-remove.js","./modules/admin-users.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users.js","./modules/admin.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/bookmark.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/bookmark.js","./modules/group-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./modules/group-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js","./modules/group-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-view.js","./modules/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/pad-add.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-add.js","./modules/pad-move.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-move.js","./modules/pad-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-remove.js","./modules/pad-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-view.js","./modules/subscribe.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","./modules/user-invitation.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user-invitation.js","./modules/userlist-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist-form.js","./modules/userlist-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist-remove.js","./modules/userlist.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js":[function(require,module,exports){
+},{"./modules/admin-logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-logout.js","./modules/admin-users-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users-form.js","./modules/admin-users-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users-remove.js","./modules/admin-users.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users.js","./modules/admin.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/bookmark.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/bookmark.js","./modules/group-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./modules/group-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js","./modules/group-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-view.js","./modules/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/pad-add.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-add.js","./modules/pad-move.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-move.js","./modules/pad-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-remove.js","./modules/pad-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-view.js","./modules/subscribe.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","./modules/user-invitation.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user-invitation.js","./modules/userlist-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist-form.js","./modules/userlist-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist-remove.js","./modules/userlist.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js":[function(require,module,exports){
 /**
 *  # Notification module
 *
@@ -18586,7 +18741,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports={
+module.exports=module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {
@@ -18877,13 +19032,15 @@ module.exports=module.exports={
     "FORM_LOGIN": "Administration login",
     "FORM_SETTINGS": "MyPads configuration",
     "FORM_USERS_SEARCH": "Search user",
+    "FORM_USER_EDIT": "Profile user edition",
     "SETTINGS_GENERAL": "General settings",
     "SETTINGS_PASSWORD": "Password settings",
     "USERS_SEARCH_LOGIN": "Search by login",
     "ETHERPAD_ACCOUNT": "Etherpad account",
     "HELP_LOGIN": "<p>MyPads administration is tied to Etherpad administration. Please enter an authorized login and password, as fixed into Etherpad <em>settings.json</em> to be able to update MyPads settings.</p>",
-    "HELP_SETTINGS": "<p>Only Etherpad admins have access to this page.</p><p>You can edit the global settings here and apply them.</p><p>They will be effective directly.</p>",
+    "HELP_SETTINGS": "<p>Only Etherpad admins have access to this page.</p><p>You can edit the global settings here and apply them. Be careful about password sizes : if you have existing accounts and raise minimum size or decrease maximum size, some user passwords may become unseizable.</p><p>Changes will be effective directly.</p>",
     "HELP_USERS": "<p>This admin reserved page helps you to find users by entering their login. Once found, you will be able to edit or remove user.</p><p>For simplicity and performance reasons, we don't offer here a full listing of subscribed users.</p>",
+    "HELP_USER_EDIT": "<p>Here you can update all data associated to an existing user.</p><p>Please note that by default, leaving password empty means keeping the current password. If you want to change it, you have to fill password field and its confirmation.</p>",
     "FIELD": {
       "TITLE": "Title",
       "PASSWORD_MIN": "Minimum size",

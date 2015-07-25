@@ -78,6 +78,8 @@
     "USERLIST": "My Userlists",
     "PROFILE": "My Profile",
     "ADMIN": "Administration",
+    "CONFIG": "Configuration",
+    "USERS": "Users",
     "LOGOUT": "Logout"
   },
   "ADMIN": {

@@ -69,13 +69,25 @@ module.exports = (function () {
           icon: 'user',
           txt: conf.LANG.MENU.PROFILE
         },
-        /*{
-          route: '/admin',
-          icon: 'tools',
-          txt: conf.LANG.MENU.ADMIN
-        },*/
         {
           route: '/logout',
+          icon: 'logout',
+          txt: conf.LANG.MENU.LOGOUT
+        }
+      ],
+      admin: [
+        {
+          route: '/admin',
+          icon: 'tools',
+          txt: conf.LANG.MENU.CONFIG
+        },
+        {
+          route: '/users',
+          icon: 'users',
+          txt: conf.LANG.MENU.USERS
+        },
+        {
+          route: '/adminlogout',
           icon: 'logout',
           txt: conf.LANG.MENU.LOGOUT
         }
@@ -104,6 +116,8 @@ module.exports = (function () {
     };
     if (auth.isAuthenticated()) {
       return ld.map(_routes.auth, activeRoute);
+    } else if (auth.isAdmin()) {
+      return ld.map(_routes.admin, activeRoute);
     } else {
       return ld.map(_routes.unauth, activeRoute);
     }

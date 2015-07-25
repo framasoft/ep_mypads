@@ -529,8 +529,17 @@ module.exports = (function () {
         req.session.mypadsUseLoginAndColorInPads =
           req.body.useLoginAndColorInPads;
       }
-      var setFn = ld.partial(user.set, value);
-      fn.set(setFn, key, value, req, res);
+      if (req.session.user && req.session.user.is_admin && !value.password) {
+        user.get(value.login, function (err, u) {
+          if (err) { return res.status(400).send({ error: err.message }); }
+          ld.assign(u, value);
+          var setFn = ld.partial(user.fn.set, u);
+          fn.set(setFn, key, u, req, res);
+        });
+      } else {
+        var setFn = ld.partial(user.set, value);
+        fn.set(setFn, key, value, req, res);
+      }
     };
 
     /**

@@ -577,36 +577,32 @@
 
         it('should return error when arguments are not as expected',
           function (done) {
-            withAdmin(function (after) {
-              rq.put(userRoute + '/parker', function (err, resp, body) {
+            rq.put(userRoute + '/guest', function (err, resp, body) {
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('PARAM_STR');
+              var b = { body: { login: 'guest', password: '' } };
+              rq.put(userRoute + '/guest', b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
                 expect(body.error).toMatch('PARAM_STR');
-                var b = { body: { login: 'parker', password: '' } };
-                rq.put(userRoute + '/parker', b, function (err, resp, body) {
+                b = { body: { login: 'guest', password: 'secret' } };
+                rq.put(userRoute + '/guest', b, function (err, resp, body) {
                   expect(resp.statusCode).toBe(400);
-                  expect(body.error).toMatch('PARAM_STR');
-                  b = { body: { login: 'parker', password: 'secret' } };
-                  rq.put(userRoute + '/parker', b, function (err, resp, body) {
-                    expect(resp.statusCode).toBe(400);
-                    expect(body.error).toMatch('PASSWORD_SIZE');
-                    after();
-                  });
+                  expect(body.error).toMatch('PASSWORD_SIZE');
+                  done();
                 });
               });
-            }, done);
+            });
           }
         );
 
         it('should return an error if password size is not correct',
           function (done) {
-            var b = { body: { login: 'parker', password: '1' } };
-            withAdmin(function (after) {
-              rq.put(userRoute + '/parker', b, function (err, resp, body) {
-                expect(resp.statusCode).toBe(400);
-                expect(body.error).toMatch('PASSWORD_SIZE');
-                after();
-              });
-            }, done);
+            var b = { body: { login: 'guest', password: '1' } };
+            rq.put(userRoute + '/guest', b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('PASSWORD_SIZE');
+              done();
+            });
           }
         );
 
@@ -649,6 +645,21 @@
                 expect(ld.isArray(body.value.groups)).toBeTruthy();
                 after();
               });
+            });
+          }, done);
+        });
+
+        it('should accept changes with no password if admin', function (done) {
+          var b = { body: { organization: 'secret' } };
+          withAdmin(function (after) {
+            rq.put(userRoute + '/parker', b, function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(200);
+              expect(body.success).toBeTruthy();
+              expect(body.key).toBe('parker');
+              expect(body.value.login).toBe('parker');
+              expect(body.value.organization).toBe('secret');
+              after();
             });
           }, done);
         });

@@ -168,6 +168,20 @@ module.exports = (function () {
 
       });
 
+      describe('admin logout testing', function () {
+
+        it('should logout if already admin', function (done) {
+          app.document.querySelector('header nav a[href$=adminlogout]').click();
+          window.setTimeout(function () {
+            var $success = qfirst('body > section p');
+            expect($success.parentNode.className).toMatch('success');
+            $success.click();
+            window.setTimeout(done, 100);
+          }, 200);
+        });
+
+      });
+
     });
 
   };

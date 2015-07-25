@@ -48,6 +48,7 @@ module.exports = (function () {
   var padMove = require('./modules/pad-move.js');
   var userInvite = require('./modules/user-invitation.js');
   var admin = require('./modules/admin.js');
+  var adminLogout = require('./modules/admin-logout.js');
 
   var route = { model: {} };
 
@@ -81,7 +82,8 @@ module.exports = (function () {
     '/mypads/group/:group/pad/remove/:pad': padRemove,
     '/mypads/group/:group/pad/view/:pad': padView,
     '/mypads/group/:group/user/:action': userInvite,
-    '/admin': admin
+    '/admin': admin,
+    '/adminlogout': adminLogout
   };
 
   route.init = function () { m.route(document.body, '/', route.model.routes); };

@@ -286,7 +286,7 @@ module.exports = (function () {
         ];
       }
     })();
-    return m('section', { class: 'block-group user' }, elements);
+    return m('section', { class: 'block-group user admin' }, elements);
   };
   view.aside = function () {
     var helpKey = (auth.isAdmin() ? 'HELP_SETTINGS' : 'HELP_LOGIN');

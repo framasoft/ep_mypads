@@ -90,6 +90,11 @@ section.user > form {
   padding: 1em;
 }
 
+section.admin > form {
+  background: #fde0dc;
+  border-color: #cc2d18;
+}
+
 section.user > fieldset > legend {
   font: 1.4em bold;
   padding-bottom: 0.6em;

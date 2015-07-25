@@ -288,10 +288,11 @@ module.exports = (function () {
     })();
     return m('section', { class: 'block-group user admin' }, elements);
   };
+
   view.aside = function () {
     var helpKey = (auth.isAdmin() ? 'HELP_SETTINGS' : 'HELP_LOGIN');
     return m('section.user-aside', [
-      m('h2', conf.SERVER.title),
+      m('h2', conf.LANG.ACTIONS.HELP),
       m('article', m.trust(conf.LANG.ADMIN[helpKey]))
     ]);
   };

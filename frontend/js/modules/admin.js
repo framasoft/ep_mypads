@@ -32,6 +32,7 @@ module.exports = (function () {
   var ld = require('lodash');
   // Local dependencies
   var conf = require('../configuration.js');
+  var auth = require('../auth.js');
   var notif = require('../widgets/notification.js');
   var layout = require('./layout.js');
   var user = require('./user.js');
@@ -47,7 +48,6 @@ module.exports = (function () {
 
   admin.controller = function () {
     var c = {};
-    c.isAdmin = m.prop(false);
     form.initFields(c, ['login', 'password']);
 
     /**
@@ -94,13 +94,13 @@ module.exports = (function () {
           c.data.passwordMax.toJSON = function () {
             return c.data.passwordMax();
           };
-          c.isAdmin(true);
+          auth.isAdmin(true);
           notif.success({ body: conf.LANG.USER.AUTH.SUCCESS });
         }, function (err) {
           notif.error({ body: ld.result(conf.LANG, err.error) });
         });
       }, function () {
-        c.isAdmin(false);
+        auth.isAdmin(false);
         var emsg = conf.LANG.BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT;
         notif.error({ body: emsg });
       });
@@ -274,7 +274,7 @@ module.exports = (function () {
 
   view.main = function (c) {
     var elements = (function () {
-      if (c.isAdmin()) {
+      if (auth.isAdmin()) {
         return [
           m('h2.block', conf.LANG.ADMIN.FORM_SETTINGS),
           view.settings(c)
@@ -288,8 +288,8 @@ module.exports = (function () {
     })();
     return m('section', { class: 'block-group user' }, elements);
   };
-  view.aside = function (c) {
-    var helpKey = (c.isAdmin() ? 'HELP_SETTINGS' : 'HELP_LOGIN');
+  view.aside = function () {
+    var helpKey = (auth.isAdmin() ? 'HELP_SETTINGS' : 'HELP_LOGIN');
     return m('section.user-aside', [
       m('h2', conf.SERVER.title),
       m('article', m.trust(conf.LANG.ADMIN[helpKey]))

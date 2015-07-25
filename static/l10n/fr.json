@@ -288,17 +288,21 @@
   "ADMIN": {
     "FORM_LOGIN": "Identification pour l'administration",
     "FORM_SETTINGS": "Configuration MyPads",
+    "FORM_USERS_SEARCH": "Rechercher un utilisateur",
     "SETTINGS_GENERAL": "Paramètres généraux",
     "SETTINGS_PASSWORD": "Paramètres mot de passe",
     "ETHERPAD_ACCOUNT": "Compte Etherpad",
+    "USERS_SEARCH_LOGIN": "Rechercher par identifiant",
     "HELP_LOGIN": "<p>L'administration de MyPads utilise celle d'Etherpad. Merci de saisir un couple identifiant mot de passe autorisé, tel que fixé dans le fichier de configuration d'Etherpad, <em>settings.json</em>, afin de pouvoir modifier la configuration de MyPads.</p>",
     "HELP_SETTINGS": "<p>Seuls les administrateurs de l'instance Etherpad ont accès à cette page.</p><p>Vous pouvez y éditer les paramètres généraux et appliquer vos changements.</p><p>Ceux-ci seront effectifs directement.</p>",
+    "HELP_USERS": "<p>Cette page d'administration est là afin que vous puissiez trouver un utilisateur en saisissant son identifiant. Une fois cela fait, vous serez en capacité de modifier ou supprimer cet utilisateur.</p><p>Pour des questions de simplicité et de performance, nous ne proposons par ici une liste complète de tous les utilisateurs inscrits.</p>",
     "FIELD": {
       "TITLE": "Titre",
       "PASSWORD_MIN": "Taille minimum",
       "PASSWORD_MAX": "Taille maximum",
       "LANGUAGE_DEFAULT": "Langue par défault",
-      "APPLY": "Appliquer"
+      "APPLY": "Appliquer",
+      "SEARCH": "Rechercher"
     },
     "INFO": {
       "LOGIN": "L'identifiant administrateur donné dans le fichier settings.json d'Etherpad",
@@ -307,7 +311,11 @@
       "PASSWORD_MAX": "Nombre maximum de caractères pour les mots de passe",
       "LANGUAGE_DEFAULT": "Langue par défaut pour les utilisateurs sans compte",
       "SUCCESS": "La configuration a été mise à jour avec succès",
-      "NOCHANGE": "La configuration n'a pas été modifiée, aucune mise à jour n'a donc été envoyée"
+      "NOCHANGE": "La configuration n'a pas été modifiée, aucune mise à jour n'a donc été envoyée",
+      "USERS_SEARCH_LOGIN": "Merci de saisir un identifiant de manière à effectuer une recherche dans la base de données",
+      "USER_FOUND": "Utilisateur trouvé. Voyez les options dans le formulaire",
+      "USER_NONE": "Pas d'utilisateur pour cet identifiant",
+      "USER_REMOVE_SURE": "Vous êtes sur le point de supprimer définitivement ce compte utilisateur et tous les groupes et pads pour lesquels cet utilisateur est seul administrateur. Si vous êtes sûr de ce que vous faites, vous pouvez cliquez sur le bouton OK."
     },
     "ERR": {
       "TITLE": "Le titre est obligatoire",

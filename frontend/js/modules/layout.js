@@ -82,12 +82,12 @@ module.exports = (function () {
           txt: conf.LANG.MENU.CONFIG
         },
         {
-          route: '/users',
+          route: '/admin/users',
           icon: 'users',
           txt: conf.LANG.MENU.USERS
         },
         {
-          route: '/adminlogout',
+          route: '/admin/logout',
           icon: 'logout',
           txt: conf.LANG.MENU.LOGOUT
         }

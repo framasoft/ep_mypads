@@ -266,8 +266,6 @@ module.exports = (function () {
   *
   * `removeAccount` is the view intended to allow user to erase completely its
   * account.
-  *
-  * TODO: window.input? for password check and go
   */
 
   view.removeAccount = function (c) {

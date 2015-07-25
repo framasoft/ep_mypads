@@ -48,6 +48,7 @@ module.exports = (function () {
 
   admin.controller = function () {
     var c = {};
+    auth.isAuthenticated(false);
     form.initFields(c, ['login', 'password']);
 
     /**

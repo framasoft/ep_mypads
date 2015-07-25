@@ -458,7 +458,234 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users-remove.js":[function(require,module,exports){
+/**
+*  # Admin user remove module
+*
+*  ## License
+*
+*  Licensed to the Apache Software Foundation (ASF) under one
+*  or more contributor license agreements.  See the NOTICE file
+*  distributed with this work for additional information
+*  regarding copyright ownership.  The ASF licenses this file
+*  to you under the Apache License, Version 2.0 (the
+*  "License"); you may not use this file except in compliance
+*  with the License.  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+*  Unless required by applicable law or agreed to in writing,
+*  software distributed under the License is distributed on an
+*  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+*  KIND, either express or implied.  See the License for the
+*  specific language governing permissions and limitations
+*  under the License.
+*
+*  ## Description
+*
+*  This module contains only admin user removal
+*/
+
+module.exports = (function () {
+  // Global dependencies
+  var m = require('mithril');
+  var ld = require('lodash');
+  // Local dependencies
+  var conf = require('../configuration.js');
+  var auth = require('../auth.js');
+  var notif = require('../widgets/notification.js');
+
+  var remove = {};
+
+  /**
+  * ## Controller
+  *
+  * This controller informs the admin about that no return will be possible and
+  * removes the user and its groupds and pads, server-side.
+  */
+
+  remove.controller = function () {
+    if (!auth.isAdmin()) { return m.route('/admin'); }
+    var login = m.route.param('login');
+    m.route('/admin/users');
+    if (window.confirm(conf.LANG.ADMIN.INFO.USER_REMOVE_SURE)) {
+      m.request({
+        method: 'DELETE',
+        url: conf.URLS.USER + '/' + login
+      }).then(function () {
+        notif.success({
+          body: conf.LANG.USER.INFO.REMOVE_ACCOUNT_SUCCESS
+        });
+      }, function (err) {
+        notif.error({ body: ld.result(conf.LANG, err.error) });
+      });
+    }
+  };
+
+  return remove;
+
+}).call(this);
+
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users.js":[function(require,module,exports){
+/**
+*  # Admin Users Management module
+*
+*  ## License
+*
+*  Licensed to the Apache Software Foundation (ASF) under one
+*  or more contributor license agreements.  See the NOTICE file
+*  distributed with this work for additional information
+*  regarding copyright ownership.  The ASF licenses this file
+*  to you under the Apache License, Version 2.0 (the
+*  "License"); you may not use this file except in compliance
+*  with the License.  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+*  Unless required by applicable law or agreed to in writing,
+*  software distributed under the License is distributed on an
+*  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+*  KIND, either express or implied.  See the License for the
+*  specific language governing permissions and limitations
+*  under the License.
+*
+*  ## Description
+*
+*  This module, reserved to admins, contains research for users, creation,
+*  edition and removal.
+*/
+
+module.exports = (function () {
+  // Global dependencies
+  var m = require('mithril');
+  var ld = require('lodash');
+  // Local dependencies
+  var conf = require('../configuration.js');
+  var auth = require('../auth.js');
+  var notif = require('../widgets/notification.js');
+  var layout = require('./layout.js');
+  var user = require('./user.js');
+  var form = require('../helpers/form.js');
+
+  var admin = {};
+
+  /**
+  * ## Controller
+  *
+  * Used to check authentication and state.
+  */
+
+  admin.controller = function () {
+    if (!auth.isAdmin()) { return m.route('/admin'); }
+
+    var c = { user: m.prop(false) };
+
+    c.fields = ['login'];
+    form.initFields(c, c.fields);
+
+    /**
+    * ### search
+    *
+    * `search` async function uses user.get API to retrieve user information.
+    * It caches response to local controller property.
+    */
+
+    c.search = function (e) {
+      e.preventDefault();
+      m.request({
+        method: 'GET',
+        url: conf.URLS.USER + '/' + c.data.login()
+      }).then(function (resp) {
+        c.user(resp.value);
+        notif.info({ body: conf.LANG.ADMIN.INFO.USER_FOUND });
+      }, function (err) {
+        c.user(false);
+        notif.error({ body: ld.result(conf.LANG, err.error) });
+      });
+    };
+
+    return c;
+  };
+
+  /**
+  * ## Views
+  */
+
+  var view = {};
+
+  view.form = function (c) {
+    var login = user.view.field.login(c);
+    login.icon.attrs['data-msg'] = conf.LANG.ADMIN.INFO.USERS_SEARCH_LOGIN;
+    return m('form.block', {
+      id: 'users-form',
+      onsubmit: c.search
+    }, [
+      m('fieldset.block-group', [
+        m('legend', conf.LANG.ADMIN.USERS_SEARCH_LOGIN),
+        m('div', [ login.label, login.input, login.icon ])
+      ]),
+      view.user(c),
+      m('input.block.send', {
+        form: 'users-form',
+        type: 'submit',
+        value: conf.LANG.ADMIN.FIELD.SEARCH
+      })
+    ]);
+  };
+
+  view.user = function (c) {
+    var u = c.user();
+    if (!u) {
+      return m('p.admin-users', conf.LANG.ADMIN.INFO.USER_NONE);
+    } else {
+      var route = '/admin/users';
+      var actions = [
+        m('a', {
+          href: route + '/edit/' + u._id,
+          config: m.route,
+          title: conf.LANG.GROUP.EDIT
+        }, [ m('i.icon-pencil') ]),
+        m('a', {
+          href: route + '/' + u.login + '/remove',
+          config: m.route,
+          title: conf.LANG.GROUP.REMOVE,
+        }, [ m('i.icon-trash') ])
+      ];
+      var name = u.login;
+      if (u.firstname) { 
+        name = [name, '(', u.firstname, u.lastname, ')'].join(' ');
+      }
+      return m('ul.admin-users', [
+        m('li.block-group', [
+          m('span.block.name', name),
+          m('span.block.actions', actions)
+        ])
+      ]);
+    }
+  };
+
+  view.main = function (c) {
+    var elements = [ m('h2.block', conf.LANG.ADMIN.FORM_USERS_SEARCH),
+      view.form(c) ];
+    return m('section', { class: 'block-group user admin' }, elements);
+  };
+
+  view.aside = function () {
+    return m('section.user-aside', [
+      m('h2', conf.LANG.ACTIONS.HELP),
+      m('article', m.trust(conf.LANG.ADMIN.HELP_USERS))
+    ]);
+  };
+
+  admin.view = function (c) {
+    return layout.view(view.main(c), view.aside(c));
+  };
+
+  return admin;
+
+}).call(this);
+
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./user.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js":[function(require,module,exports){
 /**
 *  # Admin module
 *
@@ -509,6 +736,7 @@ module.exports = (function () {
 
   admin.controller = function () {
     var c = {};
+    auth.isAuthenticated(false);
     form.initFields(c, ['login', 'password']);
 
     /**
@@ -749,10 +977,11 @@ module.exports = (function () {
     })();
     return m('section', { class: 'block-group user admin' }, elements);
   };
+
   view.aside = function () {
     var helpKey = (auth.isAdmin() ? 'HELP_SETTINGS' : 'HELP_LOGIN');
     return m('section.user-aside', [
-      m('h2', conf.SERVER.title),
+      m('h2', conf.LANG.ACTIONS.HELP),
       m('article', m.trust(conf.LANG.ADMIN[helpKey]))
     ]);
   };
@@ -2202,12 +2431,12 @@ module.exports = (function () {
           txt: conf.LANG.MENU.CONFIG
         },
         {
-          route: '/users',
+          route: '/admin/users',
           icon: 'users',
           txt: conf.LANG.MENU.USERS
         },
         {
-          route: '/adminlogout',
+          route: '/admin/logout',
           icon: 'logout',
           txt: conf.LANG.MENU.LOGOUT
         }
@@ -3476,8 +3705,6 @@ module.exports = (function () {
   *
   * `removeAccount` is the view intended to allow user to erase completely its
   * account.
-  *
-  * TODO: window.input? for password check and go
   */
 
   view.removeAccount = function (c) {
@@ -4580,6 +4807,8 @@ module.exports = (function () {
   var userInvite = require('./modules/user-invitation.js');
   var admin = require('./modules/admin.js');
   var adminLogout = require('./modules/admin-logout.js');
+  var adminUsers = require('./modules/admin-users.js');
+  var adminUserRemove = require('./modules/admin-users-remove.js');
 
   var route = { model: {} };
 
@@ -4614,7 +4843,9 @@ module.exports = (function () {
     '/mypads/group/:group/pad/view/:pad': padView,
     '/mypads/group/:group/user/:action': userInvite,
     '/admin': admin,
-    '/adminlogout': adminLogout
+    '/admin/logout': adminLogout,
+    '/admin/users': adminUsers,
+    '/admin/users/:login/remove': adminUserRemove
   };
 
   route.init = function () { m.route(document.body, '/', route.model.routes); };
@@ -4622,7 +4853,7 @@ module.exports = (function () {
   return route;
 }).call(this);
 
-},{"./modules/admin-logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-logout.js","./modules/admin.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/bookmark.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/bookmark.js","./modules/group-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./modules/group-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js","./modules/group-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-view.js","./modules/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/pad-add.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-add.js","./modules/pad-move.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-move.js","./modules/pad-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-remove.js","./modules/pad-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-view.js","./modules/subscribe.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","./modules/user-invitation.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user-invitation.js","./modules/userlist-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist-form.js","./modules/userlist-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist-remove.js","./modules/userlist.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js":[function(require,module,exports){
+},{"./modules/admin-logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-logout.js","./modules/admin-users-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users-remove.js","./modules/admin-users.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users.js","./modules/admin.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/bookmark.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/bookmark.js","./modules/group-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./modules/group-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js","./modules/group-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-view.js","./modules/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/pad-add.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-add.js","./modules/pad-move.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-move.js","./modules/pad-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-remove.js","./modules/pad-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-view.js","./modules/subscribe.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","./modules/user-invitation.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user-invitation.js","./modules/userlist-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist-form.js","./modules/userlist-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist-remove.js","./modules/userlist.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js":[function(require,module,exports){
 /**
 *  # Notification module
 *
@@ -18355,7 +18586,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {
@@ -18645,17 +18876,21 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
   "ADMIN": {
     "FORM_LOGIN": "Administration login",
     "FORM_SETTINGS": "MyPads configuration",
+    "FORM_USERS_SEARCH": "Search user",
     "SETTINGS_GENERAL": "General settings",
     "SETTINGS_PASSWORD": "Password settings",
+    "USERS_SEARCH_LOGIN": "Search by login",
     "ETHERPAD_ACCOUNT": "Etherpad account",
     "HELP_LOGIN": "<p>MyPads administration is tied to Etherpad administration. Please enter an authorized login and password, as fixed into Etherpad <em>settings.json</em> to be able to update MyPads settings.</p>",
     "HELP_SETTINGS": "<p>Only Etherpad admins have access to this page.</p><p>You can edit the global settings here and apply them.</p><p>They will be effective directly.</p>",
+    "HELP_USERS": "<p>This admin reserved page helps you to find users by entering their login. Once found, you will be able to edit or remove user.</p><p>For simplicity and performance reasons, we don't offer here a full listing of subscribed users.</p>",
     "FIELD": {
       "TITLE": "Title",
       "PASSWORD_MIN": "Minimum size",
       "PASSWORD_MAX": "Maximum size",
       "LANGUAGE_DEFAULT": "Default language",
-      "APPLY": "Apply"
+      "APPLY": "Apply",
+      "SEARCH": "Search"
     },
     "INFO": {
       "LOGIN": "The etherpad settings.json fixed admin login",
@@ -18664,7 +18899,11 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
       "PASSWORD_MAX": "Password maximum number of characters",
       "LANGUAGE_DEFAULT": "Default language for guest MyPads users",
       "SUCCESS": "Configuration has been updated successfully",
-      "NOCHANGE": "Configuration have not changed, so no update has been sent"
+      "NOCHANGE": "Configuration have not changed, so no update has been sent",
+      "USERS_SEARCH_LOGIN": "Please enter a login to search around database users",
+      "USER_FOUND": "User found, please see options inside the form",
+      "USER_NONE": "No user for this login",
+      "USER_REMOVE_SURE": "You are on the verge of removing definitively this account and all the groups and pads on which the user is the unique administrator. If you are really sure about what you are doing, please click on the OK button."
     },
     "ERR": {
       "TITLE": "Title is mandatory",

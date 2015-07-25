@@ -50,6 +50,7 @@ module.exports = (function () {
   var admin = require('./modules/admin.js');
   var adminLogout = require('./modules/admin-logout.js');
   var adminUsers = require('./modules/admin-users.js');
+  var adminUserRemove = require('./modules/admin-users-remove.js');
 
   var route = { model: {} };
 
@@ -85,7 +86,8 @@ module.exports = (function () {
     '/mypads/group/:group/user/:action': userInvite,
     '/admin': admin,
     '/admin/logout': adminLogout,
-    '/admin/users': adminUsers
+    '/admin/users': adminUsers,
+    '/admin/users/:login/remove': adminUserRemove
   };
 
   route.init = function () { m.route(document.body, '/', route.model.routes); };

@@ -90,11 +90,6 @@ section.user > form {
   padding: 1em;
 }
 
-section.admin > form {
-  background: #fde0dc;
-  border-color: #cc2d18;
-}
-
 section.user > fieldset > legend {
   font: 1.4em bold;
   padding-bottom: 0.6em;
@@ -124,3 +119,15 @@ section.user-aside > article {
   border-radius: 0.5em;
   padding: 1em;
 }
+
+/* Admin modules */
+
+section.admin > form {
+  background: #fde0dc;
+  border-color: #cc2d18;
+}
+
+ul.admin-users li span.block.name {
+  width: auto; min-width: 20%;
+}
+ul.admin-users li span.block.actions { width: auto; }

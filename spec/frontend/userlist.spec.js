@@ -71,7 +71,7 @@ module.exports = (function () {
           expect($el.length).toBe(1);
           expect($el[0].querySelector('header h4').textContent).toBe('enemies');
           expect($el[0].querySelector('dl dt').textContent).toBe('Users');
-          expect($el[0].querySelector('dl dd').textContent).toBe('1');
+          expect($el[0].querySelector('dl dd').textContent).toBe('2');
           window.setTimeout(done, 100);
         });
 

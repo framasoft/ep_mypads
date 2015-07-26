@@ -110,6 +110,18 @@ module.exports = (function () {
     if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
 
     /**
+    * ### userlistAdd
+    *
+    * `userlistAdd` function adds all members of the userlist to current
+    * invited users.
+    */
+
+    c.userlistAdd = function (ulid) {
+      var ul = auth.userInfo().userlists[ulid];
+      c.tag.current = ld.union(c.tag.current, ld.pluck(ul.users, 'login'));
+    };
+
+    /**
     * ### submit
     *
     * `submit` function calls the public API to update the group with new users
@@ -135,6 +147,28 @@ module.exports = (function () {
 
   var view = {};
 
+  view.userlistField = function (c) {
+    return m('div.block-group', [
+      m('label.block', { for: 'userlists' }, conf.LANG.MENU.USERLIST),
+      ('i', {
+        class: 'block tooltip icon-info-circled',
+        'data-msg': conf.LANG.USERLIST.INFO.USER_INVITE
+      }),
+      m('select', {
+        class: 'block',
+        name: 'userlists',
+        onchange: m.withAttr('value', c.userlistAdd)
+      }, (ld.map(ld.pairs(auth.userInfo().userlists), function (ul) {
+        return m('option', { value: ul[0] }, ul[1].name);
+      })).concat(m('option', {
+        selected: true,
+        disabled: true,
+        hidden: true,
+        value: ''
+      })))
+    ]);
+  };
+
   view.userField = function (c) {
     return m('div.block-group.tag', [
       m('label.block', { for: c.name }, c.label),
@@ -158,6 +192,10 @@ module.exports = (function () {
       id: 'group-form',
       onsubmit: c.submit
     }, [
+      m('fieldset.block-group', [
+        m('legend', (GROUP.INVITE_USERLIST)),
+        m('div', view.userlistField(c))
+      ]),
       m('fieldset.block-group', [
         m('legend', (c.isInvite ? GROUP.INVITE_USER.IU : GROUP.ADMIN_SHARE.AS)),
         m('div', view.userField(c.tag))

@@ -182,13 +182,14 @@
     "QUIT_GROUP": "Quitter le groupe",
     "INVITE_USER": {
       "IU": "Inviter des utilisateurs",
-      "HELP": "<p>Ce champ accepte un identifiant à la fois. Quand vous pressez ENTRÉE ou cliquez sur OK, l'identifiant est ajouté à la liste des utilisateurs invités. Une liste d'utilisateurs connus vous aide à saisir.</p><h3>La liste des utilisateurs</h3><p>Cette liste contient tous les utilisateurs sélectionnés. Vous pouvez les supprimer en cliquant sur le signe derrière chaque identifiant.</p><h3>Note</h3><p>Merci de noter que, pour le moment, seuls les utilisateurs enregistrés pourront être ajoutés à votre groupe. Cela signifie que les utilisateurs externes à Mypads ne recevront pas de mail pour les inviter à créer un compte.</p>",
+      "HELP": "<h4>Liste d'utilisateurs</h4><p>Vous pouvez sélectionner une ou plusieurs listes. En en choisissant une, les membres de celle-ci seront tous invités.</p><h4>Inviter des utilisateurs</h4><p>Ce champ accepte un identifiant à la fois. Quand vous pressez ENTRÉE ou cliquez sur OK, l'identifiant est ajouté à la liste des utilisateurs invités. Une liste d'utilisateurs connus vous aide à saisir.</p><h4>Utilisateurs</h4><p>Cette liste contient tous les utilisateurs sélectionnés. Vous pouvez les supprimer en cliquant sur le signe derrière chaque identifiant.</p><h4>Note</h4><p>Merci de noter que, pour le moment, seuls les utilisateurs enregistrés pourront être ajoutés à votre groupe. Cela signifie que les utilisateurs externes à Mypads ne recevront pas de mail pour les inviter à créer un compte.</p>",
       "USERS_SELECTION": "Sélection d'utilisateurs",
-      "USERS_SELECTED": "Liste d'utilisateurs sélectionnés",
+      "USERS_SELECTED": "Utilisateurs sélectionnés",
       "PLACEHOLDER": "Saisissez l'identifiant",
       "INPUT_HELP": "Vous pouvez inviter autant d'utilisateurs que vous le souhaitez",
       "SUCCESS": "L'invitation s'est déroulée avec succès"
     },
+    "INVITE_USERLIST": "Inviter une liste d'utilisateurs",
     "ADMIN_SHARE": {
       "AS": "Partage d'administration",
       "SUCCESS": "La partage d'administration s'est achevé avec succès"
@@ -279,7 +280,8 @@
       "ADD_SUCCESS": "La liste utilisateurs a été créée avec succès",
       "EDIT_SUCCESS": "La liste utilisateurs a été mise à jour avec succès",
       "REMOVE_SURE": "Êtes-vous sûr de vouloir supprimer cette liste d'utilisateurs ?",
-      "REMOVE_SUCCESS": "La liste d'utilisateurs a été supprimée avec succès"
+      "REMOVE_SUCCESS": "La liste d'utilisateurs a été supprimée avec succès",
+      "USER_INVITE": "En sélectionnant une liste, vous inviterez tous ses utilisateurs en même temps"
     },
     "ERR": {
       "NAME": "Le nom de la liste utilisateurs est obligatoire"

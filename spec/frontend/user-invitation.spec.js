@@ -80,6 +80,38 @@ module.exports = (function () {
 
       });
 
+      describe('userlist invitation', function () {
+
+        beforeAll(function (done) {
+          qfirst('a[href$=invite]').click();
+            window.setTimeout(done, 100);
+        });
+
+        afterAll(function (done) {
+          app.window.history.go(-1);
+          window.setTimeout(done, 100);
+        });
+
+        it('should have no userlist selected per default', function () {
+          expect(qfirst('select').value).toBe('');
+          expect(qall('select option').length).toBe(2);
+          expect(qfirst('fieldset ul').children.length).toBe(0);
+        });
+
+        it('should allow userlist choice and adds its users on selection',
+          function (done) {
+            var $ulist = qfirst('select');
+            $ulist.value = qfirst('select option').value;
+            $ulist.onchange($ulist);
+            window.setTimeout(function () {
+              expect(qall('fieldset ul li').length).toBe(2);
+              window.setTimeout(done, 100);
+            }, 100);
+          }
+        );
+
+      });
+
       describe('user invitation', function () {
         var $el;
         var fillElements = function () {
@@ -97,7 +129,7 @@ module.exports = (function () {
           window.setTimeout(function () {
             $el = fillElements();
             window.setTimeout(done, 100);
-          }, 200);
+          });
         });
 
         it('should display properties correcly', function (done) {
@@ -107,7 +139,7 @@ module.exports = (function () {
             expect(title.textContent).toBe('Group Santa Fe');
             expect($el.datalist.children.length).toBe(0);
             expect(users.length).toBe(0);
-            done();
+            window.setTimeout(done, 100);
           }, 100);
         });
 
@@ -139,7 +171,7 @@ module.exports = (function () {
                     expect(users[2].textContent).toBe('parker');
                     expect($el.datalist.children.length).toBe(1);
                     expect($el.datalist.children[0].value).toBe('johnny');
-                    done();
+                    window.setTimeout(done, 100);
                   }, 100);
                 }, 100);
               }, 100);
@@ -189,8 +221,8 @@ module.exports = (function () {
                     done();
                   }, 100);
                 }, 100);
-              }, 200);
-            }, 100);
+              }, 100);
+            }, 200);
           }, 100);
         });
 

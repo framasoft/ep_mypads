@@ -4013,6 +4013,18 @@ module.exports = (function () {
     if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
 
     /**
+    * ### userlistAdd
+    *
+    * `userlistAdd` function adds all members of the userlist to current
+    * invited users.
+    */
+
+    c.userlistAdd = function (ulid) {
+      var ul = auth.userInfo().userlists[ulid];
+      c.tag.current = ld.union(c.tag.current, ld.pluck(ul.users, 'login'));
+    };
+
+    /**
     * ### submit
     *
     * `submit` function calls the public API to update the group with new users
@@ -4038,6 +4050,28 @@ module.exports = (function () {
 
   var view = {};
 
+  view.userlistField = function (c) {
+    return m('div.block-group', [
+      m('label.block', { for: 'userlists' }, conf.LANG.MENU.USERLIST),
+      ('i', {
+        class: 'block tooltip icon-info-circled',
+        'data-msg': conf.LANG.USERLIST.INFO.USER_INVITE
+      }),
+      m('select', {
+        class: 'block',
+        name: 'userlists',
+        onchange: m.withAttr('value', c.userlistAdd)
+      }, (ld.map(ld.pairs(auth.userInfo().userlists), function (ul) {
+        return m('option', { value: ul[0] }, ul[1].name);
+      })).concat(m('option', {
+        selected: true,
+        disabled: true,
+        hidden: true,
+        value: ''
+      })))
+    ]);
+  };
+
   view.userField = function (c) {
     return m('div.block-group.tag', [
       m('label.block', { for: c.name }, c.label),
@@ -4061,6 +4095,10 @@ module.exports = (function () {
       id: 'group-form',
       onsubmit: c.submit
     }, [
+      m('fieldset.block-group', [
+        m('legend', (GROUP.INVITE_USERLIST)),
+        m('div', view.userlistField(c))
+      ]),
       m('fieldset.block-group', [
         m('legend', (c.isInvite ? GROUP.INVITE_USER.IU : GROUP.ADMIN_SHARE.AS)),
         m('div', view.userField(c.tag))
@@ -18741,7 +18779,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {
@@ -18925,13 +18963,14 @@ module.exports=module.exports=module.exports={
     "QUIT_GROUP": "Quit the group",
     "INVITE_USER": {
       "IU": "Invite users",
-      "HELP": "<p>This field accepts one login at a time. When ENTER is typed, or OK is clicked, the login is added to the list of invited users. A list of known users helps you to fill the login.</p><h3>List of users</h3><p>This list contains all selected users. You can remove one by clicking the sign after each login.</p><h3>Note</h3><p>Please note that, for instance, registered users will be automatically added to your group. In short term, external users will receive a mail for creating an account.</p>",
+      "HELP": "<h4>Userlists</h4><p>You can select one or more userlists. Each click will add all members of the selected userlist to invited users.</p><h4>Invite users</h4><p>This field accepts one login at a time. When ENTER is typed, or OK is clicked, the login is added to the list of invited users. A list of known users helps you to fill the login.</p><h4>Users</h4><p>This list contains all selected users. You can remove one by clicking the sign after each login.</p><h4>Note</h4><p>Please note that, for instance, registered users will be automatically added to your group. In short term, external users will receive a mail for creating an account.</p>",
       "USERS_SELECTION": "Users selection",
-      "USERS_SELECTED": "List of selected users",
+      "USERS_SELECTED": "Selected users",
       "PLACEHOLDER": "Enter login",
       "INPUT_HELP": "You can invite as many users as you want",
       "SUCCESS": "User invitation has been successfully achieved"
     },
+    "INVITE_USERLIST": "Invite a list of users",
     "ADMIN_SHARE": {
       "AS": "Administration sharing",
       "SUCCESS": "Administration sharing has been successfully achieved"
@@ -19022,7 +19061,8 @@ module.exports=module.exports=module.exports={
       "ADD_SUCCESS": "Userlist has been successfully created",
       "EDIT_SUCCESS": "Userlist has been successfully updated",
       "REMOVE_SURE": "Are you sure you want to remove this userlist ?",
-      "REMOVE_SUCCESS": "Userlist has been successfully removed"
+      "REMOVE_SUCCESS": "Userlist has been successfully removed",
+      "USER_INVITE": "By selecting a userlist, you will invite all its users at the same time"
     },
     "ERR": {
       "NAME": "The name of the userlist is required"

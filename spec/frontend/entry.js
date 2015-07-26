@@ -41,6 +41,7 @@
   var userlist = require('./userlist.spec.js');
   var tagWidget = require('./tag-widget.spec.js');
   var admin = require('./admin.spec.js');
+  var adminUsers = require('./admin-users.spec.js');
 
   describe('MyPads testing', function () {
     var app = frames[0];
@@ -62,5 +63,6 @@
     userlist.run(app);
     tagWidget.run(app);
     admin.run(app);
+    adminUsers.run(app);
   });
 }).call(this);

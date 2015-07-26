@@ -154,8 +154,8 @@ module.exports = (function () {
         });
 
         it('should update configuration otherwise', function (done) {
-          fill($el.passwordMin, '2');
-          fill($el.passwordMax, '8');
+          fill($el.passwordMin, '6');
+          fill($el.passwordMax, '32');
           $el.submit.click();
           window.setTimeout(function () {
             var $success = qfirst('body > section p');
@@ -171,8 +171,7 @@ module.exports = (function () {
       describe('admin logout testing', function () {
 
         it('should logout if already admin', function (done) {
-          app.document.querySelector('header nav a[href$="admin/logout"]')
-            .click();
+          qfirst('header nav a[href$="admin/logout"]').click();
           window.setTimeout(function () {
             var $success = qfirst('body > section p');
             expect($success.parentNode.className).toMatch('success');

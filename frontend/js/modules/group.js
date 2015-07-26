@@ -256,9 +256,9 @@ module.exports = (function () {
         m('i.tooltip.icon-info-circled',
           { 'data-msg': conf.LANG.GROUP.SORT.HELP })
       ]),
-      m('ul', [
-        m('li', [ btn('_id', conf.LANG.GROUP.PAD.SORT_BY_CREATION) ]),
-        m('li', [ btn('name', conf.LANG.GROUP.PAD.SORT_BY_NAME) ]),
+      m('ul.block-group', [
+        m('li.block', [ btn('_id', conf.LANG.GROUP.PAD.SORT_BY_CREATION) ]),
+        m('li.block', [ btn('name', conf.LANG.GROUP.PAD.SORT_BY_NAME) ]),
       ])
     ]);
   };

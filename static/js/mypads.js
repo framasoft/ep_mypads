@@ -2274,9 +2274,9 @@ module.exports = (function () {
         m('i.tooltip.icon-info-circled',
           { 'data-msg': conf.LANG.GROUP.SORT.HELP })
       ]),
-      m('ul', [
-        m('li', [ btn('_id', conf.LANG.GROUP.PAD.SORT_BY_CREATION) ]),
-        m('li', [ btn('name', conf.LANG.GROUP.PAD.SORT_BY_NAME) ]),
+      m('ul.block-group', [
+        m('li.block', [ btn('_id', conf.LANG.GROUP.PAD.SORT_BY_CREATION) ]),
+        m('li.block', [ btn('name', conf.LANG.GROUP.PAD.SORT_BY_NAME) ]),
       ])
     ]);
   };
@@ -18848,7 +18848,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {

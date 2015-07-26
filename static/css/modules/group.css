@@ -197,6 +197,9 @@ section.group-aside section.filter ul li > button, section.group-aside section.s
   width: 100%;
 }
 
+section.sort ul { width: 100%; }
+section.sort ul li { width: 50%; }
+
 section.group-aside section.filter ul li > button:focus, section.group-aside section.filter ul li > button:hover {
   font-weight: bold;
   background-color: #8157c2;

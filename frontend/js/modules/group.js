@@ -176,6 +176,24 @@ module.exports = (function () {
     };
 
     /**
+    * ### sortBy
+    *
+    * `c.sortBy` function sort pads by the `field` argument.
+    * If already sorted by the same field, it reverses order.
+    */
+
+    c.sortField = m.prop();
+    c.sortAsc = m.prop(true);
+    c.sortBy = function (field) {
+      if (c.sortField() === field) { c.sortAsc(!c.sortAsc()); }
+      c.sortField(field);
+      var direction = c.sortAsc() ? 'asc' : 'desc';
+      c.groups = ld.transform(c.groups, function (memo, groups, type) {
+        memo[type] = ld.sortByOrder(groups, field, direction);
+      });
+    };
+
+    /**
     * ### computeGroups
     *
     * `computeGroups` is an internal function that computed groups according to
@@ -224,6 +242,26 @@ module.exports = (function () {
   */
 
   var view = {};
+
+  view.sort = function (c) {
+    var btn = function (field, txt) {
+      return m('button', {
+        class: (c.sortField() === field) ? 'active': '',
+        onclick: ld.partial(c.sortBy, field)
+      }, txt);
+    };
+    return m('section.sort.block-group', [
+      m('h3.block', [
+        m('span', conf.LANG.GROUP.SORT.TITLE),
+        m('i.tooltip.icon-info-circled',
+          { 'data-msg': conf.LANG.GROUP.SORT.HELP })
+      ]),
+      m('ul', [
+        m('li', [ btn('_id', conf.LANG.GROUP.PAD.SORT_BY_CREATION) ]),
+        m('li', [ btn('name', conf.LANG.GROUP.PAD.SORT_BY_NAME) ]),
+      ])
+    ]);
+  };
 
   view.search = function (c) {
     return m('section.search.block-group', [
@@ -314,7 +352,7 @@ module.exports = (function () {
 
   view.aside = function (c) {
     return m('section.group-aside', [
-      view.search(c), view.filters(c), view.tags(c)
+      view.sort(c), view.search(c), view.filters(c), view.tags(c)
     ]);
   };
 

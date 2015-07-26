@@ -76,9 +76,19 @@ header.group a, footer.group > a.add, dl.group dd a, section.pad li a, section.p
 header.group a, section.pad li a, dl.group dd a, section.pad li button, ul.admin-users li button, section.pad, ul.mark li button, ul.mark li a {
   background: none;
 }
-header.group > a:focus, header.group a:hover, section.pad li a:hover, section.pad li button:hover, ul.mark li button:hover, ul.mark li a:hover, section.pad li a:focus, section.pad li button:focus, ul.mark li button:focus, ul.mark li a:focus {
+header.group > a:focus, header.group a:hover, section.pad li a:hover, section.pad li button:hover, ul.mark li button:hover, ul.mark li a:hover, section.pad li a:focus, section.pad li button:focus, ul.mark li button:focus, ul.mark li a:focus, section.pad p.sort button:focus, section.pad p.sort button:hover {
   background-color: #3e3363;
   color: #e0e0e0;
+}
+
+section.pad p.sort {
+  font-weight: bold;
+}
+
+section.pad p.sort button {
+  background: none;
+  border: 0;
+  text-decoration: underline;
 }
 
 dl.group {
@@ -166,18 +176,18 @@ section.group-aside section.search button {
   margin: 0.5em 0;
 }
 
-section.group-aside section.filter ul {
+section.group-aside section.filter ul, section.group-aside section.sort ul {
   list-style-type: none;
   padding: 0;
 }
 section.group-aside section.filter ul li > button.admin {
   background-color: #de6933;
 }
-section.group-aside section.filter ul li > button.user {
+section.group-aside section.filter ul li > button.user, section.group-aside section.sort ul li > button.user {
   background-color: #616161;
 }
 
-section.group-aside section.filter ul li > button {
+section.group-aside section.filter ul li > button, section.group-aside section.sort ul li > button {
   color: #e0e0e0;
   text-align: center;
   background: #6a5687;
@@ -192,10 +202,10 @@ section.group-aside section.filter ul li > button:focus, section.group-aside sec
   background-color: #8157c2;
 }
 
-section.group-aside section.filter ul li > button.active, section.group-aside section.tag li button.active {
+section.group-aside section.filter ul li > button.active, section.group-aside section.sort ul li > button.active, section.group-aside section.tag li button.active {
   background-color: #ab2a0e;
 }
-section.group-aside section.filter ul li > button.active:after, section.group-aside section.tag li button.active:after {
+section.group-aside section.filter ul li > button.active:after, section.group-aside section.sort ul li > button.active:after, section.group-aside section.tag li button.active:after {
   content: ' ✓';
 }
 

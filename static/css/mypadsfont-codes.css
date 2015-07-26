@@ -24,3 +24,6 @@
 .icon-popup:before { content: '\e816'; } /* '' */
 .icon-forward:before { content: '\e817'; } /* '' */
 .icon-users:before { content: '\e818'; } /* '' */
+.icon-arrow-combo:before { content: '\e819'; } /* '' */
+.icon-down-dir:before { content: '\e81a'; } /* '' */
+.icon-up-dir:before { content: '\e81b'; } /* '' */

@@ -68,6 +68,22 @@ module.exports = (function () {
     if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
 
     /**
+    * ### sortBy
+    *
+    * `c.sortBy` function sort pads by the `field` argument.
+    * If already sorted by the same field, it reverses order.
+    */
+
+    c.sortField = m.prop();
+    c.sortAsc = m.prop(true);
+    c.sortBy = function (field) {
+      if (c.sortField() === field) { c.sortAsc(!c.sortAsc()); }
+      c.sortField(field);
+      var direction = c.sortAsc() ? 'asc' : 'desc';
+      c.pads = ld.sortByOrder(c.pads, field, direction);
+    };
+
+    /**
     * ### quit
     * `c.quit` function is used to resign user from administration or usage of
     * a group. It is based on `user-invitation` to proceed.
@@ -146,6 +162,25 @@ module.exports = (function () {
         conf.LANG.GROUP.PAD.MOVE
       ])
     ]);
+  var sortIcon = (function () {
+    if (c.sortField()) {
+      return (c.sortAsc() ? 'up-dir' : 'down-dir');
+    } else {
+      return 'arrow-combo';
+    }
+  })();
+  var sortView = m('p.sort', [
+    m('i.icon-' + sortIcon),
+    m('span', conf.LANG.GROUP.PAD.SORT_BY),
+    m('button', {
+      type: 'button',
+      onclick: ld.partial(c.sortBy, '_id')
+    }, conf.LANG.GROUP.PAD.SORT_BY_CREATION),
+    m('button', {
+      type: 'button',
+      onclick: ld.partial(c.sortBy, 'name')
+    }, conf.LANG.GROUP.PAD.SORT_BY_NAME)
+  ]);
     var padView = (function () {
       if (ld.size(c.group.pads) === 0) {
         return m('p', conf.LANG.GROUP.PAD.NONE);
@@ -201,13 +236,9 @@ module.exports = (function () {
         }));
       }
     })();
-    var padBlocks;
-    if (c.isAdmin) {
-      padBlocks = [addView, moveView];
-    } else {
-      padBlocks = [];
-    }
-    padBlocks.push(padView);
+    var padBlocks = [];
+    if (c.isAdmin) { padBlocks.push(addView, moveView); }
+    padBlocks.push(sortView, padView);
     return m('section.pad', padBlocks);
   };
 

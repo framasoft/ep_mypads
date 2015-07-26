@@ -194,6 +194,10 @@
       "AS": "Partage d'administration",
       "SUCCESS": "La partage d'administration s'est achevé avec succès"
     },
+    "SORT": {
+      "TITLE": "Ranger par",
+      "HELP": "Par défaut, les groupes sont ordonnés par la date de création, les plus anciens en premier. Vous pouvez opter pour d'autres tris ici. Cliquer à nouveau inverse l'ordre de tri."
+    },
     "SEARCH": {
       "TITLE": "Recherche",
       "TYPE": "Saisissez ici",
@@ -230,6 +234,10 @@
       "ADD": "Créer un nouveau pad",
       "ADD_PROMPT": "Saisissez le nom du nouveau pad",
       "EDIT_PROMPT": "Saisissez le nouveau nom du pad",
+      "SORT_BY": "Ranger les pads par",
+      "SORT_BY_CREATION": "date de création",
+      "SORT_BY_NAME": "nom",
+      "SORT_BY_UPDATE": "dernière mise à jour",
       "MOVE": "Déplacer tous les pads vers un autre groupe",
       "MOVE_TITLE": "Migration des pads du groupe ",
       "MOVE_HELP": "<p>Merci de sélectionner le groupe souhaité pour votre migration. Seuls les groupes pour lesquels vous êtes administrateur apparaisent.</p><p>Une fois choisi, cliquez sur le bouton d'envoi et attendez un moment</p>",

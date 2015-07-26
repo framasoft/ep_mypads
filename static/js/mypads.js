@@ -1731,6 +1731,22 @@ module.exports = (function () {
     if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
 
     /**
+    * ### sortBy
+    *
+    * `c.sortBy` function sort pads by the `field` argument.
+    * If already sorted by the same field, it reverses order.
+    */
+
+    c.sortField = m.prop();
+    c.sortAsc = m.prop(true);
+    c.sortBy = function (field) {
+      if (c.sortField() === field) { c.sortAsc(!c.sortAsc()); }
+      c.sortField(field);
+      var direction = c.sortAsc() ? 'asc' : 'desc';
+      c.pads = ld.sortByOrder(c.pads, field, direction);
+    };
+
+    /**
     * ### quit
     * `c.quit` function is used to resign user from administration or usage of
     * a group. It is based on `user-invitation` to proceed.
@@ -1809,6 +1825,25 @@ module.exports = (function () {
         conf.LANG.GROUP.PAD.MOVE
       ])
     ]);
+  var sortIcon = (function () {
+    if (c.sortField()) {
+      return (c.sortAsc() ? 'up-dir' : 'down-dir');
+    } else {
+      return 'arrow-combo';
+    }
+  })();
+  var sortView = m('p.sort', [
+    m('i.icon-' + sortIcon),
+    m('span', conf.LANG.GROUP.PAD.SORT_BY),
+    m('button', {
+      type: 'button',
+      onclick: ld.partial(c.sortBy, '_id')
+    }, conf.LANG.GROUP.PAD.SORT_BY_CREATION),
+    m('button', {
+      type: 'button',
+      onclick: ld.partial(c.sortBy, 'name')
+    }, conf.LANG.GROUP.PAD.SORT_BY_NAME)
+  ]);
     var padView = (function () {
       if (ld.size(c.group.pads) === 0) {
         return m('p', conf.LANG.GROUP.PAD.NONE);
@@ -1864,13 +1899,9 @@ module.exports = (function () {
         }));
       }
     })();
-    var padBlocks;
-    if (c.isAdmin) {
-      padBlocks = [addView, moveView];
-    } else {
-      padBlocks = [];
-    }
-    padBlocks.push(padView);
+    var padBlocks = [];
+    if (c.isAdmin) { padBlocks.push(addView, moveView); }
+    padBlocks.push(sortView, padView);
     return m('section.pad', padBlocks);
   };
 
@@ -2163,6 +2194,24 @@ module.exports = (function () {
     };
 
     /**
+    * ### sortBy
+    *
+    * `c.sortBy` function sort pads by the `field` argument.
+    * If already sorted by the same field, it reverses order.
+    */
+
+    c.sortField = m.prop();
+    c.sortAsc = m.prop(true);
+    c.sortBy = function (field) {
+      if (c.sortField() === field) { c.sortAsc(!c.sortAsc()); }
+      c.sortField(field);
+      var direction = c.sortAsc() ? 'asc' : 'desc';
+      c.groups = ld.transform(c.groups, function (memo, groups, type) {
+        memo[type] = ld.sortByOrder(groups, field, direction);
+      });
+    };
+
+    /**
     * ### computeGroups
     *
     * `computeGroups` is an internal function that computed groups according to
@@ -2211,6 +2260,26 @@ module.exports = (function () {
   */
 
   var view = {};
+
+  view.sort = function (c) {
+    var btn = function (field, txt) {
+      return m('button', {
+        class: (c.sortField() === field) ? 'active': '',
+        onclick: ld.partial(c.sortBy, field)
+      }, txt);
+    };
+    return m('section.sort.block-group', [
+      m('h3.block', [
+        m('span', conf.LANG.GROUP.SORT.TITLE),
+        m('i.tooltip.icon-info-circled',
+          { 'data-msg': conf.LANG.GROUP.SORT.HELP })
+      ]),
+      m('ul', [
+        m('li', [ btn('_id', conf.LANG.GROUP.PAD.SORT_BY_CREATION) ]),
+        m('li', [ btn('name', conf.LANG.GROUP.PAD.SORT_BY_NAME) ]),
+      ])
+    ]);
+  };
 
   view.search = function (c) {
     return m('section.search.block-group', [
@@ -2301,7 +2370,7 @@ module.exports = (function () {
 
   view.aside = function (c) {
     return m('section.group-aside', [
-      view.search(c), view.filters(c), view.tags(c)
+      view.sort(c), view.search(c), view.filters(c), view.tags(c)
     ]);
   };
 
@@ -18779,7 +18848,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {
@@ -18975,6 +19044,10 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
       "AS": "Administration sharing",
       "SUCCESS": "Administration sharing has been successfully achieved"
     },
+    "SORT": {
+      "TITLE": "Sort by",
+      "HELP": "By default, groups are ordered by creation date, older first. You can choose to use another orders. Reclicking inverses order."
+    },
     "SEARCH": {
       "TITLE": "Search",
       "TYPE": "Type here",
@@ -19011,6 +19084,10 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
       "ADD": "Create a new pad",
       "ADD_PROMPT": "Enter the name of the new pad",
       "EDIT_PROMPT": "Enter the new name of the pad",
+      "SORT_BY": "Sort pads by",
+      "SORT_BY_CREATION": "creation date",
+      "SORT_BY_NAME": "name",
+      "SORT_BY_UPDATE": "last update",
       "MOVE": "Move all pads to another group",
       "MOVE_TITLE": "Pads migration of the group ",
       "MOVE_HELP": "<p>Please select the wanted group for your migration. Only groups on which you are admin are listed.</p><p>Once chosen, click to the submit button and wait for a moment.</p>",

@@ -194,6 +194,10 @@
       "AS": "Administration sharing",
       "SUCCESS": "Administration sharing has been successfully achieved"
     },
+    "SORT": {
+      "TITLE": "Sort by",
+      "HELP": "By default, groups are ordered by creation date, older first. You can choose to use another orders. Reclicking inverses order."
+    },
     "SEARCH": {
       "TITLE": "Search",
       "TYPE": "Type here",
@@ -230,6 +234,10 @@
       "ADD": "Create a new pad",
       "ADD_PROMPT": "Enter the name of the new pad",
       "EDIT_PROMPT": "Enter the new name of the pad",
+      "SORT_BY": "Sort pads by",
+      "SORT_BY_CREATION": "creation date",
+      "SORT_BY_NAME": "name",
+      "SORT_BY_UPDATE": "last update",
       "MOVE": "Move all pads to another group",
       "MOVE_TITLE": "Pads migration of the group ",
       "MOVE_HELP": "<p>Please select the wanted group for your migration. Only groups on which you are admin are listed.</p><p>Once chosen, click to the submit button and wait for a moment.</p>",

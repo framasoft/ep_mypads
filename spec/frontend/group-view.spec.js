@@ -33,10 +33,12 @@ module.exports = (function () {
   // Shared variables
   var $el;
   var first;
+  var qall;
 
   view.run = function (app) {
 
     first = function (sel) { return app.document.querySelector(sel); };
+    qall = function (sel) { return app.document.querySelectorAll(sel); };
 
     describe('group view module testing', function () {
 
@@ -152,6 +154,42 @@ module.exports = (function () {
               expect(pads[2].textContent).toBe('Enhanced one');
               first('body > section > div p').click();
               window.setTimeout(done, 100);
+            }, 100);
+          }, 100);
+        });
+
+        it('should allow pad sorting by creation and name', function (done) {
+          var padSortBtns = qall('section.pad p.sort button');
+          var creationSort = padSortBtns[0];
+          var nameSort = padSortBtns[1];
+          creationSort.click();
+          window.setTimeout(function () {
+            var names = qall('section.pads ul li span.name');
+            expect(names[0].textContent).toBe('Loving Annie');
+            expect(names[1].textContent).toBe('Watch sync');
+            expect(names[2].textContent).toBe('Enhanced one');
+            creationSort.click();
+            window.setTimeout(function () {
+              names = qall('section.pads ul li span.name');
+              expect(names[0].textContent).toBe('Enhanced one');
+              expect(names[1].textContent).toBe('Watch sync');
+              expect(names[2].textContent).toBe('Loving Annie');
+              nameSort.click();
+              window.setTimeout(function () {
+                names = qall('section.pads ul li span.name');
+                expect(names[0].textContent).toBe('Watch sync');
+                expect(names[1].textContent).toBe('Loving Annie');
+                expect(names[2].textContent).toBe('Enhanced one');
+                nameSort.click();
+                window.setTimeout(function () {
+                  names = qall('section.pads ul li span.name');
+                  expect(names[0].textContent).toBe('Enhanced one');
+                  expect(names[1].textContent).toBe('Loving Annie');
+                  expect(names[2].textContent).toBe('Watch sync');
+                  creationSort.click();
+                  window.setTimeout(done, 100);
+                }, 100);
+              }, 100);
             }, 100);
           }, 100);
         });

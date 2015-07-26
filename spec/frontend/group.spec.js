@@ -178,6 +178,50 @@ module.exports = (function () {
 
       describe('group side filters', function () {
 
+        describe('sort by button', function () {
+
+          it('should have default order by creation date ASC', function () {
+            var titles = $el.common.querySelectorAll('li header h4');
+            expect(titles.length).toBe(2);
+            expect(titles[0].textContent).toBe('memories');
+            expect(titles[1].textContent).toBe('shared notes');
+          });
+
+          it('should allow ordering by creation and name', function (done) {
+            var sel = 'section.sort ul li button';
+            var $btns = app.document.querySelectorAll(sel);
+            var $sortBy = { creation: $btns[0], name: $btns[1] };
+            $sortBy.creation.click();
+            window.setTimeout(function () {
+              var titles = $el.common.querySelectorAll('li header h4');
+              expect(titles[0].textContent).toBe('memories');
+              expect(titles[1].textContent).toBe('shared notes');
+              $sortBy.creation.click();
+              window.setTimeout(function () {
+                titles = $el.common.querySelectorAll('li header h4');
+                expect(titles[0].textContent).toBe('shared notes');
+                expect(titles[1].textContent).toBe('memories');
+                $sortBy.name.click();
+                window.setTimeout(function () {
+                  // DESC first
+                  titles = $el.common.querySelectorAll('li header h4');
+                  expect(titles[0].textContent).toBe('shared notes');
+                  expect(titles[1].textContent).toBe('memories');
+                  $sortBy.name.click();
+                  window.setTimeout(function () {
+                    titles = $el.common.querySelectorAll('li header h4');
+                    expect(titles[0].textContent).toBe('memories');
+                    expect(titles[1].textContent).toBe('shared notes');
+                    $sortBy.creation.click();
+                    window.setTimeout(done, 100);
+                  }, 100);
+                }, 100);
+              }, 100);
+            }, 100);
+          });
+
+        });
+
         describe('filter by search', function () {
 
           it('should forbid text search under 3 characters', function (done) {

@@ -228,7 +228,7 @@
               expect(err).toBeNull();
               expect(resp.statusCode).toBe(200);
               expect(body.success).toBeTruthy();
-              rq.get(route + 'group/inexistent',
+              rq.get(route + 'pad/inexistent',
                 function (err, resp, body) {
                   expect(err).toBeNull();
                   expect(body.error).toMatch('AUTHENTICATION.MUST_BE');
@@ -1209,6 +1209,36 @@
               expect(resp.statusCode).toBe(401);
               expect(body.error).toMatch('DENIED_RECORD');
               done();
+            });
+          }
+        );
+
+        it('should allow access to public groups for unauth users',
+          function (done) {
+            var b = {
+              body: {
+                name: 'groupPublic',
+                admin: uid,
+                visibility: 'public',
+              }
+            };
+            rq.post(groupRoute, b, function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(200);
+              expect(body.success).toBeTruthy();
+              var key = body.key;
+              rq.get(route + 'auth/logout', function () {
+                rq.get(groupRoute + '/' + key, function (err, resp, body) {
+                  expect(err).toBeNull();
+                  expect(resp.statusCode).toBe(200);
+                  expect(body.key).toBeDefined();
+                  var gwp = body.value;
+                  expect(ld.values(gwp.groups)[0].name).toBe('groupPublic');
+                  expect(ld.size(gwp.pads)).toBe(0);
+                  var params = { login: 'guest', password: 'willnotlivelong' };
+                  rq.post(route + 'auth/login', { body: params }, done);
+                });
+              });
             });
           }
         );

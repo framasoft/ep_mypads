@@ -661,13 +661,23 @@ module.exports = (function () {
 
     /**
     * GET method : `group.get` unique id
+    * Returns pads too when used for public groups and unauth users.
     *
     * Sample URL:
     * http://etherpad.ndd/mypemailads/api/group/xxxx
     */
 
-    app.get(groupRoute + '/:key', fn.ensureAuthenticated,
-      function (req, res, next) {
+    app.get(groupRoute + '/:key', function (req, res, next) {
+      if (!req.isAuthenticated() && !req.session.mypadsLogin) {
+        group.getWithPads(req.params.key, function (err, groupWithPads) {
+          if (err) { return res.status(400).send({ error: err.message }); }
+          var g = ld.values(groupWithPads.groups)[0];
+          if (g.visibility !== 'public') {
+            return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.DENIED_RECORD');
+          }
+          return res.send({ key: req.params.key, value: groupWithPads });
+        });
+      } else {
         var cond = function (val) {
           var isAdmin = (req.session.user && req.session.user.is_admin);
           var isAllowed = ld.includes(ld.union(val.admins, val.users),
@@ -676,7 +686,7 @@ module.exports = (function () {
         };
         return fn.get(group, req, res, next, cond);
       }
-    );
+    });
 
     /**
     * `canEdit` is an asynchronous internal group helper to check common

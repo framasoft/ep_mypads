@@ -726,7 +726,11 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/group
     */
 
-    app.post(groupRoute, fn.ensureAuthenticated, _set);
+    app.post(groupRoute, fn.ensureAuthenticated, function (req, res) {
+      var isAdmin = (req.session.user && req.session.user.is_admin);
+      if (!isAdmin) { req.body.admin = req.session.mypadsUid; }
+      _set(req, res);
+    });
 
     /**
     * PUT method : `group.set` with group id plus value for existing group

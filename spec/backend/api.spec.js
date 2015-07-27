@@ -1282,7 +1282,7 @@
             rq.post(groupRoute, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
               expect(body.error).toMatch('PARAM_STR');
-              var b = { body: { name: 'group1' } };
+              var b = { body: { visibility: 'public' } };
               rq.post(groupRoute, b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
                 expect(body.error).toMatch('PARAM_STR');
@@ -1295,11 +1295,13 @@
         it('should return an error if admin user does not exist',
           function (done) {
             var b = { body: { name: 'group1', admin: 'inexistentId' } };
-            rq.post(groupRoute, b, function (err, resp, body) {
-              expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('ITEMS_NOT_FOUND');
-              done();
-            });
+            withAdmin(function (after) {
+              rq.post(groupRoute, b, function (err, resp, body) {
+                expect(resp.statusCode).toBe(400);
+                expect(body.error).toMatch('ITEMS_NOT_FOUND');
+                after();
+              });
+            }, done);
           }
         );
 
@@ -1316,6 +1318,29 @@
               expect(resp.statusCode).toBe(400);
               expect(body.error).toMatch('PASSWORD_INCORRECT');
               done();
+            });
+          }
+        );
+
+        it('should force admin id to be the current user, unless ether admin',
+          function (done) {
+            var b = { body: { name: 'groupOk', admin: uotherid } };
+            rq.post(groupRoute, b, function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(200);
+              expect(body.success).toBeTruthy();
+              expect(body.key).toBeDefined();
+              expect(body.value.name).toBe('groupOk');
+              expect(body.value.admins[0]).not.toBe(uotherid);
+              expect(body.value.admins[0]).toBe(uid);
+              withAdmin(function (after) {
+                rq.post(groupRoute, b, function (err, resp, body) {
+                  expect(err).toBeNull();
+                  expect(resp.statusCode).toBe(200);
+                  expect(body.value.admins[0]).toBe(uotherid);
+                  after();
+                });
+              }, done);
             });
           }
         );

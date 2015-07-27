@@ -398,6 +398,55 @@
 
     });
 
+    describe('group getWithPads', function () {
+
+      beforeAll(initGroupUsersAndPads);
+      afterAll(specCommon.reInitDatabase);
+
+      it('should throw errors if arguments are not as expected',
+        function () {
+          expect(group.getWithPads).toThrow();
+          expect(ld.partial(group.getWithPads, 123)).toThrow();
+          expect(ld.partial(group.getWithPads, 'key')).toThrow();
+          expect(ld.partial(group.getWithPads, 'key', 'notAFunc')).toThrow();
+        }
+      );
+
+      it('should return an Error if the key is not found', function (done) {
+        group.getWithPads('inexistent', function (err, g) {
+          expect(ld.isError(err)).toBeTruthy();
+          expect(g).toBeUndefined();
+          done();
+        });
+      });
+
+      it('should return the group and its pads otherwise', function (done) {
+        group.getWithPads(gparams._id, function (err, groupWithPads) {
+          expect(err).toBeNull();
+          expect(ld.isObject(groupWithPads));
+          expect(ld.keys(groupWithPads)[0]).toBe('groups');
+          expect(ld.keys(groupWithPads)[1]).toBe('pads');
+          var g = ld.values(groupWithPads.groups)[0];
+          expect(ld.isString(g._id)).toBeTruthy();
+          expect(g.name).toBe('college');
+          var pads = ld.values(groupWithPads.pads);
+          expect(ld.size(pads)).toBe(ld.size(g.pads));
+          expect(pads[0].name).toBe('pad1');
+          group.set({ name: 'EmptyGroup', admin: gadm._id }, function (err, g) {
+            expect(err).toBeNull();
+            group.getWithPads(g._id, function (err, groupWithPads) {
+              expect(err).toBeNull();
+              var gr = ld.values(groupWithPads.groups)[0];
+              expect(gr.name).toBe('EmptyGroup');
+              expect(ld.size(groupWithPads.pads)).toBe(0);
+              done();
+            });
+          });
+        });
+      });
+
+    });
+
     describe('group getByUser', function () {
       beforeAll(initGroupUsersAndPads);
       afterAll(specCommon.reInitDatabase);

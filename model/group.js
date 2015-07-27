@@ -73,6 +73,43 @@ module.exports = (function () {
   group.get = ld.partial(common.getDel, false, GPREFIX);
 
   /**
+  * ## getWithPads
+  *
+  * This function uses `group.get` to retrieve the group record, plus it
+  * returns list of attached pads. As `group.get`, it takes `gid` group unique
+  * identifier and a `callback` function. In success, it returns an object with
+  * unique `groups` field and 0 or more pads in `pads` sub object. This
+  * structure is intended to mirror `get.getByUser` function.
+  */
+
+  group.getWithPads = function (gid, callback) {
+    if (!ld.isString(gid)) {
+      throw new TypeError('BACKEND.ERROR.TYPE.KEY_STR');
+    }
+    if (!ld.isFunction(callback)) {
+      throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
+    }
+    group.get(gid, function (err, g) {
+      if (err) { return callback(err); }
+      var groups = {};
+      groups[g._id] = g;
+      if (g.pads.length === 0) {
+        return callback(null, { groups: groups, pads: {} });
+      }
+      var padsKeys = ld.map(g.pads, function (p) { return PPREFIX + p; });
+      storage.fn.getKeys(padsKeys, function (err, pads) {
+        if (err) { return callback(err); }
+        pads = ld.reduce(pads, function (memo, val, key) {
+          key = key.substr(PPREFIX.length);
+          memo[key] = val;
+          return memo;
+        }, {});
+        return callback(null, { groups: groups, pads: pads });
+      });
+    });
+  };
+
+  /**
   * ### getByUser
   *
   * `getByUser` is an asynchronous function that returns all groups for a

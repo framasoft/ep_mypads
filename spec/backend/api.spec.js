@@ -982,7 +982,7 @@
             user.set(oparams, function (err, u) {
               if (err) { console.log(err); }
               uotherid = u._id;
-              group.set({ name: 'g1', admin: uid },
+              group.set({ name: 'g1', admin: uid, visibility: 'public' },
                 function (err, res) {
                   if (err) { console.log(err); }
                   gid = res._id;
@@ -1175,7 +1175,7 @@
             var groups = body.value.groups;
             var key = ld.first(ld.keys(groups));
             expect(groups[key].name).toBe('g1');
-            expect(groups[key].visibility).toBe('restricted');
+            expect(groups[key].visibility).toBe('public');
             expect(groups[key].password).toBeUndefined();
             var admin = ld.first(ld.values(body.value.admins));
             expect(admin.login).toBe('guest');
@@ -1244,6 +1244,19 @@
           }
         );
 
+        it('should allow access to regular user if group is public',
+          function (done) {
+            rq.get(groupRoute + '/' + gid, function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(200);
+              expect(body.key).toBe(gid);
+              expect(body.value.name).toBe('g1');
+              expect(ld.size(body.pads)).toBe(0);
+              done();
+            });
+          }
+        );
+
         it('should allow access to all groups for admin', function (done) {
           withAdmin(function (after) {
             rq.get(groupRoute + '/' + gotherid, function (err, resp, body) {
@@ -1262,7 +1275,7 @@
               expect(body.key).toBe(gid);
               expect(body.value._id).toBe(gid);
               expect(body.value.name).toBe('g1');
-              expect(body.value.visibility).toBe('restricted');
+              expect(body.value.visibility).toBe('public');
               expect(ld.isArray(body.value.users)).toBeTruthy();
               expect(ld.isArray(body.value.pads)).toBeTruthy();
               expect(body.value.password).toBeNull();

@@ -660,31 +660,31 @@ module.exports = (function () {
     );
 
     /**
-    * GET method : `group.get` unique id
-    * Returns pads too when used for public groups and unauth users.
+    * GET method : `group.getWithPads` unique id
+    * Returns pads too because usefull for public groups and unauth users.
     *
     * Sample URL:
     * http://etherpad.ndd/mypemailads/api/group/xxxx
     */
 
-    app.get(groupRoute + '/:key', function (req, res, next) {
-      if (!req.isAuthenticated() && !req.session.mypadsLogin) {
+    app.get(groupRoute + '/:key', function (req, res) {
+      try {
         group.getWithPads(req.params.key, function (err, g, pads) {
-          if (err) { return res.status(400).send({ error: err.message }); }
-          if (g.visibility !== 'public') {
+          if (err) {
+            return res.status(404)
+              .send({ key: req.params.key, error: err.message });
+          }
+          var isAdmin = (req.session.user && req.session.user.is_admin);
+          var isUser = ld.includes(ld.union(g.admins, g.users),
+            req.session.mypadsUid);
+          var isAllowedForPublic = (g.visibility === 'public');
+          if (!isAdmin && !isUser && !isAllowedForPublic) {
             return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.DENIED_RECORD');
           }
           return res.send({ key: req.params.key, value: g, pads: pads });
         });
-      } else {
-        var cond = function (val) {
-          var isAdmin = (req.session.user && req.session.user.is_admin);
-          var isAllowed = ld.includes(ld.union(val.admins, val.users),
-            req.session.mypadsUid) || val.visibility === 'public';
-          return (isAdmin || isAllowed);
-        };
-        return fn.get(group, req, res, next, cond);
       }
+      catch (e) { res.status(400).send({ error: e.message }); }
     });
 
     /**

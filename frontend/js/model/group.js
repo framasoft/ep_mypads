@@ -49,7 +49,7 @@ module.exports = (function () {
   model.fetch = function (callback) {
     var errFn = function (err) {
       notif.error({ body: ld.result(conf.LANG, err.error) });
-      if (callback) { callback(); }
+      if (callback) { callback(err); }
     };
     m.request({
       url: conf.URLS.GROUP,
@@ -79,8 +79,26 @@ module.exports = (function () {
         }).then(function (resp) {
           u.userlists = resp.value;
           auth.userInfo(u);
-          if (callback) { callback(); }
+          if (callback) { callback(resp); }
         }, errFn);
+      }, errFn);
+  };
+
+  model.fetchPublicGroup = function (gid, callback) {
+    var errFn = function (err) {
+      notif.error({ body: ld.result(conf.LANG, err.error) });
+      if (callback) { callback(err); }
+    };
+    m.request({
+      url: conf.URLS.GROUP + '/' + gid,
+      method: 'GET'
+    }).then(
+      function (resp) {
+        var data = model.data();
+        data[resp.key] = resp.value;
+        model.data(data);
+        model.pads(ld.merge(model.pads(), resp.pads));
+        if (callback) { callback(resp); }
       }, errFn);
   };
 

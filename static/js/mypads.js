@@ -366,7 +366,7 @@ module.exports = (function () {
   model.fetch = function (callback) {
     var errFn = function (err) {
       notif.error({ body: ld.result(conf.LANG, err.error) });
-      if (callback) { callback(); }
+      if (callback) { callback(err); }
     };
     m.request({
       url: conf.URLS.GROUP,
@@ -396,8 +396,26 @@ module.exports = (function () {
         }).then(function (resp) {
           u.userlists = resp.value;
           auth.userInfo(u);
-          if (callback) { callback(); }
+          if (callback) { callback(resp); }
         }, errFn);
+      }, errFn);
+  };
+
+  model.fetchPublicGroup = function (gid, callback) {
+    var errFn = function (err) {
+      notif.error({ body: ld.result(conf.LANG, err.error) });
+      if (callback) { callback(err); }
+    };
+    m.request({
+      url: conf.URLS.GROUP + '/' + gid,
+      method: 'GET'
+    }).then(
+      function (resp) {
+        var data = model.data();
+        data[resp.key] = resp.value;
+        model.data(data);
+        model.pads(ld.merge(model.pads(), resp.pads));
+        if (callback) { callback(resp); }
       }, errFn);
   };
 
@@ -1709,26 +1727,49 @@ module.exports = (function () {
   *
   * Used for group, pads and users data.
   * Ensures that models are already loaded, either load them.
+  * Taking care of public group case.
   */
 
   group.controller = function () {
-    if (!auth.isAuthenticated()) {
-      return m.route('/login');
+
+    var key = m.route.param('key');
+    var c = { group: { tags: [] } };
+    if (auth.isAuthenticated()) {
+      c.bookmarks = auth.userInfo().bookmarks.pads;
     }
 
-    var c = {};
-    c.bookmarks = auth.userInfo().bookmarks.pads;
-
-    var init = function () {
-      var key = m.route.param('key');
-      c.group = model.data()[key];
-      c.isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
-      ld.forEach(['pads', 'admins', 'users'], function (f) {
-        c[f] = ld.map(c.group[f], function (x) { return model[f]()[x]; });
-      });
+    var init = function (err) {
+      if (err) { return m.route('/mypads'); }
+      c.isGuest = (!auth.isAuthenticated() || !model.data()[key]);
+      var _init = function () {
+        c.group = model.data()[key];
+        if (!c.isGuest) {
+          c.isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
+          ld.forEach(['pads', 'admins', 'users'], function (f) {
+            c[f] = ld.map(c.group[f], function (x) { return model[f]()[x]; });
+          });
+        } else {
+          c.isAdmin = false;
+          c.pads = ld.map(c.group.pads, function (x) {
+            return model.pads()[x];
+          });
+        }
+      };
+      if (model.data()[key]) {
+        _init();
+      } else {
+        model.fetchPublicGroup(key, _init);
+      }
     };
 
-    if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
+    var fetchFn = (function () {
+      if (auth.isAuthenticated()) {
+        return ld.partial(model.fetch, init);
+      } else {
+        return ld.partial(model.fetchPublicGroup, key, init);
+      }
+    })();
+    if (ld.isEmpty(model.data())) { fetchFn(); } else { init(); }
 
     /**
     * ### sortBy
@@ -1849,28 +1890,32 @@ module.exports = (function () {
         return m('p', conf.LANG.GROUP.PAD.NONE);
       } else {
         return m('ul', ld.map(c.pads, function (p) {
-          var isBookmarked = ld.includes(c.bookmarks, p._id);
           var actions = [
-            m('button', {
-              title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK),
-              onclick: function () { padMark(p._id); }
-            }, [
-              m('i',
-                { class: 'icon-star' + (isBookmarked ? '' : '-empty') })
-              ]),
-              (function () {
-                if (c.group.visibility !== 'restricted') {
-                  return m('button', {
-                    title: conf.LANG.GROUP.SHARE,
-                    onclick: padShare.bind(c, c.group._id, p._id)
-                  }, [ m('i.icon-link') ]);
-                }
-              })(),
-              m('a', {
-                href: route + '/pad/view/' + p._id,
-                config: m.route,
-                title: conf.LANG.GROUP.VIEW
-              }, [ m('i.icon-book-open') ])
+            (function () {
+              if (!c.isGuest) {
+                var isBookmarked = ld.includes(c.bookmarks, p._id);
+                return m('button', {
+                  title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK),
+                  onclick: function () { padMark(p._id); }
+                }, [
+                  m('i',
+                    { class: 'icon-star' + (isBookmarked ? '' : '-empty') })
+                ]);
+              }
+            })(),
+            (function () {
+              if (c.group.visibility !== 'restricted') {
+                return m('button', {
+                  title: conf.LANG.GROUP.SHARE,
+                  onclick: padShare.bind(c, c.group._id, p._id)
+                }, [ m('i.icon-link') ]);
+              }
+            })(),
+            m('a', {
+              href: route + '/pad/view/' + p._id,
+              config: m.route,
+              title: conf.LANG.GROUP.VIEW
+            }, [ m('i.icon-book-open') ])
           ];
           if (c.isAdmin) {
             actions.push(
@@ -1913,6 +1958,9 @@ module.exports = (function () {
   */
 
   view.users = function (c) {
+    if(c.isGuest) {
+      return m('p', conf.LANG.GROUP.PAD.PUBLIC_DENIED);
+    }
     var userView = function (u) {
       var res = '';
       if (u.firstname) {
@@ -1973,7 +2021,7 @@ module.exports = (function () {
       );
     }
     var canQuit = (c.isAdmin && c.admins.length > 1) || (!c.isAdmin);
-    if (canQuit) {
+    if (!c.isGuest && canQuit) {
       h2Elements.push(m('button.cancel', { onclick: c.quit },
           [ m('i.icon-cancel'), conf.LANG.GROUP.QUIT_GROUP ]));
     }
@@ -18848,7 +18896,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports={
+module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {
@@ -18876,7 +18924,7 @@ module.exports=module.exports=module.exports=module.exports={
       "CONFIGURATION": {
         "LANG_PROBLEM": "Lang update can not be done. Default lang will be used.",
         "CANTGET": "Configuration loading has failed. Please contact your administrator.",
-        "KEY_NOT_FOUND": "Key has not been found"
+        "KEY_NOT_FOUND": "The record has not been found"
       },
       "AUTHENTICATION": {
         "MUST_BE": "You must be authenticated",
@@ -19077,6 +19125,7 @@ module.exports=module.exports=module.exports=module.exports={
       "ADMINS": "Admins",
       "USERS": "Users",
       "USERS_NONE": "No user",
+      "PUBLIC_DENIED": "Public access : you are not allowed to see this data.",
       "VISIBILITY": "Visibility",
       "PAD": "Pad",
       "PADS": "Pads",

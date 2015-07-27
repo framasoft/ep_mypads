@@ -26,7 +26,7 @@
       "CONFIGURATION": {
         "LANG_PROBLEM": "Le changement de langue n'a pu être fait. La langue par défaut sera utilisée.",
         "CANTGET": "Le chargement de la configuration a échoué. Merci de contacter votre administrateur.",
-        "KEY_NOT_FOUND": "Key n'a pas été trouvé"
+        "KEY_NOT_FOUND": "L'enregistrement n'a pas été trouvé"
       },
       "AUTHENTICATION": {
         "MUST_BE": "Vous devez être authentifié",
@@ -227,6 +227,7 @@
       "ADMINS": "Administrateurs",
       "USERS": "Utilisateurs",
       "USERS_NONE": "Pas d'utilisateur",
+      "PUBLIC_DENIED": "Accès public : vous n'êtes pas autorisé à voir ces données.",
       "VISIBILITY": "Visibilité",
       "PAD": "Pad",
       "PADS": "Pads",

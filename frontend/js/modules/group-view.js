@@ -46,26 +46,49 @@ module.exports = (function () {
   *
   * Used for group, pads and users data.
   * Ensures that models are already loaded, either load them.
+  * Taking care of public group case.
   */
 
   group.controller = function () {
-    if (!auth.isAuthenticated()) {
-      return m.route('/login');
+
+    var key = m.route.param('key');
+    var c = { group: { tags: [] } };
+    if (auth.isAuthenticated()) {
+      c.bookmarks = auth.userInfo().bookmarks.pads;
     }
 
-    var c = {};
-    c.bookmarks = auth.userInfo().bookmarks.pads;
-
-    var init = function () {
-      var key = m.route.param('key');
-      c.group = model.data()[key];
-      c.isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
-      ld.forEach(['pads', 'admins', 'users'], function (f) {
-        c[f] = ld.map(c.group[f], function (x) { return model[f]()[x]; });
-      });
+    var init = function (err) {
+      if (err) { return m.route('/mypads'); }
+      c.isGuest = (!auth.isAuthenticated() || !model.data()[key]);
+      var _init = function () {
+        c.group = model.data()[key];
+        if (!c.isGuest) {
+          c.isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
+          ld.forEach(['pads', 'admins', 'users'], function (f) {
+            c[f] = ld.map(c.group[f], function (x) { return model[f]()[x]; });
+          });
+        } else {
+          c.isAdmin = false;
+          c.pads = ld.map(c.group.pads, function (x) {
+            return model.pads()[x];
+          });
+        }
+      };
+      if (model.data()[key]) {
+        _init();
+      } else {
+        model.fetchPublicGroup(key, _init);
+      }
     };
 
-    if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
+    var fetchFn = (function () {
+      if (auth.isAuthenticated()) {
+        return ld.partial(model.fetch, init);
+      } else {
+        return ld.partial(model.fetchPublicGroup, key, init);
+      }
+    })();
+    if (ld.isEmpty(model.data())) { fetchFn(); } else { init(); }
 
     /**
     * ### sortBy
@@ -186,28 +209,32 @@ module.exports = (function () {
         return m('p', conf.LANG.GROUP.PAD.NONE);
       } else {
         return m('ul', ld.map(c.pads, function (p) {
-          var isBookmarked = ld.includes(c.bookmarks, p._id);
           var actions = [
-            m('button', {
-              title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK),
-              onclick: function () { padMark(p._id); }
-            }, [
-              m('i',
-                { class: 'icon-star' + (isBookmarked ? '' : '-empty') })
-              ]),
-              (function () {
-                if (c.group.visibility !== 'restricted') {
-                  return m('button', {
-                    title: conf.LANG.GROUP.SHARE,
-                    onclick: padShare.bind(c, c.group._id, p._id)
-                  }, [ m('i.icon-link') ]);
-                }
-              })(),
-              m('a', {
-                href: route + '/pad/view/' + p._id,
-                config: m.route,
-                title: conf.LANG.GROUP.VIEW
-              }, [ m('i.icon-book-open') ])
+            (function () {
+              if (!c.isGuest) {
+                var isBookmarked = ld.includes(c.bookmarks, p._id);
+                return m('button', {
+                  title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK),
+                  onclick: function () { padMark(p._id); }
+                }, [
+                  m('i',
+                    { class: 'icon-star' + (isBookmarked ? '' : '-empty') })
+                ]);
+              }
+            })(),
+            (function () {
+              if (c.group.visibility !== 'restricted') {
+                return m('button', {
+                  title: conf.LANG.GROUP.SHARE,
+                  onclick: padShare.bind(c, c.group._id, p._id)
+                }, [ m('i.icon-link') ]);
+              }
+            })(),
+            m('a', {
+              href: route + '/pad/view/' + p._id,
+              config: m.route,
+              title: conf.LANG.GROUP.VIEW
+            }, [ m('i.icon-book-open') ])
           ];
           if (c.isAdmin) {
             actions.push(
@@ -250,6 +277,9 @@ module.exports = (function () {
   */
 
   view.users = function (c) {
+    if(c.isGuest) {
+      return m('p', conf.LANG.GROUP.PAD.PUBLIC_DENIED);
+    }
     var userView = function (u) {
       var res = '';
       if (u.firstname) {
@@ -310,7 +340,7 @@ module.exports = (function () {
       );
     }
     var canQuit = (c.isAdmin && c.admins.length > 1) || (!c.isAdmin);
-    if (canQuit) {
+    if (!c.isGuest && canQuit) {
       h2Elements.push(m('button.cancel', { onclick: c.quit },
           [ m('i.icon-cancel'), conf.LANG.GROUP.QUIT_GROUP ]));
     }

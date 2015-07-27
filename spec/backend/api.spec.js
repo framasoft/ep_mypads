@@ -1232,9 +1232,10 @@
                   expect(err).toBeNull();
                   expect(resp.statusCode).toBe(200);
                   expect(body.key).toBeDefined();
-                  var gwp = body.value;
-                  expect(ld.values(gwp.groups)[0].name).toBe('groupPublic');
-                  expect(ld.size(gwp.pads)).toBe(0);
+                  var g = body.value;
+                  var pads = body.pads;
+                  expect(g.name).toBe('groupPublic');
+                  expect(ld.size(pads)).toBe(0);
                   var params = { login: 'guest', password: 'willnotlivelong' };
                   rq.post(route + 'auth/login', { body: params }, done);
                 });

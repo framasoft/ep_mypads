@@ -669,19 +669,18 @@ module.exports = (function () {
 
     app.get(groupRoute + '/:key', function (req, res, next) {
       if (!req.isAuthenticated() && !req.session.mypadsLogin) {
-        group.getWithPads(req.params.key, function (err, groupWithPads) {
+        group.getWithPads(req.params.key, function (err, g, pads) {
           if (err) { return res.status(400).send({ error: err.message }); }
-          var g = ld.values(groupWithPads.groups)[0];
           if (g.visibility !== 'public') {
             return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.DENIED_RECORD');
           }
-          return res.send({ key: req.params.key, value: groupWithPads });
+          return res.send({ key: req.params.key, value: g, pads: pads });
         });
       } else {
         var cond = function (val) {
           var isAdmin = (req.session.user && req.session.user.is_admin);
           var isAllowed = ld.includes(ld.union(val.admins, val.users),
-            req.session.mypadsUid);
+            req.session.mypadsUid) || val.visibility === 'public';
           return (isAdmin || isAllowed);
         };
         return fn.get(group, req, res, next, cond);

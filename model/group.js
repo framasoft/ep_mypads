@@ -77,9 +77,8 @@ module.exports = (function () {
   *
   * This function uses `group.get` to retrieve the group record, plus it
   * returns list of attached pads. As `group.get`, it takes `gid` group unique
-  * identifier and a `callback` function. In success, it returns an object with
-  * unique `groups` field and 0 or more pads in `pads` sub object. This
-  * structure is intended to mirror `get.getByUser` function.
+  * identifier and a `callback` function. In case of success, it returns
+  * *null*, the *group* object and an Object of *pads* (where keys are _ids).
   */
 
   group.getWithPads = function (gid, callback) {
@@ -91,10 +90,8 @@ module.exports = (function () {
     }
     group.get(gid, function (err, g) {
       if (err) { return callback(err); }
-      var groups = {};
-      groups[g._id] = g;
       if (g.pads.length === 0) {
-        return callback(null, { groups: groups, pads: {} });
+        return callback(null, g, {});
       }
       var padsKeys = ld.map(g.pads, function (p) { return PPREFIX + p; });
       storage.fn.getKeys(padsKeys, function (err, pads) {
@@ -104,7 +101,7 @@ module.exports = (function () {
           memo[key] = val;
           return memo;
         }, {});
-        return callback(null, { groups: groups, pads: pads });
+        return callback(null,g , pads);
       });
     });
   };

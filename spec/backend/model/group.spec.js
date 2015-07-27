@@ -421,24 +421,21 @@
       });
 
       it('should return the group and its pads otherwise', function (done) {
-        group.getWithPads(gparams._id, function (err, groupWithPads) {
+        group.getWithPads(gparams._id, function (err, g, pads) {
           expect(err).toBeNull();
-          expect(ld.isObject(groupWithPads));
-          expect(ld.keys(groupWithPads)[0]).toBe('groups');
-          expect(ld.keys(groupWithPads)[1]).toBe('pads');
-          var g = ld.values(groupWithPads.groups)[0];
+          expect(ld.isObject(g)).toBeTruthy();
+          expect(ld.isObject(pads)).toBeTruthy();
           expect(ld.isString(g._id)).toBeTruthy();
           expect(g.name).toBe('college');
-          var pads = ld.values(groupWithPads.pads);
+          pads = ld.values(pads);
           expect(ld.size(pads)).toBe(ld.size(g.pads));
           expect(pads[0].name).toBe('pad1');
           group.set({ name: 'EmptyGroup', admin: gadm._id }, function (err, g) {
             expect(err).toBeNull();
-            group.getWithPads(g._id, function (err, groupWithPads) {
+            group.getWithPads(g._id, function (err, g, pads) {
               expect(err).toBeNull();
-              var gr = ld.values(groupWithPads.groups)[0];
-              expect(gr.name).toBe('EmptyGroup');
-              expect(ld.size(groupWithPads.pads)).toBe(0);
+              expect(g.name).toBe('EmptyGroup');
+              expect(ld.size(pads)).toBe(0);
               done();
             });
           });

@@ -358,7 +358,8 @@ module.exports = (function () {
       pads: m.prop({}),
       users: m.prop([]),
       admins: m.prop([]),
-      tags: m.prop([])
+      tags: m.prop([]),
+      data: m.prop({ groups: m.prop({}), pads: m.prop({}) })
     });
   };
   model.init();
@@ -435,10 +436,12 @@ module.exports = (function () {
     if (password) { opts.data = { password: password }; }
     m.request(opts).then(
       function (resp) {
-        var data = model.groups();
-        data[resp.key] = resp.value;
-        model.groups(data);
-        model.pads(ld.merge(model.pads(), resp.pads));
+        var data = model.data();
+        var groups = data.groups();
+        groups[resp.key] = resp.value;
+        data.groups(groups);
+        data.pads(ld.merge(data.pads(), resp.pads));
+        model.data(data);
         if (callback) { callback(null, resp); }
       }, errFn);
   };
@@ -1759,18 +1762,19 @@ module.exports = (function () {
     var key = m.route.param('key');
     var c = {
       group: { tags: [] },
-      privatePassword: m.prop(undefined),
+      privatePassword: m.prop(''),
       sendPass: m.prop(false)
     };
     if (auth.isAuthenticated()) {
       c.bookmarks = auth.userInfo().bookmarks.pads;
     }
+    c.isGuest = !auth.isAuthenticated();
 
     var init = function (err) {
       if (err) { return m.route('/mypads'); }
-      c.isGuest = (!auth.isAuthenticated() || !model.groups()[key]);
       var _init = function () {
-        c.group = model.groups()[key];
+        var data = c.isGuest ? model.data() : model;
+        c.group = data.groups()[key];
         if (!c.isGuest) {
           c.isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
           ld.forEach(['pads', 'admins', 'users'], function (f) {
@@ -1779,13 +1783,14 @@ module.exports = (function () {
         } else {
           c.isAdmin = false;
           c.pads = ld.map(c.group.pads, function (x) {
-            return model.pads()[x];
+            return data.pads()[x];
           });
         }
       };
       if (model.groups()[key]) {
         _init();
       } else {
+        c.isGuest = true;
         model.fetchGroup(key, undefined, _init);
       }
     };
@@ -1850,7 +1855,9 @@ module.exports = (function () {
       e.preventDefault();
       model.fetchGroup(key, c.privatePassword(), function (err) {
         if (err) { return c.sendPass(false); }
-        c.group = model.groups()[key];
+        var data = c.isGuest ? model.data() : model;
+        c.group = data.groups()[key];
+        c.pads = ld.map(c.group.pads, function (x) { return data.pads()[x]; });
         c.sendPass(true);
       });
     };
@@ -2071,6 +2078,12 @@ module.exports = (function () {
 
   view.main = function (c) {
     var h2Elements = [ m('span', conf.LANG.GROUP.GROUP + ' ' + c.group.name) ];
+    if (c.group.visibility !== 'restricted') {
+      h2Elements.push(m('button', {
+        title: conf.LANG.GROUP.SHARE,
+        onclick: padShare.bind(c, c.group._id, null)
+      }, [ m('i.icon-link'), m('span', conf.LANG.GROUP.SHARE) ]));
+    }
     if (c.isAdmin) {
       h2Elements.push(
         m('a', {
@@ -2177,6 +2190,7 @@ module.exports = (function () {
   var u = auth.userInfo;
   var layout = require('./layout.js');
   var model = require('../model/group.js');
+  var padShare = require('./pad-share.js');
 
   var group = {};
 
@@ -2511,24 +2525,34 @@ module.exports = (function () {
         m('i',
           { class: 'icon-star' + (isBookmarked ? '' : '-empty') })
         ]),
-        m('a', {
-          href: padRoute + '/view',
-          config: m.route,
-          title: conf.LANG.GROUP.VIEW_MANAGE
-        }, [ m('i.icon-book-open') ])
-      ];
-      if (isAdmin) {
-        actions.push(m('a', {
-          href: padRoute + '/edit',
-          config: m.route,
-          title: conf.LANG.GROUP.EDIT
-        }, [ m('i.icon-pencil') ]),
-        m('a', {
-          href: padRoute + '/remove',
-          config: m.route,
-          title: conf.LANG.GROUP.REMOVE
-        }, [ m('i.icon-trash') ]));
-      }
+      (function () {
+        if (g.visibility !== 'restricted') {
+          return m('a', {
+            onclick: padShare.bind(c, g._id, null),
+            href: '/mypads',
+            config: m.route,
+            title: conf.LANG.GROUP.SHARE
+          }, [ m('i.icon-link') ]);
+        }
+      })(),
+      m('a', {
+        href: padRoute + '/view',
+        config: m.route,
+        title: conf.LANG.GROUP.VIEW_MANAGE
+      }, [ m('i.icon-book-open') ])
+    ];
+    if (isAdmin) {
+      actions.push(m('a', {
+        href: padRoute + '/edit',
+        config: m.route,
+        title: conf.LANG.GROUP.EDIT
+      }, [ m('i.icon-pencil') ]),
+      m('a', {
+        href: padRoute + '/remove',
+        config: m.route,
+        title: conf.LANG.GROUP.REMOVE
+      }, [ m('i.icon-trash') ]));
+    }
     return m('li.block', [
       m('header.group.block-group', [
         m('h4.block', [ m('a', {
@@ -2633,7 +2657,7 @@ module.exports = (function () {
   return group;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./pad-share.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-share.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js":[function(require,module,exports){
 /**
 *  # Home module
 *
@@ -3507,7 +3531,7 @@ module.exports = (function () {
 
 },{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-share.js":[function(require,module,exports){
 /**
-*  # Pad sharing module
+*  # Pad and group sharing module
 *
 *  ## License
 *
@@ -3530,33 +3554,28 @@ module.exports = (function () {
 *
 *  ## Description
 *
-*  Short module for pad sharing
+*  Short module for pad and group sharing
 */
 
 module.exports = (function () {
   'use strict';
   // Dependencies
   var conf = require('../configuration.js');
-  var model = require('../model/group.js');
 
   /**
   * ## Main function
   *
-  * Used to display the real etherpad link.
+  * Used to give the MyPads URL
   */
   return function (gid, pid) {
-      var group = model.groups()[gid];
-      var link = window.location.protocol + '//' + window.location.host +
-        '/p/' + pid;
-      if (group.visibility === 'private') {
-        var password = window.prompt(conf.LANG.GROUP.SHARE_PASSWORD);
-        link += '?mypadspassword=' + password;
-      }
-      window.prompt(conf.LANG.GROUP.SHARE_LINK, link);
+    var l = window.location;
+    var url = l.protocol + '//' + l.host + l.pathname + '?/mypads/group/' + gid;
+    var suffix = (pid ? '/pad/view/' + pid : '/view');
+    window.prompt(conf.LANG.GROUP.SHARE_LINK, url + suffix);
   };
 }).call(this);
 
-},{"../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-view.js":[function(require,module,exports){
+},{"../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-view.js":[function(require,module,exports){
 /**
 *  # Group View module
 *
@@ -3630,8 +3649,9 @@ module.exports = (function () {
     var init = function (err) {
       if (err) { return m.route('/mypads'); }
       var _init = function () {
-        c.group = model.groups()[group];
-        c.pad = model.pads()[key];
+        var data = c.isGuest ? model.data() : model;
+        c.group = data.groups()[group];
+        c.pad = data.pads()[key];
         c.isAdmin = (function () {
           if (c.isAuth) {
             return ld.includes(c.group.admins, auth.userInfo()._id);
@@ -3661,8 +3681,9 @@ module.exports = (function () {
       e.preventDefault();
       model.fetchGroup(group, c.password(), function (err) {
         if (err) { return c.sendPass(false); }
-        c.group = model.groups()[group];
-        c.pad = model.pads()[key];
+        var data = c.isGuest ? model.data() : model;
+        c.group = data.groups()[group];
+        c.pad = data.pads()[key];
         c.sendPass(true);
       });
     };
@@ -19005,7 +19026,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {

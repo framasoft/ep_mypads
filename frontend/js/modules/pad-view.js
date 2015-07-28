@@ -71,8 +71,9 @@ module.exports = (function () {
     var init = function (err) {
       if (err) { return m.route('/mypads'); }
       var _init = function () {
-        c.group = model.groups()[group];
-        c.pad = model.pads()[key];
+        var data = c.isGuest ? model.data() : model;
+        c.group = data.groups()[group];
+        c.pad = data.pads()[key];
         c.isAdmin = (function () {
           if (c.isAuth) {
             return ld.includes(c.group.admins, auth.userInfo()._id);
@@ -102,8 +103,9 @@ module.exports = (function () {
       e.preventDefault();
       model.fetchGroup(group, c.password(), function (err) {
         if (err) { return c.sendPass(false); }
-        c.group = model.groups()[group];
-        c.pad = model.pads()[key];
+        var data = c.isGuest ? model.data() : model;
+        c.group = data.groups()[group];
+        c.pad = data.pads()[key];
         c.sendPass(true);
       });
     };

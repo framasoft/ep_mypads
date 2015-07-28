@@ -54,18 +54,19 @@ module.exports = (function () {
     var key = m.route.param('key');
     var c = {
       group: { tags: [] },
-      privatePassword: m.prop(undefined),
+      privatePassword: m.prop(''),
       sendPass: m.prop(false)
     };
     if (auth.isAuthenticated()) {
       c.bookmarks = auth.userInfo().bookmarks.pads;
     }
+    c.isGuest = !auth.isAuthenticated();
 
     var init = function (err) {
       if (err) { return m.route('/mypads'); }
-      c.isGuest = (!auth.isAuthenticated() || !model.groups()[key]);
       var _init = function () {
-        c.group = model.groups()[key];
+        var data = c.isGuest ? model.data() : model;
+        c.group = data.groups()[key];
         if (!c.isGuest) {
           c.isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
           ld.forEach(['pads', 'admins', 'users'], function (f) {
@@ -74,13 +75,14 @@ module.exports = (function () {
         } else {
           c.isAdmin = false;
           c.pads = ld.map(c.group.pads, function (x) {
-            return model.pads()[x];
+            return data.pads()[x];
           });
         }
       };
       if (model.groups()[key]) {
         _init();
       } else {
+        c.isGuest = true;
         model.fetchGroup(key, undefined, _init);
       }
     };
@@ -145,7 +147,9 @@ module.exports = (function () {
       e.preventDefault();
       model.fetchGroup(key, c.privatePassword(), function (err) {
         if (err) { return c.sendPass(false); }
-        c.group = model.groups()[key];
+        var data = c.isGuest ? model.data() : model;
+        c.group = data.groups()[key];
+        c.pads = ld.map(c.group.pads, function (x) { return data.pads()[x]; });
         c.sendPass(true);
       });
     };
@@ -366,6 +370,12 @@ module.exports = (function () {
 
   view.main = function (c) {
     var h2Elements = [ m('span', conf.LANG.GROUP.GROUP + ' ' + c.group.name) ];
+    if (c.group.visibility !== 'restricted') {
+      h2Elements.push(m('button', {
+        title: conf.LANG.GROUP.SHARE,
+        onclick: padShare.bind(c, c.group._id, null)
+      }, [ m('i.icon-link'), m('span', conf.LANG.GROUP.SHARE) ]));
+    }
     if (c.isAdmin) {
       h2Elements.push(
         m('a', {

@@ -37,6 +37,7 @@ module.exports = (function () {
   var u = auth.userInfo;
   var layout = require('./layout.js');
   var model = require('../model/group.js');
+  var padShare = require('./pad-share.js');
 
   var group = {};
 
@@ -371,24 +372,34 @@ module.exports = (function () {
         m('i',
           { class: 'icon-star' + (isBookmarked ? '' : '-empty') })
         ]),
-        m('a', {
-          href: padRoute + '/view',
-          config: m.route,
-          title: conf.LANG.GROUP.VIEW_MANAGE
-        }, [ m('i.icon-book-open') ])
-      ];
-      if (isAdmin) {
-        actions.push(m('a', {
-          href: padRoute + '/edit',
-          config: m.route,
-          title: conf.LANG.GROUP.EDIT
-        }, [ m('i.icon-pencil') ]),
-        m('a', {
-          href: padRoute + '/remove',
-          config: m.route,
-          title: conf.LANG.GROUP.REMOVE
-        }, [ m('i.icon-trash') ]));
-      }
+      (function () {
+        if (g.visibility !== 'restricted') {
+          return m('a', {
+            onclick: padShare.bind(c, g._id, null),
+            href: '/mypads',
+            config: m.route,
+            title: conf.LANG.GROUP.SHARE
+          }, [ m('i.icon-link') ]);
+        }
+      })(),
+      m('a', {
+        href: padRoute + '/view',
+        config: m.route,
+        title: conf.LANG.GROUP.VIEW_MANAGE
+      }, [ m('i.icon-book-open') ])
+    ];
+    if (isAdmin) {
+      actions.push(m('a', {
+        href: padRoute + '/edit',
+        config: m.route,
+        title: conf.LANG.GROUP.EDIT
+      }, [ m('i.icon-pencil') ]),
+      m('a', {
+        href: padRoute + '/remove',
+        config: m.route,
+        title: conf.LANG.GROUP.REMOVE
+      }, [ m('i.icon-trash') ]));
+    }
     return m('li.block', [
       m('header.group.block-group', [
         m('h4.block', [ m('a', {

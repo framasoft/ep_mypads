@@ -41,7 +41,8 @@ module.exports = (function () {
       pads: m.prop({}),
       users: m.prop([]),
       admins: m.prop([]),
-      tags: m.prop([])
+      tags: m.prop([]),
+      data: m.prop({ groups: m.prop({}), pads: m.prop({}) })
     });
   };
   model.init();
@@ -118,10 +119,12 @@ module.exports = (function () {
     if (password) { opts.data = { password: password }; }
     m.request(opts).then(
       function (resp) {
-        var data = model.groups();
-        data[resp.key] = resp.value;
-        model.groups(data);
-        model.pads(ld.merge(model.pads(), resp.pads));
+        var data = model.data();
+        var groups = data.groups();
+        groups[resp.key] = resp.value;
+        data.groups(groups);
+        data.pads(ld.merge(data.pads(), resp.pads));
+        model.data(data);
         if (callback) { callback(null, resp); }
       }, errFn);
   };

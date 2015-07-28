@@ -1,5 +1,5 @@
 /**
-*  # Pad sharing module
+*  # Pad and group sharing module
 *
 *  ## License
 *
@@ -22,28 +22,23 @@
 *
 *  ## Description
 *
-*  Short module for pad sharing
+*  Short module for pad and group sharing
 */
 
 module.exports = (function () {
   'use strict';
   // Dependencies
   var conf = require('../configuration.js');
-  var model = require('../model/group.js');
 
   /**
   * ## Main function
   *
-  * Used to display the real etherpad link.
+  * Used to give the MyPads URL
   */
   return function (gid, pid) {
-      var group = model.groups()[gid];
-      var link = window.location.protocol + '//' + window.location.host +
-        '/p/' + pid;
-      if (group.visibility === 'private') {
-        var password = window.prompt(conf.LANG.GROUP.SHARE_PASSWORD);
-        link += '?mypadspassword=' + password;
-      }
-      window.prompt(conf.LANG.GROUP.SHARE_LINK, link);
+    var l = window.location;
+    var url = l.protocol + '//' + l.host + l.pathname + '?/mypads/group/' + gid;
+    var suffix = (pid ? '/pad/view/' + pid : '/view');
+    window.prompt(conf.LANG.GROUP.SHARE_LINK, url + suffix);
   };
 }).call(this);

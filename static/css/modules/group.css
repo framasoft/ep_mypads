@@ -57,11 +57,11 @@ header.group { background: transparent; }
 
 header.group > h4 {
   color: #333333;
-  width: 60%;
+  width: 55%;
   margin: 0;
 }
 header.group > section {
-  width: 40%;
+  width: 45%;
   text-align: right;
 }
 

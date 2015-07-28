@@ -201,7 +201,7 @@ module.exports = (function () {
             .querySelectorAll('button[title=Share]');
           padShare[2].click();
           window.setTimeout(function () {
-            expect(link).toMatch('/p/[a-z0-9]+$');
+            expect(link).toMatch('/pad/view/[a-z0-9]+$');
             done();
           }, 100);
         });

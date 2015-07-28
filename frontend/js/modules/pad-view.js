@@ -30,6 +30,7 @@ module.exports = (function () {
   // Global dependencies
   var m = require('mithril');
   var ld = require('lodash');
+  var encode = require('js-base64').Base64.encode;
   // Local dependencies
   var conf = require('../configuration.js');
   var auth = require('../auth.js');
@@ -142,7 +143,7 @@ module.exports = (function () {
 
   view.pad = function (c) {
     var link = '/p/' + c.pad._id +
-    (c.sendPass() ? '?mypadspassword=' + c.password() : '');
+    (c.sendPass() ? '?mypadspassword=' + encode(c.password()) : '');
     return [
       m('p.external', [
         m('a', {

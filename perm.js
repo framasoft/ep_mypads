@@ -42,6 +42,7 @@ catch (e) {
     };
 }
 var ld = require('lodash');
+var decode = require('js-base64').Base64.decode;
 var auth = require('./auth.js');
 var pad = require('./model/pad.js');
 var group = require('./model/group.js');
@@ -108,7 +109,7 @@ module.exports = (function () {
       } else if (g.visibility === 'private') {
         var password = req.query.mypadspassword;
         if (!password) { return refuse(); }
-        auth.fn.isPasswordValid(g, password, function (err, valid) {
+        auth.fn.isPasswordValid(g, decode(password), function (err, valid) {
           if (err) { return unexpectedErr(err); }
           return (valid ? next() : refuse());
         });

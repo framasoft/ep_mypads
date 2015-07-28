@@ -21,6 +21,7 @@
   'use strict';
 
   var ld = require('lodash');
+  var encode = require('js-base64').Base64.encode;
   var specCommon = require('./common.js');
   var perm = require('../../perm.js');
   var user = require('../../model/user.js');
@@ -196,7 +197,7 @@
         delete res.msg;
         req.session.mypadsUid = users.jerry._id;
         req.params.pid = pads.annie._id;
-        req.query.mypadspassword = 'myLovelyGirl';
+        req.query.mypadspassword = encode('myLovelyGirl');
 
         perm.fn.check(req, res, function () {
           expect(res.code).toBeUndefined();

@@ -45,16 +45,21 @@ module.exports = (function () {
   */
 
   pad.controller = function () {
-    if (!auth.isAuthenticated()) {
-      return m.route('/login');
-    }
 
     var c = {
-      bookmarks: auth.userInfo().bookmarks.pads,
+      group: {},
+      pad: {},
       sendPass: m.prop(false),
       password: m.prop(''),
       showIframe: m.prop(true)
     };
+
+    c.isAuth = auth.isAuthenticated();
+    c.isGuest = !c.isAuth;
+    c.bookmarks = (c.isAuth ? auth.userInfo().bookmarks.pads : []);
+
+    var group = m.route.param('group');
+    var key = m.route.param('pad');
 
     /**
     * ## init function
@@ -63,18 +68,44 @@ module.exports = (function () {
     * Admin should not need password when visibility is private.
     */
 
-    var init = function () {
-      var group = m.route.param('group');
-      c.group = model.data()[group];
-      var key = m.route.param('pad');
-      c.pad = model.pads()[key];
+    var init = function (err) {
+      if (err) { return m.route('/mypads'); }
+      var _init = function () {
+        c.group = model.data()[group];
+        c.pad = model.pads()[key];
+        c.isAdmin = (function () {
+          if (c.isAuth) {
+            return ld.includes(c.group.admins, auth.userInfo()._id);
+          } else {
+            return false;
+          }
+        })();
+      };
+      if (model.data()[group]) {
+        _init();
+      } else {
+        c.isGuest = true;
+        model.fetchGroup(group, undefined, _init);
+      }
     };
 
-    if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
+    var fetchFn = (function () {
+      if (c.isAuth) {
+        return ld.partial(model.fetch, init);
+      } else {
+        return ld.partial(model.fetchGroup, group, undefined, init);
+      }
+    })();
+    if (ld.isEmpty(model.data())) { fetchFn(); } else { init(); }
 
     c.submit = function (e) {
       e.preventDefault();
-      c.sendPass = m.prop(true);
+      model.fetchGroup(group, c.password(), function (err) {
+        if (err) { return c.sendPass(false); }
+        c.group = model.data()[group];
+        c.pad = model.pads()[key];
+        c.sendPass(true);
+      });
     };
 
     return c;
@@ -86,58 +117,57 @@ module.exports = (function () {
 
   var view = {};
 
+  view.passForm = function(c) {
+    return m('form', {
+      id: 'password-form',
+      onsubmit: c.submit
+    }, [
+      m('label.block', { for: 'mypadspassword' }, conf.LANG.USER.PASSWORD),
+      m('input.block', {
+        type: 'password',
+        required: true,
+        placeholder: conf.LANG.USER.UNDEF,
+        value: c.password(),
+        oninput: m.withAttr('value', c.password)
+      }),
+      m('input.ok.block', {
+        form: 'password-form',
+        type: 'submit',
+        value: conf.LANG.USER.OK
+      })
+    ]);
+  };
+
   view.pad = function (c) {
-    var showPass = ((c.group.visibility === 'private') && !c.sendPass());
-    if (showPass) {
-      return [ m('form', {
-        id: 'password-form',
-        onsubmit: c.submit
-      }, [
-        m('label.block', { for: 'mypadspassword' }, conf.LANG.USER.PASSWORD),
-        m('input.block', {
-          type: 'password',
-          required: true,
-          placeholder: conf.LANG.USER.UNDEF,
-          value: c.password(),
-          oninput: m.withAttr('value', c.password)
-        }),
-        m('input.ok.block', {
-          form: 'password-form',
-          type: 'submit',
-          value: conf.LANG.USER.OK
-        })
-      ])];
-    } else {
-      var link = '/p/' + c.pad._id +
-        (c.sendPass() ? '?mypadspassword=' + c.password() : '');
-      return [
-        m('p.external', [
-          m('a', {
-            href: link,
-            target: '_blank',
-            title: conf.LANG.GROUP.PAD.OPEN_TAB,
-            onclick: function () {
-              c.showIframe(false);
-              return true;
-            }
-          }, [
-            m('i.icon-popup'),
-            m('span', conf.LANG.GROUP.PAD.OPEN_TAB)
-          ])
+    var link = '/p/' + c.pad._id +
+    (c.sendPass() ? '?mypadspassword=' + c.password() : '');
+    return [
+      m('p.external', [
+        m('a', {
+          href: link,
+          target: '_blank',
+          title: conf.LANG.GROUP.PAD.OPEN_TAB,
+          onclick: function () {
+            c.showIframe(false);
+            return true;
+          }
+        }, [
+          m('i.icon-popup'),
+          m('span', conf.LANG.GROUP.PAD.OPEN_TAB)
+        ])
         ]),
       (function () {
         if (c.showIframe()) {
           return m('iframe', { src: link });
         }
       })()
-      ];
-    }
-
+    ];
   };
 
   view.main = function (c) {
-    var isBookmarked = ld.includes(c.bookmarks, c.pad._id);
-    var isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
+    var showPass = (!c.isAdmin && (c.group.visibility === 'private') &&
+      !c.sendPass());
+    if (showPass) { return view.passForm(c); }
     var route = '/mypads/group/' + c.group._id;
     var GROUP = conf.LANG.GROUP;
     return m('section', { class: 'block-group group' }, [
@@ -154,43 +184,48 @@ module.exports = (function () {
           ')'
         ])
       ]),
-    m('p.actions', [
-      m('button', {
-        title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK),
-        onclick: function () { padMark(c.pad._id); }
-      }, [
-        m('i',
-          { class: 'icon-star' + (isBookmarked ? '' : '-empty') }),
-        m('span', (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK))
-      ]),
-      (function () {
-        if (c.group.visibility !== 'restricted') {
-          return m('button', {
-            title: conf.LANG.GROUP.SHARE,
-            onclick: padShare.bind(c, c.group._id, c.pad._id)
-          }, [ m('i.icon-link'), m('span', conf.LANG.GROUP.SHARE) ]);
-        }
-      })(),
-      (function () {
-        if (isAdmin) {
-          return m('a', {
-            href: route + '/pad/edit/' + c.pad._id,
-            config: m.route,
-            title: conf.LANG.GROUP.EDIT
-          }, [ m('i.icon-pencil'), m('span', conf.LANG.GROUP.EDIT) ]);
+      m('p.actions', [
+        (function () {
+          if (!c.isGuest) {
+            var isBookmarked = ld.includes(c.bookmarks, c.pad._id);
+            return m('button', {
+              title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK),
+              onclick: function () { padMark(c.pad._id); }
+            }, [
+              m('i',
+                { class: 'icon-star' + (isBookmarked ? '' : '-empty') }),
+              m('span', (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK))
+            ]);
           }
-      })(),
-      (function () {
-        if (isAdmin) {
-          return m('a', {
-            href: route + '/pad/remove/' + c.pad._id,
-            config: m.route,
-            title: conf.LANG.GROUP.REMOVE
-          }, [ m('i.icon-trash'), m('span', conf.LANG.GROUP.REMOVE) ]);
-        }
-      })()
-    ]),
-    m('section.block.pad', view.pad(c))
+        })(),
+        (function () {
+          if (c.group.visibility !== 'restricted') {
+            return m('button', {
+              title: conf.LANG.GROUP.SHARE,
+              onclick: padShare.bind(c, c.group._id, c.pad._id)
+            }, [ m('i.icon-link'), m('span', conf.LANG.GROUP.SHARE) ]);
+          }
+        })(),
+        (function () {
+          if (c.isAdmin) {
+            return m('a', {
+              href: route + '/pad/edit/' + c.pad._id,
+              config: m.route,
+              title: conf.LANG.GROUP.EDIT
+            }, [ m('i.icon-pencil'), m('span', conf.LANG.GROUP.EDIT) ]);
+            }
+        })(),
+        (function () {
+          if (c.isAdmin) {
+            return m('a', {
+              href: route + '/pad/remove/' + c.pad._id,
+              config: m.route,
+              title: conf.LANG.GROUP.REMOVE
+            }, [ m('i.icon-trash'), m('span', conf.LANG.GROUP.REMOVE) ]);
+          }
+        })()
+      ]),
+      m('section.block.pad', view.pad(c))
     ]);
   };
 

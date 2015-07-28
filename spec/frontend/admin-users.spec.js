@@ -57,7 +57,6 @@ module.exports = (function () {
         }, 100);
       });
 
-      /*
       afterAll(function (done) {
         qfirst('header nav a[href$="admin/logout"]').click();
         window.setTimeout(function () {
@@ -65,7 +64,6 @@ module.exports = (function () {
           window.setTimeout(done, 100);
         }, 200);
       });
-      */
 
       describe('admin user research', function () {
 

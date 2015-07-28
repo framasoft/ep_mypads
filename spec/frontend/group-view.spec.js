@@ -37,43 +37,45 @@ module.exports = (function () {
 
   view.run = function (app) {
 
+    var login = function (login, password, done) {
+      // Login and go to group view page
+      app.document.querySelector('header nav a:first-child').click();
+      window.setTimeout(function () {
+        fill(app.document.querySelector('input[name=login]'), login);
+        fill(app.document.querySelector('input[name=password]'), password);
+        app.document.querySelector('input[type=submit]').click();
+        window.setTimeout(function () {
+          app.document.querySelectorAll('a[href$=view]')[2].click();
+          window.setTimeout(function () {
+            $el = {
+              group: first('dl.group'),
+              groupQuit: first('button.cancel'),
+              padAdd: first('section.pad a'),
+              pads: first('section.pad ul'),
+              users: first('section.users ul')
+            };
+            first('body > section > div p').click();
+            window.setTimeout(done, 100);
+          }, 200);
+        }, 200);
+      }, 200);
+    };
+
+    var logout = function (done) {
+      app.document.querySelector('.icon-logout').parentNode.click();
+      window.setTimeout(function () {
+        app.document.querySelector('body > section p').click();
+        done();
+      }, 100);
+    };
+
     first = function (sel) { return app.document.querySelector(sel); };
     qall = function (sel) { return app.document.querySelectorAll(sel); };
 
     describe('group view module testing', function () {
 
-      beforeAll(function (done) {
-        // Login and go to group view page
-        app.document.querySelector('header nav a:first-child').click();
-        window.setTimeout(function () {
-          fill(app.document.querySelector('input[name=login]'), 'parker');
-          fill(app.document.querySelector('input[name=password]'),
-            'lovesKubiak');
-          app.document.querySelector('input[type=submit]').click();
-          window.setTimeout(function () {
-            app.document.querySelectorAll('a[href$=view]')[2].click();
-            window.setTimeout(function () {
-              $el = {
-                group: first('dl.group'),
-                groupQuit: first('button.cancel'),
-                padAdd: first('section.pad a'),
-                pads: first('section.pad ul'),
-                users: first('section.users ul')
-              };
-              first('body > section > div p').click();
-              window.setTimeout(done, 100);
-            }, 200);
-          }, 200);
-        }, 200);
-      });
-
-      afterAll(function (done) {
-        app.document.querySelector('.icon-logout').parentNode.click();
-        window.setTimeout(function () {
-          app.document.querySelector('body > section p').click();
-          done();
-        }, 100);
-      });
+      beforeAll(login.bind(null, 'parker', 'lovesKubiak'));
+      afterAll(logout);
 
       describe('group properties', function () {
 
@@ -93,6 +95,49 @@ module.exports = (function () {
           expect(defs[5].textContent).toBe('Tags');
           expect(values[5].textContent).toBe('cool, funky');
         });
+
+      });
+
+      describe('group public guest navigation', function () {
+        var url;
+
+        beforeAll(function (done) {
+          url = app.window.location.href;
+          logout(done);
+        });
+        afterAll(login.bind(null, 'parker', 'lovesKubiak'));
+
+        it('should allow access to this public group without login',
+          function (done) {
+            app.window.location.href = url;
+            window.setTimeout(function () {
+              app.document.querySelector('ul.lang li').click();
+              window.setTimeout(function () {
+                $el = {
+                  group: first('dl.group'),
+                  pads: first('section.pad ul'),
+                  users: first('section.users p')
+                };
+                var defs = $el.group.querySelectorAll('dt');
+                var values = $el.group.querySelectorAll('dd');
+                expect(defs[0].textContent).toBe('Pads');
+                expect(values[0].textContent).toBe('2');
+                expect(defs[1].textContent).toBe('Admins');
+                expect(values[1].textContent).toBe('1');
+                expect(defs[2].textContent).toBe('Users');
+                expect(values[2].textContent).toBe('0');
+                expect(defs[3].textContent).toBe('Visibility');
+                expect(values[3].textContent).toBe('public');
+                expect(defs[4].textContent).toBe('Readonly');
+                expect(values[4].textContent).toBe('false');
+                expect(defs[5].textContent).toBe('Tags');
+                expect(values[5].textContent).toBe('cool, funky');
+                expect($el.users.textContent).toMatch('you are not allowed');
+                done();
+              }, 100);
+            }, 400);
+          }
+        );
 
       });
 
@@ -252,6 +297,20 @@ module.exports = (function () {
               window.setTimeout(done, 100);
             }, 100);
           }, 100);
+        });
+
+      });
+
+      describe('group sharing', function () {
+
+        it('should allow to share public group MyPads URL', function () {
+          var $share = first('section.group h2 button[title=Share]');
+          var link;
+          app.window.prompt = function (title, val) { link = val; };
+          $share.click();
+          expect(link).toBeDefined();
+          expect(link).toMatch('mypads/group/');
+          expect(link).toMatch(/\/view$/);
         });
 
       });

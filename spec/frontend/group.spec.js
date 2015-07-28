@@ -135,6 +135,22 @@ module.exports = (function () {
 
       });
 
+      describe('group sharing', function () {
+
+        it('should allow to share public group MyPads URL', function () {
+          var sel = 'header.group button[title=Share]';
+          var $share = $el.common.querySelector(sel);
+          var link;
+          app.window.prompt = function (title, val) { link = val; };
+          $share.click();
+          expect(link).toBeDefined();
+          expect(link).toMatch('mypads/group/');
+          expect(link).toMatch(/\/view$/);
+        });
+
+      });
+
+
       describe('group tag filtering', function () {
         var g;
         var tags;

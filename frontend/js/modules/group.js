@@ -374,10 +374,9 @@ module.exports = (function () {
         ]),
       (function () {
         if (g.visibility !== 'restricted') {
-          return m('a', {
+          return m('button', {
+            type: 'button',
             onclick: padShare.bind(c, g._id, null),
-            href: '/mypads',
-            config: m.route,
             title: conf.LANG.GROUP.SHARE
           }, [ m('i.icon-link') ]);
         }

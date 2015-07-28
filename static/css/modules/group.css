@@ -65,7 +65,7 @@ header.group > section {
   text-align: right;
 }
 
-header.group a, footer.group > a.add, dl.group dd a, section.pad li a, section.pad li button, ul.admin-users li button,  ul.mark li button, ul.mark li a {
+header.group a, header.group button, footer.group > a.add, dl.group dd a, section.pad li a, section.pad li button, ul.admin-users li button,  ul.mark li button, ul.mark li a {
   color: #3e3363;
   font-weight: bold;
   text-decoration: none;
@@ -73,10 +73,10 @@ header.group a, footer.group > a.add, dl.group dd a, section.pad li a, section.p
   border: 0;
 }
 
-header.group a, section.pad li a, dl.group dd a, section.pad li button, ul.admin-users li button, section.pad, ul.mark li button, ul.mark li a {
+header.group a, header.group button, section.pad li a, dl.group dd a, section.pad li button, ul.admin-users li button, section.pad, ul.mark li button, ul.mark li a {
   background: none;
 }
-header.group > a:focus, header.group a:hover, section.pad li a:hover, section.pad li button:hover, ul.mark li button:hover, ul.mark li a:hover, section.pad li a:focus, section.pad li button:focus, ul.mark li button:focus, ul.mark li a:focus, section.pad p.sort button:focus, section.pad p.sort button:hover {
+header.group > a:focus, header.group a:hover, header.group button:focus, header.group button:hover, section.pad li a:hover, section.pad li button:hover, ul.mark li button:hover, ul.mark li a:hover, section.pad li a:focus, section.pad li button:focus, ul.mark li button:focus, ul.mark li a:focus, section.pad p.sort button:focus, section.pad p.sort button:hover {
   background-color: #3e3363;
   color: #e0e0e0;
 }

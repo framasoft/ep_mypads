@@ -33,39 +33,41 @@ module.exports = (function () {
 
   view.run = function (app) {
 
+    var login = function (done) {
+      // Login and go to group view page
+      app.document.querySelector('header nav a:first-child').click();
+      window.setTimeout(function () {
+        fill(app.document.querySelector('input[name=login]'), 'parker');
+        fill(app.document.querySelector('input[name=password]'), 'lovesKubiak');
+        app.document.querySelector('input[type=submit]').click();
+        window.setTimeout(function () {
+          app.document.querySelectorAll('a[href$=view]')[2].click();
+          window.setTimeout(function () {
+            qfirst('body > section > div p').click();
+            window.setTimeout(done, 100);
+          }, 200);
+        }, 200);
+      }, 200);
+    };
+
+    var logout = function (done) {
+      app.document.querySelector('.icon-logout').parentNode.click();
+      window.setTimeout(function () {
+        app.document.querySelector('body > section p').click();
+        done();
+      }, 100);
+    };
+
     // Shared variables
     var qfirst = function (sel) { return app.document.querySelector(sel); };
     var qall = function (sel) { return app.document.querySelectorAll(sel); };
 
     describe('pad view module testing', function () {
 
-      beforeAll(function (done) {
-        // Login and go to group view page
-        app.document.querySelector('header nav a:first-child').click();
-        window.setTimeout(function () {
-          fill(app.document.querySelector('input[name=login]'), 'parker');
-          fill(app.document.querySelector('input[name=password]'),
-            'lovesKubiak');
-          app.document.querySelector('input[type=submit]').click();
-          window.setTimeout(function () {
-            app.document.querySelectorAll('a[href$=view]')[2].click();
-            window.setTimeout(function () {
-              qfirst('body > section > div p').click();
-              window.setTimeout(done, 100);
-            }, 200);
-          }, 200);
-        }, 200);
-      });
+      beforeAll(login);
+      afterAll(logout);
 
-      afterAll(function (done) {
-        app.document.querySelector('.icon-logout').parentNode.click();
-        window.setTimeout(function () {
-          app.document.querySelector('body > section p').click();
-          done();
-        }, 100);
-      });
-
-      describe('public group view and properties', function () {
+      describe('public pad view and properties', function () {
 
         beforeAll(function (done) {
           qfirst('section.pad li span a').click();
@@ -106,6 +108,34 @@ module.exports = (function () {
         });
 
       });
+
+      describe('public pad view for guest', function () {
+        var url;
+
+        beforeAll(function (done) {
+          url = app.window.location.href;
+          logout(done);
+        });
+        afterAll(login);
+
+        it('should allow access to this public pad without login',
+          function (done) {
+            app.window.location.href = url;
+            window.setTimeout(function () {
+              app.document.querySelector('ul.lang li').click();
+              window.setTimeout(function () {
+                var title = qfirst('section.group h2 span');
+                var group = qfirst('span.subtitle');
+                expect(title.textContent).toBe('Pad Loving Annie');
+                expect(group.textContent).toMatch('memories');
+                done();
+              }, 100);
+            }, 400);
+          }
+        );
+
+      });
+
 
     });
 

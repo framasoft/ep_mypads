@@ -2527,10 +2527,9 @@ module.exports = (function () {
         ]),
       (function () {
         if (g.visibility !== 'restricted') {
-          return m('a', {
+          return m('button', {
+            type: 'button',
             onclick: padShare.bind(c, g._id, null),
-            href: '/mypads',
-            config: m.route,
             title: conf.LANG.GROUP.SHARE
           }, [ m('i.icon-link') ]);
         }
@@ -20780,7 +20779,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {

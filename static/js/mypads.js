@@ -339,7 +339,7 @@ module.exports = (function () {
 *
 *  ## Description
 *
-*  This module is the main one, containing groups.
+*  This module is the main one, containing all cached frontend data.
 */
 
 module.exports = (function () {
@@ -362,6 +362,15 @@ module.exports = (function () {
     });
   };
   model.init();
+
+  /**
+  * `fetch`
+  *
+  * This function takes an optional `callback`, called with *error* or
+  * *result*. It uses the usefull group.GET API call to populate local groups,
+  * pads, users and admins objects. It also call userlist API to populate them
+  * too.
+  */
 
   model.fetch = function (callback) {
     var errFn = function (err) {
@@ -396,26 +405,41 @@ module.exports = (function () {
         }).then(function (resp) {
           u.userlists = resp.value;
           auth.userInfo(u);
-          if (callback) { callback(resp); }
+          if (callback) { callback(null, resp); }
         }, errFn);
       }, errFn);
   };
 
-  model.fetchPublicGroup = function (gid, callback) {
+  /**
+  * ## fetchGroup
+  *
+  * This function is used for unauth users or non-invited authenticated users.
+  * It calls group.GET/gid API and populates local models. It takes mandatory
+  * :
+  *
+  * - `gid` key string
+  * - `password` key string, can be set as *undefined*. If given, will be sent
+  *   as data parameter
+  * - `callback` function, called with *error* or *result*
+  */
+
+  model.fetchGroup = function (gid, password, callback) {
     var errFn = function (err) {
       notif.error({ body: ld.result(conf.LANG, err.error) });
       if (callback) { callback(err); }
     };
-    m.request({
+    var opts = {
       url: conf.URLS.GROUP + '/' + gid,
       method: 'GET'
-    }).then(
+    };
+    if (password) { opts.data = { password: password }; }
+    m.request(opts).then(
       function (resp) {
         var data = model.data();
         data[resp.key] = resp.value;
         model.data(data);
         model.pads(ld.merge(model.pads(), resp.pads));
-        if (callback) { callback(resp); }
+        if (callback) { callback(null, resp); }
       }, errFn);
   };
 
@@ -1733,7 +1757,11 @@ module.exports = (function () {
   group.controller = function () {
 
     var key = m.route.param('key');
-    var c = { group: { tags: [] } };
+    var c = {
+      group: { tags: [] },
+      privatePassword: m.prop(undefined),
+      sendPass: m.prop(false)
+    };
     if (auth.isAuthenticated()) {
       c.bookmarks = auth.userInfo().bookmarks.pads;
     }
@@ -1758,7 +1786,7 @@ module.exports = (function () {
       if (model.data()[key]) {
         _init();
       } else {
-        model.fetchPublicGroup(key, _init);
+        model.fetchGroup(key, undefined, _init);
       }
     };
 
@@ -1766,7 +1794,7 @@ module.exports = (function () {
       if (auth.isAuthenticated()) {
         return ld.partial(model.fetch, init);
       } else {
-        return ld.partial(model.fetchPublicGroup, key, init);
+        return ld.partial(model.fetchGroup, key, undefined, init);
       }
     })();
     if (ld.isEmpty(model.data())) { fetchFn(); } else { init(); }
@@ -1809,6 +1837,22 @@ module.exports = (function () {
           notif.error({ body: ld.result(conf.LANG, err.error) });
         });
       }
+    };
+
+    /**
+    * ### submitPass
+    *
+    * This function manages password sending for private group when the user is
+    * not an admin of this group.
+    */
+
+    c.submitPass = function (e) {
+      e.preventDefault();
+      model.fetchGroup(key, c.privatePassword(), function (err) {
+        if (err) { return c.sendPass(false); }
+        c.group = model.data()[key];
+        c.sendPass(true);
+      });
     };
 
     return c;
@@ -1998,6 +2042,27 @@ module.exports = (function () {
     return m('section', sectionElements);
   };
 
+  view.passForm = function (c) {
+    return [ m('form', {
+      id: 'password-form',
+      onsubmit: c.submitPass
+    }, [
+      m('label.block', { for: 'mypadspassword' }, conf.LANG.USER.PASSWORD),
+      m('input.block', {
+        type: 'password',
+        required: true,
+        placeholder: conf.LANG.USER.UNDEF,
+        value: c.privatePassword(),
+        oninput: m.withAttr('value', c.privatePassword)
+      }),
+      m('input.ok.block', {
+        form: 'password-form',
+        type: 'submit',
+        value: conf.LANG.USER.OK
+      })
+    ])];
+  };
+
   /**
   * ### main
   *
@@ -2025,22 +2090,31 @@ module.exports = (function () {
       h2Elements.push(m('button.cancel', { onclick: c.quit },
           [ m('i.icon-cancel'), conf.LANG.GROUP.QUIT_GROUP ]));
     }
-    return m('section', { class: 'block-group group' }, [
-      m('h2.block', h2Elements),
-      m('section.block.props', [
-        m('h3.title', conf.LANG.GROUP.PROPERTIES),
-        view.properties(c)
-      ]),
-      m('section.block.pads', [
-        m('h3.title', conf.LANG.GROUP.PAD.PADS),
-        view.pads(c)
-      ]),
-      m('section.block.users', [
-        m('h3.title',
-          conf.LANG.GROUP.PAD.ADMINS + ' & ' + conf.LANG.GROUP.PAD.USERS),
-        view.users(c)
-      ])
-    ]);
+    var showPass = (!c.isAdmin && (c.group.visibility === 'private') &&
+      !c.sendPass());
+    if (showPass) {
+      return m('section', { class: 'block-group group' }, [
+        m('h2.block', h2Elements),
+        view.passForm(c)
+      ]);
+    } else {
+      return m('section', { class: 'block-group group' }, [
+        m('h2.block', h2Elements),
+        m('section.block.props', [
+          m('h3.title', conf.LANG.GROUP.PROPERTIES),
+          view.properties(c)
+        ]),
+        m('section.block.pads', [
+          m('h3.title', conf.LANG.GROUP.PAD.PADS),
+          view.pads(c)
+        ]),
+        m('section.block.users', [
+          m('h3.title',
+            conf.LANG.GROUP.PAD.ADMINS + ' & ' + conf.LANG.GROUP.PAD.USERS),
+          view.users(c)
+        ])
+      ]);
+    }
   };
 
   /**
@@ -18896,7 +18970,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {
@@ -18937,7 +19011,7 @@ module.exports={
       },
       "PERMISSION": {
         "UNEXPECTED": "Sorry, an unexpected has error has occured",
-        "UNAUTHORIZED": "You are not allowed to access to this pad"
+        "UNAUTHORIZED": "You are not allowed to access to this record"
       },
       "GROUP": {
         "INEXISTENT": "Group does not exist",

@@ -22,7 +22,7 @@
 *
 *  ## Description
 *
-*  This module is the main one, containing groups.
+*  This module is the main one, containing all cached frontend data.
 */
 
 module.exports = (function () {
@@ -45,6 +45,15 @@ module.exports = (function () {
     });
   };
   model.init();
+
+  /**
+  * `fetch`
+  *
+  * This function takes an optional `callback`, called with *error* or
+  * *result*. It uses the usefull group.GET API call to populate local groups,
+  * pads, users and admins objects. It also call userlist API to populate them
+  * too.
+  */
 
   model.fetch = function (callback) {
     var errFn = function (err) {
@@ -79,26 +88,41 @@ module.exports = (function () {
         }).then(function (resp) {
           u.userlists = resp.value;
           auth.userInfo(u);
-          if (callback) { callback(resp); }
+          if (callback) { callback(null, resp); }
         }, errFn);
       }, errFn);
   };
 
-  model.fetchPublicGroup = function (gid, callback) {
+  /**
+  * ## fetchGroup
+  *
+  * This function is used for unauth users or non-invited authenticated users.
+  * It calls group.GET/gid API and populates local models. It takes mandatory
+  * :
+  *
+  * - `gid` key string
+  * - `password` key string, can be set as *undefined*. If given, will be sent
+  *   as data parameter
+  * - `callback` function, called with *error* or *result*
+  */
+
+  model.fetchGroup = function (gid, password, callback) {
     var errFn = function (err) {
       notif.error({ body: ld.result(conf.LANG, err.error) });
       if (callback) { callback(err); }
     };
-    m.request({
+    var opts = {
       url: conf.URLS.GROUP + '/' + gid,
       method: 'GET'
-    }).then(
+    };
+    if (password) { opts.data = { password: password }; }
+    m.request(opts).then(
       function (resp) {
         var data = model.data();
         data[resp.key] = resp.value;
         model.data(data);
         model.pads(ld.merge(model.pads(), resp.pads));
-        if (callback) { callback(resp); }
+        if (callback) { callback(null, resp); }
       }, errFn);
   };
 

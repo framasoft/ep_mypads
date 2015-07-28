@@ -52,7 +52,11 @@ module.exports = (function () {
   group.controller = function () {
 
     var key = m.route.param('key');
-    var c = { group: { tags: [] } };
+    var c = {
+      group: { tags: [] },
+      privatePassword: m.prop(undefined),
+      sendPass: m.prop(false)
+    };
     if (auth.isAuthenticated()) {
       c.bookmarks = auth.userInfo().bookmarks.pads;
     }
@@ -77,7 +81,7 @@ module.exports = (function () {
       if (model.data()[key]) {
         _init();
       } else {
-        model.fetchPublicGroup(key, _init);
+        model.fetchGroup(key, undefined, _init);
       }
     };
 
@@ -85,7 +89,7 @@ module.exports = (function () {
       if (auth.isAuthenticated()) {
         return ld.partial(model.fetch, init);
       } else {
-        return ld.partial(model.fetchPublicGroup, key, init);
+        return ld.partial(model.fetchGroup, key, undefined, init);
       }
     })();
     if (ld.isEmpty(model.data())) { fetchFn(); } else { init(); }
@@ -128,6 +132,22 @@ module.exports = (function () {
           notif.error({ body: ld.result(conf.LANG, err.error) });
         });
       }
+    };
+
+    /**
+    * ### submitPass
+    *
+    * This function manages password sending for private group when the user is
+    * not an admin of this group.
+    */
+
+    c.submitPass = function (e) {
+      e.preventDefault();
+      model.fetchGroup(key, c.privatePassword(), function (err) {
+        if (err) { return c.sendPass(false); }
+        c.group = model.data()[key];
+        c.sendPass(true);
+      });
     };
 
     return c;
@@ -317,6 +337,27 @@ module.exports = (function () {
     return m('section', sectionElements);
   };
 
+  view.passForm = function (c) {
+    return [ m('form', {
+      id: 'password-form',
+      onsubmit: c.submitPass
+    }, [
+      m('label.block', { for: 'mypadspassword' }, conf.LANG.USER.PASSWORD),
+      m('input.block', {
+        type: 'password',
+        required: true,
+        placeholder: conf.LANG.USER.UNDEF,
+        value: c.privatePassword(),
+        oninput: m.withAttr('value', c.privatePassword)
+      }),
+      m('input.ok.block', {
+        form: 'password-form',
+        type: 'submit',
+        value: conf.LANG.USER.OK
+      })
+    ])];
+  };
+
   /**
   * ### main
   *
@@ -344,22 +385,31 @@ module.exports = (function () {
       h2Elements.push(m('button.cancel', { onclick: c.quit },
           [ m('i.icon-cancel'), conf.LANG.GROUP.QUIT_GROUP ]));
     }
-    return m('section', { class: 'block-group group' }, [
-      m('h2.block', h2Elements),
-      m('section.block.props', [
-        m('h3.title', conf.LANG.GROUP.PROPERTIES),
-        view.properties(c)
-      ]),
-      m('section.block.pads', [
-        m('h3.title', conf.LANG.GROUP.PAD.PADS),
-        view.pads(c)
-      ]),
-      m('section.block.users', [
-        m('h3.title',
-          conf.LANG.GROUP.PAD.ADMINS + ' & ' + conf.LANG.GROUP.PAD.USERS),
-        view.users(c)
-      ])
-    ]);
+    var showPass = (!c.isAdmin && (c.group.visibility === 'private') &&
+      !c.sendPass());
+    if (showPass) {
+      return m('section', { class: 'block-group group' }, [
+        m('h2.block', h2Elements),
+        view.passForm(c)
+      ]);
+    } else {
+      return m('section', { class: 'block-group group' }, [
+        m('h2.block', h2Elements),
+        m('section.block.props', [
+          m('h3.title', conf.LANG.GROUP.PROPERTIES),
+          view.properties(c)
+        ]),
+        m('section.block.pads', [
+          m('h3.title', conf.LANG.GROUP.PAD.PADS),
+          view.pads(c)
+        ]),
+        m('section.block.users', [
+          m('h3.title',
+            conf.LANG.GROUP.PAD.ADMINS + ' & ' + conf.LANG.GROUP.PAD.USERS),
+          view.users(c)
+        ])
+      ]);
+    }
   };
 
   /**

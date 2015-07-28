@@ -54,7 +54,7 @@ module.exports = (function () {
       c.userlists = auth.userInfo().userlists;
     };
 
-    if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
+    if (ld.isEmpty(model.groups())) { model.fetch(init); } else { init(); }
     return c;
   };
 

@@ -91,7 +91,7 @@ module.exports = (function () {
       });
     };
 
-    if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
+    if (ld.isEmpty(model.groups())) { model.fetch(init); } else { init(); }
 
     /**
     * ### submission

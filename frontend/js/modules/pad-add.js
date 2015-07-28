@@ -79,9 +79,9 @@ module.exports = (function () {
         pads[resp.key] = resp.value;
         model.pads(pads);
         if (!key) {
-          var groups = model.data();
+          var groups = model.groups();
           groups[gkey].pads.push(resp.key);
-          model.data(groups);
+          model.groups(groups);
         }
         notif.success({ body: opts.successMsg });
         m.route('/mypads/group/' + gkey + '/view');

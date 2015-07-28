@@ -72,7 +72,7 @@ module.exports = (function () {
           .value();
       };
       c.bookmarks = {
-        groups: items(model.data(), uMarks.groups),
+        groups: items(model.groups(), uMarks.groups),
         pads: items(model.pads(), uMarks.pads)
       };
     };
@@ -90,7 +90,7 @@ module.exports = (function () {
     };
 
     // Bootstrapping
-    if (ld.isEmpty(model.data())) {
+    if (ld.isEmpty(model.groups())) {
       model.fetch(c.computeBookmarks);
     } else {
       c.computeBookmarks();

@@ -53,17 +53,17 @@ module.exports = (function () {
     var gid = m.route.param('group');
 
     var init = function () {
-      c.selectedGroups = ld(model.data())
+      c.selectedGroups = ld(model.groups())
         .values()
         .filter(function (g) {
           var isAdmin = ld.includes(g.admins, auth.userInfo()._id);
           return (isAdmin && (g._id !== gid));
         })
         .value();
-      c.group = model.data()[gid];
+      c.group = model.groups()[gid];
     };
 
-    if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
+    if (ld.isEmpty(model.groups())) { model.fetch(init); } else { init(); }
 
     /**
     * ### c.movePads
@@ -95,8 +95,8 @@ module.exports = (function () {
       };
       var done = function (resp) {
         if (resp) {
-          ld.pull(model.data()[gid].pads, resp.key);
-          model.data()[c.data.newGroup()].pads.push(resp.key);
+          ld.pull(model.groups()[gid].pads, resp.key);
+          model.groups()[c.data.newGroup()].pads.push(resp.key);
         }
         if (pads.length) {
           updatePad(pads.pop());

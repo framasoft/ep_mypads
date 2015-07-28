@@ -37,7 +37,7 @@ module.exports = (function () {
   var model = {};
   model.init = function () {
     ld.assign(model, {
-      data: m.prop({}),
+      groups: m.prop({}),
       pads: m.prop({}),
       users: m.prop([]),
       admins: m.prop([]),
@@ -65,7 +65,7 @@ module.exports = (function () {
       method: 'GET'
     }).then(
       function (resp) {
-        model.data(resp.value.groups); 
+        model.groups(resp.value.groups); 
         model.pads(resp.value.pads);
         model.admins(resp.value.admins);
         var u = auth.userInfo();
@@ -118,9 +118,9 @@ module.exports = (function () {
     if (password) { opts.data = { password: password }; }
     m.request(opts).then(
       function (resp) {
-        var data = model.data();
+        var data = model.groups();
         data[resp.key] = resp.value;
-        model.data(data);
+        model.groups(data);
         model.pads(ld.merge(model.pads(), resp.pads));
         if (callback) { callback(null, resp); }
       }, errFn);

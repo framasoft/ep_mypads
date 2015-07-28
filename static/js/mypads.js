@@ -354,7 +354,7 @@ module.exports = (function () {
   var model = {};
   model.init = function () {
     ld.assign(model, {
-      data: m.prop({}),
+      groups: m.prop({}),
       pads: m.prop({}),
       users: m.prop([]),
       admins: m.prop([]),
@@ -382,7 +382,7 @@ module.exports = (function () {
       method: 'GET'
     }).then(
       function (resp) {
-        model.data(resp.value.groups); 
+        model.groups(resp.value.groups); 
         model.pads(resp.value.pads);
         model.admins(resp.value.admins);
         var u = auth.userInfo();
@@ -435,9 +435,9 @@ module.exports = (function () {
     if (password) { opts.data = { password: password }; }
     m.request(opts).then(
       function (resp) {
-        var data = model.data();
+        var data = model.groups();
         data[resp.key] = resp.value;
-        model.data(data);
+        model.groups(data);
         model.pads(ld.merge(model.pads(), resp.pads));
         if (callback) { callback(null, resp); }
       }, errFn);
@@ -1257,7 +1257,7 @@ module.exports = (function () {
           .value();
       };
       c.bookmarks = {
-        groups: items(model.data(), uMarks.groups),
+        groups: items(model.groups(), uMarks.groups),
         pads: items(model.pads(), uMarks.pads)
       };
     };
@@ -1275,7 +1275,7 @@ module.exports = (function () {
     };
 
     // Bootstrapping
-    if (ld.isEmpty(model.data())) {
+    if (ld.isEmpty(model.groups())) {
       model.fetch(c.computeBookmarks);
     } else {
       c.computeBookmarks();
@@ -1414,7 +1414,7 @@ module.exports = (function () {
       var tagsCurrent;
       if (!c.addView()) {
         var key = m.route.param('key');
-        c.group = model.data()[key];
+        c.group = model.groups()[key];
         ld.map(ld.keys(c.group), function (f) {
             c.data[f] = m.prop(c.group[f]);
         });
@@ -1429,7 +1429,7 @@ module.exports = (function () {
       c.data.tags = function () { return c.tag.current; };
       c.data.tags.toJSON = function () { return c.tag.current; };
     };
-    if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
+    if (ld.isEmpty(model.groups())) { model.fetch(init); } else { init(); }
 
     /**
     * `submit` internal calls the public API to add a new group or edit an
@@ -1453,9 +1453,9 @@ module.exports = (function () {
       })();
       opts.params.data = ld.assign(c.data, { admin: auth.userInfo()._id });
       m.request(opts.params).then(function (resp) {
-        var data = model.data();
+        var data = model.groups();
         data[resp.key] = resp.value;
-        model.data(data);
+        model.groups(data);
         model.tags(ld.union(model.tags(), resp.value.tags));
         notif.success({ body: opts.extra.msg });
         m.route('/mypads/group/' + resp.value._id + '/view');
@@ -1684,9 +1684,9 @@ module.exports = (function () {
         method: 'DELETE',
         url: conf.URLS.GROUP + '/' + m.route.param('key')
       }).then(function (resp) {
-        var data = model.data();
+        var data = model.groups();
         delete data[resp.key];
-        model.data(data);
+        model.groups(data);
         notif.success({ body: conf.LANG.GROUP.INFO.REMOVE_SUCCESS });
         m.route('/mypads/group/list');
       }, function (err) {
@@ -1768,9 +1768,9 @@ module.exports = (function () {
 
     var init = function (err) {
       if (err) { return m.route('/mypads'); }
-      c.isGuest = (!auth.isAuthenticated() || !model.data()[key]);
+      c.isGuest = (!auth.isAuthenticated() || !model.groups()[key]);
       var _init = function () {
-        c.group = model.data()[key];
+        c.group = model.groups()[key];
         if (!c.isGuest) {
           c.isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
           ld.forEach(['pads', 'admins', 'users'], function (f) {
@@ -1783,7 +1783,7 @@ module.exports = (function () {
           });
         }
       };
-      if (model.data()[key]) {
+      if (model.groups()[key]) {
         _init();
       } else {
         model.fetchGroup(key, undefined, _init);
@@ -1797,7 +1797,7 @@ module.exports = (function () {
         return ld.partial(model.fetchGroup, key, undefined, init);
       }
     })();
-    if (ld.isEmpty(model.data())) { fetchFn(); } else { init(); }
+    if (ld.isEmpty(model.groups())) { fetchFn(); } else { init(); }
 
     /**
     * ### sortBy
@@ -1828,9 +1828,9 @@ module.exports = (function () {
           url: conf.URLS.GROUP + '/resign',
           data: { gid: c.group._id }
         }).then(function (resp) {
-          var data = model.data();
+          var data = model.groups();
           delete data[resp.value._id];
-          model.data(data);
+          model.groups(data);
           notif.success({ body: conf.LANG.GROUP.INFO.RESIGN_SUCCESS });
           m.route('/mypads/group/list');
         }, function (err) {
@@ -1850,7 +1850,7 @@ module.exports = (function () {
       e.preventDefault();
       model.fetchGroup(key, c.privatePassword(), function (err) {
         if (err) { return c.sendPass(false); }
-        c.group = model.data()[key];
+        c.group = model.groups()[key];
         c.sendPass(true);
       });
     };
@@ -2340,13 +2340,13 @@ module.exports = (function () {
     * list view needs. It :
     *
     * - filters according to `c.filters`
-    * - takes model.data() and creates a new object with separate bookmared,
+    * - takes model.groups() and creates a new object with separate bookmared,
     *   archived and normal groups
     * - sets `c.groups` for usage in view.
     */
 
     c.computeGroups = function () {
-      c.groups = ld(model.data()).values().sortBy('name').value();
+      c.groups = ld(model.groups()).values().sortBy('name').value();
       var userGroups = u().bookmarks.groups;
       c.groups = ld.reduce(c.groups, function (memo, g) {
         for (var k in c.filters) {
@@ -2367,7 +2367,7 @@ module.exports = (function () {
 
 
     // Bootstrapping
-    if (ld.isEmpty(model.data())) {
+    if (ld.isEmpty(model.groups())) {
       model.fetch(c.computeGroups);
     } else {
       c.computeGroups();
@@ -3129,9 +3129,9 @@ module.exports = (function () {
         pads[resp.key] = resp.value;
         model.pads(pads);
         if (!key) {
-          var groups = model.data();
+          var groups = model.groups();
           groups[gkey].pads.push(resp.key);
-          model.data(groups);
+          model.groups(groups);
         }
         notif.success({ body: opts.successMsg });
         m.route('/mypads/group/' + gkey + '/view');
@@ -3270,17 +3270,17 @@ module.exports = (function () {
     var gid = m.route.param('group');
 
     var init = function () {
-      c.selectedGroups = ld(model.data())
+      c.selectedGroups = ld(model.groups())
         .values()
         .filter(function (g) {
           var isAdmin = ld.includes(g.admins, auth.userInfo()._id);
           return (isAdmin && (g._id !== gid));
         })
         .value();
-      c.group = model.data()[gid];
+      c.group = model.groups()[gid];
     };
 
-    if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
+    if (ld.isEmpty(model.groups())) { model.fetch(init); } else { init(); }
 
     /**
     * ### c.movePads
@@ -3312,8 +3312,8 @@ module.exports = (function () {
       };
       var done = function (resp) {
         if (resp) {
-          ld.pull(model.data()[gid].pads, resp.key);
-          model.data()[c.data.newGroup()].pads.push(resp.key);
+          ld.pull(model.groups()[gid].pads, resp.key);
+          model.groups()[c.data.newGroup()].pads.push(resp.key);
         }
         if (pads.length) {
           updatePad(pads.pop());
@@ -3487,9 +3487,9 @@ module.exports = (function () {
         var pads = model.pads();
         delete pads[resp.key];
         model.pads(pads);
-        var groups = model.data();
+        var groups = model.groups();
         ld.pull(groups[gkey].pads, key);
-        model.data(groups);
+        model.groups(groups);
         notif.success({ body: conf.LANG.GROUP.INFO.PAD_REMOVE_SUCCESS });
         m.route('/mypads/group/' + gkey + '/view');
       }, function (err) {
@@ -3545,7 +3545,7 @@ module.exports = (function () {
   * Used to display the real etherpad link.
   */
   return function (gid, pid) {
-      var group = model.data()[gid];
+      var group = model.groups()[gid];
       var link = window.location.protocol + '//' + window.location.host +
         '/p/' + pid;
       if (group.visibility === 'private') {
@@ -3630,7 +3630,7 @@ module.exports = (function () {
     var init = function (err) {
       if (err) { return m.route('/mypads'); }
       var _init = function () {
-        c.group = model.data()[group];
+        c.group = model.groups()[group];
         c.pad = model.pads()[key];
         c.isAdmin = (function () {
           if (c.isAuth) {
@@ -3640,7 +3640,7 @@ module.exports = (function () {
           }
         })();
       };
-      if (model.data()[group]) {
+      if (model.groups()[group]) {
         _init();
       } else {
         c.isGuest = true;
@@ -3655,13 +3655,13 @@ module.exports = (function () {
         return ld.partial(model.fetchGroup, group, undefined, init);
       }
     })();
-    if (ld.isEmpty(model.data())) { fetchFn(); } else { init(); }
+    if (ld.isEmpty(model.groups())) { fetchFn(); } else { init(); }
 
     c.submit = function (e) {
       e.preventDefault();
       model.fetchGroup(group, c.password(), function (err) {
         if (err) { return c.sendPass(false); }
-        c.group = model.data()[group];
+        c.group = model.groups()[group];
         c.pad = model.pads()[key];
         c.sendPass(true);
       });
@@ -4215,7 +4215,7 @@ module.exports = (function () {
 
     var init = function () {
       var group = m.route.param('group');
-      c.group = model.data()[group];
+      c.group = model.groups()[group];
       var users = ld.merge(model.admins(), model.users());
       users = ld.reduce(users, function (memo, val) {
         memo.byId[val._id] = val;
@@ -4236,7 +4236,7 @@ module.exports = (function () {
         tags: ld.pull(ld.keys(c.users), auth.userInfo().login)
       });
     };
-    if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
+    if (ld.isEmpty(model.groups())) { model.fetch(init); } else { init(); }
 
     /**
     * ### userlistAdd
@@ -4829,7 +4829,7 @@ module.exports = (function () {
       });
     };
 
-    if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
+    if (ld.isEmpty(model.groups())) { model.fetch(init); } else { init(); }
 
     /**
     * ### submission
@@ -5099,7 +5099,7 @@ module.exports = (function () {
       c.userlists = auth.userInfo().userlists;
     };
 
-    if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
+    if (ld.isEmpty(model.groups())) { model.fetch(init); } else { init(); }
     return c;
   };
 
@@ -19005,7 +19005,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {

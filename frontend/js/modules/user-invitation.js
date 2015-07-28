@@ -86,7 +86,7 @@ module.exports = (function () {
 
     var init = function () {
       var group = m.route.param('group');
-      c.group = model.data()[group];
+      c.group = model.groups()[group];
       var users = ld.merge(model.admins(), model.users());
       users = ld.reduce(users, function (memo, val) {
         memo.byId[val._id] = val;
@@ -107,7 +107,7 @@ module.exports = (function () {
         tags: ld.pull(ld.keys(c.users), auth.userInfo().login)
       });
     };
-    if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
+    if (ld.isEmpty(model.groups())) { model.fetch(init); } else { init(); }
 
     /**
     * ### userlistAdd

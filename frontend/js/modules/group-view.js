@@ -63,9 +63,9 @@ module.exports = (function () {
 
     var init = function (err) {
       if (err) { return m.route('/mypads'); }
-      c.isGuest = (!auth.isAuthenticated() || !model.data()[key]);
+      c.isGuest = (!auth.isAuthenticated() || !model.groups()[key]);
       var _init = function () {
-        c.group = model.data()[key];
+        c.group = model.groups()[key];
         if (!c.isGuest) {
           c.isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
           ld.forEach(['pads', 'admins', 'users'], function (f) {
@@ -78,7 +78,7 @@ module.exports = (function () {
           });
         }
       };
-      if (model.data()[key]) {
+      if (model.groups()[key]) {
         _init();
       } else {
         model.fetchGroup(key, undefined, _init);
@@ -92,7 +92,7 @@ module.exports = (function () {
         return ld.partial(model.fetchGroup, key, undefined, init);
       }
     })();
-    if (ld.isEmpty(model.data())) { fetchFn(); } else { init(); }
+    if (ld.isEmpty(model.groups())) { fetchFn(); } else { init(); }
 
     /**
     * ### sortBy
@@ -123,9 +123,9 @@ module.exports = (function () {
           url: conf.URLS.GROUP + '/resign',
           data: { gid: c.group._id }
         }).then(function (resp) {
-          var data = model.data();
+          var data = model.groups();
           delete data[resp.value._id];
-          model.data(data);
+          model.groups(data);
           notif.success({ body: conf.LANG.GROUP.INFO.RESIGN_SUCCESS });
           m.route('/mypads/group/list');
         }, function (err) {
@@ -145,7 +145,7 @@ module.exports = (function () {
       e.preventDefault();
       model.fetchGroup(key, c.privatePassword(), function (err) {
         if (err) { return c.sendPass(false); }
-        c.group = model.data()[key];
+        c.group = model.groups()[key];
         c.sendPass(true);
       });
     };

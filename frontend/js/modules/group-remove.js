@@ -51,9 +51,9 @@ module.exports = (function () {
         method: 'DELETE',
         url: conf.URLS.GROUP + '/' + m.route.param('key')
       }).then(function (resp) {
-        var data = model.data();
+        var data = model.groups();
         delete data[resp.key];
-        model.data(data);
+        model.groups(data);
         notif.success({ body: conf.LANG.GROUP.INFO.REMOVE_SUCCESS });
         m.route('/mypads/group/list');
       }, function (err) {

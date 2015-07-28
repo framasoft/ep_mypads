@@ -37,7 +37,7 @@ module.exports = (function () {
   * Used to display the real etherpad link.
   */
   return function (gid, pid) {
-      var group = model.data()[gid];
+      var group = model.groups()[gid];
       var link = window.location.protocol + '//' + window.location.host +
         '/p/' + pid;
       if (group.visibility === 'private') {

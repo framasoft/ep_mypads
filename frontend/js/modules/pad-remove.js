@@ -56,9 +56,9 @@ module.exports = (function () {
         var pads = model.pads();
         delete pads[resp.key];
         model.pads(pads);
-        var groups = model.data();
+        var groups = model.groups();
         ld.pull(groups[gkey].pads, key);
-        model.data(groups);
+        model.groups(groups);
         notif.success({ body: conf.LANG.GROUP.INFO.PAD_REMOVE_SUCCESS });
         m.route('/mypads/group/' + gkey + '/view');
       }, function (err) {

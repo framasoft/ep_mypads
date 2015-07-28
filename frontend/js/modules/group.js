@@ -200,13 +200,13 @@ module.exports = (function () {
     * list view needs. It :
     *
     * - filters according to `c.filters`
-    * - takes model.data() and creates a new object with separate bookmared,
+    * - takes model.groups() and creates a new object with separate bookmared,
     *   archived and normal groups
     * - sets `c.groups` for usage in view.
     */
 
     c.computeGroups = function () {
-      c.groups = ld(model.data()).values().sortBy('name').value();
+      c.groups = ld(model.groups()).values().sortBy('name').value();
       var userGroups = u().bookmarks.groups;
       c.groups = ld.reduce(c.groups, function (memo, g) {
         for (var k in c.filters) {
@@ -227,7 +227,7 @@ module.exports = (function () {
 
 
     // Bootstrapping
-    if (ld.isEmpty(model.data())) {
+    if (ld.isEmpty(model.groups())) {
       model.fetch(c.computeGroups);
     } else {
       c.computeGroups();

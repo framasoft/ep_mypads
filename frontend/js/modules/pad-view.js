@@ -71,7 +71,7 @@ module.exports = (function () {
     var init = function (err) {
       if (err) { return m.route('/mypads'); }
       var _init = function () {
-        c.group = model.data()[group];
+        c.group = model.groups()[group];
         c.pad = model.pads()[key];
         c.isAdmin = (function () {
           if (c.isAuth) {
@@ -81,7 +81,7 @@ module.exports = (function () {
           }
         })();
       };
-      if (model.data()[group]) {
+      if (model.groups()[group]) {
         _init();
       } else {
         c.isGuest = true;
@@ -96,13 +96,13 @@ module.exports = (function () {
         return ld.partial(model.fetchGroup, group, undefined, init);
       }
     })();
-    if (ld.isEmpty(model.data())) { fetchFn(); } else { init(); }
+    if (ld.isEmpty(model.groups())) { fetchFn(); } else { init(); }
 
     c.submit = function (e) {
       e.preventDefault();
       model.fetchGroup(group, c.password(), function (err) {
         if (err) { return c.sendPass(false); }
-        c.group = model.data()[group];
+        c.group = model.groups()[group];
         c.pad = model.pads()[key];
         c.sendPass(true);
       });

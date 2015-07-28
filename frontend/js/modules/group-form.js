@@ -62,7 +62,7 @@ module.exports = (function () {
       var tagsCurrent;
       if (!c.addView()) {
         var key = m.route.param('key');
-        c.group = model.data()[key];
+        c.group = model.groups()[key];
         ld.map(ld.keys(c.group), function (f) {
             c.data[f] = m.prop(c.group[f]);
         });
@@ -77,7 +77,7 @@ module.exports = (function () {
       c.data.tags = function () { return c.tag.current; };
       c.data.tags.toJSON = function () { return c.tag.current; };
     };
-    if (ld.isEmpty(model.data())) { model.fetch(init); } else { init(); }
+    if (ld.isEmpty(model.groups())) { model.fetch(init); } else { init(); }
 
     /**
     * `submit` internal calls the public API to add a new group or edit an
@@ -101,9 +101,9 @@ module.exports = (function () {
       })();
       opts.params.data = ld.assign(c.data, { admin: auth.userInfo()._id });
       m.request(opts.params).then(function (resp) {
-        var data = model.data();
+        var data = model.groups();
         data[resp.key] = resp.value;
-        model.data(data);
+        model.groups(data);
         model.tags(ld.union(model.tags(), resp.value.tags));
         notif.success({ body: opts.extra.msg });
         m.route('/mypads/group/' + resp.value._id + '/view');

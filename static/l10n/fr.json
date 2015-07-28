@@ -39,7 +39,7 @@
       },
       "PERMISSION": {
         "UNEXPECTED": "Désolé, une erreur inattendue s'est produite",
-        "UNAUTHORIZED": "Vous n'êtes pas autorisé à accéder à ce pad"
+        "UNAUTHORIZED": "Vous n'êtes pas autorisé à accéder à cet enregistrement"
       },
       "GROUP": {
         "INEXISTENT": "Le group n'existe pas",

@@ -971,6 +971,7 @@
       var gid;
       var uotherid;
       var gotherid;
+      var gprivateid;
 
       beforeAll(function (done) {
         specCommon.reInitDatabase(function () {
@@ -990,7 +991,17 @@
                     function (err, res) {
                     if (err) { console.log(err); }
                     gotherid = res._id;
-                    rq.post(route + 'auth/login', { body: params }, done);
+                    var gparams = {
+                      name: 'gprivate1',
+                      admin: uotherid,
+                      visibility: 'private',
+                      password: 'secret'
+                    };
+                    group.set(gparams, function (err, res) {
+                      if (err) { console.log(err); }
+                      gprivateid = res._id;
+                      rq.post(route + 'auth/login', { body: params }, done);
+                    });
                   });
                 });
               });
@@ -1240,6 +1251,54 @@
                   rq.post(route + 'auth/login', { body: params }, done);
                 });
               });
+            });
+          }
+        );
+
+        it('should return a subset for unauth or non-admin for private group',
+          function (done) {
+            rq.get(groupRoute + '/' + gprivateid, function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(200);
+              expect(body.key).toBe(gprivateid);
+              expect(body.pads).toBeUndefined();
+              var diff = ld.difference(ld.keys(body.value),
+                ['name', 'visibility']);
+              expect(diff.length).toBe(0);
+              expect(body.value.name).toBe('gprivate1');
+              expect(body.value.visibility).toBe('private');
+              done();
+            });
+          }
+        );
+
+        it('should return an error in case of private unauth or non-admin ' +
+          'if password is bad', function (done) {
+            var route = groupRoute + '/' + gprivateid + '?password=badOne';
+            rq.get(route, function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(401);
+              expect(body.key).toBe(gprivateid);
+              expect(body.error).toMatch('PERMISSION.UNAUTHORIZED');
+              done();
+            });
+          }
+        );
+
+        it('should return the group in case of private unauth or non-admin ' +
+          'if password is correct', function (done) {
+            var route = groupRoute + '/' + gprivateid + '?password=secret';
+            rq.get(route, function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(200);
+              expect(body.key).toBe(gprivateid);
+              expect(body.value.name).toBe('gprivate1');
+              expect(body.value.visibility).toBe('private');
+              expect(body.value.readonly).toBeFalsy();
+              expect(ld.isArray(body.value.tags)).toBeTruthy();
+              expect(ld.isObject(body.pads)).toBeTruthy();
+              expect(ld.isEmpty(body.pads)).toBeTruthy();
+              done();
             });
           }
         );

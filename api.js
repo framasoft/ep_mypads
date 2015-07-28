@@ -669,19 +669,40 @@ module.exports = (function () {
 
     app.get(groupRoute + '/:key', function (req, res) {
       try {
-        group.getWithPads(req.params.key, function (err, g, pads) {
+        var key = req.params.key;
+        group.getWithPads(key, function (err, g, pads) {
           if (err) {
-            return res.status(404)
-              .send({ key: req.params.key, error: err.message });
+            return res.status(404).send({ key: key, error: err.message });
           }
           var isAdmin = (req.session.user && req.session.user.is_admin);
           var isUser = ld.includes(ld.union(g.admins, g.users),
             req.session.mypadsUid);
           var isAllowedForPublic = (g.visibility === 'public');
-          if (!isAdmin && !isUser && !isAllowedForPublic) {
+          if (isAdmin || isUser || isAllowedForPublic) {
+            return res.send({ key: key, value: g, pads: pads });
+          }
+          var isPrivate = (g.visibility === 'private');
+          if (isPrivate) {
+            if (req.query.password) {
+              auth.fn.isPasswordValid(g, req.query.password,
+                function (err, valid) {
+                  if (!err && !valid) {
+                    err = { message: 'BACKEND.ERROR.PERMISSION.UNAUTHORIZED' };
+                  }
+                  if (err) {
+                    return res.status(401)
+                      .send({ key: key, error: err.message });
+                  }
+                  return res.send({ key: key, value: g, pads: pads });
+                }
+              );
+            } else {
+              var value = ld.pick(g, 'name', 'visibility');
+              return res.send({ key: req.params.key, value: value });
+            }
+          } else {
             return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.DENIED_RECORD');
           }
-          return res.send({ key: req.params.key, value: g, pads: pads });
         });
       }
       catch (e) { res.status(400).send({ error: e.message }); }

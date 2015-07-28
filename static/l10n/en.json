@@ -39,7 +39,7 @@
       },
       "PERMISSION": {
         "UNEXPECTED": "Sorry, an unexpected has error has occured",
-        "UNAUTHORIZED": "You are not allowed to access to this pad"
+        "UNAUTHORIZED": "You are not allowed to access to this record"
       },
       "GROUP": {
         "INEXISTENT": "Group does not exist",

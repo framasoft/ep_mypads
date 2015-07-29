@@ -74,8 +74,9 @@ module.exports = (function () {
           url: conf.URLS.CONF,
           method: 'GET'
         }).then(function (resp) {
-          form.initFields(c,
-            ['title', 'passwordMin', 'passwordMax', 'defaultLanguage']);
+          form.initFields(c, ['title', 'passwordMin', 'passwordMax',
+            'defaultLanguage', 'checkMails', 'tokenDuration',
+            'SMTPHost', 'SMTPPort', 'SMTPSecure', 'SMTPUser', 'SMTPPass' ]);
           c.currentConf = resp.value;
           ld.forIn(resp.value, function (v, k) {
             c.data[k] = m.prop(v);
@@ -246,6 +247,55 @@ module.exports = (function () {
           }, [])
         );
         return { label: label, icon: icon, select: select };
+      })(),
+      checkMails: (function () {
+        var icon = form.icon(c, 'checkMails', A.INFO.CHECKMAILS);
+        var f = form.field(c, 'checkMails', A.FIELD.CHECKMAILS, icon);
+        ld.assign(f.input.attrs, {
+          type: 'checkbox',
+          checked: c.data.checkMails(),
+          onchange: m.withAttr('checked', c.data.checkMails)
+        });
+        return f;
+      })(),
+      tokenDuration: (function () {
+        var icon = form.icon(c, 'tokenDuration', A.INFO.TOKEN_DURATION);
+        var f = form.field(c, 'tokenDuration', A.FIELD.TOKEN_DURATION, icon);
+        ld.assign(f.label.attrs, { style: 'clear: left;' });
+        ld.assign(f.input.attrs, { type: 'number' });
+        return f;
+      })(),
+      SMTPHost: (function () {
+        var icon = form.icon(c, 'SMTPHost', A.INFO.SMTP_HOST);
+        return form.field(c, 'SMTPHost', A.FIELD.SMTP_HOST, icon);
+      })(),
+      SMTPPort: (function () {
+        var icon = form.icon(c, 'SMTPPort', A.INFO.SMTP_PORT);
+        var f = form.field(c, 'SMTPPort', A.FIELD.SMTP_PORT, icon);
+        ld.assign(f.input.attrs, { type: 'number', min: 1 });
+        return f;
+      })(),
+      SMTPSecure: (function () {
+        var icon = form.icon(c, 'SMTPSecure', A.INFO.SMTP_SECURE);
+        var f = form.field(c, 'SMTPSecure', A.FIELD.SMTP_SECURE, icon);
+        ld.assign(f.input.attrs, {
+          type: 'checkbox',
+          checked: c.data.SMTPSecure(),
+          onchange: m.withAttr('checked', c.data.SMTPSecure)
+        });
+        return f;
+      })(),
+      SMTPUser: (function () {
+        var icon = form.icon(c, 'SMTPUser', A.INFO.SMTP_USER);
+        var f = form.field(c, 'SMTPUser', A.FIELD.SMTP_USER, icon);
+        ld.assign(f.label.attrs, { style: 'clear: left;' });
+        return f;
+      })(),
+      SMTPPass: (function () {
+        var icon = form.icon(c, 'SMTPPass', A.INFO.SMTP_PASS);
+        var f = form.field(c, 'SMTPPass', A.FIELD.SMTP_PASS, icon);
+        ld.assign(f.input.attrs, { type: 'password' });
+        return f;
       })()
     };
     return m('form.block', {
@@ -264,6 +314,16 @@ module.exports = (function () {
         m('div', [ f.passwordMin.label, f.passwordMin.input, f.passwordMin.icon,
           f.passwordMax.label, f.passwordMax.input, f.passwordMax.icon
         ])
+      ]),
+      m('fieldset.block-group', [
+        m('legend', conf.LANG.ADMIN.SETTINGS_MAIL),
+        m('div', [ f.checkMails.label, f.checkMails.input, f.checkMails.icon,
+          f.tokenDuration.label, f.tokenDuration.input, f.tokenDuration.icon,
+          f.SMTPHost.label, f.SMTPHost.input, f.SMTPHost.icon,
+          f.SMTPPort.label, f.SMTPPort.input, f.SMTPPort.icon,
+          f.SMTPSecure.label, f.SMTPSecure.input, f.SMTPSecure.icon,
+          f.SMTPUser.label, f.SMTPUser.input, f.SMTPUser.icon,
+          f.SMTPPass.label, f.SMTPPass.input, f.SMTPPass.icon ])
       ]),
       m('input.block.send', {
         form: 'settings-form',

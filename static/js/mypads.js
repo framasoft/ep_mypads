@@ -954,8 +954,9 @@ module.exports = (function () {
           url: conf.URLS.CONF,
           method: 'GET'
         }).then(function (resp) {
-          form.initFields(c,
-            ['title', 'passwordMin', 'passwordMax', 'defaultLanguage']);
+          form.initFields(c, ['title', 'passwordMin', 'passwordMax',
+            'defaultLanguage', 'checkMails', 'tokenDuration',
+            'SMTPHost', 'SMTPPort', 'SMTPSecure', 'SMTPUser', 'SMTPPass' ]);
           c.currentConf = resp.value;
           ld.forIn(resp.value, function (v, k) {
             c.data[k] = m.prop(v);
@@ -1126,6 +1127,55 @@ module.exports = (function () {
           }, [])
         );
         return { label: label, icon: icon, select: select };
+      })(),
+      checkMails: (function () {
+        var icon = form.icon(c, 'checkMails', A.INFO.CHECKMAILS);
+        var f = form.field(c, 'checkMails', A.FIELD.CHECKMAILS, icon);
+        ld.assign(f.input.attrs, {
+          type: 'checkbox',
+          checked: c.data.checkMails(),
+          onchange: m.withAttr('checked', c.data.checkMails)
+        });
+        return f;
+      })(),
+      tokenDuration: (function () {
+        var icon = form.icon(c, 'tokenDuration', A.INFO.TOKEN_DURATION);
+        var f = form.field(c, 'tokenDuration', A.FIELD.TOKEN_DURATION, icon);
+        ld.assign(f.label.attrs, { style: 'clear: left;' });
+        ld.assign(f.input.attrs, { type: 'number' });
+        return f;
+      })(),
+      SMTPHost: (function () {
+        var icon = form.icon(c, 'SMTPHost', A.INFO.SMTP_HOST);
+        return form.field(c, 'SMTPHost', A.FIELD.SMTP_HOST, icon);
+      })(),
+      SMTPPort: (function () {
+        var icon = form.icon(c, 'SMTPPort', A.INFO.SMTP_PORT);
+        var f = form.field(c, 'SMTPPort', A.FIELD.SMTP_PORT, icon);
+        ld.assign(f.input.attrs, { type: 'number', min: 1 });
+        return f;
+      })(),
+      SMTPSecure: (function () {
+        var icon = form.icon(c, 'SMTPSecure', A.INFO.SMTP_SECURE);
+        var f = form.field(c, 'SMTPSecure', A.FIELD.SMTP_SECURE, icon);
+        ld.assign(f.input.attrs, {
+          type: 'checkbox',
+          checked: c.data.SMTPSecure(),
+          onchange: m.withAttr('checked', c.data.SMTPSecure)
+        });
+        return f;
+      })(),
+      SMTPUser: (function () {
+        var icon = form.icon(c, 'SMTPUser', A.INFO.SMTP_USER);
+        var f = form.field(c, 'SMTPUser', A.FIELD.SMTP_USER, icon);
+        ld.assign(f.label.attrs, { style: 'clear: left;' });
+        return f;
+      })(),
+      SMTPPass: (function () {
+        var icon = form.icon(c, 'SMTPPass', A.INFO.SMTP_PASS);
+        var f = form.field(c, 'SMTPPass', A.FIELD.SMTP_PASS, icon);
+        ld.assign(f.input.attrs, { type: 'password' });
+        return f;
       })()
     };
     return m('form.block', {
@@ -1144,6 +1194,16 @@ module.exports = (function () {
         m('div', [ f.passwordMin.label, f.passwordMin.input, f.passwordMin.icon,
           f.passwordMax.label, f.passwordMax.input, f.passwordMax.icon
         ])
+      ]),
+      m('fieldset.block-group', [
+        m('legend', conf.LANG.ADMIN.SETTINGS_MAIL),
+        m('div', [ f.checkMails.label, f.checkMails.input, f.checkMails.icon,
+          f.tokenDuration.label, f.tokenDuration.input, f.tokenDuration.icon,
+          f.SMTPHost.label, f.SMTPHost.input, f.SMTPHost.icon,
+          f.SMTPPort.label, f.SMTPPort.input, f.SMTPPort.icon,
+          f.SMTPSecure.label, f.SMTPSecure.input, f.SMTPSecure.icon,
+          f.SMTPUser.label, f.SMTPUser.input, f.SMTPUser.icon,
+          f.SMTPPass.label, f.SMTPPass.input, f.SMTPPass.icon ])
       ]),
       m('input.block.send', {
         form: 'settings-form',
@@ -20802,7 +20862,8 @@ module.exports={
         "USERLIST_CRUD": "crud must be add, set or del",
         "USERLIST_ID": "In set and del modes, ulistid is mandatory",
         "USERLIST_NAME": "In add mode, name of the userlist is mandatory",
-        "USERLIST_SET_PARAMS": "In set mode, name or uids is madantory"
+        "USERLIST_SET_PARAMS": "In set mode, name or uids is madantory",
+        "SMTP_CONFIG": "Your SMTP server configuration is invalid"
       },
       "CONFIGURATION": {
         "LANG_PROBLEM": "Lang update can not be done. Default lang will be used.",
@@ -21084,10 +21145,11 @@ module.exports={
     "FORM_USER_EDIT": "Profile user edition",
     "SETTINGS_GENERAL": "General settings",
     "SETTINGS_PASSWORD": "Password settings",
+    "SETTINGS_MAIL": "Mail settings",
     "USERS_SEARCH_LOGIN": "Search by login",
     "ETHERPAD_ACCOUNT": "Etherpad account",
     "HELP_LOGIN": "<p>MyPads administration is tied to Etherpad administration. Please enter an authorized login and password, as fixed into Etherpad <em>settings.json</em> to be able to update MyPads settings.</p>",
-    "HELP_SETTINGS": "<p>Only Etherpad admins have access to this page.</p><p>You can edit the global settings here and apply them. Be careful about password sizes : if you have existing accounts and raise minimum size or decrease maximum size, some user passwords may become unseizable.</p><p>Changes will be effective directly.</p>",
+    "HELP_SETTINGS": "<h3>Settings</h3><p>Only Etherpad admins have access to this page. You can edit the global settings here and apply them. Changes will be effective directly.</p><h3>Passwords</h3><p>Be careful about password sizes : if you have existing accounts and raise minimum size or decrease maximum size, some user passwords may become unseizable.</p><h3>Mail configuration</h3><p>MyPads can verify the mails of subscribed users by sending them an email which will be used by them to confirm their address. Moreover, MyPads need email sending for password recovery.</p><p>Be cautious with SMTP configuration : bad parameters can lead to an Etherpad crash.</p><p>Please note that, unlike other parameters, SMTP settings are only applied after Etherpad reboot.</p>",
     "HELP_USERS": "<p>This admin reserved page helps you to find users by entering their login. Once found, you will be able to edit or remove user.</p><p>For simplicity and performance reasons, we don't offer here a full listing of subscribed users.</p>",
     "HELP_USER_EDIT": "<p>Here you can update all data associated to an existing user.</p><p>Please note that by default, leaving password empty means keeping the current password. If you want to change it, you have to fill password field and its confirmation.</p>",
     "FIELD": {
@@ -21095,6 +21157,13 @@ module.exports={
       "PASSWORD_MIN": "Minimum size",
       "PASSWORD_MAX": "Maximum size",
       "LANGUAGE_DEFAULT": "Default language",
+      "CHECKMAILS": "Check user mails",
+      "TOKEN_DURATION": "Token validity",
+      "SMTP_HOST": "SMTP Host",
+      "SMTP_PORT": "SMTP Port",
+      "SMTP_SECURE": "Encryption",
+      "SMTP_USER": "User",
+      "SMTP_PASS": "Password",
       "APPLY": "Apply",
       "SEARCH": "Search"
     },
@@ -21104,6 +21173,13 @@ module.exports={
       "PASSWORD_MIN": "Password minimum number of characters",
       "PASSWORD_MAX": "Password maximum number of characters",
       "LANGUAGE_DEFAULT": "Default language for guest MyPads users",
+      "CHECKMAILS": "Check user mail given at subscription",
+      "TOKEN_DURATION": "The time, in minutes, generated tokens are valid until users confirm their subscription",
+      "SMTP_HOST": "Domain name where the SMTP Server belongs to",
+      "SMTP_PORT": "SMTP Port to use",
+      "SMTP_SECURE": "Check it if you want to use a encrypted connexion between MyPads and your SMTP Server",
+      "SMTP_USER": "Optional : if authentication to the SMTP server is required, username",
+      "SMTP_PASS": "Optional : if authentication to the SMTP server is required, password",
       "SUCCESS": "Configuration has been updated successfully",
       "NOCHANGE": "Configuration have not changed, so no update has been sent",
       "USERS_SEARCH_LOGIN": "Please enter a login to search around database users",

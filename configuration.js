@@ -54,7 +54,14 @@ module.exports = (function() {
       passwordMax: 30,
       languages: { en: 'English', fr: 'Français' },
       defaultLanguage: 'en',
-      smtp: true
+      checkMails: false,
+      SMTPPort: undefined,
+      SMTPHost: undefined,
+      SMTPSecure: undefined,
+      SMTPUser: undefined,
+      SMTPPass: undefined,
+      SMTPIgnoreTLS: undefined,
+      tokenDuration: 60 // in minutes
     },
 
     /**

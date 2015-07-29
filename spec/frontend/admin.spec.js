@@ -101,6 +101,13 @@ module.exports = (function () {
             lang: qfirst('select[name=defaultLanguage]'),
             passwordMin: qfirst('input[name=passwordMin]'),
             passwordMax: qfirst('input[name=passwordMax]'),
+            checkMails: qfirst('input[name=checkMails]'),
+            tokenDuration: qfirst('input[name=tokenDuration]'),
+            SMTPHost: qfirst('input[name=SMTPHost]'),
+            SMTPPort: qfirst('input[name=SMTPPort]'),
+            SMTPSecure: qfirst('input[name=SMTPSecure]'),
+            SMTPUser: qfirst('input[name=SMTPUser]'),
+            SMTPPass: qfirst('input[name=SMTPPass]'),
             submit: qfirst('input[type=submit]')
           };
           window.setTimeout(done, 100);
@@ -115,6 +122,13 @@ module.exports = (function () {
           expect($el.passwordMin.checkValidity()).toBeTruthy();
           expect($el.passwordMax.value).toBe('30');
           expect($el.passwordMax.checkValidity()).toBeTruthy();
+          expect($el.checkMails.value.length).toBe(0);
+          expect($el.tokenDuration.value).toBe('60');
+          expect($el.SMTPHost.value.length).toBe(0);
+          expect($el.SMTPPort.value.length).toBe(0);
+          expect($el.SMTPSecure.value.length).toBe(0);
+          expect($el.SMTPUser.value.length).toBe(0);
+          expect($el.SMTPPass.value.length).toBe(0);
           expect($el.form.checkValidity()).toBeTruthy();
         });
 

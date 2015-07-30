@@ -45,7 +45,7 @@
         "UNAUTHORIZED": "Vous n'êtes pas autorisé à accéder à cet enregistrement"
       },
       "GROUP": {
-        "INEXISTENT": "Le group n'existe pas",
+        "INEXISTENT": "Le groupe n'existe pas",
         "CASCADE_REMOVAL_PROBLEM": "Quelque chose s'est mal déroulé avec la suppression en cascade des pads",
         "ITEMS_NOT_FOUND": "Des utilisateurs, administrateurs ou pads n'ont pas été trouvés",
         "NOT_USER": "Vous n'êtes pas utilisateur de ce groupe",
@@ -65,7 +65,7 @@
   },
   "GLOBAL": {
     "LANG": "Français",
-    "DESCRIPTION": "MyPads est un plugin Etherpad qui a été financé en 2014 par une campagne sur Ulule. Il prend en charge<ul><li>des utilisateurs et leur authentification;</li><li>des groupes de pads par utilisateur, illimités et partageables;</li><li>les pads qui leur sont attachés, donne la possibilité d'inviter des utilisateurs connus à les utiliser, les rendre privés sous contrainte de mot de passe ou les fixer en accès public.</li></ul>",
+    "DESCRIPTION": "MyPads est un plugin <a href='http://etherpad.org/'>Etherpad</a> qui a été financé en 2014 par <a href='http://fr.ulule.com/etherpad-framapad/supporters/'>413 contributeurs</a> sur Ulule et porté par l'association <a href='http://framasoft.org'>Framasoft</a>. Il prend en charge<ul><li>des utilisateurs et leur authentification;</li><li>des groupes de pads par utilisateur, illimités et partageables;</li><li>les pads qui leur sont attachés, donne la possibilité d'inviter des utilisateurs connus à les utiliser, les rendre privés sous contrainte de mot de passe ou les fixer en accès public.</li></ul>",
     "FOOTER": "Propulsé par <a href='https://git.framasoft.org/framasoft/ep_mypads'>MyPads</a><br>Publié sous la licence Apache 2.0",
     "AND": "et"
   },
@@ -102,9 +102,9 @@
   },
   "USER": {
     "FORM": "Connexion",
-    "ORSUB": " (ou inscription ?)",
+    "ORSUB": " (ou inscription)",
     "MANDATORY_FIELDS": "Champs obligatoires",
-    "OPTIONAL_FIELDS": "Champs optionnels",
+    "OPTIONAL_FIELDS": "Champs facultatifs",
     "MYPADS_ACCOUNT": "Compte MyPads",
     "SUBSCRIBE": "S'inscrire",
     "PROFILE": "Profil",
@@ -131,15 +131,15 @@
     "INFO": {
       "LOGIN": "L'identifiant unique que vous avez choisi lorsque vous vous êtes inscrit",
       "EMAIL": "L'adresse mail est nécessaire pour la procédure de récupération de mot de passe",
-      "COLOR": "Le code héxadécimal pour la couleur que vous souhaitez utiliser par défaut pour les pads",
+      "COLOR": "Le code hexadécimal pour la couleur que vous souhaitez utiliser par défaut pour les pads",
       "LANG": "Selon la configuration de votre navigateur par défaut, dépend de ceux disponibles sur MyPads",
       "USELOGINANDCOLORINPADS": "Utiliser vos identifiant et couleur dans les pads par défaut ?",
       "PASSWORD_BEGIN": "Doit être compris entre ",
       "PASSWORD_END": " caractères",
       "PASSWORD_CHECK": "Pour confirmer : doit être le même que le mot de passe",
       "PASSWORD_CURRENT": "Mesure de sécurité : nécessaire pour tout changement sur le profil",
-      "OPTIONAL": "Champ optionnel",
-      "REMOVE_ACCOUNT": "Supprimer définitivement votre compte et tous les groupes et pads desquels vous êtes l'unique administrateur",
+      "OPTIONAL": "Champ facultatif",
+      "REMOVE_ACCOUNT": "Supprimer définitivement votre compte et tous les groupes et pads dont vous êtes l'unique administrateur",
       "REMOVE_ACCOUNT_SURE": "Vous êtes sur le point de supprimer définitivement votre compte ainsi que tous les groupes et pads dont vous êtes l'unique administrateur. Si vous êtes réellement sûr de ce que vous faisez, merci de saisir votre mot de passe et de cliquer sur OK",
       "REMOVE_ACCOUNT_SUCCESS": "Compte supprimé avec succès"
     },
@@ -158,7 +158,7 @@
       "WELCOME": "Bienvenue"
     },
     "HELP": {
-      "PROFILE": "<p>Tout changement dans votre profil nécessite votre mot de passe actuel. Merci de noter que :</p><ul><li>vous pouvez modifier toute information en utilisant le champ correspondant;</li><li>laisser les champs de mot de passe et de confirmation vides n'auront pas d'effet sur votre mot de passe actuel;</li><li>vous ne pouvez pas changer d'identifiant pour le moment mais ce sera bientôt possible;</li><li>si vous voulez changer votre mot de passe, merci d'en saisir un nouveau dans le champ mot de passe et de le confirmer avec le champ de confirmation.</li></ul>"
+      "PROFILE": "<p>Tout changement dans votre profil nécessite votre mot de passe actuel. Merci de noter que :</p><ul><li>vous pouvez modifier toute information en utilisant le champ correspondant;</li><li>laisser les champs de mot de passe et de confirmation vides n'aura pas d'effet sur votre mot de passe actuel;</li><li>vous ne pouvez pas changer d'identifiant pour le moment mais ce sera bientôt possible;</li><li>si vous voulez changer votre mot de passe, merci d'en saisir un nouveau dans le champ mot de passe et de le confirmer avec le champ de confirmation.</li></ul>"
     }
   },
   "GROUP": {
@@ -170,24 +170,24 @@
     "BOOKMARKED": "Favoris",
     "ARCHIVED": "Archivés",
     "ADD": "Créer un nouveau groupe",
-    "ADD_HELP": "<h3>Visibilité</h3><p>Vous avez le choix entre trois niveaux de visibilité. Cela impactera tous les pads liés :<ul><li><em>resteint</em>, le choix par défaut : l'accès aux pads sera limité à une liste d'utilisateurs invités que vous aurez choisi;</li><li><em>privé</em> : dans ce moden vous aurez à saisir un mot de passe qui sera vérifié pour autoriser l'accès;</li><li><em>public</em> : dans ce mode, tous les pads sont publics, les utilisateurs n'ont alors besoin que de l'adresse URL pour y accéder.</li></ul></p><h3>Lecture seule</h3><p>Si vous activez la <em>lecture seule</em>, tous les pads attachés conserveront leur dernier état connu et ne pourront être édités. Notez que la visibilité fonctionnera toujours.</p><h3>Labels</h3><p>Vous pouvez associer des labels à cet élément en cliquant sur le champ correspondant et en les sélectionnant un par un.</p><p>Pour créer un nouveau label, saisissez le et appuyer sur la touche ENTRÉE ou cliquez sur le bouton 'Ok'. Une fois le label ajouté, il sera automatiquement sélectionné sur ce formulaire.</p><p>Vous pouvez supprimer un label en cliquant sur la croix située à sa droite.</p>",
+    "ADD_HELP": "<h3>Visibilité</h3><p>Vous avez le choix entre trois niveaux de visibilité. Cela impactera tous les pads liés :<ul><li><em>resteint</em>, le choix par défaut : l'accès aux pads sera limité à une liste d'utilisateurs invités que vous aurez choisis;</li><li><em>privé</em> : dans ce mode vous aurez à saisir un mot de passe qui sera vérifié pour autoriser l'accès;</li><li><em>public</em> : dans ce mode, tous les pads sont publics, les utilisateurs n'ont alors besoin que de l'adresse URL pour y accéder.</li></ul></p><h3>Lecture seule</h3><p>Si vous activez la <em>lecture seule</em>, tous les pads attachés conserveront leur dernier état connu et ne pourront être édités. Notez que la visibilité fonctionnera toujours.</p><h3>Labels</h3><p>Vous pouvez associer des labels à cet élément en cliquant sur le champ correspondant et en les sélectionnant un par un.</p><p>Pour créer un nouveau label, saisissez-le et appuyez sur la touche ENTRÉE ou cliquez sur le bouton 'Ok'. Une fois le label ajouté, il sera automatiquement sélectionné sur ce formulaire.</p><p>Vous pouvez supprimer un label en cliquant sur la croix située à sa droite.</p>",
     "EDIT": "Modifier",
     "EDIT_GROUP": "Modifier un groupe",
     "VIEW": "Voir",
     "VIEW_MANAGE": "Voir et gérer le groupe et ses pads",
-    "VIEW_HELP": "<p>Les détails d'un groupe vous montre :<ul><li>les options définies lorsque le groupe a été créé ou mis à jour;</li><li>la liste des pads créés pour ce groupe;</li><li>et la liste des administrateurs et utilisateurs de ce groupe.</li></ul></p><p>À partir de là, vous pouvez : <ul><li>créer de nouveaux pads, les modifier, les supprimer ou les mettre en favoris;</li><li>partager l'administration de votre groupe avec d'autres utilisateurs;</li><li>inviter d'autres utilisateurs à voir et participer aux pads de ce groupe.</li></ul></p>",
+    "VIEW_HELP": "<p>Les détails d'un groupe vous montrent :<ul><li>les options définies lorsque le groupe a été créé ou mis à jour;</li><li>la liste des pads créés pour ce groupe;</li><li>et la liste des administrateurs et utilisateurs de ce groupe.</li></ul></p><p>À partir de là, vous pouvez : <ul><li>créer de nouveaux pads, les modifier, les supprimer ou les mettre en favoris;</li><li>partager l'administration de votre groupe avec d'autres utilisateurs;</li><li>inviter d'autres utilisateurs à voir et participer aux pads de ce groupe.</li></ul></p>",
     "SHARE": "Partager",
-    "SHARE_LINK": "Merci de partager cette adresse à vos invités",
+    "SHARE_LINK": "Merci de partager cette adresse avec vos invités",
     "SHARE_PASSWORD": "Merci de saisir le mot de passe afin de pouvoir partager le pad",
     "REMOVE": "Supprimer",
     "BOOKMARK": "Mettre en favori",
     "UNMARK": "Supprimer des favoris",
-    "MARK_SUCCESS": "Favori réalisé avec succès",
+    "MARK_SUCCESS": "Favori créé avec succès",
     "SHARE_ADMIN": "Partager l'administration",
     "QUIT_GROUP": "Quitter le groupe",
     "INVITE_USER": {
       "IU": "Inviter des utilisateurs",
-      "HELP": "<h4>Liste d'utilisateurs</h4><p>Vous pouvez sélectionner une ou plusieurs listes. En en choisissant une, les membres de celle-ci seront tous invités.</p><h4>Inviter des utilisateurs</h4><p>Ce champ accepte un identifiant à la fois. Quand vous pressez ENTRÉE ou cliquez sur OK, l'identifiant est ajouté à la liste des utilisateurs invités. Une liste d'utilisateurs connus vous aide à saisir.</p><h4>Utilisateurs</h4><p>Cette liste contient tous les utilisateurs sélectionnés. Vous pouvez les supprimer en cliquant sur le signe derrière chaque identifiant.</p><h4>Note</h4><p>Merci de noter que, pour le moment, seuls les utilisateurs enregistrés pourront être ajoutés à votre groupe. Cela signifie que les utilisateurs externes à Mypads ne recevront pas de mail pour les inviter à créer un compte.</p>",
+      "HELP": "<h4>Liste d'utilisateurs</h4><p>Vous pouvez sélectionner une ou plusieurs listes. En en choisissant une, ses membres seront tous invités.</p><h4>Inviter des utilisateurs</h4><p>Ce champ accepte un identifiant à la fois. Quand vous pressez ENTRÉE ou cliquez sur OK, l'identifiant est ajouté à la liste des utilisateurs invités. Une liste d'utilisateurs connus vous aide à saisir.</p><h4>Utilisateurs</h4><p>Cette liste contient tous les utilisateurs sélectionnés. Vous pouvez les supprimer en cliquant sur le signe derrière chaque identifiant.</p><h4>Note</h4><p>Merci de noter que, pour le moment, seuls les utilisateurs enregistrés pourront être ajoutés à votre groupe. Cela signifie que les utilisateurs externes à Mypads ne recevront pas de mail pour les inviter à créer un compte.</p>",
       "USERS_SELECTION": "Sélection d'utilisateurs",
       "USERS_SELECTED": "Utilisateurs sélectionnés",
       "PLACEHOLDER": "Saisissez l'identifiant",
@@ -246,7 +246,7 @@
       "SORT_BY_UPDATE": "dernière mise à jour",
       "MOVE": "Déplacer tous les pads vers un autre groupe",
       "MOVE_TITLE": "Migration des pads du groupe ",
-      "MOVE_HELP": "<p>Merci de sélectionner le groupe souhaité pour votre migration. Seuls les groupes pour lesquels vous êtes administrateur apparaisent.</p><p>Une fois choisi, cliquez sur le bouton d'envoi et attendez un moment</p>",
+      "MOVE_HELP": "<p>Merci de sélectionner le groupe souhaité pour votre migration. Seuls les groupes dont vous êtes administrateur apparaissent.</p><p>Une fois choisi, cliquez sur le bouton d'envoi et attendez un moment</p>",
       "FROM_GROUP": "groupe :",
       "VIEW_HELP": "<p>Vous voici sur l'interface principale du pad affiché.</p><p>Si le groupe ou le pad est privé, vous aurez besoin de saisir le mot de passe pour y avoir accès.</p><p>Si vous voulez revenir au groupe, vous pouvez cliquer sur le nom de celui-ci.</p>",
       "OPEN_TAB": "Ouvrir dans un nouvel onglet"
@@ -259,11 +259,11 @@
       "ADD_SUCCESS": "Le groupe a été ajouté avec succès",
       "EDIT_SUCCESS": "Le groupe a été mis à jour avec succès",
       "REMOVE_SUCCESS": "Le groupe a été supprimé avec succès",
-      "REMOVE_SURE": "Êtes-vous sûr de vouloir supprimer ce groupe ?",
-      "RESIGN": "Êtes-vous sûr de vouloir quitter ce groupe ?",
+      "REMOVE_SURE": "Voulez-vous vraiment supprimer ce groupe ?",
+      "RESIGN": "Voulez-vous vraiment quitter ce groupe ?",
       "RESIGN_SUCCESS": "Groupe quitté avec succès",
       "PAD_REMOVE_SUCCESS": "Le pad a été supprimé avec succès",
-      "PAD_REMOVE_SURE": "Êtes-vous sûr de vouloir supprimer ce pad ?",
+      "PAD_REMOVE_SURE": "Voulez-vous vraiment supprimer ce pad ?",
       "PAD_ADD_SUCCESS": "Le pad a été créé avec succès",
       "PAD_EDIT_SUCCESS": "Le pad a été mis à jour avec succès",
       "PAD_MOVE": "Choisissez le groupe souhaité pour votre migration",
@@ -276,13 +276,13 @@
   },
   "BOOKMARK": {
     "TITLE": "Mes favoris",
-    "HELP": "<p>La page de favoris vous permet de voir l'ensemble des éléments de MyPads que vous avez mis en favori et éventuellement de les en supprimer.</p>"
+    "HELP": "<p>La page de favoris vous permet de voir l'ensemble des éléments de MyPads que vous avez mis en favoris et éventuellement de les en supprimer.</p>"
   },
   "USERLIST": {
     "USERLIST": "Liste utilisateurs",
     "ADD": "Créer une nouvelle liste d'utilisateurs",
     "EDIT": "Modifier la liste utilisateurs ",
-    "HELP": "<p>Vous trouverez ici toutes vos listes d'utilisateurs, rangées par date de création. Des informations résumées sont disponibles avec le nom des chaque liste et le nombre d'utilisateurs liés.</p><p>Par les icônes d'actions, situées en haut à droite de chaque liste, vous pouvez modifier ou supprimer les listes. Davantage de détails sont dsponibles sur le formulaire d'édition.</p>",
+    "HELP": "<p>Vous trouverez ici toutes vos listes d'utilisateurs, rangées par date de création. Des informations résumées sont disponibles avec le nom des chaque liste et le nombre d'utilisateurs liés.</p><p>Avec les icônes d'actions, situées en haut à droite de chaque liste, vous pouvez modifier ou supprimer les listes. Davantage de détails sont disponibles sur le formulaire d'édition.</p>",
     "FORM_HELP": "<h3>Nom</h3><p>Vous devez saisir un nom pour la liste d'utilisateurs, afin de pouvoir l'identifier.</p><h3>Utilisateurs</h3><p>Vous pouvez ajouter autant d'utilisateurs que vous le souhaitez. Pour cela, entrez l'identifiant et cliquez sur le bouton 'OK'. Notez que les utilisateurs déjà connus peuvent être sélectionnés depuis la zone de saisie.</p><p>Pour supprimer des utilisateurs, cliquez sur le croix située à la droite de chaque identifiant.</p>",
     "FIELD": {
       "NAME": "Nom",
@@ -293,7 +293,7 @@
       "NAME": "Nom de la liste utilisateurs",
       "ADD_SUCCESS": "La liste utilisateurs a été créée avec succès",
       "EDIT_SUCCESS": "La liste utilisateurs a été mise à jour avec succès",
-      "REMOVE_SURE": "Êtes-vous sûr de vouloir supprimer cette liste d'utilisateurs ?",
+      "REMOVE_SURE": "Voulez-vous vraiment supprimer cette liste d'utilisateurs ?",
       "REMOVE_SUCCESS": "La liste d'utilisateurs a été supprimée avec succès",
       "USER_INVITE": "En sélectionnant une liste, vous inviterez tous ses utilisateurs en même temps"
     },
@@ -319,7 +319,7 @@
       "TITLE": "Titre",
       "PASSWORD_MIN": "Taille minimum",
       "PASSWORD_MAX": "Taille maximum",
-      "LANGUAGE_DEFAULT": "Langue par défault",
+      "LANGUAGE_DEFAULT": "Langue par défaut",
       "CHECKMAILS": "Vérifier les mails",
       "TOKEN_DURATION": "Validité des jetons",
       "SMTP_HOST": "Hôte SMTP",
@@ -341,14 +341,14 @@
       "SMTP_HOST": "Le nom de domaine sur lequel pointer pour le serveur SMTP",
       "SMTP_PORT": "Le port à utiliser",
       "SMTP_SECURE": "Utiliser le chiffrement pour la connection entre MyPads et le serveur SMTP",
-      "SMTP_USER": "Optionnel : si le serveur SMTP nécessite une authentification, identifiant à utiliser",
-      "SMTP_PASS": "Optionnel : si le serveur SMTP nécessite une authentification, mot de passe à utiliser",
+      "SMTP_USER": "Facultatif : si le serveur SMTP nécessite une authentification, identifiant à utiliser",
+      "SMTP_PASS": "Facultatif : si le serveur SMTP nécessite une authentification, mot de passe à utiliser",
       "SUCCESS": "La configuration a été mise à jour avec succès",
       "NOCHANGE": "La configuration n'a pas été modifiée, aucune mise à jour n'a donc été envoyée",
       "USERS_SEARCH_LOGIN": "Merci de saisir un identifiant de manière à effectuer une recherche dans la base de données",
       "USER_FOUND": "Utilisateur trouvé. Voyez les options dans le formulaire",
       "USER_NONE": "Pas d'utilisateur pour cet identifiant",
-      "USER_REMOVE_SURE": "Vous êtes sur le point de supprimer définitivement ce compte utilisateur et tous les groupes et pads pour lesquels cet utilisateur est seul administrateur. Si vous êtes sûr de ce que vous faites, vous pouvez cliquez sur le bouton OK."
+      "USER_REMOVE_SURE": "Vous êtes sur le point de supprimer définitivement ce compte utilisateur et tous les groupes et pads pour lesquels cet utilisateur est seul administrateur. Si vous êtes sûr de ce que vous faites, vous pouvez cliquer sur le bouton OK."
     },
     "ERR": {
       "TITLE": "Le titre est obligatoire",

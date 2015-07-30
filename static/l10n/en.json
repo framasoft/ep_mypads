@@ -41,7 +41,7 @@
         "DENIED_RECORD_EDIT": "You're not allowed to edit this record"
       },
       "PERMISSION": {
-        "UNEXPECTED": "Sorry, an unexpected has error has occured",
+        "UNEXPECTED": "Sorry, an unexpected has error has occurred",
         "UNAUTHORIZED": "You are not allowed to access to this record"
       },
       "GROUP": {
@@ -102,7 +102,7 @@
   },
   "USER": {
     "FORM": "Login",
-    "ORSUB": " (or subscribe ?)",
+    "ORSUB": " (or subscribe)",
     "MANDATORY_FIELDS": "Mandatory fields",
     "OPTIONAL_FIELDS": "Optional fields",
     "MYPADS_ACCOUNT": "MyPads account",
@@ -112,17 +112,17 @@
     "USERNAME": "Username",
     "LOGIN": "Login",
     "PASSWORD": "Password",
-    "PASSWORD_LOST": "Lost your password ?",
+    "PASSWORD_LOST": "Lost your password?",
     "PASSCHECK": "Password Confirmation",
     "PASSCURRENT": "Current password",
     "EMAIL": "Email",
     "EMAIL_SAMPLE": "username@example.org",
     "LANG": "Lang",
-    "USELOGINANDCOLORINPADS": "Use login and color in pads ?",
+    "USELOGINANDCOLORINPADS": "Use login and color in pads?",
     "FIRSTNAME": "Firstname",
     "LASTNAME": "Lastname",
     "ORGANIZATION": "Organization",
-    "COLOR": "User color for pads",
+    "COLOR": "Customized color for pads",
     "COLOR_SAMPLE": "#00cc00",
     "UNDEF": "********",
     "OK": "Ok",
@@ -132,7 +132,7 @@
       "LOGIN": "The unique login you choose when you have subscribed",
       "EMAIL": "The email is required for password recovery",
       "COLOR": "The hexademical code for color you want to be used by default in pads",
-      "LANG": "Your browser configuration per default, depends on available language on MyPads",
+      "LANG": "Your default browser configuration, depending on available languages on MyPads",
       "USELOGINANDCOLORINPADS": "Use login and chosen color in pads by default ?",
       "PASSWORD_BEGIN": "Must be between ",
       "PASSWORD_END": " characters",
@@ -147,18 +147,18 @@
       "LOGIN": "Login is required",
       "EMAIL": "The email is required and should be valid",
       "COLOR": "The hexadecimal code must be like #000000",
-      "LOGOUT": "Log out error : you wasn't authenticated.",
+      "LOGOUT": "Log out error : you were not authenticated.",
       "PASSWORD_MISMATCH": "The entered passwords do not match."
     },
     "AUTH": {
-      "SUCCESS": "Successfull authentication ! Welcome.",
+      "SUCCESS": "Successful authentication ! Welcome.",
       "SUCCESS_OUT": "You have been successfully disconnected.",
-      "SUBSCRIBE_SUCCESS": "Successfull subscription ! Welcome.",
+      "SUBSCRIBE_SUCCESS": "Successful subscription ! Welcome.",
       "PROFILE_SUCCESS": "Profile successfully updated.",
       "WELCOME": "Welcome"
     },
     "HELP": {
-      "PROFILE": "<p>Every change into your profile needs the current password field to be correctly filled. Please note that :</p><ul><li>you can change everything by updating the appropriate field;</li><li>leaving password and password confirmation empty won't affect your current password;</li><li>you can't change your login at the moment but you will in the future;</li><li>if you want to change your password, please enter the new one into the password field and confirm it with the password confirmation.</li></ul>"
+      "PROFILE": "<p>Every change into your profile needs the current password field to be correctly filled. Please note that :</p><ul><li>you can change everything by updating the appropriate field;</li><li>leaving password and password confirmation empty won't affect your current password;</li><li>you can't change your login at the moment but it will be possible in the future;</li><li>if you want to change your password, please enter the new one into the password field and confirm it with the password confirmation.</li></ul>"
     }
   },
   "GROUP": {
@@ -170,7 +170,7 @@
     "BOOKMARKED": "Bookmarked groups",
     "ARCHIVED": "Archived groups",
     "ADD": "Add a new group",
-    "ADD_HELP": "<h3>Visibility</h3><p>You have the choice between three levels of visibility. It will impact all linked pads :<ul><li><em>restricted</em>, default choice : access of the pads are limited to a list of invited users you have chosen;</li><li><em>private</em> : in this mode, you have to enter a password and access to the pads will be checked against this password;</li><li><em>public</em> : in this mode, all pads are public, users just need to have the URL address.</li></ul></p><h3>Readonly</h3><p>If you check <em>readonly</em>, all attached pads will stay in their state, and can not be edited. Note that visibility still works in readonly mode.</p><h3>Tags</h3><p>You can attach tags to this element by clicking on the corresponding input field and selecting them one by one.</p><p>To create a new tag, fill it and type ENTER key or click on the 'Ok' button. Once the tag has been added, it will automatically been selected on this form.</p><p>You can remove a tag by clicking on the cross located on the right of it.</p>",
+    "ADD_HELP": "<h3>Visibility</h3><p>You have the choice between three levels of visibility. It will impact all linked pads:<ul><li><em>restricted</em>, default choice: access of the pads are limited to a list of invited users you have chosen;</li><li><em>private</em>: in this mode, you have to enter a password and access to the pads will be checked against this password;</li><li><em>public</em>: in this mode, all pads are public, users just need to have the URL address.</li></ul></p><h3>Readonly</h3><p>If you check <em>readonly</em>, all attached pads will stay in their state, and can not be edited. Note that visibility still works in readonly mode.</p><h3>Tags</h3><p>You can attach tags to this element by clicking on the corresponding input field and selecting them one by one.</p><p>To create a new tag, fill it and type ENTER key or click on the 'Ok' button. Once the tag has been added, it will automatically been selected on this form.</p><p>You can remove a tag by clicking on the cross located on the right of it.</p>",
     "EDIT": "Edit",
     "EDIT_GROUP": "Edit a group",
     "VIEW": "View",
@@ -201,7 +201,7 @@
     },
     "SORT": {
       "TITLE": "Sort by",
-      "HELP": "By default, groups are ordered by creation date, older first. You can choose to use another orders. Reclicking inverses order."
+      "HELP": "By default, groups are ordered by creation date, older first. You can choose to use another orders. Click again to reverse order."
     },
     "SEARCH": {
       "TITLE": "Search",
@@ -232,7 +232,7 @@
       "ADMINS": "Admins",
       "USERS": "Users",
       "USERS_NONE": "No user",
-      "PUBLIC_DENIED": "Public access : you are not allowed to see this data.",
+      "PUBLIC_DENIED": "Public access: you are not allowed to see this data.",
       "VISIBILITY": "Visibility",
       "PAD": "Pad",
       "PADS": "Pads",
@@ -246,9 +246,9 @@
       "SORT_BY_UPDATE": "last update",
       "MOVE": "Move all pads to another group",
       "MOVE_TITLE": "Pads migration of the group ",
-      "MOVE_HELP": "<p>Please select the wanted group for your migration. Only groups on which you are admin are listed.</p><p>Once chosen, click to the submit button and wait for a moment.</p>",
+      "MOVE_HELP": "<p>Please select the wanted group for your migration. Only groups on which you are admin are listed.</p><p>Once chosen, click on the submit button and wait for a moment.</p>",
       "FROM_GROUP": "group :",
-      "VIEW_HELP": "<p>Here is the main interface to the current pad.</p><p>If the group or the pad is private, you need to enter the password to be able to access to it.</p><p>If you want to go back to the group, you can click on the group name.</p>",
+      "VIEW_HELP": "<p>Here is the main interface of the current pad.</p><p>If the group or the pad is private, you need to enter the password to be able to access to it.</p><p>If you want to go back to the group, you can click on the group name.</p>",
       "OPEN_TAB": "Open in a new tab"
     },
     "INFO": {
@@ -293,7 +293,7 @@
       "NAME": "Name of the userlist",
       "ADD_SUCCESS": "Userlist has been successfully created",
       "EDIT_SUCCESS": "Userlist has been successfully updated",
-      "REMOVE_SURE": "Are you sure you want to remove this userlist ?",
+      "REMOVE_SURE": "Are you sure you want to remove this userlist?",
       "REMOVE_SUCCESS": "Userlist has been successfully removed",
       "USER_INVITE": "By selecting a userlist, you will invite all its users at the same time"
     },
@@ -312,7 +312,7 @@
     "USERS_SEARCH_LOGIN": "Search by login",
     "ETHERPAD_ACCOUNT": "Etherpad account",
     "HELP_LOGIN": "<p>MyPads administration is tied to Etherpad administration. Please enter an authorized login and password, as fixed into Etherpad <em>settings.json</em> to be able to update MyPads settings.</p>",
-    "HELP_SETTINGS": "<h3>Settings</h3><p>Only Etherpad admins have access to this page. You can edit the global settings here and apply them. Changes will be effective directly.</p><h3>Passwords</h3><p>Be careful about password sizes : if you have existing accounts and raise minimum size or decrease maximum size, some user passwords may become unseizable.</p><h3>Mail configuration</h3><p>MyPads can verify the mails of subscribed users by sending them an email which will be used by them to confirm their address. Moreover, MyPads need email sending for password recovery.</p><p>Be cautious with SMTP configuration : bad parameters can lead to an Etherpad crash.</p><p>Please note that, unlike other parameters, SMTP settings are only applied after Etherpad reboot.</p>",
+    "HELP_SETTINGS": "<h3>Settings</h3><p>Only Etherpad admins have access this page. You can edit the global settings here and apply them. Changes will be effective directly.</p><h3>Passwords</h3><p>Be careful about password sizes : if you have existing accounts and raise minimum size or decrease maximum size, some user passwords may become unseizable.</p><h3>Mail configuration</h3><p>MyPads can verify the mails of subscribed users by sending them an email which will be used by them to confirm their address. Moreover, MyPads need email sending for password recovery.</p><p>Be cautious with SMTP configuration: bad parameters can lead to an Etherpad crash.</p><p>Please note that, unlike other parameters, SMTP settings are only applied after Etherpad reboot.</p>",
     "HELP_USERS": "<p>This admin reserved page helps you to find users by entering their login. Once found, you will be able to edit or remove user.</p><p>For simplicity and performance reasons, we don't offer here a full listing of subscribed users.</p>",
     "HELP_USER_EDIT": "<p>Here you can update all data associated to an existing user.</p><p>Please note that by default, leaving password empty means keeping the current password. If you want to change it, you have to fill password field and its confirmation.</p>",
     "FIELD": {
@@ -340,9 +340,9 @@
       "TOKEN_DURATION": "The time, in minutes, generated tokens are valid until users confirm their subscription",
       "SMTP_HOST": "Domain name where the SMTP Server belongs to",
       "SMTP_PORT": "SMTP Port to use",
-      "SMTP_SECURE": "Check it if you want to use a encrypted connexion between MyPads and your SMTP Server",
-      "SMTP_USER": "Optional : if authentication to the SMTP server is required, username",
-      "SMTP_PASS": "Optional : if authentication to the SMTP server is required, password",
+      "SMTP_SECURE": "Check it if you want to use an encrypted connexion between MyPads and your SMTP Server",
+      "SMTP_USER": "Optional: if authentication to the SMTP server is required, username",
+      "SMTP_PASS": "Optional: if authentication to the SMTP server is required, password",
       "SUCCESS": "Configuration has been updated successfully",
       "NOCHANGE": "Configuration have not changed, so no update has been sent",
       "USERS_SEARCH_LOGIN": "Please enter a login to search around database users",

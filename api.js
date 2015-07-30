@@ -43,6 +43,7 @@ catch (e) {
 var bodyParser = require('body-parser');
 // Local dependencies
 var conf = require('./configuration.js');
+var mail = require('./mail.js');
 var user = require('./model/user.js');
 var group = require('./model/group.js');
 var pad = require('./model/pad.js');
@@ -596,6 +597,34 @@ module.exports = (function () {
         catch (e) { res.status(400).send({ error: e.message }); }
       }
     );
+
+    /**
+    * POST method : special password recovery with mail sending.
+    * Need to have the login into the body
+    * 
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/passrecover
+    *
+    * TODO: really send the mail with token
+    */
+
+    app.post(api.initialRoute + 'passrecover', function (req, res) {
+      var login = req.body.login;
+      var err;
+      if (!login || ld.isEmpty(login)) {
+        err = 'BACKEND.ERROR.TYPE.LOGIN_REQUIRED';
+        return res.status(400).send({ error: err });
+      }
+      if (!user.ids[login]) {
+        err = 'BACKEND.ERROR.USER.NOT_FOUND';
+        return res.status(404).send({ error: err });
+      }
+      if (!mail.connection) {
+        err = 'BACKEND.ERROR.CONFIGURATION.MAIL_NOT_CONFIGURED';
+        return res.status(501).send({ error: err });
+      }
+      return res.status(501).end();
+    });
 
   };
 

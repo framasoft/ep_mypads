@@ -117,6 +117,7 @@ module.exports = (function () {
   config.URLS.GROUP = config.URLS.BASE + '/group';
   config.URLS.PAD = config.URLS.BASE + '/pad';
   config.URLS.USERLIST = config.URLS.BASE + '/userlist';
+  config.URLS.PASSRECOVER = config.URLS.BASE + '/passrecover';
   config.SERVER = m.prop();
   // default to en
   var USERLANG_DEFAULT = 'en';
@@ -3039,12 +3040,18 @@ module.exports = (function () {
         m('legend', conf.LANG.USER.MYPADS_ACCOUNT),
         login.label, login.input, login.icon,
         password.label, password.input, password.icon,
+        m('p.block.passlost', [
+          m('a', {
+            href: '/passrecover',
+            config: m.route
+          }, conf.LANG.USER.PASSWORD_LOST)
+        ]),
         m('input.block.send', {
           form: 'login-form',
           type: 'submit',
           value: conf.LANG.USER.LOGIN
         })
-      ]),
+      ])
     ]);
   };
 
@@ -3890,7 +3897,117 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./pad-mark.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-mark.js","./pad-share.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-share.js","js-base64":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/js-base64/base64.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./pad-mark.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-mark.js","./pad-share.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-share.js","js-base64":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/js-base64/base64.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/passrecover.js":[function(require,module,exports){
+/**
+*  # Password recovery module
+*
+*  ## License
+*
+*  Licensed to the Apache Software Foundation (ASF) under one
+*  or more contributor license agreements.  See the NOTICE file
+*  distributed with this work for additional information
+*  regarding copyright ownership.  The ASF licenses this file
+*  to you under the Apache License, Version 2.0 (the
+*  "License"); you may not use this file except in compliance
+*  with the License.  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+*  Unless required by applicable law or agreed to in writing,
+*  software distributed under the License is distributed on an
+*  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+*  KIND, either express or implied.  See the License for the
+*  specific language governing permissions and limitations
+*  under the License.
+*
+*  ## Description
+*
+*  This module contains the password recovery process
+*/
+
+module.exports = (function () {
+  // Global dependencies
+  var m = require('mithril');
+  var ld = require('lodash');
+  // Local dependencies
+  var conf = require('../configuration.js');
+  var auth = require('../auth.js');
+  var form = require('../helpers/form.js');
+  var notif = require('../widgets/notification.js');
+  var layout = require('./layout.js');
+  var user = require('./user.js');
+
+  var passrec = {};
+
+  /**
+  * ## Controller
+  *
+  * Used for module state and actions.
+  */
+
+  passrec.controller = function () {
+    if (auth.isAuthenticated()) {
+      m.route('/logout');
+    }
+
+    var c = {};
+    form.initFields(c, ['login']);
+
+    c.submit = function (e) {
+      e.preventDefault();
+      m.request({
+        method: 'POST',
+        url: conf.URLS.PASSRECOVER,
+        data: c.data
+      }).then(function () {
+        // TODO
+      }, function (err) {
+        notif.error({ body: ld.result(conf.LANG, err.error) });
+      });
+    };
+
+    return c;
+  };
+
+  /**
+  * ## Views
+  */
+
+  var view = {};
+
+  view.form = function (c) {
+    var login = user.view.field.login(c);
+    return m('form.block', {
+      id: 'passrec-form',
+      onsubmit: c.submit
+      }, [
+        m('fieldset.block-group', [ login.label, login.input, login.icon ]),
+        m('input.block.send', {
+          form: 'passrec-form',
+          type: 'submit',
+          value: conf.LANG.USER.OK
+        })
+      ]
+    );
+  };
+
+  view.main = function (c) {
+    return m('section', { class: 'block-group user' }, [
+      m('h2.block', conf.LANG.USER.PASSRECOVER),
+      view.form(c)
+    ]);
+  };
+
+  passrec.view = function (c) {
+    return layout.view(view.main(c), user.view.aside.common(c));
+  };
+
+
+  return passrec;
+
+}).call(this);
+
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./user.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js":[function(require,module,exports){
 /**
 *  # Subscription module
 *
@@ -5289,6 +5406,7 @@ module.exports = (function () {
   var home = require('./modules/home.js');
   var login = require('./modules/login.js');
   var logout = require('./modules/logout.js');
+  var passRecover = require('./modules/passrecover.js');
   var subscribe = require('./modules/subscribe.js');
   var bookmark = require('./modules/bookmark.js');
   var userlist = require('./modules/userlist.js');
@@ -5321,6 +5439,7 @@ module.exports = (function () {
     '/': home,
     '/login': login,
     '/logout': logout,
+    '/passrecover': passRecover,
     '/subscribe': subscribe,
     '/myprofile': subscribe,
     '/mybookmarks': bookmark,
@@ -5353,7 +5472,7 @@ module.exports = (function () {
   return route;
 }).call(this);
 
-},{"./modules/admin-logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-logout.js","./modules/admin-users-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users-form.js","./modules/admin-users-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users-remove.js","./modules/admin-users.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users.js","./modules/admin.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/bookmark.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/bookmark.js","./modules/group-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./modules/group-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js","./modules/group-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-view.js","./modules/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/pad-add.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-add.js","./modules/pad-move.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-move.js","./modules/pad-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-remove.js","./modules/pad-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-view.js","./modules/subscribe.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","./modules/user-invitation.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user-invitation.js","./modules/userlist-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist-form.js","./modules/userlist-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist-remove.js","./modules/userlist.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js":[function(require,module,exports){
+},{"./modules/admin-logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-logout.js","./modules/admin-users-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users-form.js","./modules/admin-users-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users-remove.js","./modules/admin-users.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users.js","./modules/admin.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/bookmark.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/bookmark.js","./modules/group-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./modules/group-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js","./modules/group-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-view.js","./modules/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/pad-add.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-add.js","./modules/pad-move.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-move.js","./modules/pad-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-remove.js","./modules/pad-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-view.js","./modules/passrecover.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/passrecover.js","./modules/subscribe.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","./modules/user-invitation.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user-invitation.js","./modules/userlist-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist-form.js","./modules/userlist-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist-remove.js","./modules/userlist.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js":[function(require,module,exports){
 /**
 *  # Notification module
 *
@@ -20839,7 +20958,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {
@@ -20849,6 +20968,7 @@ module.exports={
         "KEY_STR": "Key must be a string",
         "VALUE_REQUIRED": "Value is mandatory",
         "LOGIN_STR": "Login must be a string",
+        "LOGIN_REQUIRED": "Login is required",
         "PASSWORD_STR": "Password must be a string",
         "PASSWORD_MISSING": "Missing password",
         "PASSWORD_SIZE": "Password size is too short or too long",
@@ -20868,7 +20988,8 @@ module.exports={
       "CONFIGURATION": {
         "LANG_PROBLEM": "Lang update can not be done. Default lang will be used.",
         "CANTGET": "Configuration loading has failed. Please contact your administrator.",
-        "KEY_NOT_FOUND": "The record has not been found"
+        "KEY_NOT_FOUND": "The record has not been found",
+        "MAIL_NOT_CONFIGURED": "Mail settings have not been done on this server. Please contact your administrator."
       },
       "AUTHENTICATION": {
         "MUST_BE": "You must be authenticated",
@@ -20947,9 +21068,11 @@ module.exports={
     "MYPADS_ACCOUNT": "MyPads account",
     "SUBSCRIBE": "Subscribe",
     "PROFILE": "Profile",
+    "PASSRECOVER": "Password recovery",
     "USERNAME": "Username",
     "LOGIN": "Login",
     "PASSWORD": "Password",
+    "PASSWORD_LOST": "Lost your password ?",
     "PASSCHECK": "Password Confirmation",
     "PASSCURRENT": "Current password",
     "EMAIL": "Email",

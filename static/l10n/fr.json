@@ -8,6 +8,7 @@
         "KEY_STR": "Key doit être une chaîne de caractères",
         "VALUE_REQUIRED": "Value est obligatoire",
         "LOGIN_STR": "Login doit être une chaîne de caractères",
+        "LOGIN_REQUIRED": "Un identifiant est obligatoire",
         "PASSWORD_STR": "Password doit être une chaîne de caractères",
         "PASSWORD_MISSING": "Le mot de passe est manquant",
         "PASSWORD_SIZE": "La taille du mot de passe est invalide",
@@ -27,7 +28,8 @@
       "CONFIGURATION": {
         "LANG_PROBLEM": "Le changement de langue n'a pu être fait. La langue par défaut sera utilisée.",
         "CANTGET": "Le chargement de la configuration a échoué. Merci de contacter votre administrateur.",
-        "KEY_NOT_FOUND": "L'enregistrement n'a pas été trouvé"
+        "KEY_NOT_FOUND": "L'enregistrement n'a pas été trouvé",
+        "MAIL_NOT_CONFIGURED": "Le paramétrage des envois de mail n'a pas été fait sur ce serveur. Merci de contacter votre administrateur."
       },
       "AUTHENTICATION": {
         "MUST_BE": "Vous devez être authentifié",
@@ -106,10 +108,12 @@
     "MYPADS_ACCOUNT": "Compte MyPads",
     "SUBSCRIBE": "S'inscrire",
     "PROFILE": "Profil",
+    "PASSRECOVER": "Récupération de mot de passe",
     "USERNAME": "Identifiant",
     "LOGIN": "Se connecter",
     "PASSWORD": "Mot de passe",
     "PASSCHECK": "Confirmation de mot de passe",
+    "PASSWORD_LOST": "Mot de passe perdu ?",
     "PASSCURRENT": "Mot de passe actuel",
     "EMAIL": "Courriel",
     "EMAIL_SAMPLE": "identifiant@exemple.org",

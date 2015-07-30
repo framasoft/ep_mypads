@@ -17,6 +17,12 @@ div.tag button.ok {
   font-weight: bold;
 }
 
+section.user p.passlost {
+  margin: 0;
+  text-align: center;
+}
+section.user p.passlost a { color: #757575; }
+
 section.user input[type=submit] {
   text-transform: uppercase;
   margin-left: 30%;

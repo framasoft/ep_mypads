@@ -43,6 +43,7 @@ module.exports = (function () {
   config.URLS.GROUP = config.URLS.BASE + '/group';
   config.URLS.PAD = config.URLS.BASE + '/pad';
   config.URLS.USERLIST = config.URLS.BASE + '/userlist';
+  config.URLS.PASSRECOVER = config.URLS.BASE + '/passrecover';
   config.SERVER = m.prop();
   // default to en
   var USERLANG_DEFAULT = 'en';

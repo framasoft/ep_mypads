@@ -33,6 +33,7 @@ module.exports = (function () {
   var home = require('./modules/home.js');
   var login = require('./modules/login.js');
   var logout = require('./modules/logout.js');
+  var passRecover = require('./modules/passrecover.js');
   var subscribe = require('./modules/subscribe.js');
   var bookmark = require('./modules/bookmark.js');
   var userlist = require('./modules/userlist.js');
@@ -65,6 +66,7 @@ module.exports = (function () {
     '/': home,
     '/login': login,
     '/logout': logout,
+    '/passrecover': passRecover,
     '/subscribe': subscribe,
     '/myprofile': subscribe,
     '/mybookmarks': bookmark,

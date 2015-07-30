@@ -30,6 +30,7 @@
   var login = require('./login.spec.js');
   var subscribe = require('./subscribe.spec.js');
   var profile = require('./profile.spec.js');
+  var passRecover = require('./passrecover.spec.js');
   var bookmark = require('./bookmark.spec.js');
   var groupList = require('./group.spec.js');
   var groupForm = require('./group-form.spec.js');
@@ -52,6 +53,7 @@
     login.run(app);
     subscribe.run(app);
     profile.run(app);
+    passRecover.run(app);
     bookmark.run(app);
     groupList.run(app);
     groupForm.run(app);

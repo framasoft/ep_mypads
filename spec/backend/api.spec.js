@@ -930,6 +930,41 @@
 
       });
 
+      describe('user password recovery POST', function () {
+
+        it('should complain about missing login', function (done) {
+          rq.post(route + 'passrecover', function (err, resp, body) {
+            expect(err).toBeNull();
+            expect(resp.statusCode).toBe(400);
+            expect(body.error).toMatch('LOGIN_REQUIRED');
+            done();
+          });
+        });
+
+        it('should complain about not found user', function (done) {
+          var b = { body: { login: 'inexistent' } };
+          rq.post(route + 'passrecover', b, function (err, resp, body) {
+            expect(err).toBeNull();
+            expect(resp.statusCode).toBe(404);
+            expect(body.error).toMatch('USER.NOT_FOUND');
+            done();
+          });
+        });
+
+        it('should complain about not configured mail settings',
+          function (done) {
+            var b = { body: { login: 'guest' } };
+            rq.post(route + 'passrecover', b, function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(501);
+              expect(body.error).toMatch('MAIL_NOT_CONFIGURED');
+              done();
+            });
+          }
+        );
+
+      });
+
       describe('user.del DELETE and key/login', function () {
 
         it('will return an error if the user does not exist',

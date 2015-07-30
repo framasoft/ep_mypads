@@ -8,6 +8,7 @@
         "KEY_STR": "Key must be a string",
         "VALUE_REQUIRED": "Value is mandatory",
         "LOGIN_STR": "Login must be a string",
+        "LOGIN_REQUIRED": "Login is required",
         "PASSWORD_STR": "Password must be a string",
         "PASSWORD_MISSING": "Missing password",
         "PASSWORD_SIZE": "Password size is too short or too long",
@@ -27,7 +28,8 @@
       "CONFIGURATION": {
         "LANG_PROBLEM": "Lang update can not be done. Default lang will be used.",
         "CANTGET": "Configuration loading has failed. Please contact your administrator.",
-        "KEY_NOT_FOUND": "The record has not been found"
+        "KEY_NOT_FOUND": "The record has not been found",
+        "MAIL_NOT_CONFIGURED": "Mail settings have not been done on this server. Please contact your administrator."
       },
       "AUTHENTICATION": {
         "MUST_BE": "You must be authenticated",
@@ -106,9 +108,11 @@
     "MYPADS_ACCOUNT": "MyPads account",
     "SUBSCRIBE": "Subscribe",
     "PROFILE": "Profile",
+    "PASSRECOVER": "Password recovery",
     "USERNAME": "Username",
     "LOGIN": "Login",
     "PASSWORD": "Password",
+    "PASSWORD_LOST": "Lost your password ?",
     "PASSCHECK": "Password Confirmation",
     "PASSCURRENT": "Current password",
     "EMAIL": "Email",

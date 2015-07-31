@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/mnt/share/fabien/bak/code/node/ep_mypads/frontend.js":[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /**
 *  # Frontend Entry Point
 *
@@ -33,7 +33,7 @@
   conf.init(route.init);
 }).call(this);
 
-},{"./frontend/js/configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","./frontend/js/route.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/route.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js":[function(require,module,exports){
+},{"./frontend/js/configuration.js":3,"./frontend/js/route.js":33}],2:[function(require,module,exports){
 /**
 *  # Authentification module
 *
@@ -71,7 +71,7 @@ module.exports = (function () {
   return auth;
 }).call(this);
 
-},{"mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js":[function(require,module,exports){
+},{"mithril":42}],3:[function(require,module,exports){
 /**
 *  # Configuration
 *
@@ -182,7 +182,7 @@ module.exports = (function () {
   return config;
 }).call(this);
 
-},{"../../static/l10n/en.json":"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json","./auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","./widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js":[function(require,module,exports){
+},{"../../static/l10n/en.json":43,"./auth.js":2,"./widgets/notification.js":34,"lodash":41,"mithril":42}],4:[function(require,module,exports){
 /**
 *  # Form helpers functions
 *
@@ -315,7 +315,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js":[function(require,module,exports){
+},{"mithril":42}],5:[function(require,module,exports){
 /**
 *  # Group List module
 *
@@ -450,7 +450,7 @@ module.exports = (function () {
   return model;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-logout.js":[function(require,module,exports){
+},{"../auth.js":2,"../configuration.js":3,"../widgets/notification.js":34,"lodash":41,"mithril":42}],6:[function(require,module,exports){
 /**
 *  # Admin logout module
 *
@@ -504,7 +504,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users-form.js":[function(require,module,exports){
+},{"../auth.js":2,"../configuration.js":3,"../widgets/notification.js":34,"mithril":42}],7:[function(require,module,exports){
 /**
 *  # Admin Users Form edition module
 *
@@ -651,7 +651,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./subscribe.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users-remove.js":[function(require,module,exports){
+},{"../auth.js":2,"../configuration.js":3,"../helpers/form.js":4,"../widgets/notification.js":34,"./layout.js":17,"./subscribe.js":27,"lodash":41,"mithril":42}],8:[function(require,module,exports){
 /**
 *  # Admin user remove module
 *
@@ -719,7 +719,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users.js":[function(require,module,exports){
+},{"../auth.js":2,"../configuration.js":3,"../widgets/notification.js":34,"lodash":41,"mithril":42}],9:[function(require,module,exports){
 /**
 *  # Admin Users Management module
 *
@@ -878,7 +878,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./user.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js":[function(require,module,exports){
+},{"../auth.js":2,"../configuration.js":3,"../helpers/form.js":4,"../widgets/notification.js":34,"./layout.js":17,"./user.js":29,"lodash":41,"mithril":42}],10:[function(require,module,exports){
 /**
 *  # Admin module
 *
@@ -956,8 +956,8 @@ module.exports = (function () {
           method: 'GET'
         }).then(function (resp) {
           form.initFields(c, ['title', 'passwordMin', 'passwordMax',
-            'defaultLanguage', 'checkMails', 'tokenDuration',
-            'SMTPHost', 'SMTPPort', 'SMTPSecure', 'SMTPUser', 'SMTPPass' ]);
+            'defaultLanguage', 'checkMails', 'tokenDuration', 'SMTPHost',
+            'SMTPPort', 'SMTPSecure', 'SMTPUser', 'SMTPPass', 'SMTPEmailFrom']);
           c.currentConf = resp.value;
           ld.forIn(resp.value, function (v, k) {
             c.data[k] = m.prop(v);
@@ -1177,6 +1177,12 @@ module.exports = (function () {
         var f = form.field(c, 'SMTPPass', A.FIELD.SMTP_PASS, icon);
         ld.assign(f.input.attrs, { type: 'password' });
         return f;
+      })(),
+      SMTPEmailFrom: (function () {
+        var icon = form.icon(c, 'SMTPEmailFrom', A.INFO.SMTP_EMAILFROM);
+        var f = form.field(c, 'SMTPEmailFrom', A.FIELD.SMTP_EMAILFROM, icon);
+        ld.assign(f.input.attrs, { type: 'email' });
+        return f;
       })()
     };
     return m('form.block', {
@@ -1204,7 +1210,8 @@ module.exports = (function () {
           f.SMTPPort.label, f.SMTPPort.input, f.SMTPPort.icon,
           f.SMTPSecure.label, f.SMTPSecure.input, f.SMTPSecure.icon,
           f.SMTPUser.label, f.SMTPUser.input, f.SMTPUser.icon,
-          f.SMTPPass.label, f.SMTPPass.input, f.SMTPPass.icon ])
+          f.SMTPPass.label, f.SMTPPass.input, f.SMTPPass.icon,
+          f.SMTPEmailFrom.label, f.SMTPEmailFrom.input, f.SMTPEmailFrom.icon ])
       ]),
       m('input.block.send', {
         form: 'settings-form',
@@ -1246,7 +1253,7 @@ module.exports = (function () {
   return admin;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./user.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/bookmark.js":[function(require,module,exports){
+},{"../auth.js":2,"../configuration.js":3,"../helpers/form.js":4,"../widgets/notification.js":34,"./layout.js":17,"./user.js":29,"lodash":41,"mithril":42}],11:[function(require,module,exports){
 /**
 *  # Bookmark List module
 *
@@ -1413,7 +1420,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","./group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./pad-mark.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-mark.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js":[function(require,module,exports){
+},{"../auth.js":2,"../configuration.js":3,"../model/group.js":5,"./group.js":15,"./layout.js":17,"./pad-mark.js":21,"lodash":41,"mithril":42}],12:[function(require,module,exports){
 /**
 *  # Group form module
 *
@@ -1694,7 +1701,7 @@ module.exports = (function () {
   return gf;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","../widgets/tag.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/tag.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js":[function(require,module,exports){
+},{"../auth.js":2,"../configuration.js":3,"../helpers/form.js":4,"../model/group.js":5,"../widgets/notification.js":34,"../widgets/tag.js":35,"./layout.js":17,"lodash":41,"mithril":42}],13:[function(require,module,exports){
 /**
 *  # Group remove module
 *
@@ -1766,7 +1773,7 @@ module.exports = (function () {
   return remove;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-view.js":[function(require,module,exports){
+},{"../auth.js":2,"../configuration.js":3,"../model/group.js":5,"../widgets/notification.js":34,"lodash":41,"mithril":42}],14:[function(require,module,exports){
 /**
 *  # Group View module
 *
@@ -2211,7 +2218,7 @@ module.exports = (function () {
   return group;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./pad-mark.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-mark.js","./pad-share.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-share.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js":[function(require,module,exports){
+},{"../auth.js":2,"../configuration.js":3,"../model/group.js":5,"../widgets/notification.js":34,"./layout.js":17,"./pad-mark.js":21,"./pad-share.js":24,"lodash":41,"mithril":42}],15:[function(require,module,exports){
 /**
 *  # Group List module
 *
@@ -2717,7 +2724,7 @@ module.exports = (function () {
   return group;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./pad-share.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-share.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js":[function(require,module,exports){
+},{"../auth.js":2,"../configuration.js":3,"../model/group.js":5,"../widgets/notification.js":34,"./layout.js":17,"./pad-share.js":24,"lodash":41,"mithril":42}],16:[function(require,module,exports){
 /**
 *  # Home module
 *
@@ -2768,7 +2775,7 @@ module.exports = (function () {
   return home;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js":[function(require,module,exports){
+},{"../auth.js":2,"./layout.js":17,"mithril":42}],17:[function(require,module,exports){
 /**
 *  # Layout
 *
@@ -2939,7 +2946,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js":[function(require,module,exports){
+},{"../auth.js":2,"../configuration.js":3,"../widgets/notification.js":34,"lodash":41,"mithril":42}],18:[function(require,module,exports){
 /**
 *  # Login module
 *
@@ -3071,7 +3078,7 @@ module.exports = (function () {
   return login;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./user.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js":[function(require,module,exports){
+},{"../auth.js":2,"../configuration.js":3,"../helpers/form.js":4,"../widgets/notification.js":34,"./layout.js":17,"./user.js":29,"lodash":41,"mithril":42}],19:[function(require,module,exports){
 /**
 *  # Home module
 *
@@ -3137,7 +3144,7 @@ module.exports = (function () {
   return logout;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-add.js":[function(require,module,exports){
+},{"../auth.js":2,"../configuration.js":3,"../model/group.js":5,"../widgets/notification.js":34,"lodash":41,"mithril":42}],20:[function(require,module,exports){
 /**
 *  # Pad creation and edition module
 *
@@ -3238,7 +3245,7 @@ module.exports = (function () {
   return add;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-mark.js":[function(require,module,exports){
+},{"../auth.js":2,"../configuration.js":3,"../model/group.js":5,"../widgets/notification.js":34,"lodash":41,"mithril":42}],21:[function(require,module,exports){
 /**
 *  # Pad bookmarking module
 *
@@ -3304,7 +3311,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-move.js":[function(require,module,exports){
+},{"../auth.js":2,"../configuration.js":3,"../widgets/notification.js":34,"lodash":41,"mithril":42}],22:[function(require,module,exports){
 /**
 *  # Pad migration from a group to another
 *
@@ -3518,7 +3525,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-remove.js":[function(require,module,exports){
+},{"../auth.js":2,"../configuration.js":3,"../model/group.js":5,"../widgets/notification.js":34,"./layout.js":17,"lodash":41,"mithril":42}],23:[function(require,module,exports){
 /**
 *  # Pad remove module
 *
@@ -3595,7 +3602,7 @@ module.exports = (function () {
   return remove;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-share.js":[function(require,module,exports){
+},{"../auth.js":2,"../configuration.js":3,"../model/group.js":5,"../widgets/notification.js":34,"lodash":41,"mithril":42}],24:[function(require,module,exports){
 /**
 *  # Pad and group sharing module
 *
@@ -3641,7 +3648,7 @@ module.exports = (function () {
   };
 }).call(this);
 
-},{"../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-view.js":[function(require,module,exports){
+},{"../configuration.js":3}],25:[function(require,module,exports){
 /**
 *  # Group View module
 *
@@ -3897,7 +3904,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./pad-mark.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-mark.js","./pad-share.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-share.js","js-base64":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/js-base64/base64.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/passrecover.js":[function(require,module,exports){
+},{"../auth.js":2,"../configuration.js":3,"../model/group.js":5,"./layout.js":17,"./pad-mark.js":21,"./pad-share.js":24,"js-base64":40,"lodash":41,"mithril":42}],26:[function(require,module,exports){
 /**
 *  # Password recovery module
 *
@@ -4007,7 +4014,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./user.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js":[function(require,module,exports){
+},{"../auth.js":2,"../configuration.js":3,"../helpers/form.js":4,"../widgets/notification.js":34,"./layout.js":17,"./user.js":29,"lodash":41,"mithril":42}],27:[function(require,module,exports){
 /**
 *  # Subscription module
 *
@@ -4324,7 +4331,7 @@ module.exports = (function () {
   return subscribe;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./user.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user-invitation.js":[function(require,module,exports){
+},{"../auth.js":2,"../configuration.js":3,"../helpers/form.js":4,"../model/group.js":5,"../widgets/notification.js":34,"./layout.js":17,"./user.js":29,"lodash":41,"mithril":42}],28:[function(require,module,exports){
 /**
 *  # User invitation and admin sharing module
 *
@@ -4564,7 +4571,7 @@ module.exports = (function () {
   return invite;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","../widgets/tag.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/tag.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js":[function(require,module,exports){
+},{"../auth.js":2,"../configuration.js":3,"../model/group.js":5,"../widgets/notification.js":34,"../widgets/tag.js":35,"./layout.js":17,"lodash":41,"mithril":42}],29:[function(require,module,exports){
 /**
 *  # User module
 *
@@ -4933,7 +4940,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist-form.js":[function(require,module,exports){
+},{"../configuration.js":3,"../helpers/form.js":4,"lodash":41,"mithril":42}],30:[function(require,module,exports){
 /**
 *  # Userlist form module
 *
@@ -5167,7 +5174,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","../widgets/tag.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/tag.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist-remove.js":[function(require,module,exports){
+},{"../auth.js":2,"../configuration.js":3,"../helpers/form.js":4,"../model/group.js":5,"../widgets/notification.js":34,"../widgets/tag.js":35,"./layout.js":17,"lodash":41,"mithril":42}],31:[function(require,module,exports){
 /**
 *  # Userlist remove module
 *
@@ -5240,7 +5247,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist.js":[function(require,module,exports){
+},{"../auth.js":2,"../configuration.js":3,"../widgets/notification.js":34,"lodash":41,"mithril":42}],32:[function(require,module,exports){
 /**
 *  # Userlists module
 *
@@ -5370,7 +5377,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/route.js":[function(require,module,exports){
+},{"../auth.js":2,"../configuration.js":3,"../model/group.js":5,"./layout.js":17,"lodash":41,"mithril":42}],33:[function(require,module,exports){
 /**
 *  # Routing module
 *
@@ -5472,7 +5479,7 @@ module.exports = (function () {
   return route;
 }).call(this);
 
-},{"./modules/admin-logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-logout.js","./modules/admin-users-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users-form.js","./modules/admin-users-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users-remove.js","./modules/admin-users.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users.js","./modules/admin.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/bookmark.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/bookmark.js","./modules/group-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./modules/group-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js","./modules/group-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-view.js","./modules/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/pad-add.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-add.js","./modules/pad-move.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-move.js","./modules/pad-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-remove.js","./modules/pad-view.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-view.js","./modules/passrecover.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/passrecover.js","./modules/subscribe.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","./modules/user-invitation.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user-invitation.js","./modules/userlist-form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist-form.js","./modules/userlist-remove.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist-remove.js","./modules/userlist.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js":[function(require,module,exports){
+},{"./modules/admin-logout.js":6,"./modules/admin-users-form.js":7,"./modules/admin-users-remove.js":8,"./modules/admin-users.js":9,"./modules/admin.js":10,"./modules/bookmark.js":11,"./modules/group-form.js":12,"./modules/group-remove.js":13,"./modules/group-view.js":14,"./modules/group.js":15,"./modules/home.js":16,"./modules/login.js":18,"./modules/logout.js":19,"./modules/pad-add.js":20,"./modules/pad-move.js":22,"./modules/pad-remove.js":23,"./modules/pad-view.js":25,"./modules/passrecover.js":26,"./modules/subscribe.js":27,"./modules/user-invitation.js":28,"./modules/userlist-form.js":30,"./modules/userlist-remove.js":31,"./modules/userlist.js":32,"mithril":42}],34:[function(require,module,exports){
 /**
 *  # Notification module
 *
@@ -5634,7 +5641,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/tag.js":[function(require,module,exports){
+},{"../configuration.js":3,"mithril":42}],35:[function(require,module,exports){
 
 /**
 *  # Tag field module
@@ -5781,7 +5788,7 @@ module.exports = (function () {
   return tag;
 }).call(this);
 
-},{"../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/browserify/node_modules/buffer/index.js":[function(require,module,exports){
+},{"../configuration.js":3,"lodash":41,"mithril":42}],36:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -7093,7 +7100,7 @@ function decodeUtf8Char (str) {
   }
 }
 
-},{"base64-js":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/browserify/node_modules/buffer/node_modules/base64-js/lib/b64.js","ieee754":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/browserify/node_modules/buffer/node_modules/ieee754/index.js","is-array":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/browserify/node_modules/buffer/node_modules/is-array/index.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/browserify/node_modules/buffer/node_modules/base64-js/lib/b64.js":[function(require,module,exports){
+},{"base64-js":37,"ieee754":38,"is-array":39}],37:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -7219,7 +7226,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/browserify/node_modules/buffer/node_modules/ieee754/index.js":[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 exports.read = function(buffer, offset, isLE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -7305,7 +7312,7 @@ exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/browserify/node_modules/buffer/node_modules/is-array/index.js":[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 
 /**
  * isArray
@@ -7340,7 +7347,7 @@ module.exports = isArray || function (val) {
   return !! val && '[object Array]' == str.call(val);
 };
 
-},{}],"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/js-base64/base64.js":[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 /*
  * $Id: base64.js,v 2.15 2014/04/05 12:58:57 dankogai Exp dankogai $
  *
@@ -7534,7 +7541,7 @@ module.exports = isArray || function (val) {
     }
 })(this);
 
-},{"buffer":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/browserify/node_modules/buffer/index.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js":[function(require,module,exports){
+},{"buffer":36}],41:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -19889,7 +19896,7 @@ module.exports = isArray || function (val) {
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js":[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 var m = (function app(window, undefined) {
 	var OBJECT = "[object Object]", ARRAY = "[object Array]", STRING = "[object String]", FUNCTION = "function";
 	var type = {}.toString;
@@ -20957,8 +20964,8 @@ var m = (function app(window, undefined) {
 if (typeof module != "undefined" && module !== null && module.exports) module.exports = m;
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
-},{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+},{}],43:[function(require,module,exports){
+module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {
@@ -20983,7 +20990,9 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
         "USERLIST_ID": "In set and del modes, ulistid is mandatory",
         "USERLIST_NAME": "In add mode, name of the userlist is mandatory",
         "USERLIST_SET_PARAMS": "In set mode, name or uids is madantory",
-        "SMTP_CONFIG": "Your SMTP server configuration is invalid"
+        "SMTP_CONFIG": "Your SMTP server configuration is invalid",
+        "TO_MAIL": "to must be an email address",
+        "MSG_STR": "message must be a string"
       },
       "CONFIGURATION": {
         "LANG_PROBLEM": "Lang update can not be done. Default lang will be used.",
@@ -21001,7 +21010,7 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
         "DENIED_RECORD_EDIT": "You're not allowed to edit this record"
       },
       "PERMISSION": {
-        "UNEXPECTED": "Sorry, an unexpected has error has occured",
+        "UNEXPECTED": "Sorry, an unexpected has error has occurred",
         "UNAUTHORIZED": "You are not allowed to access to this record"
       },
       "GROUP": {
@@ -21062,7 +21071,7 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
   },
   "USER": {
     "FORM": "Login",
-    "ORSUB": " (or subscribe ?)",
+    "ORSUB": " (or subscribe)",
     "MANDATORY_FIELDS": "Mandatory fields",
     "OPTIONAL_FIELDS": "Optional fields",
     "MYPADS_ACCOUNT": "MyPads account",
@@ -21072,17 +21081,17 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
     "USERNAME": "Username",
     "LOGIN": "Login",
     "PASSWORD": "Password",
-    "PASSWORD_LOST": "Lost your password ?",
+    "PASSWORD_LOST": "Lost your password?",
     "PASSCHECK": "Password Confirmation",
     "PASSCURRENT": "Current password",
     "EMAIL": "Email",
     "EMAIL_SAMPLE": "username@example.org",
     "LANG": "Lang",
-    "USELOGINANDCOLORINPADS": "Use login and color in pads ?",
+    "USELOGINANDCOLORINPADS": "Use login and color in pads?",
     "FIRSTNAME": "Firstname",
     "LASTNAME": "Lastname",
     "ORGANIZATION": "Organization",
-    "COLOR": "User color for pads",
+    "COLOR": "Customized color for pads",
     "COLOR_SAMPLE": "#00cc00",
     "UNDEF": "********",
     "OK": "Ok",
@@ -21092,7 +21101,7 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
       "LOGIN": "The unique login you choose when you have subscribed",
       "EMAIL": "The email is required for password recovery",
       "COLOR": "The hexademical code for color you want to be used by default in pads",
-      "LANG": "Your browser configuration per default, depends on available language on MyPads",
+      "LANG": "Your default browser configuration, depending on available languages on MyPads",
       "USELOGINANDCOLORINPADS": "Use login and chosen color in pads by default ?",
       "PASSWORD_BEGIN": "Must be between ",
       "PASSWORD_END": " characters",
@@ -21107,18 +21116,18 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
       "LOGIN": "Login is required",
       "EMAIL": "The email is required and should be valid",
       "COLOR": "The hexadecimal code must be like #000000",
-      "LOGOUT": "Log out error : you wasn't authenticated.",
+      "LOGOUT": "Log out error : you were not authenticated.",
       "PASSWORD_MISMATCH": "The entered passwords do not match."
     },
     "AUTH": {
-      "SUCCESS": "Successfull authentication ! Welcome.",
+      "SUCCESS": "Successful authentication ! Welcome.",
       "SUCCESS_OUT": "You have been successfully disconnected.",
-      "SUBSCRIBE_SUCCESS": "Successfull subscription ! Welcome.",
+      "SUBSCRIBE_SUCCESS": "Successful subscription ! Welcome.",
       "PROFILE_SUCCESS": "Profile successfully updated.",
       "WELCOME": "Welcome"
     },
     "HELP": {
-      "PROFILE": "<p>Every change into your profile needs the current password field to be correctly filled. Please note that :</p><ul><li>you can change everything by updating the appropriate field;</li><li>leaving password and password confirmation empty won't affect your current password;</li><li>you can't change your login at the moment but you will in the future;</li><li>if you want to change your password, please enter the new one into the password field and confirm it with the password confirmation.</li></ul>"
+      "PROFILE": "<p>Every change into your profile needs the current password field to be correctly filled. Please note that :</p><ul><li>you can change everything by updating the appropriate field;</li><li>leaving password and password confirmation empty won't affect your current password;</li><li>you can't change your login at the moment but it will be possible in the future;</li><li>if you want to change your password, please enter the new one into the password field and confirm it with the password confirmation.</li></ul>"
     }
   },
   "GROUP": {
@@ -21130,7 +21139,7 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
     "BOOKMARKED": "Bookmarked groups",
     "ARCHIVED": "Archived groups",
     "ADD": "Add a new group",
-    "ADD_HELP": "<h3>Visibility</h3><p>You have the choice between three levels of visibility. It will impact all linked pads :<ul><li><em>restricted</em>, default choice : access of the pads are limited to a list of invited users you have chosen;</li><li><em>private</em> : in this mode, you have to enter a password and access to the pads will be checked against this password;</li><li><em>public</em> : in this mode, all pads are public, users just need to have the URL address.</li></ul></p><h3>Readonly</h3><p>If you check <em>readonly</em>, all attached pads will stay in their state, and can not be edited. Note that visibility still works in readonly mode.</p><h3>Tags</h3><p>You can attach tags to this element by clicking on the corresponding input field and selecting them one by one.</p><p>To create a new tag, fill it and type ENTER key or click on the 'Ok' button. Once the tag has been added, it will automatically been selected on this form.</p><p>You can remove a tag by clicking on the cross located on the right of it.</p>",
+    "ADD_HELP": "<h3>Visibility</h3><p>You have the choice between three levels of visibility. It will impact all linked pads:<ul><li><em>restricted</em>, default choice: access of the pads are limited to a list of invited users you have chosen;</li><li><em>private</em>: in this mode, you have to enter a password and access to the pads will be checked against this password;</li><li><em>public</em>: in this mode, all pads are public, users just need to have the URL address.</li></ul></p><h3>Readonly</h3><p>If you check <em>readonly</em>, all attached pads will stay in their state, and can not be edited. Note that visibility still works in readonly mode.</p><h3>Tags</h3><p>You can attach tags to this element by clicking on the corresponding input field and selecting them one by one.</p><p>To create a new tag, fill it and type ENTER key or click on the 'Ok' button. Once the tag has been added, it will automatically been selected on this form.</p><p>You can remove a tag by clicking on the cross located on the right of it.</p>",
     "EDIT": "Edit",
     "EDIT_GROUP": "Edit a group",
     "VIEW": "View",
@@ -21161,7 +21170,7 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
     },
     "SORT": {
       "TITLE": "Sort by",
-      "HELP": "By default, groups are ordered by creation date, older first. You can choose to use another orders. Reclicking inverses order."
+      "HELP": "By default, groups are ordered by creation date, older first. You can choose to use another orders. Click again to reverse order."
     },
     "SEARCH": {
       "TITLE": "Search",
@@ -21192,7 +21201,7 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
       "ADMINS": "Admins",
       "USERS": "Users",
       "USERS_NONE": "No user",
-      "PUBLIC_DENIED": "Public access : you are not allowed to see this data.",
+      "PUBLIC_DENIED": "Public access: you are not allowed to see this data.",
       "VISIBILITY": "Visibility",
       "PAD": "Pad",
       "PADS": "Pads",
@@ -21206,9 +21215,9 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
       "SORT_BY_UPDATE": "last update",
       "MOVE": "Move all pads to another group",
       "MOVE_TITLE": "Pads migration of the group ",
-      "MOVE_HELP": "<p>Please select the wanted group for your migration. Only groups on which you are admin are listed.</p><p>Once chosen, click to the submit button and wait for a moment.</p>",
+      "MOVE_HELP": "<p>Please select the wanted group for your migration. Only groups on which you are admin are listed.</p><p>Once chosen, click on the submit button and wait for a moment.</p>",
       "FROM_GROUP": "group :",
-      "VIEW_HELP": "<p>Here is the main interface to the current pad.</p><p>If the group or the pad is private, you need to enter the password to be able to access to it.</p><p>If you want to go back to the group, you can click on the group name.</p>",
+      "VIEW_HELP": "<p>Here is the main interface of the current pad.</p><p>If the group or the pad is private, you need to enter the password to be able to access to it.</p><p>If you want to go back to the group, you can click on the group name.</p>",
       "OPEN_TAB": "Open in a new tab"
     },
     "INFO": {
@@ -21253,7 +21262,7 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
       "NAME": "Name of the userlist",
       "ADD_SUCCESS": "Userlist has been successfully created",
       "EDIT_SUCCESS": "Userlist has been successfully updated",
-      "REMOVE_SURE": "Are you sure you want to remove this userlist ?",
+      "REMOVE_SURE": "Are you sure you want to remove this userlist?",
       "REMOVE_SUCCESS": "Userlist has been successfully removed",
       "USER_INVITE": "By selecting a userlist, you will invite all its users at the same time"
     },
@@ -21272,7 +21281,7 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
     "USERS_SEARCH_LOGIN": "Search by login",
     "ETHERPAD_ACCOUNT": "Etherpad account",
     "HELP_LOGIN": "<p>MyPads administration is tied to Etherpad administration. Please enter an authorized login and password, as fixed into Etherpad <em>settings.json</em> to be able to update MyPads settings.</p>",
-    "HELP_SETTINGS": "<h3>Settings</h3><p>Only Etherpad admins have access to this page. You can edit the global settings here and apply them. Changes will be effective directly.</p><h3>Passwords</h3><p>Be careful about password sizes : if you have existing accounts and raise minimum size or decrease maximum size, some user passwords may become unseizable.</p><h3>Mail configuration</h3><p>MyPads can verify the mails of subscribed users by sending them an email which will be used by them to confirm their address. Moreover, MyPads need email sending for password recovery.</p><p>Be cautious with SMTP configuration : bad parameters can lead to an Etherpad crash.</p><p>Please note that, unlike other parameters, SMTP settings are only applied after Etherpad reboot.</p>",
+    "HELP_SETTINGS": "<h3>Settings</h3><p>Only Etherpad admins have access this page. You can edit the global settings here and apply them. Changes will be effective directly.</p><h3>Passwords</h3><p>Be careful about password sizes : if you have existing accounts and raise minimum size or decrease maximum size, some user passwords may become unseizable.</p><h3>Mail configuration</h3><p>MyPads can verify the mails of subscribed users by sending them an email which will be used by them to confirm their address. Moreover, MyPads need email sending for password recovery.</p><p>Be cautious with SMTP configuration: bad parameters can lead to an Etherpad crash.</p><p>Please note that, unlike other parameters, SMTP settings are only applied after Etherpad reboot.</p>",
     "HELP_USERS": "<p>This admin reserved page helps you to find users by entering their login. Once found, you will be able to edit or remove user.</p><p>For simplicity and performance reasons, we don't offer here a full listing of subscribed users.</p>",
     "HELP_USER_EDIT": "<p>Here you can update all data associated to an existing user.</p><p>Please note that by default, leaving password empty means keeping the current password. If you want to change it, you have to fill password field and its confirmation.</p>",
     "FIELD": {
@@ -21300,9 +21309,9 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
       "TOKEN_DURATION": "The time, in minutes, generated tokens are valid until users confirm their subscription",
       "SMTP_HOST": "Domain name where the SMTP Server belongs to",
       "SMTP_PORT": "SMTP Port to use",
-      "SMTP_SECURE": "Check it if you want to use a encrypted connexion between MyPads and your SMTP Server",
-      "SMTP_USER": "Optional : if authentication to the SMTP server is required, username",
-      "SMTP_PASS": "Optional : if authentication to the SMTP server is required, password",
+      "SMTP_SECURE": "Check it if you want to use an encrypted connexion between MyPads and your SMTP Server",
+      "SMTP_USER": "Optional: if authentication to the SMTP server is required, username",
+      "SMTP_PASS": "Optional: if authentication to the SMTP server is required, password",
       "SUCCESS": "Configuration has been updated successfully",
       "NOCHANGE": "Configuration have not changed, so no update has been sent",
       "USERS_SEARCH_LOGIN": "Please enter a login to search around database users",
@@ -21320,4 +21329,4 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
   }
 }
 
-},{}]},{},["/mnt/share/fabien/bak/code/node/ep_mypads/frontend.js"]);
+},{}]},{},[1]);

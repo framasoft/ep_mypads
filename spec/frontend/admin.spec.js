@@ -108,6 +108,7 @@ module.exports = (function () {
             SMTPSecure: qfirst('input[name=SMTPSecure]'),
             SMTPUser: qfirst('input[name=SMTPUser]'),
             SMTPPass: qfirst('input[name=SMTPPass]'),
+            SMTPEmailFrom: qfirst('input[name=SMTPEmailFrom]'),
             submit: qfirst('input[type=submit]')
           };
           window.setTimeout(done, 100);
@@ -129,6 +130,7 @@ module.exports = (function () {
           expect($el.SMTPSecure.value.length).toBe(0);
           expect($el.SMTPUser.value.length).toBe(0);
           expect($el.SMTPPass.value.length).toBe(0);
+          expect($el.SMTPEmailFrom.value.length).toBe(0);
           expect($el.form.checkValidity()).toBeTruthy();
         });
 
@@ -142,6 +144,9 @@ module.exports = (function () {
           expect($el.passwordMin.checkValidity()).toBeFalsy();
           fill($el.passwordMax, '0');
           expect($el.passwordMax.checkValidity()).toBeFalsy();
+          fill($el.SMTPEmailFrom, 'notanemail');
+          expect($el.SMTPEmailFrom.checkValidity()).toBeFalsy();
+          fill($el.SMTPEmailFrom, '');
           $el.submit.click();
           expect($el.form.checkValidity()).toBeFalsy();
           window.setTimeout(done, 100);

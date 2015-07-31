@@ -75,8 +75,8 @@ module.exports = (function () {
           method: 'GET'
         }).then(function (resp) {
           form.initFields(c, ['title', 'passwordMin', 'passwordMax',
-            'defaultLanguage', 'checkMails', 'tokenDuration',
-            'SMTPHost', 'SMTPPort', 'SMTPSecure', 'SMTPUser', 'SMTPPass' ]);
+            'defaultLanguage', 'checkMails', 'tokenDuration', 'SMTPHost',
+            'SMTPPort', 'SMTPSecure', 'SMTPUser', 'SMTPPass', 'SMTPEmailFrom']);
           c.currentConf = resp.value;
           ld.forIn(resp.value, function (v, k) {
             c.data[k] = m.prop(v);
@@ -296,6 +296,12 @@ module.exports = (function () {
         var f = form.field(c, 'SMTPPass', A.FIELD.SMTP_PASS, icon);
         ld.assign(f.input.attrs, { type: 'password' });
         return f;
+      })(),
+      SMTPEmailFrom: (function () {
+        var icon = form.icon(c, 'SMTPEmailFrom', A.INFO.SMTP_EMAILFROM);
+        var f = form.field(c, 'SMTPEmailFrom', A.FIELD.SMTP_EMAILFROM, icon);
+        ld.assign(f.input.attrs, { type: 'email' });
+        return f;
       })()
     };
     return m('form.block', {
@@ -323,7 +329,8 @@ module.exports = (function () {
           f.SMTPPort.label, f.SMTPPort.input, f.SMTPPort.icon,
           f.SMTPSecure.label, f.SMTPSecure.input, f.SMTPSecure.icon,
           f.SMTPUser.label, f.SMTPUser.input, f.SMTPUser.icon,
-          f.SMTPPass.label, f.SMTPPass.input, f.SMTPPass.icon ])
+          f.SMTPPass.label, f.SMTPPass.input, f.SMTPPass.icon,
+          f.SMTPEmailFrom.label, f.SMTPEmailFrom.input, f.SMTPEmailFrom.icon ])
       ]),
       m('input.block.send', {
         form: 'settings-form',

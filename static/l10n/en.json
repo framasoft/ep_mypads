@@ -23,7 +23,9 @@
         "USERLIST_ID": "In set and del modes, ulistid is mandatory",
         "USERLIST_NAME": "In add mode, name of the userlist is mandatory",
         "USERLIST_SET_PARAMS": "In set mode, name or uids is madantory",
-        "SMTP_CONFIG": "Your SMTP server configuration is invalid"
+        "SMTP_CONFIG": "Your SMTP server configuration is invalid",
+        "TO_MAIL": "to must be an email address",
+        "MSG_STR": "message must be a string"
       },
       "CONFIGURATION": {
         "LANG_PROBLEM": "Lang update can not be done. Default lang will be used.",
@@ -327,6 +329,7 @@
       "SMTP_SECURE": "Encryption",
       "SMTP_USER": "User",
       "SMTP_PASS": "Password",
+      "SMTP_EMAILFROM": "Email to send from",
       "APPLY": "Apply",
       "SEARCH": "Search"
     },
@@ -343,6 +346,7 @@
       "SMTP_SECURE": "Check it if you want to use an encrypted connexion between MyPads and your SMTP Server",
       "SMTP_USER": "Optional: if authentication to the SMTP server is required, username",
       "SMTP_PASS": "Optional: if authentication to the SMTP server is required, password",
+      "SMTP_EMAILFROM": "Email address to use to send emails from MyPads",
       "SUCCESS": "Configuration has been updated successfully",
       "NOCHANGE": "Configuration have not changed, so no update has been sent",
       "USERS_SEARCH_LOGIN": "Please enter a login to search around database users",

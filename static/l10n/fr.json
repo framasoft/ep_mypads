@@ -23,7 +23,9 @@
         "USERLIST_ID": "Dans les modes set et del, ulistid est obligatoire",
         "USERLIST_NAME": "Dans le mode création, le nom de la liste utilisateur est obligatoire",
         "USERLIST_SET_PARAMS": "Dans le mode édition, le nom ou la liste des identifiants utilisateurs est obligatoire",
-        "SMTP_CONFIG": "Votre configuration SMTP est invalide"
+        "SMTP_CONFIG": "Votre configuration SMTP est invalide",
+        "TO_MAIL": "to doit être une adresse mail valide",
+        "MSG_STR": "message doit être une chaîne de caractères"
       },
       "CONFIGURATION": {
         "LANG_PROBLEM": "Le changement de langue n'a pu être fait. La langue par défaut sera utilisée.",
@@ -327,6 +329,7 @@
       "SMTP_SECURE": "Chiffrement",
       "SMTP_USER": "Utilisateur",
       "SMTP_PASS": "Mot de passe",
+      "SMTP_EMAILFROM": "Email d'envoi",
       "APPLY": "Appliquer",
       "SEARCH": "Rechercher"
     },
@@ -343,6 +346,7 @@
       "SMTP_SECURE": "Utiliser le chiffrement pour la connection entre MyPads et le serveur SMTP",
       "SMTP_USER": "Facultatif : si le serveur SMTP nécessite une authentification, identifiant à utiliser",
       "SMTP_PASS": "Facultatif : si le serveur SMTP nécessite une authentification, mot de passe à utiliser",
+      "SMTP_EMAILFROM": "Adresse courriel à utiliser pour envoyer des messages depuis MyPads",
       "SUCCESS": "La configuration a été mise à jour avec succès",
       "NOCHANGE": "La configuration n'a pas été modifiée, aucune mise à jour n'a donc été envoyée",
       "USERS_SEARCH_LOGIN": "Merci de saisir un identifiant de manière à effectuer une recherche dans la base de données",

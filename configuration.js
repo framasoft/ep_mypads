@@ -60,6 +60,7 @@ module.exports = (function() {
       SMTPSecure: undefined,
       SMTPUser: undefined,
       SMTPPass: undefined,
+      SMTPEmailFrom: undefined,
       SMTPIgnoreTLS: undefined,
       tokenDuration: 60 // in minutes
     },

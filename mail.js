@@ -30,6 +30,8 @@
 var ld = require('lodash');
 var cuid = require('cuid');
 var SMTPConnection = require('smtp-connection');
+// Local dependencies
+require('./helpers.js'); // Helpers auto-init
 var conf = require('./configuration.js');
 
 module.exports = (function () {
@@ -126,10 +128,37 @@ module.exports = (function () {
   };
 
   /**
-  * ## sendMessage
+  * ## send
+  *
+  * `send` is an asynchronous function that sends an email. It takes mandatory
+  *
+  * - `to`, an email string
+  * - `message`, a string containing the text message
+  * - a `callback` function
+  *
+  *   It returns to the callback function *error* if there is, *null* otherwise
+  *   and an information object. See smtp-connection for more details.
   */
 
-  mail.sendMessage = function () {};
+  mail.send = function (to, message, callback) {
+    var err;
+    if (!ld.isEmail(to)) {
+      throw new TypeError('BACKEND.ERROR.TYPE.TO_MAIL');
+    }
+    if (!ld.isString(message)) {
+      throw new TypeError('BACKEND.ERROR.TYPE.MSG_STR');
+    }
+    if (!ld.isFunction(callback)) {
+      throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
+    }
+    var emailFrom = conf.get('SMTPEmailFrom');
+    if (!mail.connection || !emailFrom) {
+      err = 'BACKEND.ERROR.CONFIGURATION.MAIL_NOT_CONFIGURED';
+      return callback(err);
+    }
+    var envelope = { from: emailFrom, to: to };
+    mail.connection.send(envelope, message, callback);
+  };
 
   /**
   * ## init

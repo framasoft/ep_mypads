@@ -148,7 +148,7 @@ module.exports = (function () {
           expect(app.location.search).not.toBe(hash);
           var $success = app.document.querySelectorAll('body > section p');
           $success = $success[$success.length - 1];
-          expect($success.textContent).toMatch('Successfull subscription');
+          expect($success.textContent).toMatch('Successful subscription');
           $success.click();
           window.setTimeout(function () {
             expect(first('main h2').textContent).toMatch('Mes groupes');

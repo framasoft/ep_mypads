@@ -25,6 +25,7 @@ module.exports = (function () {
   'use strict';
 
   // Dependencies
+  require('../helpers.js'); // Helpers auto-init
   var crypto = require('crypto');
   var ld = require('lodash');
   var cuid = require('cuid');
@@ -593,28 +594,6 @@ module.exports = (function () {
       });
     });
   };
-
-  /**
-  * ## lodash mixins
-  *
-  * Here are lodash user extensions for MyPads.
-  *
-  * ### isEmail
-  *
-  * `isEmail` checks if given string is an email or not. It takes a value and
-  * returns a boolean.
-  *
-  * For reference, used regular expression is :
-  * /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
-  */
-
-  ld.mixin({ isEmail: function (val) {
-    var rg = new RegExp(['[a-z0-9!#$%&\'*+/=?^_`{|}~-]+',
-      '(?:\\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*@(?:[a-z0-9]',
-      '(?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9]',
-      '(?:[a-z0-9-]*[a-z0-9])?'].join(''));
-    return (ld.isString(val) && rg.test(val));
-  }});
 
   return user;
 

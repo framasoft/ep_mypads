@@ -31,7 +31,8 @@
         "LANG_PROBLEM": "Lang update can not be done. Default lang will be used.",
         "CANTGET": "Configuration loading has failed. Please contact your administrator.",
         "KEY_NOT_FOUND": "The record has not been found",
-        "MAIL_NOT_CONFIGURED": "Mail settings have not been done on this server. Please contact your administrator."
+        "MAIL_NOT_CONFIGURED": "Mail settings have not been done on this server. Please contact its administrator.",
+        "ROOTURL_NOT_CONFIGURED": "Root Url setting has not been entered on this server. Please contact its administrator."
       },
       "AUTHENTICATION": {
         "MUST_BE": "You must be authenticated",
@@ -62,6 +63,10 @@
       "PAD": {
         "INEXISTENT": "Pad does not exist",
         "ITEMS_NOT_FOUND": "Pad group or at least one of the users are not found"
+      },
+      "TOKEN": {
+        "INCORRECT": "Used token contains incorrect data for this request.",
+        "EXPIRED": "Token has expired. Please make a new request."
       }
     }
   },
@@ -365,8 +370,5 @@
       "LANGUAGE_DEFAULT": "A default language must be selected",
       "SMTP_EMAILFROM": "Must be a valid email"
     }
-  },
-  "MAIL_TPL": {
-    "PASSRECOVER": "<%= login >, a password change request on <%= title %> has been initiated for your login. If you want to confirm your password change, please click on this Web address : <=% url %>. If this request does not come from you, simply ignore this email. Address will become invalid in <%= duration %> minutes."
   }
 }

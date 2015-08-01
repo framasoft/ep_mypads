@@ -26,6 +26,7 @@
 *  Please refer to binded function when no details are given.
 */
 
+var readFileSync = require('fs').readFileSync;
 // External dependencies
 var ld = require('lodash');
 var passport = require('passport');
@@ -70,6 +71,13 @@ module.exports = (function () {
       // Only allow functional testing in testing mode
       app.use('/mypads/functest', express.static(__dirname + '/spec/frontend'));
     }
+    var rfsOpts = { encofing: 'utf8' };
+    api.l10n = {
+      mail: {
+        en: JSON.parse(readFileSync('./templates/mail_en.json', rfsOpts)),
+        fr: JSON.parse(readFileSync('./templates/mail_fr.json', rfsOpts)),
+      }
+    };
     auth.init(app);
     authAPI(app);
     perm.init(app);
@@ -165,6 +173,18 @@ module.exports = (function () {
     return res
     .status(401)
     .send({ error: errCode });
+  };
+
+  /**
+  * `mailMessage` is an internal helper that computed email templates. It takes
+  * the `tpl` key of the template and the `date` needed.
+  * It returns the computed template.
+  */
+
+  fn.mailMessage = function (tpl, data) {
+    var lang = conf.get('defaultLanguage');
+    tpl = ld.template(api.l10n.mail[lang][tpl]);
+    return tpl(data);
   };
 
 
@@ -604,8 +624,6 @@ module.exports = (function () {
     * 
     * Sample URL:
     * http://etherpad.ndd/mypads/api/passrecover
-    *
-    * TODO: really send the mail with token
     */
 
     app.post(api.initialRoute + 'passrecover', function (req, res) {
@@ -619,11 +637,63 @@ module.exports = (function () {
         err = 'BACKEND.ERROR.USER.NOT_FOUND';
         return res.status(404).send({ error: err });
       }
-      if (!mail.connection) {
-        err = 'BACKEND.ERROR.CONFIGURATION.MAIL_NOT_CONFIGURED';
+      if (conf.get('rootUrl').length === 0) {
+        err = 'BACKEND.ERROR.CONFIGURATION.ROOTURL_NOT_CONFIGURED';
         return res.status(501).send({ error: err });
       }
-      return res.status(501).end();
+      user.get(login, function (err, u) {
+        if (err) { return res.status(400).send({ error: err }); }
+        var token = mail.genToken({ login: login, action: 'passrecover' });
+        console.log(conf.get('rootUrl') + '/mypads/index.html?passrecover/' +
+          token);
+        var message = fn.mailMessage('PASSRECOVER', {
+          login: login,
+          title: conf.get('title'),
+          url: conf.get('rootUrl') + '/mypads/index.html?passrecover/' + token,
+          duration: conf.get('tokenDuration')
+        });
+        mail.send(u.email, message, function (err) {
+          if (err) { return res.status(501).send({ error: err }); }
+          return res.send({ success: true });
+        });
+      });
+    });
+
+    /**
+    * PUT method : password recovery with token and new email
+    * Need to have the login into the body
+    * 
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/passrecover
+    */
+
+    app.put(api.initialRoute + 'passrecover/:token', function (req, res) {
+      var val = mail.tokens[req.params.token];
+      var err;
+      var badLogin = (!val || !val.login || !user.ids[val.login]);
+      var badAction = (!val || !val.action || (val.action !== 'passrecover'));
+      if (badLogin || badAction) {
+        err = 'BACKEND.ERROR.TOKEN.INCORRECT';
+        return res.status(400).send({ error: err });
+      }
+      if (!mail.isValidToken(req.params.token)) {
+        err = 'BACKEND.ERROR.TOKEN.EXPIRED';
+        return res.status(400).send({ error: err });
+      }
+      var pass = req.body.password;
+      var passC = req.body.passwordConfirm;
+      if (!pass || (pass !== passC)) {
+        err = 'USER.ERR.PASSWORD_MISMATCH';
+        return res.status(400).send({ error: err });
+      }
+      user.get(val.login, function (err, u) {
+        if (err) { return res.status(400).send({ error: err.message }); }
+        u.password = pass;
+        user.set(u, function (err) {
+          if (err) { return res.status(400).send({ error: err.message }); }
+          res.send({ success: true, login: val.login });
+        });
+      });
     });
 
   };

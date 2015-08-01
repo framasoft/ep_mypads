@@ -23,6 +23,7 @@
   var ld = require('lodash');
   var request = require('request');
   var api = require('../../api.js');
+  var mail = require('../../mail.js');
   var user = require('../../model/user.js');
   var group = require('../../model/group.js');
   var pad = require('../../model/pad.js');
@@ -951,8 +952,21 @@
           });
         });
 
+        it('should complain about not configured rootUrl setting',
+          function (done) {
+            var b = { body: { login: 'guest' } };
+            rq.post(route + 'passrecover', b, function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(501);
+              expect(body.error).toMatch('ROOTURL_NOT_CONFIGURED');
+              done();
+            });
+          }
+        );
+
         it('should complain about not configured mail settings',
           function (done) {
+            conf.cache.rootUrl = 'http://localhost:8042';
             var b = { body: { login: 'guest' } };
             rq.post(route + 'passrecover', b, function (err, resp, body) {
               expect(err).toBeNull();
@@ -962,6 +976,103 @@
             });
           }
         );
+
+      });
+
+      describe('user password recovery PUT', function () {
+
+        afterAll(function () {
+          mail.tokens = {};
+          mail.ends = {};
+        });
+
+        it('should return an error if the token value is incorrect',
+          function (done) {
+            rq.put(route + 'passrecover/invalid', function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('TOKEN.INCORRECT');
+              var token = mail.genToken({ login: 'guest', action: 'another' });
+              rq.put(route + 'passrecover/' + token,
+                function (err, resp, body) {
+                  expect(err).toBeNull();
+                  expect(resp.statusCode).toBe(400);
+                  expect(body.error).toMatch('TOKEN.INCORRECT');
+                  token = mail.genToken({ action: 'passrecover' });
+                  rq.put(route + 'passrecover/' + token,
+                    function (err, resp, body) {
+                      expect(err).toBeNull();
+                      expect(resp.statusCode).toBe(400);
+                      expect(body.error).toMatch('TOKEN.INCORRECT');
+                      done();
+                    }
+                  );
+                }
+              );
+            });
+          }
+        );
+
+        it('should return an error if the token is no more valid',
+          function (done) {
+            conf.cache.tokenDuration = -1;
+            var tk = mail.genToken({ login: 'guest', action: 'passrecover' });
+            rq.put(route + 'passrecover/' + tk, function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('TOKEN.EXPIRED');
+              conf.cache.tokenDuration = 60;
+              done();
+            });
+          }
+        );
+
+        it('should return an error if the passwords are not given or mismatch',
+          function (done) {
+            var tk = mail.genToken({ login: 'guest', action: 'passrecover' });
+            rq.put(route + 'passrecover/' + tk, function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('PASSWORD_MISMATCH');
+              var b = { body: { password: 'aPass', passwordConfirm: '2' } };
+              rq.put(route + 'passrecover/' + tk, b,
+                function (err, resp, body) {
+                  expect(err).toBeNull();
+                  expect(resp.statusCode).toBe(400);
+                  expect(body.error).toMatch('PASSWORD_MISMATCH');
+                  conf.cache.tokenDuration = 60;
+                  done();
+                }
+              );
+            });
+          }
+        );
+
+        it('should forbid bad password', function (done) {
+          var tk = mail.genToken({ login: 'guest', action: 'passrecover' });
+          var b = { body: { password: 'short', passwordConfirm: 'short' } };
+          rq.put(route + 'passrecover/' + tk, b, function (err, resp, body) {
+            expect(err).toBeNull();
+            expect(resp.statusCode).toBe(400);
+            expect(body.error).toMatch('TYPE.PASSWORD_SIZE');
+            done();
+          });
+        });
+
+        it('should change password otherwise', function (done) {
+          var tk = mail.genToken({ login: 'guest', action: 'passrecover' });
+          var b = { body: {
+            password: 'aBetterPassword',
+            passwordConfirm: 'aBetterPassword'
+          } };
+          rq.put(route + 'passrecover/' + tk, b, function (err, resp, body) {
+            expect(err).toBeNull();
+            expect(resp.statusCode).toBe(200);
+            expect(body.login).toBe('guest');
+            expect(body.success).toBeTruthy();
+            done();
+          });
+        });
 
       });
 

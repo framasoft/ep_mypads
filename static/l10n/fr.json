@@ -31,7 +31,8 @@
         "LANG_PROBLEM": "Le changement de langue n'a pu être fait. La langue par défaut sera utilisée.",
         "CANTGET": "Le chargement de la configuration a échoué. Merci de contacter votre administrateur.",
         "KEY_NOT_FOUND": "L'enregistrement n'a pas été trouvé",
-        "MAIL_NOT_CONFIGURED": "Le paramétrage des envois de mail n'a pas été fait sur ce serveur. Merci de contacter votre administrateur."
+        "MAIL_NOT_CONFIGURED": "Le paramétrage des envois de mail n'a pas été fait sur ce serveur. Merci de contacter son administrateur.",
+        "ROOTURL_NOT_CONFIGURED": "Le paramétrage de l'adresse Web racine n'a pas été fait sur ce serveur. Merci de contacter son administrateur."
       },
       "AUTHENTICATION": {
         "MUST_BE": "Vous devez être authentifié",
@@ -62,6 +63,10 @@
       "PAD": {
         "INEXISTENT": "Le pad n'existe pas",
         "ITEMS_NOT_FOUND": "Le groupe rattaché à ce pad ou au moins l'un de ses utilisateurs n'a pas été trouvé"
+      },
+      "TOKEN": {
+        "INCORRECT": "Le token employé contient des données incorrectes pour cette requête.",
+        "EXPIRED": "Le token a expiré. Merci de faire une nouvelle requête."
       }
     }
   },
@@ -365,8 +370,5 @@
       "LANGUAGE_DEFAULT": "Une langue par défaut doit être choisie",
       "SMTP_EMAILFROM": "Doit être une adresse mail valide"
     }
-  },
-  "MAIL_TPL": {
-    "PASSRECOVER": "<%= login >, une demande de changement de mot de passe a été faite sur <%= title %> concernant votre identifiant. Si vous souhaitez confirmer ce changement de mot de passe, merci de cliquer sur l'adresse suivante : <=% url %>. Si cette requête n'émane pas de vous, ignorez simplement ce message. L'adresse deviendra invalide dans <%= duration %> minutes."
   }
 }

@@ -67,6 +67,7 @@ module.exports = (function () {
     '/login': login,
     '/logout': logout,
     '/passrecover': passRecover,
+    '/passrecover/:token': passRecover,
     '/subscribe': subscribe,
     '/myprofile': subscribe,
     '/mybookmarks': bookmark,

@@ -148,7 +148,9 @@
       "OPTIONAL": "Champ facultatif",
       "REMOVE_ACCOUNT": "Supprimer définitivement votre compte et tous les groupes et pads dont vous êtes l'unique administrateur",
       "REMOVE_ACCOUNT_SURE": "Vous êtes sur le point de supprimer définitivement votre compte ainsi que tous les groupes et pads dont vous êtes l'unique administrateur. Si vous êtes réellement sûr de ce que vous faisez, merci de saisir votre mot de passe et de cliquer sur OK",
-      "REMOVE_ACCOUNT_SUCCESS": "Compte supprimé avec succès"
+      "REMOVE_ACCOUNT_SUCCESS": "Compte supprimé avec succès",
+      "PASSRECOVER_SUCCESS": "Vous devriez avoir reçu un message sur l'adresse mail que vous avez saisie lors de votre inscription. Ce message contient une adresse Web qui n'est valide que temporairement. Merci de suivre cette adresse afin de modifier votre mot de passe.",
+      "CHANGEPASS_SUCCESS": "Votre mot de passe a été mis à jour avec succès."
     },
     "ERR": {
       "LOGIN": "Un identifiant est nécessaire",

@@ -50,8 +50,15 @@ module.exports = (function () {
       m.route('/logout');
     }
 
-    var c = {};
-    form.initFields(c, ['login']);
+    var c = {
+      token: m.route.param('token')
+    };
+    var fields = (c.token ? ['password', 'passwordConfirm'] : ['login']);
+    form.initFields(c, fields);
+    
+    var errFn = function (err) {
+      notif.error({ body: ld.result(conf.LANG, err.error) });
+    };
 
     c.submit = function (e) {
       e.preventDefault();
@@ -60,10 +67,20 @@ module.exports = (function () {
         url: conf.URLS.PASSRECOVER,
         data: c.data
       }).then(function () {
-        // TODO
-      }, function (err) {
-        notif.error({ body: ld.result(conf.LANG, err.error) });
-      });
+        notif.success({ body: conf.LANG.USER.INFO.PASSRECOVER_SUCCESS });
+      }, errFn);
+    };
+
+    c.changePass = function (e) {
+      e.preventDefault();
+      m.request({
+        method: 'PUT',
+        url: conf.URLS.PASSRECOVER + '/' + c.token,
+        data: c.data
+      }).then(function () {
+        m.route('/login');
+        notif.success({ body: conf.LANG.USER.INFO.CHANGEPASS_SUCCESS });
+      }, errFn);
     };
 
     return c;
@@ -91,10 +108,28 @@ module.exports = (function () {
     );
   };
 
+  view.formChange = function (c) {
+    var pass = user.view.field.password(c);
+    var passC = user.view.field.passwordConfirm(c);
+    return m('form.block', {
+      id: 'passchange-form',
+      onsubmit: c.changePass
+      }, [
+        m('fieldset.block-group', [ pass.label, pass.input, pass.icon,
+          passC.label, passC.input, passC.icon ]),
+        m('input.block.send', {
+          form: 'passchange-form',
+          type: 'submit',
+          value: conf.LANG.USER.OK
+        })
+      ]
+    );
+  };
+
   view.main = function (c) {
     return m('section', { class: 'block-group user' }, [
       m('h2.block', conf.LANG.USER.PASSRECOVER),
-      view.form(c)
+      (c.token ? view.formChange(c) : view.form(c))
     ]);
   };
 

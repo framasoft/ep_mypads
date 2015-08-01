@@ -148,7 +148,9 @@
       "OPTIONAL": "Optional field",
       "REMOVE_ACCOUNT": "Remove definitively your account and all the groups and pads on which you are the unique administrator",
       "REMOVE_ACCOUNT_SURE": "You are on the verge of removing definitively your account and all the groups and pads on which you are the unique administrator. If you are really sure about what you are doing, please enter your current password and click OK",
-      "REMOVE_ACCOUNT_SUCCESS": "Account removed with success"
+      "REMOVE_ACCOUNT_SUCCESS": "Account removed with success",
+      "PASSRECOVER_SUCCESS": "You should have received an email to the address you have used when you subscribe. This email contains a Web address that is temporary valid. Please follow this url to change your password.",
+      "CHANGEPASS_SUCCESS": "Your password has been successfully updated."
     },
     "ERR": {
       "LOGIN": "Login is required",

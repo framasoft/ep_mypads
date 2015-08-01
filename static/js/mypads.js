@@ -3969,8 +3969,15 @@ module.exports = (function () {
       m.route('/logout');
     }
 
-    var c = {};
-    form.initFields(c, ['login']);
+    var c = {
+      token: m.route.param('token')
+    };
+    var fields = (c.token ? ['password', 'passwordConfirm'] : ['login']);
+    form.initFields(c, fields);
+    
+    var errFn = function (err) {
+      notif.error({ body: ld.result(conf.LANG, err.error) });
+    };
 
     c.submit = function (e) {
       e.preventDefault();
@@ -3979,10 +3986,20 @@ module.exports = (function () {
         url: conf.URLS.PASSRECOVER,
         data: c.data
       }).then(function () {
-        // TODO
-      }, function (err) {
-        notif.error({ body: ld.result(conf.LANG, err.error) });
-      });
+        notif.success({ body: conf.LANG.USER.INFO.PASSRECOVER_SUCCESS });
+      }, errFn);
+    };
+
+    c.changePass = function (e) {
+      e.preventDefault();
+      m.request({
+        method: 'PUT',
+        url: conf.URLS.PASSRECOVER + '/' + c.token,
+        data: c.data
+      }).then(function () {
+        m.route('/login');
+        notif.success({ body: conf.LANG.USER.INFO.CHANGEPASS_SUCCESS });
+      }, errFn);
     };
 
     return c;
@@ -4010,10 +4027,28 @@ module.exports = (function () {
     );
   };
 
+  view.formChange = function (c) {
+    var pass = user.view.field.password(c);
+    var passC = user.view.field.passwordConfirm(c);
+    return m('form.block', {
+      id: 'passchange-form',
+      onsubmit: c.changePass
+      }, [
+        m('fieldset.block-group', [ pass.label, pass.input, pass.icon,
+          passC.label, passC.input, passC.icon ]),
+        m('input.block.send', {
+          form: 'passchange-form',
+          type: 'submit',
+          value: conf.LANG.USER.OK
+        })
+      ]
+    );
+  };
+
   view.main = function (c) {
     return m('section', { class: 'block-group user' }, [
       m('h2.block', conf.LANG.USER.PASSRECOVER),
-      view.form(c)
+      (c.token ? view.formChange(c) : view.form(c))
     ]);
   };
 
@@ -5459,6 +5494,7 @@ module.exports = (function () {
     '/login': login,
     '/logout': logout,
     '/passrecover': passRecover,
+    '/passrecover/:token': passRecover,
     '/subscribe': subscribe,
     '/myprofile': subscribe,
     '/mybookmarks': bookmark,
@@ -20977,7 +21013,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/home/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {
@@ -21010,7 +21046,8 @@ module.exports=module.exports=module.exports={
         "LANG_PROBLEM": "Lang update can not be done. Default lang will be used.",
         "CANTGET": "Configuration loading has failed. Please contact your administrator.",
         "KEY_NOT_FOUND": "The record has not been found",
-        "MAIL_NOT_CONFIGURED": "Mail settings have not been done on this server. Please contact your administrator."
+        "MAIL_NOT_CONFIGURED": "Mail settings have not been done on this server. Please contact its administrator.",
+        "ROOTURL_NOT_CONFIGURED": "Root Url setting has not been entered on this server. Please contact its administrator."
       },
       "AUTHENTICATION": {
         "MUST_BE": "You must be authenticated",
@@ -21041,6 +21078,10 @@ module.exports=module.exports=module.exports={
       "PAD": {
         "INEXISTENT": "Pad does not exist",
         "ITEMS_NOT_FOUND": "Pad group or at least one of the users are not found"
+      },
+      "TOKEN": {
+        "INCORRECT": "Used token contains incorrect data for this request.",
+        "EXPIRED": "Token has expired. Please make a new request."
       }
     }
   },
@@ -21122,7 +21163,9 @@ module.exports=module.exports=module.exports={
       "OPTIONAL": "Optional field",
       "REMOVE_ACCOUNT": "Remove definitively your account and all the groups and pads on which you are the unique administrator",
       "REMOVE_ACCOUNT_SURE": "You are on the verge of removing definitively your account and all the groups and pads on which you are the unique administrator. If you are really sure about what you are doing, please enter your current password and click OK",
-      "REMOVE_ACCOUNT_SUCCESS": "Account removed with success"
+      "REMOVE_ACCOUNT_SUCCESS": "Account removed with success",
+      "PASSRECOVER_SUCCESS": "You should have received an email to the address you have used when you subscribe. This email contains a Web address that is temporary valid. Please follow this url to change your password.",
+      "CHANGEPASS_SUCCESS": "Your password has been successfully updated."
     },
     "ERR": {
       "LOGIN": "Login is required",
@@ -21344,9 +21387,6 @@ module.exports=module.exports=module.exports={
       "LANGUAGE_DEFAULT": "A default language must be selected",
       "SMTP_EMAILFROM": "Must be a valid email"
     }
-  },
-  "MAIL_TPL": {
-    "PASSRECOVER": "<%= login >, a password change request on <%= title %> has been initiated for your login. If you want to confirm your password change, please click on this Web address : <=% url %>. If this request does not come from you, simply ignore this email. Address will become invalid in <%= duration %> minutes."
   }
 }
 

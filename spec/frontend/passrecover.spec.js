@@ -56,37 +56,69 @@ module.exports = (function () {
         window.setTimeout(done, 200);
       });
 
-      it('should forbid submision whith no login fill', function () {
-        $el.submit.click();
-        expect($el.login.checkValidity()).toBeFalsy();
-        expect($el.form.checkValidity()).toBeFalsy();
+      describe('password recovery from login', function () {
+
+        it('should forbid submision whith no login fill', function () {
+          $el.submit.click();
+          expect($el.login.checkValidity()).toBeFalsy();
+          expect($el.form.checkValidity()).toBeFalsy();
+        });
+
+        it('should return an error if inexistent login is filled',
+          function (done) {
+            fill($el.login, 'inexistent');
+            $el.submit.click();
+            window.setTimeout(function () {
+              var $err = qfirst('body > section.notification div.error p');
+              expect($err.innerHTML).toMatch('User not found');
+              $err.click();
+              window.setTimeout(done, 100);
+            }, 100);
+          }
+        );
+
+        it('should return an error if mail management has not been configured',
+          function (done) {
+            fill($el.login, 'parker');
+            $el.submit.click();
+            window.setTimeout(function () {
+              var $err = qfirst('body > section.notification div.error p');
+              expect($err.innerHTML).toMatch('Root Url setting has not');
+              $err.click();
+              window.setTimeout(done, 100);
+            }, 100);
+          }
+        );
       });
 
-      it('should return an error if inexistent login is filled',
-        function (done) {
-          fill($el.login, 'inexistent');
-          $el.submit.click();
-          window.setTimeout(function () {
-            var $err = qfirst('body > section.notification div.error p');
-            expect($err.innerHTML).toMatch('User not found');
-            $err.click();
-            window.setTimeout(done, 100);
-          }, 100);
-        }
-      );
+      describe('password change', function () {
 
-      it('should return an error if mail management has not been configured',
-        function (done) {
-          fill($el.login, 'parker');
-          $el.submit.click();
+        beforeAll(function (done) {
+          app.window.location.search = '?/passrecover/invalidtoken';
           window.setTimeout(function () {
-            var $err = qfirst('body > section.notification div.error p');
-            expect($err.innerHTML).toMatch('Mail settings have not been');
-            $err.click();
+            qfirst('ul.lang li:first-child').click();
+            $el = {
+              password: qfirst('input[name=password]'),
+              passwordConfirm: qfirst('input[name=passwordConfirm]'),
+              submit: qfirst('input[type=submit]')
+            };
             window.setTimeout(done, 100);
-          }, 100);
-        }
-      );
+          }, 400);
+        });
+
+        it('should return an error if the token is invalid', function (done) {
+            fill($el.password, 'aGoodSizePassword');
+            fill($el.passwordConfirm, 'aGoodSizePassword');
+            $el.submit.click();
+            window.setTimeout(function () {
+              var $err = qfirst('body > section.notification div.error p');
+              expect($err.innerHTML).toMatch('Used token contains incorrect');
+              $err.click();
+              window.setTimeout(done, 100);
+            }, 200);
+        });
+      });
+
     });
   };
 

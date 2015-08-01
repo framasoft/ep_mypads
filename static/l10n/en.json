@@ -36,6 +36,7 @@
       },
       "AUTHENTICATION": {
         "MUST_BE": "You must be authenticated",
+        "ACTIVATION_NEEDED": "Your account has not been confirmed",
         "NOT_AUTH": "Not authenticated",
         "PASSWORD_INCORRECT": "Password is not correct",
         "ADMIN": "Access denied : you must be an authenticated Etherpad instance admin.",

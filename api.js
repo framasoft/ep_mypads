@@ -196,9 +196,11 @@ module.exports = (function () {
   fn.ensureAuthenticated = function (req, res, next) {
     if (!req.isAuthenticated() && !req.session.mypadsLogin) {
       return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.MUST_BE');
-    } else {
-      return next();
     }
+    if (!req.session.mypadsActive) {
+      return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.ACTIVATION_NEEDED');
+    }
+    return next();
   };
 
   /**
@@ -281,6 +283,7 @@ module.exports = (function () {
           var finish = function () {
             ld.assign(req.session, {
               mypadsUid: u._id,
+              mypadsActive: u.active,
               mypadsLogin: u.login,
               mypadsColor: u.color,
               mypadsUseLoginAndColorInPads: u.useLoginAndColorInPads

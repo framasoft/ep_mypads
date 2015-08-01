@@ -476,6 +476,33 @@
       });
     });
 
+    describe('user inactive account limitations', function () {
+
+      beforeAll(function (done) {
+        conf.cache.checkMails = true;
+        var b = { body: { login: 'shelly', password: 'lovesKubiak' } };
+        rq.post(route + 'user', b, function () {
+          rq.post(route + 'auth/login', b, done);
+        });
+      });
+
+      afterAll(function (done) {
+        conf.cache.checkMails = false;
+        rq.get(route + 'auth/logout', done);
+      });
+
+      it('should create in inactive account according to the configuration',
+        function (done) {
+          rq.get(route + 'group', function (err, resp, body) {
+            expect(err).toBeNull();
+            expect(body.error).toMatch('ACTIVATION_NEEDED');
+            done();
+          });
+        }
+      );
+
+    });
+
     describe('user API', function () {
       var userRoute = route + 'user';
       var userlistRoute = route + 'userlist';
@@ -1318,7 +1345,7 @@
 
       });
 
-      describe('group.getByUSer GET', function () {
+      describe('group.getByUser GET', function () {
 
         it('should return groups, pads and users', function (done) {
           rq.get(groupRoute, function (err, resp, body) {

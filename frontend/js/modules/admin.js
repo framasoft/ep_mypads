@@ -74,13 +74,17 @@ module.exports = (function () {
           url: conf.URLS.CONF,
           method: 'GET'
         }).then(function (resp) {
-          form.initFields(c, ['title', 'passwordMin', 'passwordMax',
+          form.initFields(c, ['title', 'rootUrl', 'passwordMin', 'passwordMax',
             'defaultLanguage', 'checkMails', 'tokenDuration', 'SMTPHost',
             'SMTPPort', 'SMTPSecure', 'SMTPUser', 'SMTPPass', 'SMTPEmailFrom']);
           c.currentConf = resp.value;
           ld.forIn(resp.value, function (v, k) {
             c.data[k] = m.prop(v);
           });
+          if (c.data.rootUrl().length === 0) {
+            var l = window.location;
+            c.data.rootUrl(l.protocol + '//' + l.host);
+          }
           var propInt = function (val) {
             val = val || 0;
             return function (v) {
@@ -206,6 +210,12 @@ module.exports = (function () {
         ld.assign(f.input.attrs, { required: true });
         return f;
       })(),
+      rootUrl: (function () {
+        var icon = form.icon(c, 'rootUrl', A.INFO.ROOTURL, A.ERR.ROOTURL);
+        var f = form.field(c, 'rootUrl', A.FIELD.ROOTURL, icon);
+        ld.assign(f.input.attrs, { type: 'url' });
+        return f;
+      })(),
       passwordMin: (function () {
         var icon = form.icon(c, 'passwordMin', A.INFO.PASSWORD_MIN,
           A.ERR.PASSWORD_MIN);
@@ -298,7 +308,8 @@ module.exports = (function () {
         return f;
       })(),
       SMTPEmailFrom: (function () {
-        var icon = form.icon(c, 'SMTPEmailFrom', A.INFO.SMTP_EMAILFROM);
+        var icon = form.icon(c, 'SMTPEmailFrom', A.INFO.SMTP_EMAILFROM,
+          A.ERR.SMTP_EMAILFROM);
         var f = form.field(c, 'SMTPEmailFrom', A.FIELD.SMTP_EMAILFROM, icon);
         ld.assign(f.input.attrs, { type: 'email' });
         return f;
@@ -311,6 +322,7 @@ module.exports = (function () {
       m('fieldset.block-group', [
         m('legend', conf.LANG.ADMIN.SETTINGS_GENERAL),
         m('div', [ f.title.label, f.title.input, f.title.icon,
+          f.rootUrl.label, f.rootUrl.input, f.rootUrl.icon,
           f.defaultLanguage.label, f.defaultLanguage.select,
           f.defaultLanguage.icon
         ])

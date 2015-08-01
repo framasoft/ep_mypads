@@ -50,6 +50,7 @@ module.exports = (function() {
 
     DEFAULTS: {
       title: 'MyPads',
+      rootUrl: '',
       passwordMin: 8,
       passwordMax: 30,
       languages: { en: 'English', fr: 'Français' },

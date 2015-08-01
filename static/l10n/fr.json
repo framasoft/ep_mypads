@@ -319,6 +319,7 @@
     "HELP_USER_EDIT": "<p>Vous pourrez ici mettre à jour toutes les données associées à un utilisateur existant.</p><p>Veuillez noter que par défaut, laisser le mot de passe vide signifie conserver le mot de passe utilisateur actuel. Si vous voulez changer ce mot de passe, vous devez remplir le champ correspondant ainsi que celui de confirmation.</p>",
     "FIELD": {
       "TITLE": "Titre",
+      "ROOTURL": "Adresse Web",
       "PASSWORD_MIN": "Taille minimum",
       "PASSWORD_MAX": "Taille maximum",
       "LANGUAGE_DEFAULT": "Langue par défaut",
@@ -336,6 +337,7 @@
     "INFO": {
       "LOGIN": "L'identifiant administrateur donné dans le fichier settings.json d'Etherpad",
       "TITLE": "Titre principal affiché sur votre instance MyPads",
+      "ROOTURL": "La racine de l'adresse Web utilisée pour accéder à Etherpad",
       "PASSWORD_MIN": "Nombre minimum de caractères pour les mots de passe",
       "PASSWORD_MAX": "Nombre maximum de caractères pour les mots de passe",
       "LANGUAGE_DEFAULT": "Langue par défaut pour les utilisateurs sans compte",
@@ -356,10 +358,15 @@
     },
     "ERR": {
       "TITLE": "Le titre est obligatoire",
+      "ROOTURL": "Doit être une URL valide",
       "PASSWORD_MIN": "La taille minimum est obligatoire",
       "PASSWORD_MAX": "La taille maximum est obligatoire",
       "PASSWORD_SIZE": "La taille minimum ne peut être plus élevée que la maximum. Merci de vérifier vos saisies.",
-      "LANGUAGE_DEFAULT": "Une langue par défaut doit être choisie"
+      "LANGUAGE_DEFAULT": "Une langue par défaut doit être choisie",
+      "SMTP_EMAILFROM": "Doit être une adresse mail valide"
     }
+  },
+  "MAIL_TPL": {
+    "PASSRECOVER": "<%= login >, une demande de changement de mot de passe a été faite sur <%= title %> concernant votre identifiant. Si vous souhaitez confirmer ce changement de mot de passe, merci de cliquer sur l'adresse suivante : <=% url %>. Si cette requête n'émane pas de vous, ignorez simplement ce message. L'adresse deviendra invalide dans <%= duration %> minutes."
   }
 }

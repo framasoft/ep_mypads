@@ -319,6 +319,7 @@
     "HELP_USER_EDIT": "<p>Here you can update all data associated to an existing user.</p><p>Please note that by default, leaving password empty means keeping the current password. If you want to change it, you have to fill password field and its confirmation.</p>",
     "FIELD": {
       "TITLE": "Title",
+      "ROOTURL": "Root Web URL",
       "PASSWORD_MIN": "Minimum size",
       "PASSWORD_MAX": "Maximum size",
       "LANGUAGE_DEFAULT": "Default language",
@@ -336,6 +337,7 @@
     "INFO": {
       "LOGIN": "The etherpad settings.json fixed admin login",
       "TITLE": "Global title displayed on your MyPads instance",
+      "ROOTURL": "The root Web address used to access to Etherpad",
       "PASSWORD_MIN": "Password minimum number of characters",
       "PASSWORD_MAX": "Password maximum number of characters",
       "LANGUAGE_DEFAULT": "Default language for guest MyPads users",
@@ -356,10 +358,15 @@
     },
     "ERR": {
       "TITLE": "Title is mandatory",
+      "ROOTURL": "Must be a valid URL",
       "PASSWORD_MIN": "Minimum password size is mandatory",
       "PASSWORD_MAX": "Maximum password size is mandatory",
       "PASSWORD_SIZE": "Min size can't be higher than max size. Please check your numbers.",
-      "LANGUAGE_DEFAULT": "A default language must be selected"
+      "LANGUAGE_DEFAULT": "A default language must be selected",
+      "SMTP_EMAILFROM": "Must be a valid email"
     }
+  },
+  "MAIL_TPL": {
+    "PASSRECOVER": "<%= login >, a password change request on <%= title %> has been initiated for your login. If you want to confirm your password change, please click on this Web address : <=% url %>. If this request does not come from you, simply ignore this email. Address will become invalid in <%= duration %> minutes."
   }
 }

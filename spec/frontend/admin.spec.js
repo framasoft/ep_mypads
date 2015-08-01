@@ -98,6 +98,7 @@ module.exports = (function () {
           $el = {
             form: qfirst('form'),
             title: qfirst('input[name=title]'),
+            rootUrl: qfirst('input[name=rootUrl]'),
             lang: qfirst('select[name=defaultLanguage]'),
             passwordMin: qfirst('input[name=passwordMin]'),
             passwordMax: qfirst('input[name=passwordMax]'),
@@ -116,6 +117,8 @@ module.exports = (function () {
 
         it('should display default values and be valid', function () {
           expect($el.title.value).toBe('MyPads');
+          expect($el.title.checkValidity()).toBeTruthy();
+          expect($el.rootUrl.value).toBe('http://localhost:8042');
           expect($el.title.checkValidity()).toBeTruthy();
           expect($el.lang.value).toBe('en');
           expect($el.lang.checkValidity()).toBeTruthy();
@@ -182,7 +185,7 @@ module.exports = (function () {
             $success.click();
             expect(qfirst('header div h1').textContent).toBe($el.title.value);
             window.setTimeout(done, 100);
-          }, 200);
+          }, 300);
         });
 
       });

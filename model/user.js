@@ -179,7 +179,6 @@ module.exports = (function () {
   * a `groups` array field, which will hold `model.group` of pads ids. It also
   * adds a `userlists` object, with uid keys and userlist Object (name field,
   * users array). It returns the user object.
-  *
   */
 
   user.fn.assignProps = function (params) {
@@ -193,6 +192,7 @@ module.exports = (function () {
     u.groups = [];
     u.bookmarks = { groups: [], pads: [] };
     u.userlists = {};
+    if (!p._id) { u.active = !conf.get('checkMails'); }
     if (ld.isBoolean(p.useLoginAndColorInPads)) {
       u.useLoginAndColorInPads = p.useLoginAndColorInPads;
     } else {
@@ -410,6 +410,7 @@ module.exports = (function () {
           u.groups = dbuser.groups;
           u.bookmarks = dbuser.bookmarks;
           u.userlists = dbuser.userlists;
+          u.active = dbuser.active;
           user.fn.genPassword(dbuser, u, function (err, u) {
             if (err) { return callback(err); }
             user.fn.set(u, callback);

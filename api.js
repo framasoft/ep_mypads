@@ -74,8 +74,8 @@ module.exports = (function () {
     var rfsOpts = { encofing: 'utf8' };
     api.l10n = {
       mail: {
-        en: JSON.parse(readFileSync('./templates/mail_en.json', rfsOpts)),
-        fr: JSON.parse(readFileSync('./templates/mail_fr.json', rfsOpts)),
+        en: JSON.parse(readFileSync(__dirname + '/templates/mail_en.json', rfsOpts)),
+        fr: JSON.parse(readFileSync(__dirname + '/templates/mail_fr.json', rfsOpts)),
       }
     };
     auth.init(app);

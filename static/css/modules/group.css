@@ -180,10 +180,7 @@ section.group-aside section.filter ul, section.group-aside section.sort ul {
   list-style-type: none;
   padding: 0;
 }
-section.group-aside section.filter ul li > button.admin {
-  background-color: #de6933;
-}
-section.group-aside section.filter ul li > button.user, section.group-aside section.sort ul li > button.user {
+section.group-aside section.filter ul li > button, section.group-aside section.sort ul li > button.user {
   background-color: #616161;
 }
 
@@ -200,9 +197,8 @@ section.group-aside section.filter ul li > button, section.group-aside section.s
 section.sort ul { width: 100%; }
 section.sort ul li { width: 50%; }
 
-section.group-aside section.filter ul li > button:focus, section.group-aside section.filter ul li > button:hover {
+section.group-aside section.filter ul li > button:focus, section.group-aside section.filter ul li > button:hover, section.group-aside section.sort ul li > button:focus, section.group-aside section.sort ul li > button:hover {
   font-weight: bold;
-  background-color: #8157c2;
 }
 
 section.group-aside section.filter ul li > button.active, section.group-aside section.sort ul li > button.active, section.group-aside section.tag li button.active {
@@ -224,7 +220,7 @@ section.group-aside section.tag li button {
   border-radius: 0.4em;
 }
 section.group-aside section.tag li button:focus, section.group-aside section.tag li button:hover {
-  background-color: #8157c2;
+  font-weight: bold;
 }
 
 /* Pad View Specific */

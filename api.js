@@ -545,8 +545,8 @@ module.exports = (function () {
         key = req.body.login;
         if (conf.get('checkMails')) {
           var token = mail.genToken({ login: key, action: 'accountconfirm' });
-          var url = conf.get('rootUrl') + '/mypads/index.html?accountconfirm/' +
-            token;
+          var url = conf.get('rootUrl') +
+            '/mypads/index.html?/accountconfirm/' + token;
           console.log(url);
           var message = fn.mailMessage('ACCOUNT_CONFIRMATION', {
             login: key,
@@ -668,12 +668,12 @@ module.exports = (function () {
       user.get(login, function (err, u) {
         if (err) { return res.status(400).send({ error: err }); }
         var token = mail.genToken({ login: login, action: 'passrecover' });
-        console.log(conf.get('rootUrl') + '/mypads/index.html?passrecover/' +
+        console.log(conf.get('rootUrl') + '/mypads/index.html?/passrecover/' +
           token);
         var message = fn.mailMessage('PASSRECOVER', {
           login: login,
           title: conf.get('title'),
-          url: conf.get('rootUrl') + '/mypads/index.html?passrecover/' + token,
+          url: conf.get('rootUrl') + '/mypads/index.html?/passrecover/' + token,
           duration: conf.get('tokenDuration')
         });
         mail.send(u.email, message, function (err) {
@@ -714,6 +714,34 @@ module.exports = (function () {
         if (err) { return res.status(400).send({ error: err.message }); }
         u.password = pass;
         user.set(u, function (err) {
+          if (err) { return res.status(400).send({ error: err.message }); }
+          res.send({ success: true, login: val.login });
+        });
+      });
+    });
+
+    /**
+    * POST method : account confirmation with token on body
+    * 
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/accountconfirm
+    */
+
+    app.post(api.initialRoute + 'accountconfirm', function (req, res) {
+      var val = mail.tokens[req.body.token];
+      var err;
+      if (!val || !val.action || (val.action !== 'accountconfirm')) {
+        err = 'BACKEND.ERROR.TOKEN.INCORRECT';
+        return res.status(400).send({ error: err });
+      }
+      if (!mail.isValidToken(req.body.token)) {
+        err = 'BACKEND.ERROR.TOKEN.EXPIRED';
+        return res.status(400).send({ error: err });
+      }
+      user.get(val.login, function (err, u) {
+        if (err) { return res.status(400).send({ error: err.message }); }
+        u.active = true;
+        user.fn.set(u, function (err) {
           if (err) { return res.status(400).send({ error: err.message }); }
           res.send({ success: true, login: val.login });
         });

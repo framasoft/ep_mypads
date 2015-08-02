@@ -151,7 +151,8 @@
       "REMOVE_ACCOUNT_SURE": "You are on the verge of removing definitively your account and all the groups and pads on which you are the unique administrator. If you are really sure about what you are doing, please enter your current password and click OK",
       "REMOVE_ACCOUNT_SUCCESS": "Account removed with success",
       "PASSRECOVER_SUCCESS": "You should have received an email to the address you have used when you subscribe. This email contains a Web address that is temporary valid. Please follow this url to change your password.",
-      "CHANGEPASS_SUCCESS": "Your password has been successfully updated."
+      "CHANGEPASS_SUCCESS": "Your password has been successfully updated.",
+      "ACCOUNT_CONFIRMATION_SUCCESS": "Your account has been successfully confirmed. You can now login."
     },
     "ERR": {
       "LOGIN": "Login is required",
@@ -164,6 +165,7 @@
       "SUCCESS": "Successful authentication ! Welcome.",
       "SUCCESS_OUT": "You have been successfully disconnected.",
       "SUBSCRIBE_SUCCESS": "Successful subscription ! Welcome.",
+      "SUBSCRIBE_CONFIRM_SUCCESS": "Successful subscription. An email has been sent to you in order to confirm your email address before you can login.",
       "PROFILE_SUCCESS": "Profile successfully updated.",
       "WELCOME": "Welcome"
     },

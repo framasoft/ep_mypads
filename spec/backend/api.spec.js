@@ -480,9 +480,9 @@
 
       beforeAll(function (done) {
         conf.cache.checkMails = true;
-        var b = { body: { login: 'shelly', password: 'lovesKubiak' } };
-        rq.post(route + 'user', b, function () {
-          rq.post(route + 'auth/login', b, done);
+        var params = { login: 'shelly', password: 'lovesKubiak' };
+        user.set(params, function () {
+          rq.post(route + 'auth/login', { body: params }, done);
         });
       });
 
@@ -1102,6 +1102,61 @@
         });
 
       });
+
+      describe('user account confirmation POST', function () {
+
+        afterAll(function () {
+          mail.tokens = {};
+          mail.ends = {};
+        });
+
+        it('should return an error if the token value is incorrect',
+          function (done) {
+            rq.post(route + 'accountconfirm', function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('TOKEN.INCORRECT');
+              var tk = mail.genToken({ login: 'guest', action: 'another' });
+              var b = { body: { token: tk } };
+              rq.post(route + 'accountconfirm', b, function (err, resp, body) {
+                expect(err).toBeNull();
+                expect(resp.statusCode).toBe(400);
+                expect(body.error).toMatch('TOKEN.INCORRECT');
+                done();
+              });
+            });
+          }
+        );
+
+        it('should return an error if the token is no more valid',
+          function (done) {
+            conf.cache.tokenDuration = -1;
+            var tk = mail.genToken({ login: 'xxx', action: 'accountconfirm' });
+            var b = { body: { token: tk } };
+            rq.post(route + 'accountconfirm/', b, function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('TOKEN.EXPIRED');
+              conf.cache.tokenDuration = 60;
+              done();
+            });
+          }
+        );
+
+        it('should activate account otherwise', function (done) {
+          var tk = mail.genToken({ login: 'guest', action: 'accountconfirm' });
+          var b = { body: { token: tk } };
+          rq.post(route + 'accountconfirm', b, function (err, resp, body) {
+            expect(err).toBeNull();
+            expect(resp.statusCode).toBe(200);
+            expect(body.login).toBe('guest');
+            expect(body.success).toBeTruthy();
+            done();
+          });
+        });
+
+      });
+
 
       describe('user.del DELETE and key/login', function () {
 

@@ -44,6 +44,7 @@ module.exports = (function () {
   config.URLS.PAD = config.URLS.BASE + '/pad';
   config.URLS.USERLIST = config.URLS.BASE + '/userlist';
   config.URLS.PASSRECOVER = config.URLS.BASE + '/passrecover';
+  config.URLS.ACCOUNT_CONFIRMATION = config.URLS.BASE + '/accountconfirm';
   config.SERVER = m.prop();
   // default to en
   var USERLANG_DEFAULT = 'en';

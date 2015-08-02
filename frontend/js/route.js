@@ -34,6 +34,7 @@ module.exports = (function () {
   var login = require('./modules/login.js');
   var logout = require('./modules/logout.js');
   var passRecover = require('./modules/passrecover.js');
+  var accountConfirm = require('./modules/accountconfirm.js');
   var subscribe = require('./modules/subscribe.js');
   var bookmark = require('./modules/bookmark.js');
   var userlist = require('./modules/userlist.js');
@@ -68,6 +69,7 @@ module.exports = (function () {
     '/logout': logout,
     '/passrecover': passRecover,
     '/passrecover/:token': passRecover,
+    '/accountconfirm/:token': accountConfirm,
     '/subscribe': subscribe,
     '/myprofile': subscribe,
     '/mybookmarks': bookmark,

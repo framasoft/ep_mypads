@@ -108,9 +108,14 @@ module.exports = (function () {
           url: conf.URLS.USER,
           data: c.data
         }).then(function (resp) {
-          auth.isAuthenticated(true);
-          auth.userInfo(resp.value);
-          notif.success({ body: conf.LANG.USER.AUTH.SUBSCRIBE_SUCCESS });
+          if (!resp.value.active) {
+            var msg = conf.LANG.USER.AUTH.SUBSCRIBE_CONFIRM_SUCCESS;
+            notif.success({ body: msg });
+          } else {
+            auth.isAuthenticated(true);
+            auth.userInfo(resp.value);
+            notif.success({ body: conf.LANG.USER.AUTH.SUBSCRIBE_SUCCESS });
+          }
           var lang = auth.userInfo().lang;
           if (lang !== conf.USERLANG) {
             conf.updateLang(lang);

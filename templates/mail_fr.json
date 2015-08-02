@@ -1,3 +1,4 @@
 {
+  "ACCOUNT_CONFIRMATION": "<%= login %>, vous vous êtes inscrit sur <%= title %>. Cette instance etherpad nécessite une confirmation de votre adresse mail afin d'activer votre compte. Pour ce faire, merci de vous rendre sur l'adresse Web suivante : <%= url %>.",
   "PASSRECOVER": "<%= login %>, une demande de changement de mot de passe a été faite sur <%= title %> concernant votre identifiant. Si vous souhaitez confirmer ce changement de mot de passe, merci de vous rendre à l'adresse suivante : <%= url %> . Si cette requête n'émane pas de vous, ignorez simplement ce message. L'adresse deviendra invalide dans <%= duration %> minutes."
 }

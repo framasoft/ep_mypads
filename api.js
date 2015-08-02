@@ -26,7 +26,7 @@
 *  Please refer to binded function when no details are given.
 */
 
-var readFileSync = require('fs').readFileSync;
+var rFS = require('fs').readFileSync;
 // External dependencies
 var ld = require('lodash');
 var passport = require('passport');
@@ -71,11 +71,11 @@ module.exports = (function () {
       // Only allow functional testing in testing mode
       app.use('/mypads/functest', express.static(__dirname + '/spec/frontend'));
     }
-    var rfsOpts = { encofing: 'utf8' };
+    var rFSOpts = { encofing: 'utf8' };
     api.l10n = {
       mail: {
-        en: JSON.parse(readFileSync(__dirname + '/templates/mail_en.json', rfsOpts)),
-        fr: JSON.parse(readFileSync(__dirname + '/templates/mail_fr.json', rfsOpts)),
+        en: JSON.parse(rFS(__dirname + '/templates/mail_en.json', rFSOpts)),
+        fr: JSON.parse(rFS(__dirname + '/templates/mail_fr.json', rFSOpts)),
       }
     };
     auth.init(app);
@@ -540,29 +540,50 @@ module.exports = (function () {
     var _set = function (req, res) {
       var key;
       var value = req.body;
+      var stop;
       if (req.method === 'POST') {
         key = req.body.login;
+        if (conf.get('checkMails')) {
+          var token = mail.genToken({ login: key, action: 'accountconfirm' });
+          var url = conf.get('rootUrl') + '/mypads/index.html?accountconfirm/' +
+            token;
+          console.log(url);
+          var message = fn.mailMessage('ACCOUNT_CONFIRMATION', {
+            login: key,
+            title: conf.get('title'),
+            url: url,
+            duration: conf.get('tokenDuration')
+          });
+          mail.send(req.body.email, message, function (err) {
+            if (err) {
+              stop = true;
+              return res.status(501).send({ error: err });
+            }
+          });
+        }
       } else {
         key = req.params.key;
         value.login = req.body.login || key;
         value._id = user.ids[key];
       }
       // Update needed session values
-      req.session.mypadsColor = req.body.color || req.session.mypadsColor;
-      if (!ld.isUndefined(req.body.useLoginAndColorInPads)) {
-        req.session.mypadsUseLoginAndColorInPads =
-          req.body.useLoginAndColorInPads;
-      }
-      if (req.session.user && req.session.user.is_admin) {
-        user.get(value.login, function (err, u) {
-          if (err) { return res.status(400).send({ error: err.message }); }
-          ld.assign(u, value);
-          var setFn = ld.partial(user.fn.set, u);
-          fn.set(setFn, key, u, req, res);
-        });
-      } else {
-        var setFn = ld.partial(user.set, value);
-        fn.set(setFn, key, value, req, res);
+      if (!stop) {
+        req.session.mypadsColor = req.body.color || req.session.mypadsColor;
+        if (!ld.isUndefined(req.body.useLoginAndColorInPads)) {
+          req.session.mypadsUseLoginAndColorInPads =
+            req.body.useLoginAndColorInPads;
+        }
+        if (req.session.user && req.session.user.is_admin) {
+          user.get(value.login, function (err, u) {
+            if (err) { return res.status(400).send({ error: err.message }); }
+            ld.assign(u, value);
+            var setFn = ld.partial(user.fn.set, u);
+            fn.set(setFn, key, u, req, res);
+          });
+        } else {
+          var setFn = ld.partial(user.set, value);
+          fn.set(setFn, key, value, req, res);
+        }
       }
     };
 

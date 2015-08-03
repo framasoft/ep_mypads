@@ -992,6 +992,44 @@ module.exports = (function () {
     var c = {};
     auth.isAuthenticated(false);
     form.initFields(c, ['login', 'password']);
+    var init = function () {
+      m.request({
+        url: conf.URLS.CONF,
+        method: 'GET'
+      }).then(function (resp) {
+        form.initFields(c, ['title', 'rootUrl', 'passwordMin', 'passwordMax',
+          'defaultLanguage', 'checkMails', 'tokenDuration', 'SMTPHost',
+          'SMTPPort', 'SMTPSecure', 'SMTPUser', 'SMTPPass', 'SMTPEmailFrom']);
+        c.currentConf = resp.value;
+        ld.forIn(resp.value, function (v, k) {
+          c.data[k] = m.prop(v);
+        });
+        if (c.data.rootUrl().length === 0) {
+          var l = window.location;
+          c.data.rootUrl(l.protocol + '//' + l.host);
+        }
+        var propInt = function (val) {
+          val = val || 0;
+          return function (v) {
+            if (v !== undefined) { val = parseInt(v, 10); }
+            return val;
+          };
+        };
+        c.data.passwordMin = propInt(c.data.passwordMin());
+        c.data.passwordMax = propInt(c.data.passwordMax());
+        c.data.passwordMin.toJSON = function () {
+          return c.data.passwordMin(); 
+        };
+        c.data.passwordMax.toJSON = function () {
+          return c.data.passwordMax();
+        };
+        auth.isAdmin(true);
+        notif.success({ body: conf.LANG.USER.AUTH.SUCCESS });
+      }, function (err) {
+        notif.error({ body: ld.result(conf.LANG, err.error) });
+      });
+    };
+    if (auth.isAdmin()) { init() };
 
     /**
     * ### login
@@ -1011,43 +1049,7 @@ module.exports = (function () {
         url: url,
         method: 'GET',
         deserialize: function () {}
-      }).then(function () {
-        m.request({
-          url: conf.URLS.CONF,
-          method: 'GET'
-        }).then(function (resp) {
-          form.initFields(c, ['title', 'rootUrl', 'passwordMin', 'passwordMax',
-            'defaultLanguage', 'checkMails', 'tokenDuration', 'SMTPHost',
-            'SMTPPort', 'SMTPSecure', 'SMTPUser', 'SMTPPass', 'SMTPEmailFrom']);
-          c.currentConf = resp.value;
-          ld.forIn(resp.value, function (v, k) {
-            c.data[k] = m.prop(v);
-          });
-          if (c.data.rootUrl().length === 0) {
-            var l = window.location;
-            c.data.rootUrl(l.protocol + '//' + l.host);
-          }
-          var propInt = function (val) {
-            val = val || 0;
-            return function (v) {
-              if (v !== undefined) { val = parseInt(v, 10); }
-              return val;
-            };
-          };
-          c.data.passwordMin = propInt(c.data.passwordMin());
-          c.data.passwordMax = propInt(c.data.passwordMax());
-          c.data.passwordMin.toJSON = function () {
-            return c.data.passwordMin(); 
-          };
-          c.data.passwordMax.toJSON = function () {
-            return c.data.passwordMax();
-          };
-          auth.isAdmin(true);
-          notif.success({ body: conf.LANG.USER.AUTH.SUCCESS });
-        }, function (err) {
-          notif.error({ body: ld.result(conf.LANG, err.error) });
-        });
-      }, function () {
+      }).then(init, function () {
         auth.isAdmin(false);
         var emsg = conf.LANG.BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT;
         notif.error({ body: emsg });
@@ -21081,7 +21083,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports=module.exports={
+module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {

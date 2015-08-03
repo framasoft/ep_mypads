@@ -162,37 +162,73 @@
         }
       );
 
-      it('should otherwise accept well defined parameters', function (done) {
-        var params = {
+      it('should return an error if visibility is private with invalid ' +
+        'password', function (done) {
+          var params = {
           name: 'trapFrank',
           group: ggroup._id,
-          users: [guser._id],
-          visibility: 'restricted',
-          readonly: false
+          visibility: 'private'
         };
         pad.set(params, function (err, p) {
-          expect(err).toBeNull();
-          expect(ld.isObject(p)).toBeTruthy();
-          expect(p._id).toBeDefined();
-          expect(p.name).toBe('trapFrank');
-          expect(p.group).toBe(ggroup._id);
-          expect(p.visibility).toBe('restricted');
-          expect(p.password).toBeNull();
-          expect(p.readonly).toBeFalsy();
-          expect(ld.isArray(p.users)).toBeTruthy();
-          expect(ld.first(p.users)).toBe(guser._id);
-          p.visibility = 'private';
-          p.password = 'GraceHasFever';
-          pad.set(p, function (err, p) {
-            expect(err).toBeNull();
-            expect(p._id).toBeDefined();
-            expect(p.name).toBe('trapFrank');
-            expect(p.visibility).toBe('private');
-            expect(p.password).toBe('GraceHasFever');
+          expect(ld.isError(err)).toBeTruthy();
+          expect(err).toMatch('PASSWORD_INCORRECT');
+          expect(p).toBeUndefined();
+          params.password = 123;
+          pad.set(params, function (err, p) {
+            expect(ld.isError(err)).toBeTruthy();
+            expect(err).toMatch('PASSWORD_INCORRECT');
+            expect(p).toBeUndefined();
             done();
           });
         });
       });
+
+      it('should otherwise accept well defined parameters and keeps password ' +
+        'after first definition', function (done) {
+          var params = {
+            name: 'trapFrank',
+            group: ggroup._id,
+            users: [guser._id],
+            visibility: 'restricted',
+            readonly: false
+          };
+          pad.set(params, function (err, p) {
+            expect(err).toBeNull();
+            expect(ld.isObject(p)).toBeTruthy();
+            expect(p._id).toBeDefined();
+            expect(p.name).toBe('trapFrank');
+            expect(p.group).toBe(ggroup._id);
+            expect(p.visibility).toBe('restricted');
+            expect(p.password).toBeNull();
+            expect(p.readonly).toBeFalsy();
+            expect(ld.isArray(p.users)).toBeTruthy();
+            expect(ld.first(p.users)).toBe(guser._id);
+            p.visibility = 'private';
+            p.password = 'GraceHasFever';
+            pad.set(p, function (err, p) {
+              expect(err).toBeNull();
+              expect(p._id).toBeDefined();
+              expect(p.name).toBe('trapFrank');
+              expect(p.visibility).toBe('private');
+              expect(ld.isObject(p.password)).toBeTruthy();
+              var pass = ld.clone(p.password);
+              expect(p.password.salt).toBeDefined();
+              expect(p.password.hash).toBeDefined();
+              p.name = 'TRAPFrank';
+              delete p.password;
+              pad.set(p, function (err, p) {
+                expect(err).toBeNull();
+                expect(p._id).toBeDefined();
+                expect(p.name).toBe('TRAPFrank');
+                expect(p.visibility).toBe('private');
+                expect(p.password.salt).toBe(pass.salt);
+                expect(p.password.hash).toBe(pass.hash);
+                done();
+              });
+            });
+          });
+        }
+      );
 
       it('should also allow updating existing pad', function (done) {
         gpad.name = 'shellyNator';

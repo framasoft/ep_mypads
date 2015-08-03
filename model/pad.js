@@ -38,6 +38,7 @@ module.exports = (function () {
   var cuid = require('cuid');
   var common = require('./common.js');
   var storage = require('../storage.js');
+  var group = require('./group.js');
   var PPREFIX = storage.DBPREFIX.PAD;
   var UPREFIX = storage.DBPREFIX.USER;
   var GPREFIX = storage.DBPREFIX.GROUP;
@@ -242,13 +243,18 @@ module.exports = (function () {
   *   pad object;
   * - a special `edit` boolean, defaults to *false* for reusing the function for
   *   set (edit) an existing pad.
-  *
-  * TODO: ensure user has the right to link _this_ group (admin)
   */
 
   pad.set = function (params, callback) {
     common.addSetInit(params, callback, ['name', 'group']);
     var p = pad.fn.assignProps(params);
+    var check = function () {
+      group.fn.handlePassword(p, function (err, password) {
+        if (err) { return callback(err); }
+        if (password) { p.password = password; }
+        pad.fn.checkSet(p, callback);
+      });
+    };
     if (params._id) {
       p._id = params._id;
       storage.db.get(PPREFIX + p._id, function(err, res) {
@@ -257,11 +263,14 @@ module.exports = (function () {
           return callback(new Error('BACKEND.ERROR.PAD.INEXISTENT'));
         }
         if (res.group !== p.group) { p.moveGroup = res.group; }
-        pad.fn.checkSet(p, callback);
+        if ((res.visibility === 'private') && !p.password) {
+          p.password = res.password;
+        }
+        check();
       });
     } else {
       p._id = cuid();
-      pad.fn.checkSet(p, callback);
+      check();
     }
   };
 

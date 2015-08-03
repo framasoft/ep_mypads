@@ -29,7 +29,7 @@
 // External dependencies
 var ld = require('lodash');
 var cuid = require('cuid');
-var SMTPConnection = require('smtp-connection');
+var emailjs = require('emailjs');
 // Local dependencies
 require('./helpers.js'); // Helpers auto-init
 var conf = require('./configuration.js');
@@ -87,44 +87,23 @@ module.exports = (function () {
   * login after connection.
   */
 
-  mail.connect = function (callback) {
-    if (!ld.isFunction(callback)) {
-      throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
-    }
-    var _connect = function () {
-      var opts = {
-        port: parseInt(conf.get('SMTPPort'), 10),
-        host: conf.get('SMTPHost'),
-        secure: conf.get('SMTPSecure'),
-        ignoreTLS: !!conf.get('SMTPIgnoreTLS')
-      };
-      if (!ld.isNumber(opts.port) || !ld.isString(opts.host) ||
-        !ld.isBoolean(opts.secure)) {
-        throw new TypeError('BACKEND.ERROR.TYPE.SMTP_CONFIG');
-      }
-      var user = conf.get('SMTPUser');
-      var pass = conf.get('SMTPPass');
-      var _connCb = ld.partial(callback, null, true);
-      if (ld.isString(user) && ld.isString(pass)) {
-        _connCb = function () {
-          mail.connection.login({ user: user, pass: pass }, function (err) {
-            if (err) { return callback(err); }
-            callback(null, true);
-          });
-        };
-      }
-      try {
-        mail.connection = new SMTPConnection(opts);
-        mail.connection.connect(_connCb);
-      }
-      catch (e) { callback(e); }
+  mail.connect = function () {
+    var opts = {
+      port: parseInt(conf.get('SMTPPort'), 10),
+      host: conf.get('SMTPHost'),
+      ssl: conf.get('SMTPSSL'),
+      tls: conf.get('SMTPTLS'),
+      user: conf.get('SMTPUser'),
+      password: conf.get('SMTPPass')
     };
-    if (mail.connection) {
-      mail.connection.on('end', _connect);
-      mail.connection.quit();
-    } else {
-      _connect();
+    if (!ld.isNumber(opts.port) || !ld.isString(opts.host) ||
+      !ld.isBoolean(opts.ssl) || !ld.isBoolean(opts.tls)) {
+      throw new TypeError('BACKEND.ERROR.TYPE.SMTP_CONFIG');
     }
+    try {
+      mail.server = emailjs.server.connect(opts);
+    }
+    catch (e) { console.log(e); }
   };
 
   /**
@@ -140,10 +119,13 @@ module.exports = (function () {
   *   and an information object. See smtp-connection for more details.
   */
 
-  mail.send = function (to, message, callback) {
+  mail.send = function (to, subject, message, callback) {
     var err;
     if (!ld.isEmail(to)) {
       throw new TypeError('BACKEND.ERROR.TYPE.TO_MAIL');
+    }
+    if (!ld.isString(subject)) {
+      throw new TypeError('BACKEND.ERROR.TYPE.SUBJECT_STR');
     }
     if (!ld.isString(message)) {
       throw new TypeError('BACKEND.ERROR.TYPE.MSG_STR');
@@ -152,12 +134,17 @@ module.exports = (function () {
       throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
     }
     var emailFrom = conf.get('SMTPEmailFrom');
-    if (!mail.connection || !emailFrom) {
+    if (!mail.server || !emailFrom) {
       err = 'BACKEND.ERROR.CONFIGURATION.MAIL_NOT_CONFIGURED';
       return callback(err);
     }
-    var envelope = { from: emailFrom, to: to };
-    mail.connection.send(envelope, message, callback);
+    var envelope = {
+      from: emailFrom,
+      to: to,
+      subject: subject,
+      text: message
+    };
+    mail.server.send(envelope, callback);
   };
 
   /**
@@ -169,8 +156,7 @@ module.exports = (function () {
 
   mail.init = function () {
     if (conf.get('SMTPHost')) {
-      mail.connect(function (err) {
-        if (err) { console.log(err); } });
+      mail.connect();
     }
   };
 

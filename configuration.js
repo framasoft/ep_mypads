@@ -58,11 +58,11 @@ module.exports = (function() {
       checkMails: false,
       SMTPPort: undefined,
       SMTPHost: undefined,
-      SMTPSecure: undefined,
       SMTPUser: undefined,
       SMTPPass: undefined,
       SMTPEmailFrom: undefined,
-      SMTPIgnoreTLS: undefined,
+      SMTPSSL: false,
+      SMTPTLS: true,
       tokenDuration: 60 // in minutes
     },
 

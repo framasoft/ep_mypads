@@ -481,9 +481,7 @@
       beforeAll(function (done) {
         conf.cache.checkMails = true;
         var params = { login: 'shelly', password: 'lovesKubiak' };
-        user.set(params, function () {
-          rq.post(route + 'auth/login', { body: params }, done);
-        });
+        user.set(params, done);
       });
 
       afterAll(function (done) {
@@ -493,11 +491,14 @@
 
       it('should create in inactive account according to the configuration',
         function (done) {
-          rq.get(route + 'group', function (err, resp, body) {
-            expect(err).toBeNull();
-            expect(body.error).toMatch('ACTIVATION_NEEDED');
-            done();
-          });
+          var b =  { login: 'shelly', password: 'lovesKubiak' };
+          rq.post(route + 'auth/login', { body: b },
+            function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(body.error).toMatch('ACTIVATION_NEEDED');
+              done();
+            }
+          );
         }
       );
 

@@ -197,9 +197,6 @@ module.exports = (function () {
     if (!req.isAuthenticated() && !req.session.mypadsLogin) {
       return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.MUST_BE');
     }
-    if (!req.session.mypadsActive) {
-      return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.ACTIVATION_NEEDED');
-    }
     return next();
   };
 
@@ -293,7 +290,12 @@ module.exports = (function () {
               user: ld.omit(u, 'password')
             });
           };
-          finish();
+          if (u.active) {
+            finish();
+          } else {
+            var msg = 'BACKEND.ERROR.AUTHENTICATION.ACTIVATION_NEEDED';
+            return fn.denied(res, msg);
+          }
         });
       })(req, res, next);
     });
@@ -548,13 +550,15 @@ module.exports = (function () {
           var url = conf.get('rootUrl') +
             '/mypads/index.html?/accountconfirm/' + token;
           console.log(url);
+          var subject = fn.mailMessage('ACCOUNT_CONFIRMATION_SUBJECT', {
+            title: conf.get('title') });
           var message = fn.mailMessage('ACCOUNT_CONFIRMATION', {
             login: key,
             title: conf.get('title'),
             url: url,
             duration: conf.get('tokenDuration')
           });
-          mail.send(req.body.email, message, function (err) {
+          mail.send(req.body.email, subject, message, function (err) {
             if (err) {
               stop = true;
               return res.status(501).send({ error: err });
@@ -670,13 +674,15 @@ module.exports = (function () {
         var token = mail.genToken({ login: login, action: 'passrecover' });
         console.log(conf.get('rootUrl') + '/mypads/index.html?/passrecover/' +
           token);
+        var subject = fn.mailMessage('PASSRECOVER_SUBJECT', {
+          title: conf.get('title') });
         var message = fn.mailMessage('PASSRECOVER', {
           login: login,
           title: conf.get('title'),
           url: conf.get('rootUrl') + '/mypads/index.html?/passrecover/' + token,
           duration: conf.get('tokenDuration')
         });
-        mail.send(u.email, message, function (err) {
+        mail.send(u.email, subject, message, function (err) {
           if (err) { return res.status(501).send({ error: err }); }
           return res.send({ success: true });
         });

@@ -999,7 +999,8 @@ module.exports = (function () {
       }).then(function (resp) {
         form.initFields(c, ['title', 'rootUrl', 'passwordMin', 'passwordMax',
           'defaultLanguage', 'checkMails', 'tokenDuration', 'SMTPHost',
-          'SMTPPort', 'SMTPSecure', 'SMTPUser', 'SMTPPass', 'SMTPEmailFrom']);
+          'SMTPPort', 'SMTPSSL', 'SMTPTLS', 'SMTPUser', 'SMTPPass',
+          'SMTPEmailFrom']);
         c.currentConf = resp.value;
         ld.forIn(resp.value, function (v, k) {
           c.data[k] = m.prop(v);
@@ -1229,13 +1230,24 @@ module.exports = (function () {
         ld.assign(f.input.attrs, { type: 'number', min: 1 });
         return f;
       })(),
-      SMTPSecure: (function () {
-        var icon = form.icon(c, 'SMTPSecure', A.INFO.SMTP_SECURE);
-        var f = form.field(c, 'SMTPSecure', A.FIELD.SMTP_SECURE, icon);
+      SMTPSSL: (function () {
+        var icon = form.icon(c, 'SMTPSSL', A.INFO.SMTP_SSL);
+        var f = form.field(c, 'SMTPSSL', A.FIELD.SMTP_SSL, icon);
         ld.assign(f.input.attrs, {
           type: 'checkbox',
-          checked: c.data.SMTPSecure(),
-          onchange: m.withAttr('checked', c.data.SMTPSecure)
+          checked: c.data.SMTPSSL(),
+          onchange: m.withAttr('checked', c.data.SMTPSSL)
+        });
+        return f;
+      })(),
+      SMTPTLS: (function () {
+        var icon = form.icon(c, 'SMTPTLS', A.INFO.SMTP_TLS);
+        var f = form.field(c, 'SMTPTLS', A.FIELD.SMTP_TLS, icon);
+        ld.assign(f.label.attrs, { style: 'clear: left;' });
+        ld.assign(f.input.attrs, {
+          type: 'checkbox',
+          checked: c.data.SMTPTLS(),
+          onchange: m.withAttr('checked', c.data.SMTPTLS)
         });
         return f;
       })(),
@@ -1283,7 +1295,8 @@ module.exports = (function () {
           f.tokenDuration.label, f.tokenDuration.input, f.tokenDuration.icon,
           f.SMTPHost.label, f.SMTPHost.input, f.SMTPHost.icon,
           f.SMTPPort.label, f.SMTPPort.input, f.SMTPPort.icon,
-          f.SMTPSecure.label, f.SMTPSecure.input, f.SMTPSecure.icon,
+          f.SMTPSSL.label, f.SMTPSSL.input, f.SMTPSSL.icon,
+          f.SMTPTLS.label, f.SMTPTLS.input, f.SMTPTLS.icon,
           f.SMTPUser.label, f.SMTPUser.input, f.SMTPUser.icon,
           f.SMTPPass.label, f.SMTPPass.input, f.SMTPPass.icon,
           f.SMTPEmailFrom.label, f.SMTPEmailFrom.input, f.SMTPEmailFrom.icon ])
@@ -21084,7 +21097,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {
@@ -21424,7 +21437,8 @@ module.exports=module.exports=module.exports=module.exports=module.exports={
       "TOKEN_DURATION": "Token validity",
       "SMTP_HOST": "SMTP Host",
       "SMTP_PORT": "SMTP Port",
-      "SMTP_SECURE": "Encryption",
+      "SMTP_SSL": "Encryption via SSL",
+      "SMTP_TLS": "Encryption via TLS",
       "SMTP_USER": "User",
       "SMTP_PASS": "Password",
       "SMTP_EMAILFROM": "Email to send from",
@@ -21442,7 +21456,8 @@ module.exports=module.exports=module.exports=module.exports=module.exports={
       "TOKEN_DURATION": "The time, in minutes, generated tokens are valid until users confirm their subscription",
       "SMTP_HOST": "Domain name where the SMTP Server belongs to",
       "SMTP_PORT": "SMTP Port to use",
-      "SMTP_SECURE": "Check it if you want to use an encrypted connexion between MyPads and your SMTP Server",
+      "SMTP_SSL": "Check it if you want to use an encrypted SSL connexion between MyPads and your SMTP Server",
+      "SMTP_TLS": "Check it if you want to use an encrypted TLS connexion between MyPads and your SMTP Server",
       "SMTP_USER": "Optional: if authentication to the SMTP server is required, username",
       "SMTP_PASS": "Optional: if authentication to the SMTP server is required, password",
       "SMTP_EMAILFROM": "Email address to use to send emails from MyPads",

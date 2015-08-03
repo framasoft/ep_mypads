@@ -25,6 +25,7 @@
         "USERLIST_SET_PARAMS": "Dans le mode édition, le nom ou la liste des identifiants utilisateurs est obligatoire",
         "SMTP_CONFIG": "Votre configuration SMTP est invalide",
         "TO_MAIL": "to doit être une adresse mail valide",
+        "SUBJECT_STR": "subject doit être une chaîne de caractères",
         "MSG_STR": "message doit être une chaîne de caractères"
       },
       "CONFIGURATION": {
@@ -337,7 +338,8 @@
       "TOKEN_DURATION": "Validité des jetons",
       "SMTP_HOST": "Hôte SMTP",
       "SMTP_PORT": "Port SMTP",
-      "SMTP_SECURE": "Chiffrement",
+      "SMTP_SSL": "Chiffrement par SSL",
+      "SMTP_TLS": "Chiffrement par TLS",
       "SMTP_USER": "Utilisateur",
       "SMTP_PASS": "Mot de passe",
       "SMTP_EMAILFROM": "Email d'envoi",
@@ -355,7 +357,8 @@
       "TOKEN_DURATION": "Le temps, en minutes, pendant lequel les jetons générés sont valides, afin que les utilisateurs puissent confirmer leur adresse mail",
       "SMTP_HOST": "Le nom de domaine sur lequel pointer pour le serveur SMTP",
       "SMTP_PORT": "Le port à utiliser",
-      "SMTP_SECURE": "Utiliser le chiffrement pour la connection entre MyPads et le serveur SMTP",
+      "SMTP_SSL": "Utiliser le chiffrement SSL pour la connection entre MyPads et le serveur SMTP",
+      "SMTP_TLS": "Utiliser le chiffrement TLS pour la connection entre MyPads et le serveur SMTP",
       "SMTP_USER": "Facultatif : si le serveur SMTP nécessite une authentification, identifiant à utiliser",
       "SMTP_PASS": "Facultatif : si le serveur SMTP nécessite une authentification, mot de passe à utiliser",
       "SMTP_EMAILFROM": "Adresse courriel à utiliser pour envoyer des messages depuis MyPads",

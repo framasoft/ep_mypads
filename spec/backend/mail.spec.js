@@ -97,14 +97,14 @@
             mailInfo.address = address;
             mailInfo.session = session;
             mailInfo.stream = '';
-            next(new Error('not null to prevend real sending'));
+            next(new Error('not null to prevent real sending'));
           }
         });
         server.listen(2525, done);
       });
 
       afterAll(function (done) {
-        mail.connection.quit();
+        mail.server.smtp.quit();
         server.close(done);
       });
 
@@ -113,42 +113,49 @@
         var clientOpts = {
           SMTPPort: 2525,
           SMTPHost: 'localhost',
-          SMTPSecure: false,
-          SMTPIgnoreTLS: true
+          SMTPSSL: false,
+          SMTPTLS: false
         };
 
         afterAll(function() {
           conf.cache = ld.clone(conf.DEFAULTS);
         });
 
-        it('should throw an error if no callback is given', function () {
-          expect(mail.connect).toThrowError(/CALLBACK_FN/);
-        });
-
         it('should throw an error if no options have been fixed', function () {
-          expect(ld.partial(mail.connect, ld.noop))
+          expect(ld.partial(mail.connect))
             .toThrowError(/ERROR.TYPE.SMTP_CONFIG/);
         });
 
-        xit('should return an error if options are incorrect', function () {
-          // Bad options crash NodeJS, should be fixed upstream on
-          // 'SMTPConnection library.
+        it('should return an error if options are incorrect', function (done) {
           conf.cache.SMTPPort = 25;
           conf.cache.SMTPHost = 'localhost';
-          conf.cache.SMTPSecure = false;
-          conf.cache.SMTPIgnoreTLS = true;
-          expect(ld.partial(mail.connect, ld.noop)).toThrowError(/toto/);
+          conf.cache.SMTPSSL = false;
+          conf.cache.SMTPTLS = false;
+          conf.cache.emailFrom = 'parker@mondovideo.com';
+          mail.connect();
+          mail.send('parker@lewis.me', 'subject', 'message', function (err) {
+            expect(err).toMatch('MAIL_NOT_CONFIGURED');
+            expect(mail.server.smtp.state()).toBe(0);
+            done();
+          });
         });
 
         describe('mail.connect real connection', function () {
+
+          beforeAll(function () {
+            conf.cache.SMTPEmailFrom = 'lewis@mondovideo.com';
+          });
+          afterAll(function () { conf.cache.SMTPEmailFrom = undefined; });
 
           it('should not login with invalid credentials', function (done) {
             ld.assign(conf.cache, clientOpts);
             conf.cache.SMTPUser = 'parker';
             conf.cache.SMTPPass = 'lovesKuKu';
-            mail.connect(function (err) {
-              expect(ld.isError(err)).toBeTruthy();
-              expect(err).toMatch('Invalid login');
+            mail.connect();
+            mail.send('parker@lewis.me', 'subject', 'message', function (err) {
+              expect(err).toMatch('no form of authorization supported');
+              expect(mail.server.smtp.authorized()).toBeFalsy();
+              expect(mail.server.smtp.state()).toBe(2);
               done();
             });
           });
@@ -158,11 +165,16 @@
               ld.assign(conf.cache, clientOpts);
               delete conf.cache.SMTPUser;
               delete conf.cache.SMTPPass;
-              mail.connect(function (err, success) {
-                expect(err).toBeNull();
-                expect(success).toBeTruthy();
-                done();
-              });
+              mail.connect();
+              mail.send('parker@lewis.me', 'subject', 'message',
+                function (err) {
+                  expect(err).toMatch('bad response');
+                  expect(err.smtp).toMatch('550 not null to prevent');
+                  expect(mail.server.smtp.authorized()).toBeTruthy();
+                  expect(mail.server.smtp.state()).toBe(2);
+                  done();
+                }
+              );
             }
           );
 
@@ -178,14 +190,16 @@
           expect(ld.partial(mail.send, 'notAnEmail'))
             .toThrowError(/ERROR.TYPE.TO_MAIL/);
           expect(ld.partial(mail.send, 'parker@lewis.me', false))
+            .toThrowError(/ERROR.TYPE.SUBJECT_STR/);
+          expect(ld.partial(mail.send, 'parker@lewis.me', 'subject', false))
             .toThrowError(/ERROR.TYPE.MSG_STR/);
-          expect(ld.partial(mail.send, 'parker@lewis.me', 'message', 12))
+          expect(ld.partial(mail.send, 'parker@lewis.me', 'subj', 'msg', 12))
             .toThrowError(/ERROR.TYPE.CALLBACK_FN/);
         });
 
         it('should return an email if configuration is not fully done',
           function (done) {
-            mail.send('parker@lewis.me', 'message', function (err) {
+            mail.send('parker@lewis.me', 'subject', 'message', function (err) {
               expect(err).toMatch('ERROR.CONFIGURATION.MAIL_NOT_CONFIGURED');
               done();
             });
@@ -194,10 +208,17 @@
 
         it('should otherwise send an email', function (done) {
           conf.cache.SMTPEmailFrom = 'lewis@mondovideo.com';
-          mail.send('parker@lewis.me', 'message', function () {
-            expect(mailInfo.address.address).toBe('lewis@mondovideo.com');
-            done();
-          });
+          mail.send('parker@lewis.me', 'subject', 'message',
+            function (err, info) {
+              expect(err).toMatch('bad response');
+              expect(err.smtp).toMatch('550 not null to prevent');
+              expect(info.header.from).toBe('lewis@mondovideo.com');
+              expect(info.header.to).toBe('parker@lewis.me');
+              expect(info.text).toBe('message');
+              expect(mail.server.smtp.state()).toBe(2);
+              done();
+            }
+          );
         });
 
       });

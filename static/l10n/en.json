@@ -25,6 +25,7 @@
         "USERLIST_SET_PARAMS": "In set mode, name or uids is madantory",
         "SMTP_CONFIG": "Your SMTP server configuration is invalid",
         "TO_MAIL": "to must be an email address",
+        "SUBJECT_STR": "subject must be a string",
         "MSG_STR": "message must be a string"
       },
       "CONFIGURATION": {
@@ -337,7 +338,8 @@
       "TOKEN_DURATION": "Token validity",
       "SMTP_HOST": "SMTP Host",
       "SMTP_PORT": "SMTP Port",
-      "SMTP_SECURE": "Encryption",
+      "SMTP_SSL": "Encryption via SSL",
+      "SMTP_TLS": "Encryption via TLS",
       "SMTP_USER": "User",
       "SMTP_PASS": "Password",
       "SMTP_EMAILFROM": "Email to send from",
@@ -355,7 +357,8 @@
       "TOKEN_DURATION": "The time, in minutes, generated tokens are valid until users confirm their subscription",
       "SMTP_HOST": "Domain name where the SMTP Server belongs to",
       "SMTP_PORT": "SMTP Port to use",
-      "SMTP_SECURE": "Check it if you want to use an encrypted connexion between MyPads and your SMTP Server",
+      "SMTP_SSL": "Check it if you want to use an encrypted SSL connexion between MyPads and your SMTP Server",
+      "SMTP_TLS": "Check it if you want to use an encrypted TLS connexion between MyPads and your SMTP Server",
       "SMTP_USER": "Optional: if authentication to the SMTP server is required, username",
       "SMTP_PASS": "Optional: if authentication to the SMTP server is required, password",
       "SMTP_EMAILFROM": "Email address to use to send emails from MyPads",

@@ -106,7 +106,8 @@ module.exports = (function () {
             tokenDuration: qfirst('input[name=tokenDuration]'),
             SMTPHost: qfirst('input[name=SMTPHost]'),
             SMTPPort: qfirst('input[name=SMTPPort]'),
-            SMTPSecure: qfirst('input[name=SMTPSecure]'),
+            SMTPSSL: qfirst('input[name=SMTPSSL]'),
+            SMTPTLS: qfirst('input[name=SMTPTLS]'),
             SMTPUser: qfirst('input[name=SMTPUser]'),
             SMTPPass: qfirst('input[name=SMTPPass]'),
             SMTPEmailFrom: qfirst('input[name=SMTPEmailFrom]'),
@@ -130,7 +131,8 @@ module.exports = (function () {
           expect($el.tokenDuration.value).toBe('60');
           expect($el.SMTPHost.value.length).toBe(0);
           expect($el.SMTPPort.value.length).toBe(0);
-          expect($el.SMTPSecure.value.length).toBe(0);
+          expect($el.SMTPSSL.value.length).toBe(0);
+          expect($el.SMTPTLS.value).toBe('true');
           expect($el.SMTPUser.value.length).toBe(0);
           expect($el.SMTPPass.value.length).toBe(0);
           expect($el.SMTPEmailFrom.value.length).toBe(0);

@@ -57,7 +57,8 @@ module.exports = (function () {
       }).then(function (resp) {
         form.initFields(c, ['title', 'rootUrl', 'passwordMin', 'passwordMax',
           'defaultLanguage', 'checkMails', 'tokenDuration', 'SMTPHost',
-          'SMTPPort', 'SMTPSecure', 'SMTPUser', 'SMTPPass', 'SMTPEmailFrom']);
+          'SMTPPort', 'SMTPSSL', 'SMTPTLS', 'SMTPUser', 'SMTPPass',
+          'SMTPEmailFrom']);
         c.currentConf = resp.value;
         ld.forIn(resp.value, function (v, k) {
           c.data[k] = m.prop(v);
@@ -287,13 +288,24 @@ module.exports = (function () {
         ld.assign(f.input.attrs, { type: 'number', min: 1 });
         return f;
       })(),
-      SMTPSecure: (function () {
-        var icon = form.icon(c, 'SMTPSecure', A.INFO.SMTP_SECURE);
-        var f = form.field(c, 'SMTPSecure', A.FIELD.SMTP_SECURE, icon);
+      SMTPSSL: (function () {
+        var icon = form.icon(c, 'SMTPSSL', A.INFO.SMTP_SSL);
+        var f = form.field(c, 'SMTPSSL', A.FIELD.SMTP_SSL, icon);
         ld.assign(f.input.attrs, {
           type: 'checkbox',
-          checked: c.data.SMTPSecure(),
-          onchange: m.withAttr('checked', c.data.SMTPSecure)
+          checked: c.data.SMTPSSL(),
+          onchange: m.withAttr('checked', c.data.SMTPSSL)
+        });
+        return f;
+      })(),
+      SMTPTLS: (function () {
+        var icon = form.icon(c, 'SMTPTLS', A.INFO.SMTP_TLS);
+        var f = form.field(c, 'SMTPTLS', A.FIELD.SMTP_TLS, icon);
+        ld.assign(f.label.attrs, { style: 'clear: left;' });
+        ld.assign(f.input.attrs, {
+          type: 'checkbox',
+          checked: c.data.SMTPTLS(),
+          onchange: m.withAttr('checked', c.data.SMTPTLS)
         });
         return f;
       })(),
@@ -341,7 +353,8 @@ module.exports = (function () {
           f.tokenDuration.label, f.tokenDuration.input, f.tokenDuration.icon,
           f.SMTPHost.label, f.SMTPHost.input, f.SMTPHost.icon,
           f.SMTPPort.label, f.SMTPPort.input, f.SMTPPort.icon,
-          f.SMTPSecure.label, f.SMTPSecure.input, f.SMTPSecure.icon,
+          f.SMTPSSL.label, f.SMTPSSL.input, f.SMTPSSL.icon,
+          f.SMTPTLS.label, f.SMTPTLS.input, f.SMTPTLS.icon,
           f.SMTPUser.label, f.SMTPUser.input, f.SMTPUser.icon,
           f.SMTPPass.label, f.SMTPPass.input, f.SMTPPass.icon,
           f.SMTPEmailFrom.label, f.SMTPEmailFrom.input, f.SMTPEmailFrom.icon ])

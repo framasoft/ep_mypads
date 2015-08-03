@@ -144,12 +144,8 @@ module.exports = (function () {
       return callback(new TypeError('BACKEND.ERROR.TYPE.PASSWORD_MISSING'));
     }
     user.fn.hashPassword(u.password.salt, password, function (err, res) {
-      if (err) { callback(err); }
-      if (res.hash === u.password.hash) {
-        callback(null, true);
-      } else {
-        callback(null, false);
-      }
+      if (err) { return callback(err); }
+      callback(null, (res.hash === u.password.hash));
     });
   };
 

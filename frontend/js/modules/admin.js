@@ -87,7 +87,7 @@ module.exports = (function () {
         notif.error({ body: ld.result(conf.LANG, err.error) });
       });
     };
-    if (auth.isAdmin()) { init() };
+    if (auth.isAdmin()) { init(); }
 
     /**
     * ### login

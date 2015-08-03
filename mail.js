@@ -93,7 +93,7 @@ module.exports = (function () {
     }
     var _connect = function () {
       var opts = {
-        port: conf.get('SMTPPort'),
+        port: parseInt(conf.get('SMTPPort'), 10),
         host: conf.get('SMTPHost'),
         secure: conf.get('SMTPSecure'),
         ignoreTLS: !!conf.get('SMTPIgnoreTLS')

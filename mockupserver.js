@@ -28,6 +28,7 @@
   var hooks = require('./hooks.js');
   var storage = require('./storage.js');
   var api = require('./api.js');
+  var mail = require('./mail.js');
   var user = require('./model/user.js');
   var group = require('./model/group.js');
   var pad = require('./model/pad.js');
@@ -84,6 +85,7 @@
                           visibility: 'public'
                         };
                         group.set(g, function () {
+                          mail.init();
                           api.init(specCommon.express.app, 'en',
                             console.log.bind(null,
                               'MockupServer runs on port 8042'));

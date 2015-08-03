@@ -68,8 +68,10 @@ module.exports = (function () {
   hooks.expressCreateServer = function (name, args, callback) {
     var storage = require('./storage.js');
     var api = require('./api.js');
+    var mail = require('./mail.js');
     storage.init(function () {
       var lang = configuration.get('defaultLanguage');
+      mail.init();
       api.init(args.app, lang, callback);
     });
   };

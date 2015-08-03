@@ -110,7 +110,8 @@ module.exports = (function () {
         }).then(function (resp) {
           if (!resp.value.active) {
             var msg = conf.LANG.USER.AUTH.SUBSCRIBE_CONFIRM_SUCCESS;
-            notif.success({ body: msg });
+            m.route('/');
+            return notif.success({ body: msg });
           } else {
             auth.isAuthenticated(true);
             auth.userInfo(resp.value);

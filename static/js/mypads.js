@@ -498,7 +498,7 @@ module.exports = (function () {
       data: { token: token }
     }).then(function () {
       m.route('/login');
-      notif.success({ body: conf.LANG.ACCOUNT_CONFIRMATION_SUCCESS });
+      notif.success({ body: conf.LANG.USER.INFO.ACCOUNT_CONFIRMATION_SUCCESS });
     }, function (err) {
       m.route('/login');
       notif.error({ body: ld.result(conf.LANG, err.error) });
@@ -4237,7 +4237,8 @@ module.exports = (function () {
         }).then(function (resp) {
           if (!resp.value.active) {
             var msg = conf.LANG.USER.AUTH.SUBSCRIBE_CONFIRM_SUCCESS;
-            notif.success({ body: msg });
+            m.route('/');
+            return notif.success({ body: msg });
           } else {
             auth.isAuthenticated(true);
             auth.userInfo(resp.value);
@@ -21083,7 +21084,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {
@@ -21110,6 +21111,7 @@ module.exports=module.exports=module.exports=module.exports={
         "USERLIST_SET_PARAMS": "In set mode, name or uids is madantory",
         "SMTP_CONFIG": "Your SMTP server configuration is invalid",
         "TO_MAIL": "to must be an email address",
+        "SUBJECT_STR": "subject must be a string",
         "MSG_STR": "message must be a string"
       },
       "CONFIGURATION": {

@@ -44,7 +44,7 @@ module.exports = (function () {
       data: { token: token }
     }).then(function () {
       m.route('/login');
-      notif.success({ body: conf.LANG.ACCOUNT_CONFIRMATION_SUCCESS });
+      notif.success({ body: conf.LANG.USER.INFO.ACCOUNT_CONFIRMATION_SUCCESS });
     }, function (err) {
       m.route('/login');
       notif.error({ body: ld.result(conf.LANG, err.error) });

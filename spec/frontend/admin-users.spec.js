@@ -165,7 +165,7 @@ module.exports = (function () {
           $el.lang.onchange($el.lang);
           window.setTimeout(function () {
             expect($el.email.checkValidity()).toBeFalsy();
-            expect($el.lang.checkValidity()).toBeFalsy();
+            expect($el.lang.required).toBeTruthy();
             fill($el.email, 'frank@gracefanclub.net');
             $el.lang.value = 'fr';
             $el.lang.onchange($el.lang);

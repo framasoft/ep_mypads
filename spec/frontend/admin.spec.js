@@ -137,12 +137,9 @@ module.exports = (function () {
           expect($el.form.checkValidity()).toBeTruthy();
         });
 
-        it('should forbid submision whith bad input', function (done) {
+        it('should forbid submission whith bad input', function (done) {
           fill($el.title, '');
           expect($el.title.checkValidity()).toBeFalsy();
-          $el.lang.value = '';
-          $el.lang.onchange($el.lang);
-          expect($el.lang.checkValidity()).toBeFalsy();
           fill($el.passwordMin, '');
           expect($el.passwordMin.checkValidity()).toBeFalsy();
           fill($el.passwordMax, '0');

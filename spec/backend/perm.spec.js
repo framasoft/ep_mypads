@@ -69,9 +69,21 @@
                     name: 'Lesson 1',
                     group: groups.college._id
                   };
+                  pads.collegePrivate = {
+                    name: 'Private lesson',
+                    group: groups.college._id,
+                    visibility: 'private',
+                    password: 'somePass'
+                  };
                   pads.memories = {
                     name: 'Our first meet',
                     group: groups.memories._id
+                  };
+                  pads.memoriesPublic = {
+                    name: 'Public meeting',
+                    group: groups.memories._id,
+                    visibility: 'public',
+                    readonly: true
                   };
                   pads.annie = {
                     name: 'Falling in love',
@@ -79,11 +91,17 @@
                   };
                   pad.set(pads.college, function (err, p) {
                     if (!err) { pads.college = p; }
-                    pad.set(pads.memories, function (err, p) {
-                      if (!err) { pads.memories = p; }
-                      pad.set(pads.annie, function (err, p) {
-                        if (!err) { pads.annie = p; }
-                        done();
+                    pad.set(pads.collegePrivate, function (err, p) {
+                      if (!err) { pads.collegePrivate = p; }
+                      pad.set(pads.memories, function (err, p) {
+                        if (!err) { pads.memories = p; }
+                        pad.set(pads.memoriesPublic, function (err, p) {
+                          if (!err) { pads.memoriesPublic = p; }
+                          pad.set(pads.annie, function (err, p) {
+                            if (!err) { pads.annie = p; }
+                            done();
+                          });
+                        });
                       });
                     });
                   });
@@ -113,42 +131,53 @@
         });
       });
 
-      it('should allow access for admin user', function () {
+      it('should allow access for admin user', function (done) {
         req.session.mypadsUid = users.parker._id;
         req.params.pid = pads.college._id;
-        perm.fn.check(req, res, next);
-        expect(res.code).toBeUndefined();
-        expect(res.msg).toBeUndefined();
-
-        req.params.pid = pads.memories._id;
-        perm.fn.check(req, res, next);
-        expect(res.code).toBeUndefined();
-        expect(res.msg).toBeUndefined();
-
-        req.params.pid = pads.annie._id;
-        perm.fn.check(req, res, next);
-        expect(res.code).toBeUndefined();
-        expect(res.msg).toBeUndefined();
+        perm.fn.check(req, res, function () {
+          expect(res.code).toBeUndefined();
+          expect(res.msg).toBeUndefined();
+          req.params.pid = pads.memories._id;
+          perm.fn.check(req, res, function () {
+            expect(res.code).toBeUndefined();
+            expect(res.msg).toBeUndefined();
+            req.params.pid = pads.annie._id;
+            perm.fn.check(req, res, function () {
+              expect(res.code).toBeUndefined();
+              expect(res.msg).toBeUndefined();
+              done();
+            });
+          });
+        });
       });
 
-      it('should allow access to all for public group', function () {
+      it('should allow access to all for public group', function (done) {
         delete req.session.mypadsUid;
         req.params.pid = pads.college._id;
-        perm.fn.check(req, res, next);
-        expect(res.code).toBeUndefined();
-        expect(res.msg).toBeUndefined();
+        perm.fn.check(req, res, function () {
+          expect(res.code).toBeUndefined();
+          expect(res.msg).toBeUndefined();
+          done();
+        });
       });
 
-      it('should forbid access for user not invited', function () {
+      it('should forbid access for user not invited', function (done) {
         req.params.pid = pads.memories._id;
         perm.fn.check(req, res, next);
-        expect(res.code).toBe(403);
-        expect(res.msg.error).toMatch('UNAUTHORIZED');
+        setTimeout(function () {
+          expect(res.code).toBe(403);
+          expect(res.msg.error).toMatch('UNAUTHORIZED');
+          delete res.code;
+          delete res.msg;
+          req.session.mypadsUid = users.jerry._id;
+          perm.fn.check(req, res, next);
+          setTimeout(function () {
+            expect(res.code).toBe(403);
+            expect(res.msg.error).toMatch('UNAUTHORIZED');
+            done();
+          }, 100);
+        }, 100);
 
-        req.session.mypadsUid = users.jerry._id;
-        perm.fn.check(req, res, next);
-        expect(res.code).toBe(403);
-        expect(res.msg.error).toMatch('UNAUTHORIZED');
       });
 
       it('should allow access for user invited', function (done) {
@@ -161,20 +190,26 @@
           expect(err).toBeNull();
           groups.memories = g;
           req.session.mypadsUid = users.jerry._id;
-          perm.fn.check(req, res, next);
-          expect(res.code).toBeUndefined();
-          expect(res.msg).toBeUndefined();
-          done();
+          perm.fn.check(req, res, function () {
+            expect(res.code).toBeUndefined();
+            expect(res.msg).toBeUndefined();
+            done();
+          });
         });
       });
 
-      it('should forbid access for private without password', function () {
+      it('should forbid access for private without password', function (done) {
+        delete res.code;
+        delete res.msg;
         req.session.mypadsUid = users.jerry._id;
         req.params.pid = pads.annie._id;
 
         perm.fn.check(req, res, next);
-        expect(res.code).toBe(403);
-        expect(res.msg.error).toMatch('UNAUTHORIZED');
+        setTimeout(function () {
+          expect(res.code).toBe(403);
+          expect(res.msg.error).toMatch('UNAUTHORIZED');
+          done();
+        }, 100);
       });
 
       it('should forbid access for private with bad password', function (done) {
@@ -189,7 +224,7 @@
           expect(res.code).toBe(403);
           expect(res.msg.error).toMatch('UNAUTHORIZED');
           done();
-        }, 200);
+        }, 100);
       });
 
       it('should allow access for private with good password', function (done) {
@@ -205,6 +240,53 @@
           done();
         });
       });
+
+      it('should forbid access to private pad in public group',
+        function (done) {
+          delete res.code;
+          delete res.msg;
+          delete req.session.mypadsUid;
+          delete req.query.mypadspassword;
+          req.params.pid = pads.collegePrivate._id;
+
+          perm.fn.check(req, res, next);
+          setTimeout(function () {
+            expect(res.code).toBe(403);
+            expect(res.msg.error).toMatch('UNAUTHORIZED');
+            done();
+          }, 100);
+        }
+      );
+
+      it('should allow access to private pad in public group with password',
+        function (done) {
+          delete res.code;
+          delete res.msg;
+          delete req.session.mypadsUid;
+          req.params.pid = pads.collegePrivate._id;
+          req.query.mypadspassword = encode('somePass');
+
+          perm.fn.check(req, res, function () {
+            expect(res.code).toBeUndefined();
+            expect(res.msg).toBeUndefined();
+            done();
+          });
+        }
+      );
+
+      it('should allow access to public pad in restricted group',
+        function (done) {
+          delete res.code;
+          delete res.msg;
+          delete req.session.mypadsUid;
+          req.params.pid = pads.memoriesPublic._id;
+          perm.fn.check(req, res, function () {
+            expect(res.code).toBeUndefined();
+            expect(res.msg).toBeUndefined();
+            done();
+          });
+        }
+      );
 
     });
 
@@ -242,9 +324,19 @@
 
           req.params.pid = pads.college._id;
           perm.fn.readonly(req, res, next);
-          expect(res.code).toBe(200);
-          expect(res.msg).toMatch('Testing only');
-          done();
+          setTimeout(function () {
+            expect(res.code).toBe(200);
+            expect(res.msg).toMatch('Testing only');
+            delete res.code;
+            delete res.msg;
+            req.params.pid = pads.memoriesPublic._id;
+            perm.fn.readonly(req, res, next);
+            setTimeout(function () {
+              expect(res.code).toBe(200);
+              expect(res.msg).toMatch('Testing only');
+              done();
+            }, 100);
+          }, 100);
         });
       });
 

@@ -80,7 +80,7 @@ module.exports = (function () {
   /**
   * ### check
   *
-  * `check` function is a middlware-like function for all request to pads.
+  * `check` function is a middlware-like function for all requests to pads.
   * It checks if the pad is handled by MyPads or not and if, allows to see it
   * according its *visibility* and user authentication.
   */
@@ -96,25 +96,38 @@ module.exports = (function () {
       return res.status(403)
         .send({ error: 'BACKEND.ERROR.PERMISSION.UNAUTHORIZED' });
     };
+    var checkPass = function (el) {
+      var password = req.query.mypadspassword;
+      if (!password) { return refuse(); }
+      auth.fn.isPasswordValid(el, decode(password), function (err, valid) {
+        if (err) { return unexpectedErr(err); }
+        return (valid ? next() : refuse());
+      });
+    };
     var uid = req.session.mypadsUid || false;
     perm.fn.getPadAndGroup(req.params.pid, function (err, pg) {
       if (err) { return unexpectedErr(err); }
       // Key not found, not a MyPads pad so next()
       if (!pg) { return next(); }
-      // If admin of the group, ok
       var g = pg.group;
+      var p = pg.pad;
+      // If admin of the group or pad or group publics, ok
+      // If pad or group is private, check password
       if (ld.includes(g.admins, uid)) { return next(); }
-      if (g.visibility === 'restricted') {
-        return (ld.includes(g.users, uid) ? next() : refuse());
-      } else if (g.visibility === 'private') {
-        var password = req.query.mypadspassword;
-        if (!password) { return refuse(); }
-        auth.fn.isPasswordValid(g, decode(password), function (err, valid) {
-          if (err) { return unexpectedErr(err); }
-          return (valid ? next() : refuse());
-        });
-      } else {
-        next(); // public
+      switch (p.visibility) {
+        case 'public':
+          return next();
+        case 'private':
+          return checkPass(p);
+      }
+      switch (g.visibility) {
+        case 'public':
+          return next();
+        case 'private':
+          return checkPass(g);
+        // Restricted case : if user, ok
+        default:
+          return (ld.includes(g.users, uid) ? next() : refuse());
       }
     });
   };
@@ -139,7 +152,8 @@ module.exports = (function () {
       // Key not found, not a MyPads pad so next()
       if (!pg) { return next(); }
       var g = pg.group;
-      if (g.readonly) {
+      var p = pg.pad;
+      if (p.readonly || g.readonly) {
         getPad(pg.pad._id, function (err, p) {
           if (err) { return unexpectedErr(err); }
           getPadHTML(p, undefined, function (err, html) {

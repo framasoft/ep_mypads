@@ -2157,7 +2157,8 @@ module.exports = (function () {
               }
             })(),
             (function () {
-              if (c.group.visibility !== 'restricted') {
+              if ((c.group.visibility !== 'restricted') ||
+                (p.visibility && p.visibility !== 'restricted')) {
                 return m('button', {
                   title: conf.LANG.GROUP.SHARE,
                   onclick: padShare.bind(c, c.group._id, p._id)
@@ -2184,13 +2185,17 @@ module.exports = (function () {
               }, [ m('i.icon-trash') ])
             );
           }
+          var padName = p.name;
+          if (p.visibility && (p.visibility !== c.group.visibility)) {
+            padName += ' (' + p.visibility + ')';
+          }
           return m('li.block-group', [
             m('span.block.name', [
               m('a', {
                 href: route + '/pad/view/' + p._id,
                 config: m.route,
                 title: conf.LANG.GROUP.VIEW
-              }, p.name)
+              }, padName)
               ]),
             m('span.block.actions', actions)
           ]);
@@ -21276,7 +21281,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {

@@ -42,7 +42,7 @@ module.exports = (function () {
       users: m.prop([]),
       admins: m.prop([]),
       tags: m.prop([]),
-      data: m.prop({ groups: m.prop({}), pads: m.prop({}) })
+      tmp: m.prop({ groups: m.prop({}), pads: m.prop({}) })
     });
   };
   model.init();
@@ -95,38 +95,74 @@ module.exports = (function () {
   };
 
   /**
-  * ## fetchGroup
+  * ## fetchObject
   *
   * This function is used for unauth users or non-invited authenticated users.
-  * It calls group.GET/gid API and populates local models. It takes mandatory
-  * :
+  * It calls group.GET/id API and populates local models. If group is denied
+  * and `keys.pad` is fixed, it tries access to pad only. It takes mandatory :
   *
-  * - `gid` key string
-  * - `password` key string, can be set as *undefined*. If given, will be sent
-  *   as data parameter
+  * - `keys` JS object containing `group` and optional `pad` id string
+  * - `password` string, can be set as *undefined*. If given, will be sent as
+  *   data parameter
   * - `callback` function, called with *error* or *result*
   */
 
-  model.fetchGroup = function (gid, password, callback) {
+  model.fetchObject = function (keys, password, callback) {
     var errFn = function (err) {
       notif.error({ body: ld.result(conf.LANG, err.error) });
       if (callback) { callback(err); }
     };
-    var opts = {
-      url: conf.URLS.GROUP + '/' + gid,
-      method: 'GET'
+
+    var fetchPad = function (group) {
+      var opts = {
+        url: conf.URLS.PAD + '/' + keys.pad,
+        method: 'GET'
+      };
+      if (password) { opts.data = { password: password }; }
+      m.request(opts).then(
+        function (resp) {
+          var data = model.tmp();
+          var pads = data.pads();
+          pads[resp.key] = resp.value;
+          data.pads(pads);
+          model.tmp(data);
+          if (callback) { callback(null, resp); }
+        }, function (err) {
+          if (group) {
+            return callback(null, group);
+          }
+          errFn(err);
+        });
     };
-    if (password) { opts.data = { password: password }; }
-    m.request(opts).then(
-      function (resp) {
-        var data = model.data();
-        var groups = data.groups();
-        groups[resp.key] = resp.value;
-        data.groups(groups);
-        data.pads(ld.merge(data.pads(), resp.pads));
-        model.data(data);
-        if (callback) { callback(null, resp); }
-      }, errFn);
+
+    var fetchGroup = function () {
+      var opts = {
+        url: conf.URLS.GROUP + '/' + keys.group,
+        method: 'GET'
+      };
+      if (password) { opts.data = { password: password }; }
+      m.request(opts).then(
+        function (resp) {
+          var data = model.tmp();
+          var groups = data.groups();
+          groups[resp.key] = resp.value;
+          data.groups(groups);
+          data.pads(ld.merge(data.pads(), resp.pads));
+          model.tmp(data);
+          var padPass = (!keys.pad || ld.includes(resp.pads, keys.pad));
+          if (padPass) {
+            if (callback) { callback(null, resp); }
+          } else {
+            fetchPad(resp);
+          }
+        }, function (err) {
+          if (err.error === 'BACKEND.ERROR.AUTHENTICATION.DENIED_RECORD' &&
+            keys.pad) { return fetchPad(); }
+          errFn(err);
+        });
+    };
+
+    fetchGroup();
   };
 
   return model;

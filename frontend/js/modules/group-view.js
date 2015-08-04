@@ -64,8 +64,9 @@ module.exports = (function () {
 
     var init = function (err) {
       if (err) { return m.route('/mypads'); }
-      var _init = function () {
-        var data = c.isGuest ? model.data() : model;
+      var _init = function (err) {
+        if (err) { return m.route('/mypads'); }
+        var data = c.isGuest ? model.tmp() : model;
         c.group = data.groups()[key];
         if (!c.isGuest) {
           c.isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
@@ -74,16 +75,16 @@ module.exports = (function () {
           });
         } else {
           c.isAdmin = false;
-          c.pads = ld.map(c.group.pads, function (x) {
+          c.pads = ld.compact(ld.map(c.group.pads, function (x) {
             return data.pads()[x];
-          });
+          }));
         }
       };
       if (model.groups()[key]) {
         _init();
       } else {
         c.isGuest = true;
-        model.fetchGroup(key, undefined, _init);
+        model.fetchObject({ group: key }, undefined, _init);
       }
     };
 
@@ -91,7 +92,7 @@ module.exports = (function () {
       if (auth.isAuthenticated()) {
         return ld.partial(model.fetch, init);
       } else {
-        return ld.partial(model.fetchGroup, key, undefined, init);
+        return ld.partial(model.fetchObject, { group: key }, undefined, init);
       }
     })();
     if (ld.isEmpty(model.groups())) { fetchFn(); } else { init(); }
@@ -145,11 +146,12 @@ module.exports = (function () {
 
     c.submitPass = function (e) {
       e.preventDefault();
-      model.fetchGroup(key, c.privatePassword(), function (err) {
+      model.fetchObject({ group: key }, c.privatePassword(), function (err) {
         if (err) { return c.sendPass(false); }
-        var data = c.isGuest ? model.data() : model;
+        var data = c.isGuest ? model.tmp() : model;
         c.group = data.groups()[key];
-        c.pads = ld.map(c.group.pads, function (x) { return data.pads()[x]; });
+        c.pads = ld.compact(ld.map(c.group.pads, 
+          function (x) { return data.pads()[x]; }));
         c.sendPass(true);
       });
     };

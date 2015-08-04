@@ -361,7 +361,7 @@ module.exports = (function () {
       users: m.prop([]),
       admins: m.prop([]),
       tags: m.prop([]),
-      data: m.prop({ groups: m.prop({}), pads: m.prop({}) })
+      tmp: m.prop({ groups: m.prop({}), pads: m.prop({}) })
     });
   };
   model.init();
@@ -414,38 +414,74 @@ module.exports = (function () {
   };
 
   /**
-  * ## fetchGroup
+  * ## fetchObject
   *
   * This function is used for unauth users or non-invited authenticated users.
-  * It calls group.GET/gid API and populates local models. It takes mandatory
-  * :
+  * It calls group.GET/id API and populates local models. If group is denied
+  * and `keys.pad` is fixed, it tries access to pad only. It takes mandatory :
   *
-  * - `gid` key string
-  * - `password` key string, can be set as *undefined*. If given, will be sent
-  *   as data parameter
+  * - `keys` JS object containing `group` and optional `pad` id string
+  * - `password` string, can be set as *undefined*. If given, will be sent as
+  *   data parameter
   * - `callback` function, called with *error* or *result*
   */
 
-  model.fetchGroup = function (gid, password, callback) {
+  model.fetchObject = function (keys, password, callback) {
     var errFn = function (err) {
       notif.error({ body: ld.result(conf.LANG, err.error) });
       if (callback) { callback(err); }
     };
-    var opts = {
-      url: conf.URLS.GROUP + '/' + gid,
-      method: 'GET'
+
+    var fetchPad = function (group) {
+      var opts = {
+        url: conf.URLS.PAD + '/' + keys.pad,
+        method: 'GET'
+      };
+      if (password) { opts.data = { password: password }; }
+      m.request(opts).then(
+        function (resp) {
+          var data = model.tmp();
+          var pads = data.pads();
+          pads[resp.key] = resp.value;
+          data.pads(pads);
+          model.tmp(data);
+          if (callback) { callback(null, resp); }
+        }, function (err) {
+          if (group) {
+            return callback(null, group);
+          }
+          errFn(err);
+        });
     };
-    if (password) { opts.data = { password: password }; }
-    m.request(opts).then(
-      function (resp) {
-        var data = model.data();
-        var groups = data.groups();
-        groups[resp.key] = resp.value;
-        data.groups(groups);
-        data.pads(ld.merge(data.pads(), resp.pads));
-        model.data(data);
-        if (callback) { callback(null, resp); }
-      }, errFn);
+
+    var fetchGroup = function () {
+      var opts = {
+        url: conf.URLS.GROUP + '/' + keys.group,
+        method: 'GET'
+      };
+      if (password) { opts.data = { password: password }; }
+      m.request(opts).then(
+        function (resp) {
+          var data = model.tmp();
+          var groups = data.groups();
+          groups[resp.key] = resp.value;
+          data.groups(groups);
+          data.pads(ld.merge(data.pads(), resp.pads));
+          model.tmp(data);
+          var padPass = (!keys.pad || ld.includes(resp.pads, keys.pad));
+          if (padPass) {
+            if (callback) { callback(null, resp); }
+          } else {
+            fetchPad(resp);
+          }
+        }, function (err) {
+          if (err.error === 'BACKEND.ERROR.AUTHENTICATION.DENIED_RECORD' &&
+            keys.pad) { return fetchPad(); }
+          errFn(err);
+        });
+    };
+
+    fetchGroup();
   };
 
   return model;
@@ -1936,8 +1972,9 @@ module.exports = (function () {
 
     var init = function (err) {
       if (err) { return m.route('/mypads'); }
-      var _init = function () {
-        var data = c.isGuest ? model.data() : model;
+      var _init = function (err) {
+        if (err) { return m.route('/mypads'); }
+        var data = c.isGuest ? model.tmp() : model;
         c.group = data.groups()[key];
         if (!c.isGuest) {
           c.isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
@@ -1946,16 +1983,16 @@ module.exports = (function () {
           });
         } else {
           c.isAdmin = false;
-          c.pads = ld.map(c.group.pads, function (x) {
+          c.pads = ld.compact(ld.map(c.group.pads, function (x) {
             return data.pads()[x];
-          });
+          }));
         }
       };
       if (model.groups()[key]) {
         _init();
       } else {
         c.isGuest = true;
-        model.fetchGroup(key, undefined, _init);
+        model.fetchObject({ group: key }, undefined, _init);
       }
     };
 
@@ -1963,7 +2000,7 @@ module.exports = (function () {
       if (auth.isAuthenticated()) {
         return ld.partial(model.fetch, init);
       } else {
-        return ld.partial(model.fetchGroup, key, undefined, init);
+        return ld.partial(model.fetchObject, { group: key }, undefined, init);
       }
     })();
     if (ld.isEmpty(model.groups())) { fetchFn(); } else { init(); }
@@ -2017,11 +2054,12 @@ module.exports = (function () {
 
     c.submitPass = function (e) {
       e.preventDefault();
-      model.fetchGroup(key, c.privatePassword(), function (err) {
+      model.fetchObject({ group: key }, c.privatePassword(), function (err) {
         if (err) { return c.sendPass(false); }
-        var data = c.isGuest ? model.data() : model;
+        var data = c.isGuest ? model.tmp() : model;
         c.group = data.groups()[key];
-        c.pads = ld.map(c.group.pads, function (x) { return data.pads()[x]; });
+        c.pads = ld.compact(ld.map(c.group.pads, 
+          function (x) { return data.pads()[x]; }));
         c.sendPass(true);
       });
     };
@@ -3307,8 +3345,7 @@ module.exports = (function () {
         ld.map(ld.keys(c.pad), function (f) {
             c.data[f] = m.prop(c.pad[f]);
         });
-        var ownFields = [ c.data.visibility(), c.data.password(),
-          c.data.readonly() ];
+        var ownFields = [ c.data.visibility(), c.data.readonly() ];
         c.groupParams = m.prop(ld.every(ownFields, ld.isNull));
         c.data.password = m.prop('');
       }
@@ -3926,8 +3963,8 @@ module.exports = (function () {
     c.isGuest = !c.isAuth;
     c.bookmarks = (c.isAuth ? auth.userInfo().bookmarks.pads : []);
 
-    var group = m.route.param('group');
-    var key = m.route.param('pad');
+    c.gid = m.route.param('group');
+    c.pid = m.route.param('pad');
 
     /**
     * ## init function
@@ -3939,22 +3976,22 @@ module.exports = (function () {
     var init = function (err) {
       if (err) { return m.route('/mypads'); }
       var _init = function () {
-        var data = c.isGuest ? model.data() : model;
-        c.group = data.groups()[group];
-        c.pad = data.pads()[key];
+        var data = c.isGuest ? model.tmp() : model;
+        c.group = data.groups()[c.gid] || {};
+        c.pad = data.pads()[c.pid];
         c.isAdmin = (function () {
-          if (c.isAuth) {
+          if (c.isAuth && c.group.admins) {
             return ld.includes(c.group.admins, auth.userInfo()._id);
           } else {
             return false;
           }
         })();
       };
-      if (model.groups()[group]) {
+      if (model.pads()[c.pid]) {
         _init();
       } else {
         c.isGuest = true;
-        model.fetchGroup(group, undefined, _init);
+        model.fetchObject({ group: c.gid, pad: c.pid }, undefined, _init);
       }
     };
 
@@ -3962,20 +3999,23 @@ module.exports = (function () {
       if (c.isAuth) {
         return ld.partial(model.fetch, init);
       } else {
-        return ld.partial(model.fetchGroup, group, undefined, init);
+        var keys = { group: c.gid, pad: c.pid };
+        return ld.partial(model.fetchObject, keys, undefined, init);
       }
     })();
-    if (ld.isEmpty(model.groups())) { fetchFn(); } else { init(); }
+    if (ld.isEmpty(model.pads())) { fetchFn(); } else { init(); }
 
     c.submit = function (e) {
       e.preventDefault();
-      model.fetchGroup(group, c.password(), function (err) {
-        if (err) { return c.sendPass(false); }
-        var data = c.isGuest ? model.data() : model;
-        c.group = data.groups()[group];
-        c.pad = data.pads()[key];
-        c.sendPass(true);
-      });
+      model.fetchObject({ group: c.gid, pad: c.pid }, c.password(),
+        function (err) {
+          if (err) { return c.sendPass(false); }
+          var data = c.isGuest ? model.tmp() : model;
+          c.group = data.groups()[c.gid];
+          c.pad = data.pads()[c.pid];
+          c.sendPass(true);
+        }
+      );
     };
 
     return c;
@@ -4035,24 +4075,34 @@ module.exports = (function () {
   };
 
   view.main = function (c) {
-    var showPass = (!c.isAdmin && (c.group.visibility === 'private') &&
-      !c.sendPass());
+    var isPrivate = (function () {
+      if (c.pad) {
+        return (c.pad.visibility === 'private');
+      } else {
+        return (c.group.visibility && c.group.visibility === 'private');
+      }
+    })();
+    var showPass = (!c.isAdmin && isPrivate && !c.sendPass());
     if (showPass) { return view.passForm(c); }
-    var route = '/mypads/group/' + c.group._id;
+    var route = '/mypads/group/' + c.gid;
     var GROUP = conf.LANG.GROUP;
     return m('section', { class: 'block-group group' }, [
       m('h2.block', [
         m('span', conf.LANG.GROUP.PAD.PAD + ' ' + c.pad.name),
-        m('span.subtitle', [
-          '(',
-          conf.LANG.GROUP.PAD.FROM_GROUP,
-          m('a', {
-            href: route + '/view',
-            config: m.route,
-            title: conf.LANG.GROUP.VIEW
-          }, c.group.name ),
-          ')'
-        ])
+        (function () {
+          if (c.group && c.group.name) {
+            return m('span.subtitle', [
+              '(',
+              conf.LANG.GROUP.PAD.FROM_GROUP,
+              m('a', {
+                href: route + '/view',
+                config: m.route,
+                title: conf.LANG.GROUP.VIEW
+              }, c.group.name ),
+              ')'
+            ]);
+          }
+        })()
       ]),
       m('p.actions', [
         (function () {
@@ -4069,11 +4119,12 @@ module.exports = (function () {
           }
         })(),
         (function () {
-          if (c.group.visibility !== 'restricted') {
-            return m('button', {
-              title: conf.LANG.GROUP.SHARE,
-              onclick: padShare.bind(c, c.group._id, c.pad._id)
-            }, [ m('i.icon-link'), m('span', conf.LANG.GROUP.SHARE) ]);
+          if (c.group && c.group.visibility &&
+            c.group.visibility !== 'restricted') {
+              return m('button', {
+                title: conf.LANG.GROUP.SHARE,
+                onclick: padShare.bind(c, c.group._id, c.pad._id)
+              }, [ m('i.icon-link'), m('span', conf.LANG.GROUP.SHARE) ]);
           }
         })(),
         (function () {
@@ -21225,7 +21276,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {

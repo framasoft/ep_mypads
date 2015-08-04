@@ -793,7 +793,7 @@ module.exports = (function () {
               );
               data.pads = ld.transform(data.pads,
                 function (memo, val, key) {
-                  memo[key] = ld.pick(val, '_id', 'name', 'group');
+                  memo[key] = ld.omit(val, 'password');
                 }
               );
               data.users = ld.transform(data.users, function (memo, val, key) {
@@ -1010,6 +1010,9 @@ module.exports = (function () {
     var canAct = function (edit, successFn, req, res) {
       pad.get(req.params.key, function (err, p) {
         if (err) { return res.status(404).send({ error: err.message }); }
+        if (!edit && ld.includes(['public', 'private'], p.visibility)) {
+          return successFn(req, res, p);
+        }
         group.get(p.group, function (err, g) {
           if (err) { return res.status(400).send({ error: err.message }); }
           var users = edit ? g.admins : ld.union(g.admins, g.users);

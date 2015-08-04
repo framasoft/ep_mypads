@@ -1867,6 +1867,7 @@
       var gotherid;
       var pid;
       var potherid;
+      var ppublicid;
 
       beforeAll(function (done) {
         specCommon.reInitDatabase(function () {
@@ -1892,7 +1893,15 @@
                         function (err, p) {
                           if (err) { console.log(err); }
                           potherid = p._id;
-                          rq.post(route + 'auth/login', { body: params }, done);
+                          pad.set({
+                            name: 'ppublic1',
+                            group: g._id,
+                            visibility: 'public'
+                          }, function (err, p) {
+                            ppublicid = p._id;
+                            rq.post(route + 'auth/login', { body: params },
+                             done);
+                          });
                         }
                       );
                     }
@@ -1939,6 +1948,16 @@
               after();
             });
           }, done);
+        });
+
+        it('should allow access to public pads', function (done) {
+          rq.get(padRoute + '/' + ppublicid, function (err, resp, body) {
+            expect(resp.statusCode).toBe(200);
+            expect(body.key).toBe(ppublicid);
+            expect(body.value._id).toBe(ppublicid);
+            expect(body.value.name).toBe('ppublic1');
+            done();
+          });
         });
 
         it('should give the key and the pad attributes otherwise',

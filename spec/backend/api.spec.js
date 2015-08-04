@@ -232,7 +232,7 @@
               rq.get(route + 'pad/inexistent',
                 function (err, resp, body) {
                   expect(err).toBeNull();
-                  expect(body.error).toMatch('AUTHENTICATION.MUST_BE');
+                  expect(body.error).toMatch('KEY_NOT_FOUND');
                   done();
                 }
               );
@@ -1484,6 +1484,36 @@
           }
         );
 
+        it('should return filtered pads for public access groups',
+          function (done) {
+            var b = { body: { name: 'public', group: gid } };
+            rq.post(route + 'pad', b, function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(200);
+              expect(body.success).toBeTruthy();
+              b.body.visibility = 'private';
+              b.body.password = 'password';
+              rq.post(route + 'pad', b, function (err, resp, body) {
+                expect(err).toBeNull();
+                expect(resp.statusCode).toBe(200);
+                expect(body.success).toBeTruthy();
+                rq.get(route + 'auth/logout', function () {
+                  rq.get(groupRoute + '/' + gid, function (err, resp, body) {
+                    expect(err).toBeNull();
+                    expect(resp.statusCode).toBe(200);
+                    expect(body.key).toBe(gid);
+                    var pads = body.pads;
+                    expect(ld.size(pads)).toBe(1);
+                    expect(ld.values(pads)[0].name).toBe('public');
+                    var pms = { login: 'guest', password: 'willnotlivelong' };
+                    rq.post(route + 'auth/login', { body: pms }, done);
+                  });
+                });
+              });
+            });
+          }
+        );
+
         it('should return a subset for unauth or non-admin for private group',
           function (done) {
             rq.get(groupRoute + '/' + gprivateid, function (err, resp, body) {
@@ -1539,7 +1569,7 @@
               expect(resp.statusCode).toBe(200);
               expect(body.key).toBe(gid);
               expect(body.value.name).toBe('g1');
-              expect(ld.size(body.pads)).toBe(0);
+              expect(ld.size(body.pads)).toBe(2);
               done();
             });
           }

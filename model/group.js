@@ -101,7 +101,7 @@ module.exports = (function () {
           memo[key] = val;
           return memo;
         }, {});
-        return callback(null,g , pads);
+        return callback(null, g, pads);
       });
     });
   };

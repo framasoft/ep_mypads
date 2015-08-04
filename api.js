@@ -835,6 +835,13 @@ module.exports = (function () {
           var isUser = ld.includes(ld.union(g.admins, g.users),
             req.session.mypadsUid);
           var isAllowedForPublic = (g.visibility === 'public');
+          if (isAllowedForPublic && !isAdmin && !isUser) {
+            pads = ld.transform(pads, function (memo, p, key) {
+              if (!p.visibility || p.visibility === g.visibility) {
+                memo[key] = p;
+              }
+            });
+          }
           if (isAdmin || isUser || isAllowedForPublic) {
             return res.send({ key: key, value: g, pads: pads });
           }
@@ -849,6 +856,13 @@ module.exports = (function () {
                   if (err) {
                     return res.status(401)
                       .send({ key: key, error: err.message });
+                  }
+                  if (isPrivate && !isAdmin && !isUser) {
+                    pads = ld.transform(pads, function (memo, p, key) {
+                      if (!p.visibility || p.visibility === g.visibility) {
+                        memo[key] = p;
+                      }
+                    });
                   }
                   return res.send({ key: key, value: g, pads: pads });
                 }
@@ -1013,6 +1027,9 @@ module.exports = (function () {
         if (!edit && ld.includes(['public', 'private'], p.visibility)) {
           return successFn(req, res, p);
         }
+        if (!req.isAuthenticated() && !req.session.mypadsLogin) {
+          return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.MUST_BE');
+        }
         group.get(p.group, function (err, g) {
           if (err) { return res.status(400).send({ error: err.message }); }
           var users = edit ? g.admins : ld.union(g.admins, g.users);
@@ -1036,7 +1053,7 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/pad/xxxx
     */
 
-    app.get(padRoute + '/:key', fn.ensureAuthenticated,
+    app.get(padRoute + '/:key',
       ld.partial(canAct, false, function (req, res, val) {
         return res.send({ key: req.params.key, value: val });
       }));

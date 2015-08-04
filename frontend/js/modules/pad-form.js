@@ -64,8 +64,7 @@ module.exports = (function () {
         ld.map(ld.keys(c.pad), function (f) {
             c.data[f] = m.prop(c.pad[f]);
         });
-        var ownFields = [ c.data.visibility(), c.data.password(),
-          c.data.readonly() ];
+        var ownFields = [ c.data.visibility(), c.data.readonly() ];
         c.groupParams = m.prop(ld.every(ownFields, ld.isNull));
         c.data.password = m.prop('');
       }

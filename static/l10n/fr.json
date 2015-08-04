@@ -228,7 +228,8 @@
       "PRIVATE": "Privé",
       "RESTRICTED": "Restreint",
       "PUBLIC": "Public",
-      "READONLY": "Lecture seule"
+      "READONLY": "Lecture seule",
+      "GROUP_PARAMS": "Paramètres du groupe ?"
     },
     "FILTERS": {
       "TITLE": "Filtres",
@@ -252,6 +253,7 @@
       "NONE": "Aucun pad attaché",
       "ADD": "Créer un nouveau pad",
       "ADD_PROMPT": "Saisissez le nom du nouveau pad",
+      "EDIT": "Modifier un pad",
       "EDIT_PROMPT": "Saisissez le nouveau nom du pad",
       "SORT_BY": "Ranger les pads par",
       "SORT_BY_CREATION": "date de création",
@@ -265,10 +267,11 @@
       "OPEN_TAB": "Ouvrir dans un nouvel onglet"
     },
     "INFO": {
-      "NAME": "Nom du groupe",
+      "NAME": "Nom",
       "VISIBILITY": "Requis, restreint par défaut aux utilisateurs ou administrateurs invités",
       "READONLY": "Si sélectionné les pads liés seront en lecture seule",
       "PASSWORD": "Requis pour le mode privé",
+      "GROUP_PARAMS": "Par défaut, les pads héritent des paramètres du group dont ils sont partie. Vous pouvez cependant leur fixer des règles spécifiques",
       "ADD_SUCCESS": "Le groupe a été ajouté avec succès",
       "EDIT_SUCCESS": "Le groupe a été mis à jour avec succès",
       "REMOVE_SUCCESS": "Le groupe a été supprimé avec succès",

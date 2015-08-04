@@ -44,7 +44,7 @@ module.exports = (function () {
   var groupView = require('./modules/group-view.js');
   var groupForm = require('./modules/group-form.js');
   var groupRemove = require('./modules/group-remove.js');
-  var padAdd = require('./modules/pad-add.js');
+  var padForm = require('./modules/pad-form.js');
   var padRemove = require('./modules/pad-remove.js');
   var padView = require('./modules/pad-view.js');
   var padMove = require('./modules/pad-move.js');
@@ -84,9 +84,9 @@ module.exports = (function () {
     '/mypads/group/:key/view': groupView,
     '/mypads/group/:key/edit': groupForm,
     '/mypads/group/:key/remove': groupRemove,
-    '/mypads/group/:group/pad/add': padAdd,
+    '/mypads/group/:group/pad/add': padForm,
     '/mypads/group/:group/pad/move': padMove,
-    '/mypads/group/:group/pad/edit/:pad': padAdd,
+    '/mypads/group/:group/pad/edit/:pad': padForm,
     '/mypads/group/:group/pad/remove/:pad': padRemove,
     '/mypads/group/:group/pad/view/:pad': padView,
     '/mypads/group/:group/user/:action': userInvite,

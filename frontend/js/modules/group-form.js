@@ -67,7 +67,6 @@ module.exports = (function () {
             c.data[f] = m.prop(c.group[f]);
         });
         c.data.password = m.prop('');
-        c.private = m.prop(c.data.visibility() === 'private');
         tagsCurrent = c.group.tags;
       }
       c.tag = new tag.controller({
@@ -119,6 +118,7 @@ module.exports = (function () {
   */
 
   var view = {};
+  gf.views = view;
 
   view.icon = {};
 
@@ -170,7 +170,8 @@ module.exports = (function () {
     return f;
   };
 
-  view.field.visibility = function (c) {
+  view.field.visibility = function (c, restricted) {
+    restricted = ld.isUndefined(restricted) ? true : restricted;
     var label = m('label.block', { for: 'visibility' },
       conf.LANG.GROUP.FIELD.VISIBILITY);
     var select = m('select', {
@@ -180,7 +181,14 @@ module.exports = (function () {
       value: c.data.visibility(),
       onchange: m.withAttr('value', c.data.visibility)
     }, [
-      m('option', { value: 'restricted' }, conf.LANG.GROUP.FIELD.RESTRICTED),
+      (function () {
+        if (restricted) {
+          return m('option', { value: 'restricted' },
+            conf.LANG.GROUP.FIELD.RESTRICTED);
+        } else {
+          return m('option', { value: '' }, '');
+        }
+      })(),
       m('option', { value: 'private' }, conf.LANG.GROUP.FIELD.PRIVATE),
       m('option', { value: 'public' }, conf.LANG.GROUP.FIELD.PUBLIC)
     ]);
@@ -195,7 +203,7 @@ module.exports = (function () {
       type: 'password',
       placeholder: conf.LANG.USER.UNDEF,
       value: c.data.password(),
-      required: (c.addView() || !c.private()),
+      required: (c.addView() && (c.data.visibility() === 'private')),
       oninput: m.withAttr('value', c.data.password)
     });
     return { label: label, icon: view.icon.password(), input: input };

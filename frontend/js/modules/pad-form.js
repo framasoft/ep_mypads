@@ -31,11 +31,14 @@ module.exports = (function () {
   var m = require('mithril');
   var ld = require('lodash');
   var auth = require('../auth.js');
+  var layout = require('./layout.js');
+  var form = require('../helpers/form.js');
+  var group = require('./group-form.js');
   var conf = require('../configuration.js');
   var model = require('../model/group.js');
   var notif = require('../widgets/notification.js');
 
-  var add = {};
+  var pf = {};
 
   /**
   * ## Controller
@@ -44,41 +47,64 @@ module.exports = (function () {
   * cases, redirection to parent group view.
   */
 
-  add.controller = function () {
+  pf.controller = function () {
     if (!auth.isAuthenticated()) { return m.route('/login'); }
+    var c = { groupParams: m.prop(true) };
+
     var key = m.route.param('pad');
     var gkey = m.route.param('group');
-    var opts;
-    if (key) {
-      opts = {
-        pad: model.pads()[key],
-        method: 'PUT',
-        url: conf.URLS.PAD + '/' + key,
-        promptMsg: conf.LANG.GROUP.PAD.ADD_PROMPT,
-        successMsg: conf.LANG.GROUP.INFO.PAD_EDIT_SUCCESS
-      };
-    } else {
-      opts = {
-        pad: { name: '' },
-        method: 'POST',
-        url: conf.URLS.PAD,
-        promptMsg: conf.LANG.GROUP.PAD.EDIT_PROMPT,
-        successMsg: conf.LANG.GROUP.INFO.PAD_ADD_SUCCESS
-      };
-    }
-    opts.pad.group = gkey;
-    var name = window.prompt(opts.promptMsg, opts.pad.name);
-    if (name) {
-      opts.pad.name = name;
+
+    var init = function () {
+      c.addView = m.prop(!key);
+      c.fields = ['name', 'visibility', 'password', 'readonly'];
+      form.initFields(c, c.fields);
+      if (!c.addView()) {
+        c.pad = model.pads()[key];
+        c.group = model.groups()[gkey];
+        ld.map(ld.keys(c.pad), function (f) {
+            c.data[f] = m.prop(c.pad[f]);
+        });
+        var ownFields = [ c.data.visibility(), c.data.password(),
+          c.data.readonly() ];
+        c.groupParams = m.prop(ld.every(ownFields, ld.isNull));
+        c.data.password = m.prop('');
+      }
+    };
+
+    if (ld.isEmpty(model.groups())) { model.fetch(init); } else { init(); }
+
+    c.submit = function (e) {
+      e.preventDefault();
+      var opts = (function () {
+        if (c.addView()) {
+          return {
+            method: 'POST',
+            url: conf.URLS.PAD,
+            successMsg: conf.LANG.GROUP.INFO.PAD_ADD_SUCCESS
+          };
+        } else {
+          return {
+            method: 'PUT',
+            url: conf.URLS.PAD + '/' + key,
+            successMsg: conf.LANG.GROUP.INFO.PAD_EDIT_SUCCESS
+          };
+        }
+      })();
+      if (c.groupParams()) {
+        c.data.visibility(null);
+        c.data.password(null);
+        c.data.readonly(null);
+      }
+      c.data.group = m.prop(gkey);
       m.request({
         method: opts.method,
         url: opts.url,
-        data: opts.pad
+        data: c.data
       }).then(function (resp) {
         var pads = model.pads();
         pads[resp.key] = resp.value;
         model.pads(pads);
-        if (!key) {
+        if (c.addView()) {
           var groups = model.groups();
           groups[gkey].pads.push(resp.key);
           model.groups(groups);
@@ -88,12 +114,106 @@ module.exports = (function () {
       }, function (err) {
         notif.error({ body: ld.result(conf.LANG, err.error) });
       });
-    } else {
-      m.route('/mypads/group/' + gkey + '/view');
-    }
+    };
+
+    return c;
   };
 
-  add.view = function () {};
+  /**
+  * ## Views
+  */
 
-  return add;
+  var view = {};
+
+  /**
+  * ### groupParams field
+  */
+
+  view.groupParams = function (c) {
+    var G = conf.LANG.GROUP;
+    var icon = m('i', {
+      class: 'block tooltip icon-info-circled',
+      'data-msg': G.INFO.GROUP_PARAMS
+    });
+    return {
+      label: m('label.block', { for: 'groupParams' }, G.FIELD.GROUP_PARAMS),
+      input: m('input', {
+        class: 'block',
+        name: 'groupParams',
+        type: 'checkbox',
+        checked: c.groupParams(),
+        onchange: m.withAttr('checked', c.groupParams)
+      }),
+      icon: icon
+    };
+  };
+
+  /**
+  * ### form view
+  *
+  * Classic view with all fields and changes according to the view.
+  */
+
+  view.form = function (c) {
+    var name = group.views.field.name(c);
+    var visibility = group.views.field.visibility(c, false);
+    ld.assign(visibility.label.attrs, { style: 'clear: left;' });
+    var password = group.views.field.password(c);
+    var readonly = group.views.field.readonly(c);
+    var groupParams = view.groupParams(c);
+
+    var fields = [ name.label, name.input, name.icon,
+      groupParams.label, groupParams.input, groupParams.icon ];
+
+    if (!c.groupParams()) {
+      fields.push(visibility.label, visibility.select, visibility.icon);
+      if (c.data.visibility() === 'private') {
+        fields.push(password.label, password.input, password.icon);
+      }
+      fields.push(readonly.label, readonly.input, readonly.icon);
+    }
+
+    return m('form.block', {
+      id: 'pad-form',
+      onsubmit: c.submit
+    }, [
+      m('fieldset.block-group', [
+        m('legend', conf.LANG.GROUP.PAD.PAD),
+        m('div', fields)
+      ]),
+      m('input.block.send', {
+        form: 'pad-form',
+        type: 'submit',
+        value: conf.LANG.ACTIONS.SAVE
+      })
+    ]);
+  };
+
+
+  /**
+  * ### main and global view
+  *
+  * Views with cosmetic and help changes according to the current page.
+  */
+
+  view.main = function (c) {
+    return m('section', { class: 'block-group user group-form' }, [
+      m('h2.block',
+        c.addView() ? conf.LANG.GROUP.PAD.ADD : conf.LANG.GROUP.PAD.EDIT),
+      view.form(c)
+    ]);
+  };
+
+  view.aside = function () {
+    return m('section.user-aside', [
+      m('h2', conf.LANG.ACTIONS.HELP),
+      m('article', m.trust(conf.LANG.GROUP.ADD_HELP))
+    ]);
+  };
+
+  pf.view = function (c) {
+    return layout.view(view.main(c), view.aside(c));
+  };
+
+  return pf;
 }).call(this);

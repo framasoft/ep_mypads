@@ -228,7 +228,8 @@
       "PRIVATE": "Private",
       "RESTRICTED": "Restricted",
       "PUBLIC": "Public",
-      "READONLY": "Readonly"
+      "READONLY": "Readonly",
+      "GROUP_PARAMS": "Group parameters ?"
     },
     "FILTERS": {
       "TITLE": "Filters",
@@ -252,6 +253,7 @@
       "NONE": "No pad linked",
       "ADD": "Create a new pad",
       "ADD_PROMPT": "Enter the name of the new pad",
+      "EDIT": "Edit a pad",
       "EDIT_PROMPT": "Enter the new name of the pad",
       "SORT_BY": "Sort pads by",
       "SORT_BY_CREATION": "creation date",
@@ -265,10 +267,11 @@
       "OPEN_TAB": "Open in a new tab"
     },
     "INFO": {
-      "NAME": "Name of the group",
+      "NAME": "Name",
       "VISIBILITY": "Required, restricted by default to invited users or admins",
       "READONLY": "If checked, linked pads will be in readonly mode",
       "PASSWORD": "Required in private mode",
+      "GROUP_PARAMS": "By default, pad inherits from parameters of the group they belong to. You can overwrite them if you want",
       "ADD_SUCCESS": "Group has been successfully created",
       "EDIT_SUCCESS": "Group has been successfully updated",
       "REMOVE_SUCCESS": "Group has been successfully removed",

@@ -154,7 +154,7 @@ module.exports = (function () {
       var g = pg.group;
       var p = pg.pad;
       if (p.readonly || g.readonly) {
-        getPad(pg.pad._id, function (err, p) {
+        return getPad(pg.pad._id, function (err, p) {
           if (err) { return unexpectedErr(err); }
           getPadHTML(p, undefined, function (err, html) {
             if (err) { return unexpectedErr(err); }

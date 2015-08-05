@@ -83,7 +83,7 @@ module.exports = (function () {
           var defs = $el.group.querySelectorAll('dt');
           var values = $el.group.querySelectorAll('dd');
           expect(defs[0].textContent).toBe('Pads');
-          expect(values[0].textContent).toBe('2');
+          expect(values[0].textContent).toBe('4');
           expect(defs[1].textContent).toBe('Admins');
           expect(values[1].textContent).toBe('1');
           expect(defs[2].textContent).toBe('Users');
@@ -121,7 +121,7 @@ module.exports = (function () {
                 var defs = $el.group.querySelectorAll('dt');
                 var values = $el.group.querySelectorAll('dd');
                 expect(defs[0].textContent).toBe('Pads');
-                expect(values[0].textContent).toBe('2');
+                expect(values[0].textContent).toBe('4');
                 expect(defs[1].textContent).toBe('Admins');
                 expect(values[1].textContent).toBe('1');
                 expect(defs[2].textContent).toBe('Users');
@@ -156,51 +156,11 @@ module.exports = (function () {
 
         it('should display expected values', function () {
           var pads = $el.pads.querySelectorAll('li span.name');
-          expect(pads.length).toBe(2);
+          expect(pads.length).toBe(4);
           expect(pads[0].textContent).toBe('Loving Annie');
           expect(pads[1].textContent).toBe('Watch sync');
-        });
-
-        it('should allow pad creation', function (done) {
-          app.window.prompt = function () { return ''; };
-          $el.padAdd.click();
-          window.setTimeout(function () {
-            var pads = $el.pads.querySelectorAll('li span.name');
-            expect(pads.length).toBe(2);
-            app.window.prompt = function () { return 'Another one'; };
-            $el.padAdd.click();
-            window.setTimeout(function () {
-              var groupVals = app.document.querySelectorAll('dl.group dd');
-              expect(groupVals[0].textContent).toBe('3');
-              pads = app.document
-                .querySelectorAll('section.pad ul li span.name');
-              expect(pads.length).toBe(3);
-              expect(pads[2].textContent).toBe('Another one');
-              first('body > section > div p').click();
-              window.setTimeout(done, 100);
-            }, 200);
-          }, 100);
-        });
-
-        it('should allow pad name update', function (done) {
-          app.window.prompt = function () { return ''; };
-          var padEdit = app.document.querySelectorAll('a[href*=\'/pad/edit\']');
-          padEdit[2].click();
-          window.setTimeout(function () {
-            var pads = app.document
-              .querySelectorAll('section.pad ul li span.name');
-            expect(pads[2].textContent).toBe('Another one');
-            app.window.prompt = function () { return 'Enhanced one'; };
-            padEdit = app.document.querySelectorAll('a[href*=\'/pad/edit\']');
-            padEdit[2].click();
-            window.setTimeout(function () {
-              pads = app.document
-                .querySelectorAll('section.pad ul li span.name');
-              expect(pads[2].textContent).toBe('Enhanced one');
-              first('body > section > div p').click();
-              window.setTimeout(done, 100);
-            }, 100);
-          }, 100);
+          expect(pads[2].textContent).toBe('Another one');
+          expect(pads[3].textContent).toBe('Enhanced one');
         });
 
         it('should allow pad sorting by creation and name', function (done) {
@@ -212,25 +172,29 @@ module.exports = (function () {
             var names = qall('section.pads ul li span.name');
             expect(names[0].textContent).toBe('Loving Annie');
             expect(names[1].textContent).toBe('Watch sync');
-            expect(names[2].textContent).toBe('Enhanced one');
+            expect(names[2].textContent).toBe('Another one');
+            expect(names[3].textContent).toBe('Enhanced one');
             creationSort.click();
             window.setTimeout(function () {
               names = qall('section.pads ul li span.name');
               expect(names[0].textContent).toBe('Enhanced one');
-              expect(names[1].textContent).toBe('Watch sync');
-              expect(names[2].textContent).toBe('Loving Annie');
+              expect(names[1].textContent).toBe('Another one');
+              expect(names[2].textContent).toBe('Watch sync');
+              expect(names[3].textContent).toBe('Loving Annie');
               nameSort.click();
               window.setTimeout(function () {
                 names = qall('section.pads ul li span.name');
                 expect(names[0].textContent).toBe('Watch sync');
                 expect(names[1].textContent).toBe('Loving Annie');
                 expect(names[2].textContent).toBe('Enhanced one');
+                expect(names[3].textContent).toBe('Another one');
                 nameSort.click();
                 window.setTimeout(function () {
                   names = qall('section.pads ul li span.name');
-                  expect(names[0].textContent).toBe('Enhanced one');
-                  expect(names[1].textContent).toBe('Loving Annie');
-                  expect(names[2].textContent).toBe('Watch sync');
+                  expect(names[0].textContent).toBe('Another one');
+                  expect(names[1].textContent).toBe('Enhanced one');
+                  expect(names[2].textContent).toBe('Loving Annie');
+                  expect(names[3].textContent).toBe('Watch sync');
                   creationSort.click();
                   window.setTimeout(done, 100);
                 }, 100);
@@ -255,22 +219,22 @@ module.exports = (function () {
           app.window.confirm = function () { return false; };
           var padRemove = app.document
             .querySelectorAll('a[href*=\'/pad/remove\']');
-          padRemove[2].click();
+          padRemove[3].click();
           window.setTimeout(function () {
             var pads = app.document
               .querySelectorAll('section.pad ul li span.name');
-            expect(pads.length).toBe(3);
-            expect(pads[2].textContent).toBe('Enhanced one');
+            expect(pads.length).toBe(4);
+            expect(pads[3].textContent).toBe('Enhanced one');
             app.window.confirm = function () { return true; };
             padRemove = app.document
               .querySelectorAll('a[href*=\'/pad/remove\']');
-            padRemove[2].click();
+            padRemove[3].click();
             window.setTimeout(function () {
               pads = app.document
                 .querySelectorAll('section.pad ul li span.name');
-              expect(pads.length).toBe(2);
+              expect(pads.length).toBe(3);
               var groupVals = app.document.querySelectorAll('dl.group dd');
-              expect(groupVals[0].textContent).toBe('2');
+              expect(groupVals[0].textContent).toBe('3');
               first('body > section > div p').click();
               window.setTimeout(done, 100);
             }, 100);

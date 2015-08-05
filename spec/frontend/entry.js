@@ -36,6 +36,7 @@
   var groupForm = require('./group-form.spec.js');
   var groupRemove = require('./group-remove.spec.js');
   var groupView = require('./group-view.spec.js');
+  var padForm = require('./pad-form.spec.js');
   var userInvite = require('./user-invitation.spec.js');
   var padView = require('./pad-view.spec.js');
   var padMove = require('./pad-move.spec.js');
@@ -58,6 +59,7 @@
     groupList.run(app);
     groupForm.run(app);
     groupRemove.run(app);
+    padForm.run(app);
     groupView.run(app);
     userInvite.run(app);
     padView.run(app);

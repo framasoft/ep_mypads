@@ -89,6 +89,12 @@
                     name: 'Falling in love',
                     group: groups.annie._id
                   };
+                  pads.annieOwnPass = {
+                    name: 'Falling in love',
+                    group: groups.annie._id,
+                    visibility: 'private',
+                    password: 'v3rYS3cre7'
+                  };
                   pad.set(pads.college, function (err, p) {
                     if (!err) { pads.college = p; }
                     pad.set(pads.collegePrivate, function (err, p) {
@@ -99,7 +105,10 @@
                           if (!err) { pads.memoriesPublic = p; }
                           pad.set(pads.annie, function (err, p) {
                             if (!err) { pads.annie = p; }
-                            done();
+                            pad.set(pads.annieOwnPass, function (err, p) {
+                              if (!err) { pads.annieOwnPass = p; }
+                              done();
+                            });
                           });
                         });
                       });
@@ -271,6 +280,38 @@
             expect(res.msg).toBeUndefined();
             done();
           });
+        }
+      );
+
+      it('should allow access to private pad with its own password in ' +
+        'private group', function (done) {
+          delete res.code;
+          delete res.msg;
+          delete req.session.mypadsUid;
+          req.params.pid = pads.annieOwnPass._id;
+          req.query.mypadspassword = encode('badPass');
+          perm.check(req, res, next);
+          setTimeout(function () {
+            expect(res.code).toBe(403);
+            expect(res.msg.error).toMatch('UNAUTHORIZED');
+            delete res.code;
+            delete res.msg;
+            req.query.mypadspassword = encode('myLovelyGirl');
+            perm.check(req, res, next);
+            setTimeout(function () {
+              expect(res.code).toBe(403);
+              expect(res.msg.error).toMatch('UNAUTHORIZED');
+              delete res.code;
+              delete res.msg;
+              req.query.mypadspassword = encode('v3rYS3cre7');
+              perm.check(req, res, function () {
+                expect(res.code).toBeUndefined();
+                expect(res.msg).toBeUndefined();
+                done();
+              });
+            }, 100);
+          }, 100);
+
         }
       );
 

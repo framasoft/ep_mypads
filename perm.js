@@ -107,15 +107,16 @@ module.exports = (function () {
         return callback();
       case 'private':
         return checkPass(p);
-    }
-    switch (g.visibility) {
-      case 'public':
-        return callback();
-      case 'private':
-        return checkPass(g);
-      // Restricted case : if user, ok
       default:
-        return (ld.includes(g.users, uid) ? callback() : params.refuse());
+        switch (g.visibility) {
+          case 'public':
+            return callback();
+          case 'private':
+            return checkPass(g);
+          // Restricted case : if user, ok
+          default:
+            return (ld.includes(g.users, uid) ? callback() : params.refuse());
+        }
     }
   };
 

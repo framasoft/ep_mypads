@@ -156,8 +156,7 @@ module.exports = (function () {
             fetchPad(resp);
           }
         }, function (err) {
-          if (err.error === 'BACKEND.ERROR.AUTHENTICATION.DENIED_RECORD' &&
-            keys.pad) { return fetchPad(); }
+          if (keys.pad) { return fetchPad(); }
           errFn(err);
         });
     };

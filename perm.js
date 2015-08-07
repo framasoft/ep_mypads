@@ -80,13 +80,80 @@ module.exports = (function () {
   /**
   * ### check
   *
-  * `check` function is a middlware-like function for all requests to pads.
-  * It checks if the pad is handled by MyPads or not and if, allows to see it
-  * according its *visibility* and user authentication.
+  * `check` internal function checks if the pad is handled by MyPads or not and
+  * if, allows to see it according its *visibility* and user authentication.
   */
 
-  perm.fn.check = function (req, res, next) {
-    var unexpectedErr = function (err) {
+  perm.fn.check = function (params) {
+    var callback = ld.partial(params.callback, params);
+    var checkPass = function (el) {
+      var password = params.req.query.mypadspassword;
+      if (!password) { return params.refuse(); }
+      auth.fn.isPasswordValid(el, decode(password), function (err, valid) {
+        if (err) { return params.unexpected(err); }
+        return (valid ? callback() : params.refuse());
+      });
+    };
+    var uid = params.req.session.mypadsUid || false;
+    // Key not found, not a MyPads pad so next()
+    if (!params.pg) { return params.next(); }
+    var g = params.pg.group;
+    var p = params.pg.pad;
+    // If admin of the group or pad or group publics, ok
+    // If pad or group is private, check password
+    if (ld.includes(g.admins, uid)) { return callback(); }
+    switch (p.visibility) {
+      case 'public':
+        return callback();
+      case 'private':
+        return checkPass(p);
+    }
+    switch (g.visibility) {
+      case 'public':
+        return callback();
+      case 'private':
+        return checkPass(g);
+      // Restricted case : if user, ok
+      default:
+        return (ld.includes(g.users, uid) ? callback() : params.refuse());
+    }
+  };
+
+  /**
+  * ### readonly
+  *
+  * `readonly` checks if the pad belongs to MyPads and has been archived. If
+  * yes, it redirects to HTML export.
+  */
+
+  perm.fn.readonly = function (params) {
+    var g = params.pg.group;
+    var p = params.pg.pad;
+    if (p.readonly || (g.readonly && p.readonly === null)) {
+      return getPad(params.pg.pad._id, function (err, p) {
+        if (err) { return params.unexpected(err); }
+        getPadHTML(p, undefined, function (err, html) {
+          if (err) { return params.unexpected(err); }
+          html = '<!DOCTYPE HTML><html><body>' + html + '</body></html>';
+          return params.res.status(200).send(html);
+        });
+      });
+    } else {
+      return params.next();
+    }
+  };
+
+  /**
+  * ### check
+  *
+  * `check` is a middleware-like function for all requests to pads.
+  * It regroups permissions work according to groups and pads visibility and
+  * readonly verifications. It retrieves pad and group requested and pass the
+  * result alongside request, result and chained function.
+  */
+
+  perm.check = function (req, res, next) {
+    var unexpected = function (err) {
       return res.status(401).send({
         error: 'BACKEND.ERROR.PERMISSION.UNEXPECTED',
         extra: err
@@ -96,75 +163,18 @@ module.exports = (function () {
       return res.status(403)
         .send({ error: 'BACKEND.ERROR.PERMISSION.UNAUTHORIZED' });
     };
-    var checkPass = function (el) {
-      var password = req.query.mypadspassword;
-      if (!password) { return refuse(); }
-      auth.fn.isPasswordValid(el, decode(password), function (err, valid) {
-        if (err) { return unexpectedErr(err); }
-        return (valid ? next() : refuse());
-      });
-    };
-    var uid = req.session.mypadsUid || false;
-    perm.fn.getPadAndGroup(req.params.pid, function (err, pg) {
-      if (err) { return unexpectedErr(err); }
-      // Key not found, not a MyPads pad so next()
-      if (!pg) { return next(); }
-      var g = pg.group;
-      var p = pg.pad;
-      // If admin of the group or pad or group publics, ok
-      // If pad or group is private, check password
-      if (ld.includes(g.admins, uid)) { return next(); }
-      switch (p.visibility) {
-        case 'public':
-          return next();
-        case 'private':
-          return checkPass(p);
-      }
-      switch (g.visibility) {
-        case 'public':
-          return next();
-        case 'private':
-          return checkPass(g);
-        // Restricted case : if user, ok
-        default:
-          return (ld.includes(g.users, uid) ? next() : refuse());
-      }
-    });
-  };
-
-  /**
-  * ### readonly
-  *
-  * `readonly` is a middleware-like procedure for all requests to pads.
-  * It checks if the pad belongs to MyPads and has been archived. If yes, it
-  * redirects to HTML export.
-  */
-
-  perm.fn.readonly = function (req, res, next) {
-    var unexpectedErr = function (err) {
-      return res.status(401).send({
-        error: 'BACKEND.ERROR.PERMISSION.UNEXPECTED',
-        extra: err
-      });
+    var params = {
+      req: req,
+      res: res,
+      next: next,
+      callback: perm.fn.readonly,
+      unexpected: unexpected,
+      refuse: refuse
     };
     perm.fn.getPadAndGroup(req.params.pid, function (err, pg) {
-      if (err) { return unexpectedErr(err); }
-      // Key not found, not a MyPads pad so next()
-      if (!pg) { return next(); }
-      var g = pg.group;
-      var p = pg.pad;
-      if (p.readonly || g.readonly) {
-        return getPad(pg.pad._id, function (err, p) {
-          if (err) { return unexpectedErr(err); }
-          getPadHTML(p, undefined, function (err, html) {
-            if (err) { return unexpectedErr(err); }
-            html = '<!DOCTYPE HTML><html><body>' + html + '</body></html>';
-            return res.status(200).send(html);
-          });
-        });
-      } else {
-        return next();
-      }
+      if (err) { return unexpected(err); }
+      params.pg = pg;
+      perm.fn.check(params);
     });
   };
 
@@ -180,7 +190,7 @@ module.exports = (function () {
 
   perm.padAndAuthor = {};
 
-  perm.fn.setNameAndColor = function (req, res, next) {
+  perm.setNameAndColor = function (req, res, next) {
     if (req.session.mypadsUseLoginAndColorInPads) {
       var opts = { userName: req.session.mypadsLogin };
       if (req.session.mypadsColor) {
@@ -208,9 +218,8 @@ module.exports = (function () {
   */
 
   perm.init = function (app) {
-    app.all('/p/:pid', perm.fn.check);
-    app.all('/p/:pid', perm.fn.readonly);
-    app.all('/p/:pid', perm.fn.setNameAndColor);
+    app.all('/p/:pid', perm.check);
+    app.all('/p/:pid', perm.setNameAndColor);
   };
 
   return perm;

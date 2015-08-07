@@ -128,6 +128,18 @@ module.exports = (function () {
           model.tmp(data);
           if (callback) { callback(null, resp); }
         }, function (err) {
+          if (err.error === 'BACKEND.ERROR.TYPE.PASSWORD_MISSING') {
+            var value = { _id: keys.pad, visibility: 'private' };
+            var data = model.tmp();
+            var pads = data.pads();
+            pads[keys.pad] = value;
+            data.pads(pads);
+            model.tmp(data);
+            return callback(null, { key: keys.pad, value: value });
+          }
+          if (err.error === 'BACKEND.ERROR.PERMISSION.UNAUTHORIZED') {
+            return errFn(err);
+          }
           if (group) {
             return callback(null, group);
           }

@@ -80,11 +80,11 @@ module.exports = (function () {
     };
     auth.init(app);
     authAPI(app);
-    perm.init(app);
     configurationAPI(app);
     userAPI(app);
     groupAPI(app);
     padAPI(app);
+    perm.init(app);
     callback();
   };
 
@@ -1043,11 +1043,14 @@ module.exports = (function () {
             return successFn(req, res, p);
           });
         } else {
-          if (!req.isAuthenticated() && !req.session.mypadsLogin) {
-            return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.MUST_BE');
-          }
           group.get(p.group, function (err, g) {
             if (err) { return res.status(400).send({ error: err.message }); }
+            if (!edit && (g.visibility === 'public')) {
+              return successFn(req, res, p);
+            }
+            if (!req.isAuthenticated() && !req.session.mypadsLogin) {
+              return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.MUST_BE');
+            }
             var users = edit ? g.admins : ld.union(g.admins, g.users);
             var isAllowed = ld.includes(users, req.session.mypadsUid);
             if (isAllowed) {

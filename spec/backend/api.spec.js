@@ -2081,7 +2081,7 @@
             expect(body.key).toBeDefined();
             var key = body.key;
             expect(body.value.name).toBe('padOk');
-            rq.get(padRoute + '/' + key,
+            rq.get(padRoute + '/' + key + '?password=secret',
               function (err, resp, body) {
                 expect(err).toBeNull();
                 expect(resp.statusCode).toBe(200);

@@ -1023,25 +1023,41 @@ module.exports = (function () {
 
     var canAct = function (edit, successFn, req, res) {
       pad.get(req.params.key, function (err, p) {
+        var key = req.params.key;
         if (err) { return res.status(404).send({ error: err.message }); }
-        if (!edit && ld.includes(['public', 'private'], p.visibility)) {
+        var isAdmin = (req.session.user && req.session.user.is_admin);
+        if (isAdmin) {
           return successFn(req, res, p);
         }
-        if (!req.isAuthenticated() && !req.session.mypadsLogin) {
-          return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.MUST_BE');
+        if (!edit && (p.visibility === 'public')) {
+          return successFn(req, res, p);
         }
-        group.get(p.group, function (err, g) {
-          if (err) { return res.status(400).send({ error: err.message }); }
-          var users = edit ? g.admins : ld.union(g.admins, g.users);
-          var isAllowed = ld.includes(users, req.session.mypadsUid);
-          var isAdmin = (req.session.user && req.session.user.is_admin);
-          if (isAdmin || isAllowed) {
+        if (!edit && (p.visibility === 'private')) {
+          auth.fn.isPasswordValid(p, req.query.password, function (err, valid) {
+            if (!err && !valid) {
+              err = { message: 'BACKEND.ERROR.PERMISSION.UNAUTHORIZED' };
+            }
+            if (err) {
+              return res.status(401).send({ key: key, error: err.message });
+            }
             return successFn(req, res, p);
-          } else {
-            var msg = edit ? 'DENIED_RECORD_EDIT' : 'DENIED_RECORD';
-            return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.' + msg);
+          });
+        } else {
+          if (!req.isAuthenticated() && !req.session.mypadsLogin) {
+            return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.MUST_BE');
           }
-        });
+          group.get(p.group, function (err, g) {
+            if (err) { return res.status(400).send({ error: err.message }); }
+            var users = edit ? g.admins : ld.union(g.admins, g.users);
+            var isAllowed = ld.includes(users, req.session.mypadsUid);
+            if (isAllowed) {
+              return successFn(req, res, p);
+            } else {
+              var msg = edit ? 'DENIED_RECORD_EDIT' : 'DENIED_RECORD';
+              return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.' + msg);
+            }
+          });
+        }
       });
     };
 
@@ -1053,6 +1069,7 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/pad/xxxx
     */
 
+    // TODO: + admin, no pass needed...
     app.get(padRoute + '/:key',
       ld.partial(canAct, false, function (req, res, val) {
         return res.send({ key: req.params.key, value: val });

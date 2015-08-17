@@ -139,6 +139,8 @@
           group.set(params, function (err, g) {
             expect(err).toBeNull();
             expect(g.name).toBe('group');
+            expect(ld.isString(g.description) && ld.isEmpty(g.description))
+              .toBeTruthy();
             expect(ld.isArray(g.admins)).toBeTruthy();
             expect(ld.isArray(g.users) && ld.isEmpty(g.users)).toBeTruthy();
             expect(ld.isArray(g.pads) && ld.isEmpty(g.pads)).toBeTruthy();
@@ -182,6 +184,7 @@
       it('should otherwise accept well defined parameters', function (done) {
         var params = {
           name: 'college2',
+          description: 'A strange place',
           admin: gadm._id,
           admins: ld.take(gusers, 2),
           users: ld.takeRight(gusers, 3),
@@ -194,6 +197,7 @@
           expect(err).toBeNull();
           expect(ld.isString(g._id)).toBeTruthy();
           expect(g.name).toBe('college2');
+          expect(g.description).toBe('A strange place');
           expect(ld.isArray(g.admins)).toBeTruthy();
           expect(ld.first(g.admins)).toBe(gadm._id);
           var contained = (ld.size(ld.intersection(g.admins, gusers)) ===
@@ -284,6 +288,7 @@
         var params = {
           _id: gparams._id,
           name: 'college2',
+          description: 'A very strange place',
           admin: gadm._id,
           admins: ld.takeRight(gusers, 2),
           users: ld.take(gusers, 3),
@@ -295,6 +300,7 @@
           expect(err).toBeNull();
           expect(ld.isString(g._id)).toBeTruthy();
           expect(g.name).toBe('college2');
+          expect(g.description).toBe('A very strange place');
           expect(ld.isArray(g.admins)).toBeTruthy();
           expect(ld.first(g.admins)).toBe(gadm._id);
           var contained = (ld.size(ld.intersection(g.admins, gusers)) ===

@@ -158,6 +158,7 @@ module.exports = (function () {
   * - `params` object, with
   *
   *   - a `name` string that can't be empty
+  *   - an optional `description` string
   *   - an `admin` string, the unique key identifying the initial administrator
   *   of the group
   *   - `visibility`, a string defined as *restricted* by default to invited
@@ -440,6 +441,7 @@ module.exports = (function () {
   group.fn.assignProps = function (params) {
     var p = params;
     var g = { name: p.name };
+    g.description = (ld.isString(p.description) ? p.description : '');
     p.admins = ld.isArray(p.admins) ? ld.filter(p.admins, ld.isString) : [];
     g.admins = ld.union([ p.admin ], p.admins);
     g.users = ld.uniq(p.users);

@@ -92,8 +92,8 @@ module.exports = (function () {
             expect($notif.innerHTML).toMatch('successfully moved');
             $notif.click();
             window.setTimeout(done, 100);
-          }, 100);
-        }, 100);
+          }, 200);
+        }, 200);
       });
 
     });

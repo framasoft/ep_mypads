@@ -49,7 +49,6 @@ var user = require('./model/user.js');
 var group = require('./model/group.js');
 var pad = require('./model/pad.js');
 var auth = require('./auth.js');
-var perm = require('./perm.js');
 
 module.exports = (function () {
   'use strict';
@@ -84,7 +83,6 @@ module.exports = (function () {
     userAPI(app);
     groupAPI(app);
     padAPI(app);
-    perm.init(app);
     callback();
   };
 

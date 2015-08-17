@@ -94,7 +94,7 @@ module.exports = (function () {
         return (valid ? callback() : params.refuse());
       });
     };
-    var uid = params.req.session.mypadsUid || false;
+    var uid = params.req.session && params.req.session.mypadsUid || false;
     // Key not found, not a MyPads pad so next()
     if (!params.pg) { return params.next(); }
     var g = params.pg.group;

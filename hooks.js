@@ -50,13 +50,13 @@ module.exports = (function () {
 
   /**
   * `expressConfigure` hook profits from the args.app express instance to
-  * initialize authentication, right before other things : MyPads routes etc.
+  * initialize permissions, right before other things : MyPads routes etc.
   */
 
   hooks.expressConfigure = function (name, args, callback) {
-    var auth = require('./auth.js');
-    auth.init(args.app);
-    callback();
+    var perm = require('./perm.js');
+    perm.init(args.app);
+    setTimeout(callback, 100);
   };
 
   /**

@@ -226,6 +226,7 @@
     "PROPERTIES": "Propriétés",
     "FIELD": {
       "NAME": "Nom",
+      "DESCRIPTION": "Description",
       "VISIBILITY": "Visibilité",
       "PRIVATE": "Privé",
       "RESTRICTED": "Restreint",
@@ -270,6 +271,7 @@
     },
     "INFO": {
       "NAME": "Nom",
+      "DESCRIPTION": "Un texte optionnel pour décrire votre groupe",
       "VISIBILITY": "Requis, restreint par défaut aux utilisateurs ou administrateurs invités",
       "READONLY": "Si sélectionné les pads liés seront en lecture seule",
       "PASSWORD": "Requis pour le mode privé",

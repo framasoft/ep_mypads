@@ -413,6 +413,7 @@ module.exports = (function () {
     } else {
       return m('section', { class: 'block-group group' }, [
         m('h2.block', h2Elements),
+        m('section.block.description', [ m('pre', c.group.description) ]),
         m('section.block.props', [
           m('h3.title', conf.LANG.GROUP.PROPERTIES),
           view.properties(c)

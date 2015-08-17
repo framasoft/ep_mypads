@@ -54,6 +54,7 @@ module.exports = (function () {
               $el = { 
                 form: first('form'),
                 name: first('input[name=name]'),
+                description: first('textarea[name=description]'),
                 visibility: first('select[name=visibility]'),
                 readonly: first('input[name=readonly]'),
                 submit: first('input[type=submit]')
@@ -79,6 +80,7 @@ module.exports = (function () {
           $el.submit.click();
           expect($el.form.checkValidity()).toBeFalsy();
           expect($el.name.checkValidity()).toBeFalsy();
+          expect($el.description.checkValidity()).toBeTruthy();
           expect($el.visibility.checkValidity()).toBeTruthy();
           expect($el.visibility.value).toBe('restricted');
           expect($el.readonly.checkValidity()).toBeTruthy();
@@ -129,6 +131,7 @@ module.exports = (function () {
             $el = { 
               form: first('form'),
               name: first('input[name=name]'),
+              description: first('textarea[name=description]'),
               visibility: first('select[name=visibility]'),
               password: first('input[type=password]'),
               readonly: first('input[name=readonly]'),
@@ -144,6 +147,8 @@ module.exports = (function () {
           expect($el.readonly.checked).toBeFalsy();
           expect($el.password.value).toBe('');
           fill($el.name, 'High School Memories, again');
+          fill($el.description, 'Something quite private.');
+          $el.description.onchange($el.description);
           window.setTimeout(function () {
             $el.submit.click();
             window.setTimeout(function () {
@@ -158,6 +163,7 @@ module.exports = (function () {
 
         it('should accept changes and setting a new password', function (done) {
           expect($el.name.value).toBe('High School Memories, again');
+          expect($el.description.value).toBe('Something quite private.');
           $el.password.value = 'aNewPassWord';
           $el.submit.click();
           window.setTimeout(function () {

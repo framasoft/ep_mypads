@@ -1625,7 +1625,7 @@ module.exports = (function () {
     var c = {};
     var init = function () {
       c.addView = m.prop(m.route() === '/mypads/group/add');
-      c.fields = ['name', 'visibility', 'password', 'readonly'];
+      c.fields = ['name', 'description', 'visibility', 'password', 'readonly'];
       form.initFields(c, c.fields);
       c.data.visibility('restricted');
       var tagsCurrent;
@@ -1709,6 +1709,10 @@ module.exports = (function () {
       conf.LANG.GROUP.ERR.NAME);
   };
 
+  view.icon.description = function (c) {
+    return form.icon(c, 'description', conf.LANG.GROUP.INFO.DESCRIPTION);
+  };
+
   view.icon.visibility = function () {
     return view.icon.common(conf.LANG.GROUP.INFO.VISIBILITY);
   };
@@ -1740,6 +1744,18 @@ module.exports = (function () {
         config: form.focusOnInit
       });
     return f;
+  };
+
+  view.field.description = function (c) {
+    var label = m('label.block', { for: 'description' },
+      conf.LANG.GROUP.FIELD.DESCRIPTION);
+    var textarea = m('textarea', {
+      name: 'description',
+      class: 'block',
+      value: (c.data.description() || ''),
+      onchange: m.withAttr('value', c.data.description)
+    }, c.data.description());
+    return { label: label, icon: view.icon.description(c), textarea: textarea };
   };
 
   view.field.visibility = function (c, restricted) {
@@ -1807,6 +1823,7 @@ module.exports = (function () {
       return memo;
     }, {});
     var fields = [ _f.name.label, _f.name.input, _f.name.icon,
+      _f.description.label, _f.description.textarea, _f.description.icon,
       _f.visibility.label, _f.visibility.select, _f.visibility.icon
     ];
     if (c.data.visibility() === 'private') {
@@ -2346,6 +2363,7 @@ module.exports = (function () {
     } else {
       return m('section', { class: 'block-group group' }, [
         m('h2.block', h2Elements),
+        m('section.block.description', [ m('pre', c.group.description) ]),
         m('section.block.props', [
           m('h3.title', conf.LANG.GROUP.PROPERTIES),
           view.properties(c)
@@ -21319,7 +21337,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {
@@ -21547,6 +21565,7 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
     "PROPERTIES": "Properties",
     "FIELD": {
       "NAME": "Name",
+      "DESCRIPTION": "Description",
       "VISIBILITY": "Visibility",
       "PRIVATE": "Private",
       "RESTRICTED": "Restricted",
@@ -21591,6 +21610,7 @@ module.exports=module.exports=module.exports=module.exports=module.exports=modul
     },
     "INFO": {
       "NAME": "Name",
+      "DESCRIPTION": "An optional long text to describe your group",
       "VISIBILITY": "Required, restricted by default to invited users or admins",
       "READONLY": "If checked, linked pads will be in readonly mode",
       "PASSWORD": "Required in private mode",

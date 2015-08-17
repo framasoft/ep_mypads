@@ -16,11 +16,12 @@ main.block > aside.block { width: 100%;, padding: 1em; }
 
 /* Tags */
 
-body.block-group {
+body.block-group, pre {
   font-size: 1em;
   font-family: DejaVu Sans, Verdana, sans-serif;
-  background: #333333;
 }
+
+body.block-group { background: #333333; }
 
 header, footer {
   color: #f5f5f5;
@@ -76,13 +77,13 @@ legend {
   margin-bottom: 1em;
 }
 
-label, input { margin: 0.5em 0 0.5em; }
+label, input, textarea { margin: 0.5em 0 0.5em; }
 
 label {
   text-transform: uppercase; 
 }
 
-input, select {
+input, select, textarea {
   padding: 0.7em;
   border: 0.1em solid #e0e0e0;
   border-radius: 0.3em;

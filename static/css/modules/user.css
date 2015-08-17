@@ -7,7 +7,7 @@ section.user {
 }
 
 section.user label { width: 100%; }
-section.user input, section.user select, section.padmove div { width: 95%; }
+section.user input, section.user select, section.user textarea, section.padmove div { width: 95%; }
 section.user i { width: 5%; }
 div.tag input { width: 85%; }
 div.tag button.ok {
@@ -78,7 +78,7 @@ section.remove-account button:hover, section.remove-account button:focus {
   section.user { width: 40em; }
 
   section.user label { width: 50%; }
-  section.user input, section.user select, section.padmove div { width: 45%; }
+  section.user input, section.user select, section.user textarea, section.padmove div { width: 45%; }
   div.tag input { width: 35%; }
 }
 

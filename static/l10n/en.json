@@ -226,6 +226,7 @@
     "PROPERTIES": "Properties",
     "FIELD": {
       "NAME": "Name",
+      "DESCRIPTION": "Description",
       "VISIBILITY": "Visibility",
       "PRIVATE": "Private",
       "RESTRICTED": "Restricted",
@@ -270,6 +271,7 @@
     },
     "INFO": {
       "NAME": "Name",
+      "DESCRIPTION": "An optional long text to describe your group",
       "VISIBILITY": "Required, restricted by default to invited users or admins",
       "READONLY": "If checked, linked pads will be in readonly mode",
       "PASSWORD": "Required in private mode",

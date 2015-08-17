@@ -87,8 +87,29 @@ module.exports = (function() {
       }
       configuration.cache = ld.clone(configuration.DEFAULTS, true);
       // Would like to use doBulk but not supported for all *ueberDB* backends
-      storage.fn.setKeys(ld.transform(configuration.DEFAULTS,
-        function (memo, val, key) { memo[DBPREFIX + key] = val; }), callback);
+      var confKeys = ld.map(ld.keys(configuration.DEFAULTS), function (key) {
+        return DBPREFIX + key;
+      });
+      storage.fn.getKeys(confKeys, function (err, res) {
+        if (err) { throw err; }
+        res = ld.transform(res, function (memo, val, key) {
+          if (val) {
+            memo[key] = val;
+          } else {
+            var dval = configuration.DEFAULTS[key.replace(DBPREFIX, '')];
+            memo[key] = ld.clone(dval);
+          }
+        });
+        storage.fn.setKeys(res, function (err) {
+          if (err) { throw err; }
+          configuration.cache = ld.transform(res, function (memo, val, key) {
+            key = key.replace(DBPREFIX, '');
+            memo[key] = val;
+          });
+          //ld.assign(configuration.cache, confData);
+          callback(null, res);
+        });
+      });
     },
 
     /**

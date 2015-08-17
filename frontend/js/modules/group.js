@@ -419,7 +419,7 @@ module.exports = (function () {
           })()
         ]),
         m('dt.block', conf.LANG.GROUP.PAD.VISIBILITY),
-        m('dd.block', g.visibility),
+        m('dd.block', conf.LANG.GROUP.FIELD[g.visibility.toUpperCase()]),
         m('dt.block', conf.LANG.GROUP.PAD.ADMINS),
         m('dd.block', [ ld.size(g.admins), (function () {
           if (isAdmin) {

@@ -124,7 +124,7 @@ module.exports = (function () {
                   window.setTimeout(function () {
                     expect(qfirst('dl.group dd').textContent).toBe('4');
                     expect(qall('section.pad ul li span.name')[3].textContent)
-                      .toBe('A private one (private)');
+                      .toBe('A private one (Private)');
                     var $success = qfirst('body > section p');
                     expect($success.parentNode.className).toMatch('success');
                     $success.click();

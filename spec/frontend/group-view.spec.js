@@ -89,9 +89,9 @@ module.exports = (function () {
           expect(defs[2].textContent).toBe('Users');
           expect(values[2].textContent).toBe('0');
           expect(defs[3].textContent).toBe('Visibility');
-          expect(values[3].textContent).toBe('public');
+          expect(values[3].textContent).toBe('Public');
           expect(defs[4].textContent).toBe('Readonly');
-          expect(values[4].textContent).toBe('false');
+          expect(values[4].textContent).toBe('no');
           expect(defs[5].textContent).toBe('Tags');
           expect(values[5].textContent).toBe('cool, funky');
         });
@@ -127,9 +127,9 @@ module.exports = (function () {
                 expect(defs[2].textContent).toBe('Users');
                 expect(values[2].textContent).toBe('0');
                 expect(defs[3].textContent).toBe('Visibility');
-                expect(values[3].textContent).toBe('public');
+                expect(values[3].textContent).toBe('Public');
                 expect(defs[4].textContent).toBe('Readonly');
-                expect(values[4].textContent).toBe('false');
+                expect(values[4].textContent).toBe('no');
                 expect(defs[5].textContent).toBe('Tags');
                 expect(values[5].textContent).toBe('cool, funky');
                 expect($el.users.textContent).toMatch('you are not allowed');

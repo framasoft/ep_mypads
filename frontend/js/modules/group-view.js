@@ -181,9 +181,9 @@ module.exports = (function () {
         m('dt.block', conf.LANG.GROUP.PAD.USERS),
         m('dd.block', ld.size(c.group.users)),
         m('dt.block', conf.LANG.GROUP.PAD.VISIBILITY),
-        m('dd.block', c.group.visibility),
+        m('dd.block', conf.LANG.GROUP.FIELD[c.group.visibility.toUpperCase()]),
         m('dt.block', conf.LANG.GROUP.FIELD.READONLY),
-        m('dd.block', c.group.readonly),
+        m('dd.block', conf.LANG.GLOBAL[c.group.readonly ? 'YES' : 'NO']),
         m('dt.block', conf.LANG.GROUP.TAGS.TITLE),
         m('dd.block', c.group.tags.join(', '))
       ])
@@ -279,7 +279,8 @@ module.exports = (function () {
           }
           var padName = p.name;
           if (p.visibility && (p.visibility !== c.group.visibility)) {
-            padName += ' (' + p.visibility + ')';
+            var visib = conf.LANG.GROUP.FIELD[p.visibility.toUpperCase()];
+            padName += ' (' + visib + ')';
           }
           return m('li.block-group', [
             m('span.block.name', [

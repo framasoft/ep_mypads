@@ -1681,6 +1681,7 @@
           var b = {
             body: {
               name: 'groupOk',
+              description: 'a cool new group',
               admin: uid,
               visibility: 'private',
               password: 'secret'
@@ -1693,6 +1694,7 @@
             expect(body.key).toBeDefined();
             var key = body.key;
             expect(body.value.name).toBe('groupOk');
+            expect(body.value.description).toBe('a cool new group');
             rq.get(groupRoute + '/' + key,
               function (err, resp, body) {
                 expect(err).toBeNull();
@@ -1742,6 +1744,7 @@
             body: {
               _id: gid,
               name: 'gUpdated',
+              description: 'an updated one',
               admin: uid,
               visibility: 'public',
               readonly: true
@@ -1753,6 +1756,7 @@
             expect(body.success).toBeTruthy();
             expect(body.key).toBe(gid);
             expect(body.value.name).toBe('gUpdated');
+            expect(body.value.description).toBe('an updated one');
             rq.get(groupRoute + '/' + gid,
               function (err, resp, body) {
                 expect(resp.statusCode).toBe(200);

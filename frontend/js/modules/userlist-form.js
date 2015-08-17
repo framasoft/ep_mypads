@@ -151,8 +151,11 @@ module.exports = (function () {
     var f = form.field(c, 'name', conf.LANG.USERLIST.FIELD.NAME,
       form.icon(c, 'name', conf.LANG.USERLIST.INFO.NAME,
       conf.LANG.GROUP.ERR.NAME));
-    ld.assign(f.input.attrs,
-      { placeholder: conf.LANG.USERLIST.INFO.NAME, required: true });
+      ld.assign(f.input.attrs, {
+        placeholder: conf.LANG.USERLIST.INFO.NAME,
+        required: true,
+        config: form.focusOnInit
+      });
     return f;
   };
 

@@ -126,6 +126,15 @@ module.exports = (function () {
     c.valid[field](isValid());
   };
 
+  /**
+  * `focusOnInit` is a mithril.config attribute that focus on a given `element`
+  * at first initialization.
+  */
+
+  form.focusOnInit = function (element, isInit) {
+    if (!isInit) { element.focus(); }
+  };
+
   return form;
 
 }).call(this);

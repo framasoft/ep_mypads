@@ -165,8 +165,11 @@ module.exports = (function () {
   view.field.name = function (c) {
     var f = form.field(c, 'name', conf.LANG.GROUP.INFO.NAME,
       view.icon.name(c));
-    ld.assign(f.input.attrs,
-      { placeholder: conf.LANG.GROUP.INFO.NAME, required: true });
+      ld.assign(f.input.attrs, {
+        placeholder: conf.LANG.GROUP.INFO.NAME,
+        required: true,
+        config: form.focusOnInit
+      });
     return f;
   };
 

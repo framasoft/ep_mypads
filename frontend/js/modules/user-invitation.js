@@ -37,6 +37,7 @@ module.exports = (function () {
   var layout = require('./layout.js');
   var notif = require('../widgets/notification.js');
   var tag = require('../widgets/tag.js');
+  var form = require('../helpers/form.js');
 
   var invite = {};
 
@@ -170,9 +171,11 @@ module.exports = (function () {
   };
 
   view.userField = function (c) {
+    var tagInput = tag.views.input(c);
+    tagInput.attrs.config = form.focusOnInit;
     return m('div.block-group.tag', [
       m('label.block', { for: c.name }, c.label),
-      tag.views.input(c),
+      tagInput,
       m('i', {
         class: 'block tooltip icon-info-circled tag',
         'data-msg': conf.LANG.GROUP.INVITE_USER.INPUT_HELP }),

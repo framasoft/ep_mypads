@@ -91,6 +91,7 @@ module.exports = (function () {
 
   view.form = function (c) {
     var login = user.view.field.login(c);
+    login.input.attrs.config = form.focusOnInit;
     var password = user.view.field.password(c);
     return m('form.block', {
       id: 'login-form', onsubmit: c.submit }, [

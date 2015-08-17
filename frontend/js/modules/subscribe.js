@@ -239,12 +239,14 @@ module.exports = (function () {
     ];
     if (c.profileView()) {
       var passC = user.view.field.passwordCurrent(c);
+      passC.input.attrs.config = form.focusOnInit;
       requiredFields.splice(0, 0, passC.label, passC.input, passC.icon);
       requiredFields.push(fields.useLoginAndColorInPads.label,
         fields.useLoginAndColorInPads.input,
         fields.useLoginAndColorInPads.icon);
     } else if (!c.adminView()) {
       var log = fields.login;
+      log.input.attrs.config = form.focusOnInit;
       requiredFields.splice(0, 0, log.label, log.input, log.icon);
     }
     var USER = conf.LANG.USER;

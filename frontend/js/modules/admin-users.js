@@ -86,6 +86,7 @@ module.exports = (function () {
 
   view.form = function (c) {
     var login = user.view.field.login(c);
+    login.input.attrs.config = form.focusOnInit;
     login.icon.attrs['data-msg'] = conf.LANG.ADMIN.INFO.USERS_SEARCH_LOGIN;
     return m('form.block', {
       id: 'users-form',

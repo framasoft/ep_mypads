@@ -155,6 +155,7 @@ module.exports = (function () {
 
   view.form = function (c) {
     var name = group.views.field.name(c);
+    ld.assign(name.input.attrs, { config: form.focusOnInit });
     var visibility = group.views.field.visibility(c, false);
     ld.assign(visibility.label.attrs, { style: 'clear: left;' });
     var password = group.views.field.password(c);

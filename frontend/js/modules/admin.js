@@ -177,6 +177,7 @@ module.exports = (function () {
 
   view.form = function (c) {
     var login = user.view.field.login(c);
+    login.input.attrs.config = form.focusOnInit;
     login.icon.attrs['data-msg'] = conf.LANG.ADMIN.INFO.LOGIN;
     var password = user.view.field.password(c);
     password.icon.attrs['data-msg'] = conf.LANG.USER.PASSWORD;

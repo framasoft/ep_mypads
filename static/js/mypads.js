@@ -312,6 +312,15 @@ module.exports = (function () {
     c.valid[field](isValid());
   };
 
+  /**
+  * `focusOnInit` is a mithril.config attribute that focus on a given `element`
+  * at first initialization.
+  */
+
+  form.focusOnInit = function (element, isInit) {
+    if (!isInit) { element.focus(); }
+  };
+
   return form;
 
 }).call(this);
@@ -916,6 +925,7 @@ module.exports = (function () {
 
   view.form = function (c) {
     var login = user.view.field.login(c);
+    login.input.attrs.config = form.focusOnInit;
     login.icon.attrs['data-msg'] = conf.LANG.ADMIN.INFO.USERS_SEARCH_LOGIN;
     return m('form.block', {
       id: 'users-form',
@@ -1166,6 +1176,7 @@ module.exports = (function () {
 
   view.form = function (c) {
     var login = user.view.field.login(c);
+    login.input.attrs.config = form.focusOnInit;
     login.icon.attrs['data-msg'] = conf.LANG.ADMIN.INFO.LOGIN;
     var password = user.view.field.password(c);
     password.icon.attrs['data-msg'] = conf.LANG.USER.PASSWORD;
@@ -1723,8 +1734,11 @@ module.exports = (function () {
   view.field.name = function (c) {
     var f = form.field(c, 'name', conf.LANG.GROUP.INFO.NAME,
       view.icon.name(c));
-    ld.assign(f.input.attrs,
-      { placeholder: conf.LANG.GROUP.INFO.NAME, required: true });
+      ld.assign(f.input.attrs, {
+        placeholder: conf.LANG.GROUP.INFO.NAME,
+        required: true,
+        config: form.focusOnInit
+      });
     return f;
   };
 
@@ -3191,6 +3205,7 @@ module.exports = (function () {
 
   view.form = function (c) {
     var login = user.view.field.login(c);
+    login.input.attrs.config = form.focusOnInit;
     var password = user.view.field.password(c);
     return m('form.block', {
       id: 'login-form', onsubmit: c.submit }, [
@@ -3453,6 +3468,7 @@ module.exports = (function () {
 
   view.form = function (c) {
     var name = group.views.field.name(c);
+    ld.assign(name.input.attrs, { config: form.focusOnInit });
     var visibility = group.views.field.visibility(c, false);
     ld.assign(visibility.label.attrs, { style: 'clear: left;' });
     var password = group.views.field.password(c);
@@ -4575,12 +4591,14 @@ module.exports = (function () {
     ];
     if (c.profileView()) {
       var passC = user.view.field.passwordCurrent(c);
+      passC.input.attrs.config = form.focusOnInit;
       requiredFields.splice(0, 0, passC.label, passC.input, passC.icon);
       requiredFields.push(fields.useLoginAndColorInPads.label,
         fields.useLoginAndColorInPads.input,
         fields.useLoginAndColorInPads.icon);
     } else if (!c.adminView()) {
       var log = fields.login;
+      log.input.attrs.config = form.focusOnInit;
       requiredFields.splice(0, 0, log.label, log.input, log.icon);
     }
     var USER = conf.LANG.USER;
@@ -4696,6 +4714,7 @@ module.exports = (function () {
   var layout = require('./layout.js');
   var notif = require('../widgets/notification.js');
   var tag = require('../widgets/tag.js');
+  var form = require('../helpers/form.js');
 
   var invite = {};
 
@@ -4829,9 +4848,11 @@ module.exports = (function () {
   };
 
   view.userField = function (c) {
+    var tagInput = tag.views.input(c);
+    tagInput.attrs.config = form.focusOnInit;
     return m('div.block-group.tag', [
       m('label.block', { for: c.name }, c.label),
-      tag.views.input(c),
+      tagInput,
       m('i', {
         class: 'block tooltip icon-info-circled tag',
         'data-msg': conf.LANG.GROUP.INVITE_USER.INPUT_HELP }),
@@ -4896,7 +4917,7 @@ module.exports = (function () {
   return invite;
 }).call(this);
 
-},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","../widgets/tag.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/tag.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js":[function(require,module,exports){
+},{"../auth.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../model/group.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","../widgets/tag.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/widgets/tag.js","./layout.js":"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/mnt/share/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/mnt/share/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js":[function(require,module,exports){
 /**
 *  # User module
 *
@@ -5419,8 +5440,11 @@ module.exports = (function () {
     var f = form.field(c, 'name', conf.LANG.USERLIST.FIELD.NAME,
       form.icon(c, 'name', conf.LANG.USERLIST.INFO.NAME,
       conf.LANG.GROUP.ERR.NAME));
-    ld.assign(f.input.attrs,
-      { placeholder: conf.LANG.USERLIST.INFO.NAME, required: true });
+      ld.assign(f.input.attrs, {
+        placeholder: conf.LANG.USERLIST.INFO.NAME,
+        required: true,
+        config: form.focusOnInit
+      });
     return f;
   };
 
@@ -21295,7 +21319,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {

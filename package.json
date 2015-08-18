@@ -24,10 +24,10 @@
     "cuid": "^1.2.4",
     "lodash": "^3.1.0",
     "passport": "^0.2.1",
-    "passport-local": "^1.0.0",
     "body-parser": "~1.12.3",
     "js-base64": "~2.1.8",
-    "emailjs": "~0.3.16"
+    "emailjs": "~0.3.16",
+    "passport-jwt": "~1.1.0"
   },
   "devDependencies": {
     "browserify": "^9.0.3",

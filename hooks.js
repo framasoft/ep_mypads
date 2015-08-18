@@ -50,29 +50,17 @@ module.exports = (function () {
 
   /**
   * `expressConfigure` hook profits from the args.app express instance to
-  * initialize permissions, right before other things : MyPads routes etc.
+  * initialize API before YAJSML and then storage and mail.
   */
 
   hooks.expressConfigure = function (name, args, callback) {
-    var perm = require('./perm.js');
-    perm.init(args.app);
-    setTimeout(callback, 100);
-  };
-
-  /**
-  * `expressCreateServer` hook profits from the args.app express instance to
-  * initialize all MyPads routes from its own API and local indexes from
-  * storage.
-  */
-
-  hooks.expressCreateServer = function (name, args, callback) {
     var storage = require('./storage.js');
     var api = require('./api.js');
     var mail = require('./mail.js');
+    api.init(args.app);
     storage.init(function () {
-      var lang = configuration.get('defaultLanguage');
       mail.init();
-      api.init(args.app, lang, callback);
+      callback();
     });
   };
 

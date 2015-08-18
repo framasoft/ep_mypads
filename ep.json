@@ -6,7 +6,6 @@
       "hooks": {
         "init_ep_mypads": "ep_mypads/hooks:init",
         "expressConfigure": "ep_mypads/hooks:expressConfigure",
-        "expressCreateServer": "ep_mypads/hooks:expressCreateServer",
         "clientVars": "ep_mypads/hooks:clientVars"
       },
       "client_hooks": {}

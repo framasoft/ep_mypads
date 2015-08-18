@@ -49,6 +49,7 @@ var user = require('./model/user.js');
 var group = require('./model/group.js');
 var pad = require('./model/pad.js');
 var auth = require('./auth.js');
+var perm = require('./perm.js');
 
 module.exports = (function () {
   'use strict';
@@ -58,11 +59,16 @@ module.exports = (function () {
 
   /**
   * `init` is the first function that takes an Express app as argument.
-  * It loads locales definitions, then it initializes all API requirements,
+  * It initializes authentication, permissions and also all API requirements,
   * particularly mypads routes.
+  *
+  * It needs to be fast to finish *before* YAJSML plugin (which takes over all
+  * requests otherwise and refuse anything apart GET and HEAD HTTP methods.
+  * That's why api.init is used without any callback and is called before
+  * storage initialization.
   */
 
-  api.init = function (app, language, callback) {
+  api.init = function (app) {
     // Use this for .JSON storage
     app.use(bodyParser.json());
     app.use('/mypads', express.static(__dirname + '/static'));
@@ -83,7 +89,7 @@ module.exports = (function () {
     userAPI(app);
     groupAPI(app);
     padAPI(app);
-    callback();
+    perm.init(app);
   };
 
   /**

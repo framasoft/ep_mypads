@@ -45,7 +45,10 @@ catch (e) {
   cookieParser = require('cookie-parser');
 }
 var passport = require('passport');
-var localStrategy = require('passport-local').Strategy;
+var JWTStrategy = require('passport-jwt').Strategy;
+var cuid = require('cuid');
+// secret per express-session
+var secret = cuid();
 
 // Local dependencies
 var user = require('./model/user.js');
@@ -71,7 +74,7 @@ module.exports = (function () {
   /**
   * ### local
   *
-  * `local` is a synchronous function used to set up local strategy.
+  * `local` is a synchronous function used to set up JWT strategy.
   */
 
   auth.fn.local = function () {
@@ -81,20 +84,21 @@ module.exports = (function () {
     passport.deserializeUser(function(id, done) {
       user.get(id, done);
     });
-    passport.use(new localStrategy({
-      usernameField: 'login',
-      passwordField: 'password'
-    }, function (login, password, callback) {
-      var isFS = function (s) { return (ld.isString(s) && !ld.isEmpty(s)); };
-      if (!isFS(login)) { throw new TypeError('BACKEND.ERROR.TYPE.LOGIN_STR'); }
-      if (!isFS(password)) {
-        throw new TypeError('BACKEND.ERROR.TYPE.PASSWORD_STR');
+    passport.use(new JWTStrategy({ secretOrKey: secret },
+      function (jwt_payload, callback) {
+        var isFS = function (s) { return (ld.isString(s) && !ld.isEmpty(s)); };
+        if (!isFS(jwt_payload.login)) {
+          throw new TypeError('BACKEND.ERROR.TYPE.LOGIN_STR');
+        }
+        if (!isFS(jwt_payload.password)) {
+          throw new TypeError('BACKEND.ERROR.TYPE.PASSWORD_STR');
+        }
+        if (!ld.isFunction(callback)) {
+          throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
+        }
+        auth.fn.localFn(jwt_payload.login, jwt_payload.password, callback);
       }
-      if (!ld.isFunction(callback)) {
-        throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
-      }
-      auth.fn.localFn.apply(this, arguments);
-    }));
+    ));
   };
 
 

@@ -67,9 +67,10 @@
       specCommon.mockupExpressServer();
       specCommon.reInitDatabase(function () {
         conf.init(function () {
-          api.init(specCommon.express.app);
-          rq = request.defaults({ json: true, jar: j });
-          setTimeout(done, 1000);
+          api.init(specCommon.express.app, function () {
+            rq = request.defaults({ json: true, jar: j });
+            setTimeout(done, 500);
+          });
         });
       });
     });

@@ -85,11 +85,9 @@
                           visibility: 'public'
                         };
                         group.set(g, function () {
-                          mail.init();
-                          api.init(specCommon.express.app, 'en',
-                            console.log.bind(null,
-                              'MockupServer runs on port 8042'));
-                            });
+                          api.init(specCommon.express.app, function () {
+                            mail.init();
+                            console.log('MockupServer runs on port 8042');
                           });
                         });
                       });
@@ -101,5 +99,7 @@
           });
         });
       });
+    });
+  });
 
 }).call(this);

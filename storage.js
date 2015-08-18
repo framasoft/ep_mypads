@@ -53,13 +53,17 @@ module.exports = (function () {
   }
 
   /**
-  * `init` function for in memory secondary indexes.
-  * At the moment only user / logins.
+  * `init` function for initial configuration cache init and in memory
+  * secondary indexes. At the moment only user / logins.
   */
 
   storage.init = function (callback) {
-    var user = require('./model/user.js');
-    user.init(callback);
+    var configuration = require('./configuration.js');
+    configuration.init(function (err) {
+      if (err) { return callback(err); }
+      var user = require('./model/user.js');
+      user.init(callback);
+    });
   };
 
   /**

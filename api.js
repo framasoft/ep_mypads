@@ -68,7 +68,7 @@ module.exports = (function () {
   * storage initialization.
   */
 
-  api.init = function (app) {
+  api.init = function (app, callback) {
     // Use this for .JSON storage
     app.use(bodyParser.json());
     app.use('/mypads', express.static(__dirname + '/static'));
@@ -90,6 +90,7 @@ module.exports = (function () {
     groupAPI(app);
     padAPI(app);
     perm.init(app);
+    callback(null);
   };
 
   /**
@@ -323,6 +324,24 @@ module.exports = (function () {
       }
     });
 
+    /**
+    * GET method : admin logout, method that destroy current `req.session` and
+    * logout from passport.
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/auth/adminlogout
+    */
+
+    app.get(authRoute + '/adminlogout', function (req, res) {
+      if (req.session.user && req.session.user.is_admin) {
+        req.session.destroy();
+        return res.status(200).send({ success: true });
+      } else {
+        res.status(400)
+          .send({ error: 'BACKEND.ERROR.AUTHENTICATION.NOT_AUTH' });
+      }
+    });
+
   };
 
   /**
@@ -343,6 +362,7 @@ module.exports = (function () {
     */
 
     app.get(confRoute, function (req, res) {
+      req.session = req.session || {};
       var isAuth = (req.isAuthenticated() || !!req.session.mypadsLogin);
       var isAdmin = (req.session.user && req.session.user.is_admin);
       var action = isAdmin ? 'all' : 'public';

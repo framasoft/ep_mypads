@@ -164,11 +164,10 @@ module.exports = (function () {
   */
 
   auth.init = function (app) {
-    auth.fn.local();
-    app.use(cookieParser());
     app.use(passport.initialize());
     app.use(passport.session());
     if (testMode) {
+      app.use(cookieParser());
       var cuid = require('cuid');
       var hour = 3600000;
       app.use(session({
@@ -178,16 +177,15 @@ module.exports = (function () {
         cookie: { maxAge: hour }
       }));
       app.get('/admin', function (req, res) {
-        if (!req.session) { req.session = {}; }
         req.session.user = { is_admin: true };
         return res.status(200).send({ success: true });
       });
       app.get('/admin/logout', function (req, res) {
-        if (!req.session) { req.session = {}; }
         req.session.user = { is_admin: false };
         return res.status(200).send({ success: true });
       });
     }
+    auth.fn.local();
   };
 
   return auth;

@@ -57,10 +57,12 @@ module.exports = (function () {
     var storage = require('./storage.js');
     var api = require('./api.js');
     var mail = require('./mail.js');
-    api.init(args.app);
-    storage.init(function () {
-      mail.init();
-      callback();
+    api.init(args.app, function () {
+      storage.init(function (err) {
+        if (err) { return callback(err); }
+        mail.init();
+        callback(null);
+      });
     });
   };
 

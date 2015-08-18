@@ -73,20 +73,17 @@ module.exports = (function() {
 
     cache: {},
 
-    /**
-    * `init` is called when mypads plugin is initialized. It fixes the default
-    * data for the configuration into the database.
-    * It takes an optional `callback` function used after `db.set` abstraction
-    * to return an eventual *error*.
+    /*
+    * `initCache` is called at mypads launch to populate `configuration.cache`
+    * from DEFAULTS and database. The function will be returned with full
+    * results, including DBPREFIX on keys.
     */
 
-    init: function (callback) {
-      callback = callback || function () {};
+    initCache: function (callback) {
       if (!ld.isFunction(callback)) {
         throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
       }
       configuration.cache = ld.clone(configuration.DEFAULTS, true);
-      // Would like to use doBulk but not supported for all *ueberDB* backends
       var confKeys = ld.map(ld.keys(configuration.DEFAULTS), function (key) {
         return DBPREFIX + key;
       });
@@ -100,15 +97,48 @@ module.exports = (function() {
             memo[key] = ld.clone(dval);
           }
         });
-        storage.fn.setKeys(res, function (err) {
-          if (err) { throw err; }
+        callback(null, res);
+      });
+    },
+
+    /**
+    * `init` is called when mypads plugin is initialized. It fixes the default
+    * data for the configuration into the database.
+    * It takes an optional `callback` function used after `db.set` abstraction
+    * to return an eventual *error*.
+    */
+
+    init: function (callback) {
+      callback = callback || function () {};
+      if (!ld.isFunction(callback)) {
+        throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
+      }
+
+      var confDefaults = ld.transform(configuration.DEFAULTS,
+        function (memo, val, key) { memo[DBPREFIX + key] = val; });
+
+      var initFromDatabase = function () {
+        storage.fn.getKeys(ld.keys(confDefaults), function (err, res) {
+          if (err) { return callback(err); }
           configuration.cache = ld.transform(res, function (memo, val, key) {
             key = key.replace(DBPREFIX, '');
             memo[key] = val;
           });
-          //ld.assign(configuration.cache, confData);
-          callback(null, res);
+          return callback(null);
         });
+      };
+
+      var initToDatabase = function () {
+        storage.fn.setKeys(confDefaults, function (err) {
+          if (err) { return callback(err); }
+          configuration.cache = ld.clone(configuration.DEFAULTS, true);
+          return callback(null);
+        });
+      };
+
+      storage.db.get(DBPREFIX + 'title', function (err, title) {
+        if (err) { return callback(err); }
+        (title ? initFromDatabase : initToDatabase)();
       });
     },
 

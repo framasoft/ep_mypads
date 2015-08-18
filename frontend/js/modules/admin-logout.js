@@ -28,6 +28,7 @@
 module.exports = (function () {
   // Global dependencies
   var m = require('mithril');
+  var ld = require('lodash');
   // Local dependencies
   var conf = require('../configuration.js');
   var auth = require('../auth.js');
@@ -44,7 +45,14 @@ module.exports = (function () {
   logout.controller = function () {
     auth.isAdmin(false);
     m.route('/');
-    notif.success({ body: conf.LANG.USER.AUTH.SUCCESS_OUT });
+    m.request({
+      url: conf.URLS.AUTH + '/adminlogout',
+      method: 'GET'
+    }).then(function () {
+      notif.success({ body: conf.LANG.USER.AUTH.SUCCESS_OUT });
+    }, function (err) {
+      notif.error({ body: ld.result(conf.LANG, err.error) });
+    });
   };
 
   return logout;

@@ -94,7 +94,8 @@ module.exports = (function () {
         return (valid ? callback() : params.refuse());
       });
     };
-    var uid = params.req.session && params.req.session.mypadsUid || false;
+    var login = params.req.mypadsLogin;
+    var uid = login && auth.tokens[login]._id || false;
     // Key not found, not a MyPads pad so next()
     if (!params.pg) { return params.next(); }
     var g = params.pg.group;
@@ -183,19 +184,21 @@ module.exports = (function () {
   * ### setNameAndColor
   *
   * Internal function `setNameAndColor` is an Express middleware used in
-  * conjunction with `padAndAuthor` public JS object. According to
-  * *req.session.mypads* values and user preference for
-  * `useLoginAndColorInPads`, it passes, for a given pad identifier, the last
-  * `login` and user `color` values.
+  * conjunction with `padAndAuthor` public JS object. According to *user*
+  * object in `auth.tokens` and user preference for `useLoginAndColorInPads`,
+  * it passes, for a given pad identifier, the last `login` and user `color`
+  * values.
   */
 
   perm.padAndAuthor = {};
 
   perm.setNameAndColor = function (req, res, next) {
-    if (req.session.mypadsUseLoginAndColorInPads) {
-      var opts = { userName: req.session.mypadsLogin };
-      if (req.session.mypadsColor) {
-        opts.userColor = req.session.mypadsColor;
+    var login = req.mypadsLogin;
+    var u = auth.tokens[login];
+    if (login && u.useLoginAndColorInPads) {
+      var opts = { userName: login };
+      if (u.color) {
+        opts.userColor = u.color;
       }
       perm.padAndAuthor[req.params.pid] = opts;
     } else {

@@ -44,10 +44,13 @@ module.exports = (function () {
 
     controller: function () {
       if (!auth.isAuthenticated()) { return m.route('/login'); }
-      m.request({ method: 'GET', url: conf.URLS.LOGOUT })
-      .then(function () {
+      m.request({
+        method: 'GET',
+        url: conf.URLS.LOGOUT + '?auth_token=' + auth.token()
+      }).then(function () {
         auth.isAuthenticated(false);
         auth.userInfo(null);
+        localStorage.removeItem('token');
         model.init();
         document.title = conf.SERVER.title;
         notif.success({ body: conf.LANG.USER.AUTH.SUCCESS_OUT });

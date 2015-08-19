@@ -65,9 +65,10 @@ module.exports = (function () {
   var m = require('mithril');
 
   var auth = {};
-  auth.isAuthenticated = m.prop(false);
   auth.isAdmin = m.prop(false);
   auth.userInfo = m.prop();
+  auth.token = function () { return localStorage.getItem('token'); };
+  auth.isAuthenticated = m.prop(!!auth.token());
   return auth;
 }).call(this);
 
@@ -161,8 +162,11 @@ module.exports = (function () {
   */
 
   config.init = function (callback) {
-    m.request({ method: 'GET', url: config.URLS.CONF })
-    .then(function (settings) {
+    var r = (auth.isAuthenticated() ? '?auth_token=' + auth.token() : '');
+    m.request({
+      method: 'GET',
+      url: config.URLS.CONF + r
+    }).then(function (settings) {
       config.SERVER = settings.value; 
       auth.isAuthenticated(settings.auth);
       auth.userInfo(settings.user);
@@ -389,9 +393,10 @@ module.exports = (function () {
       notif.error({ body: ld.result(conf.LANG, err.error) });
       if (callback) { callback(err); }
     };
+    var r = (auth.isAuthenticated() ? '?auth_token=' + auth.token() : '');
     m.request({
-      url: conf.URLS.GROUP,
-      method: 'GET'
+      url: conf.URLS.GROUP + r,
+      method: 'GET',
     }).then(
       function (resp) {
         model.groups(resp.value.groups); 
@@ -412,8 +417,8 @@ module.exports = (function () {
           .value();
         model.tags(tags);
         m.request({
-          url: conf.URLS.USERLIST,
-          method: 'GET'
+          url: conf.URLS.USERLIST + r,
+          method: 'GET',
         }).then(function (resp) {
           u.userlists = resp.value;
           auth.userInfo(u);
@@ -443,10 +448,11 @@ module.exports = (function () {
 
     var fetchPad = function (group) {
       var opts = {
-        url: conf.URLS.PAD + '/' + keys.pad,
+        url: conf.URLS.PAD + '/' + keys.pad + '?',
         method: 'GET'
       };
-      if (password) { opts.data = { password: password }; }
+      if (password) { opts.url += '&password=' + password; }
+      if (auth.isAuthenticated()) { opts.url += '&auth_token=' + auth.token(); }
       m.request(opts).then(
         function (resp) {
           var data = model.tmp();
@@ -477,10 +483,11 @@ module.exports = (function () {
 
     var fetchGroup = function () {
       var opts = {
-        url: conf.URLS.GROUP + '/' + keys.group,
-        method: 'GET'
+        url: conf.URLS.GROUP + '/' + keys.group + '?',
+        method: 'GET',
       };
-      if (password) { opts.data = { password: password }; }
+      if (password) { opts.url += '&password=' + password; }
+      if (auth.isAuthenticated()) { opts.url += '&auth_token=' + auth.token(); }
       m.request(opts).then(
         function (resp) {
           var data = model.tmp();
@@ -1676,6 +1683,7 @@ module.exports = (function () {
         return _o;
       })();
       opts.params.data = ld.assign(c.data, { admin: auth.userInfo()._id });
+      opts.params.data.auth_token = auth.token();
       m.request(opts.params).then(function (resp) {
         var data = model.groups();
         data[resp.key] = resp.value;
@@ -1935,7 +1943,8 @@ module.exports = (function () {
     if (window.confirm(conf.LANG.GROUP.INFO.REMOVE_SURE)) {
       m.request({
         method: 'DELETE',
-        url: conf.URLS.GROUP + '/' + m.route.param('key')
+        url: conf.URLS.GROUP + '/' + m.route.param('key'),
+        data: { auth_token: auth.token() }
       }).then(function (resp) {
         var data = model.groups();
         delete data[resp.key];
@@ -2082,7 +2091,10 @@ module.exports = (function () {
         m.request({
           method: 'POST',
           url: conf.URLS.GROUP + '/resign',
-          data: { gid: c.group._id }
+          data: {
+            gid: c.group._id,
+            auth_token: auth.token()
+          }
         }).then(function (resp) {
           var data = model.groups();
           delete data[resp.value._id];
@@ -2474,7 +2486,11 @@ module.exports = (function () {
     m.request({
       url: conf.URLS.USERMARK,
       method: 'POST',
-      data: { type: 'groups', key: gid }
+      data: {
+        type: 'groups',
+        key: gid,
+        auth_token: auth.token()
+      }
     }).then(function () {
       notif.success({ body: conf.LANG.GROUP.MARK_SUCCESS });
       if (successFn) { successFn(); }
@@ -3206,6 +3222,7 @@ module.exports = (function () {
       }).then(function (resp) {
         auth.isAuthenticated(true);
         auth.userInfo(resp.user);
+        localStorage.setItem('token', resp.token);
         var lang = auth.userInfo().lang;
         if (lang !== conf.USERLANG) {
           conf.updateLang(lang);
@@ -3317,10 +3334,13 @@ module.exports = (function () {
 
     controller: function () {
       if (!auth.isAuthenticated()) { return m.route('/login'); }
-      m.request({ method: 'GET', url: conf.URLS.LOGOUT })
-      .then(function () {
+      m.request({
+        method: 'GET',
+        url: conf.URLS.LOGOUT + '?auth_token=' + auth.token()
+      }).then(function () {
         auth.isAuthenticated(false);
         auth.userInfo(null);
+        localStorage.removeItem('token');
         model.init();
         document.title = conf.SERVER.title;
         notif.success({ body: conf.LANG.USER.AUTH.SUCCESS_OUT });
@@ -3437,7 +3457,7 @@ module.exports = (function () {
       m.request({
         method: opts.method,
         url: opts.url,
-        data: c.data
+        data: ld.assign(c.data, { auth_token: auth.token() })
       }).then(function (resp) {
         var pads = model.pads();
         pads[resp.key] = resp.value;
@@ -3612,7 +3632,7 @@ module.exports = (function () {
     m.request({
       url: conf.URLS.USERMARK,
       method: 'POST',
-      data: { type: 'pads', key: pid }
+      data: { type: 'pads', key: pid, auth_token: auth.token() }
     }).then(function () {
       notif.success({ body: conf.LANG.GROUP.MARK_SUCCESS });
       if (successFn) { successFn(); }
@@ -3714,7 +3734,7 @@ module.exports = (function () {
         m.request({
           method: 'PUT',
           url: conf.URLS.PAD + '/' + p._id,
-          data: p
+          data: ld.assign(p, { auth_token: auth.token() })
         }).then(done, function (err) {
           notif.error({ body: ld.result(conf.LANG, err.error) });
         });
@@ -3891,7 +3911,8 @@ module.exports = (function () {
     if (window.confirm(conf.LANG.GROUP.INFO.PAD_REMOVE_SURE)) {
       m.request({
         method: 'DELETE',
-        url: conf.URLS.PAD + '/' + key
+        url: conf.URLS.PAD + '/' + key,
+        data: { auth_token: auth.token() }
       }).then(function (resp) {
         var pads = model.pads();
         delete pads[resp.key];
@@ -4503,7 +4524,10 @@ module.exports = (function () {
             method: 'POST',
             url: conf.URLS.LOGIN,
             data: c.data
-          }).then(m.route.bind(null, '/'), errfn);
+          }).then(function (resp) {
+            localStorage.setItem('token', resp.token);
+            m.route('/');
+          }, errfn);
         }, errfn);
       }
     };
@@ -4531,13 +4555,17 @@ module.exports = (function () {
       m.request({
         method: 'POST',
         url: conf.URLS.CHECK,
-        data: { login: auth.userInfo().login, password: c.data.passwordCurrent }
+        data: {
+          login: auth.userInfo().login,
+          password: c.data.passwordCurrent,
+          auth_token: auth.token()
+        }
       }).then(function () {
         passwordUpdate();
         m.request({
           method: 'PUT',
           url: conf.URLS.USER + '/' + auth.userInfo().login,
-          data: c.data
+          data: ld.assign(c.data, { auth_token: auth.token() })
         }).then(function (resp) {
           auth.userInfo(resp.value);
           notif.success({ body: conf.LANG.USER.AUTH.PROFILE_SUCCESS });
@@ -4564,11 +4592,16 @@ module.exports = (function () {
         m.request({
           method: 'POST',
           url: conf.URLS.CHECK,
-          data: { login: login, password: password }
+          data: {
+            login: login,
+            password: password,
+            auth_token: auth.token()
+          }
         }).then(function () {
           m.request({
             method: 'DELETE',
-            url: conf.URLS.USER + '/' + login
+            url: conf.URLS.USER + '/' + login,
+            data: { auth_token: auth.token() }
           }).then(function () {
             auth.isAuthenticated(false);
             auth.userInfo(null);
@@ -4757,7 +4790,8 @@ module.exports = (function () {
     var data = {
       invite: c.isInvite,
       gid: c.group._id,
-      logins: c.tag.current
+      logins: c.tag.current,
+      auth_token: auth.token()
     };
     m.request({
       method: 'POST',
@@ -5421,7 +5455,8 @@ module.exports = (function () {
         url: conf.URLS.USERLIST,
         data: {
           name: c.data.name(),
-          logins: c.tag.current
+          logins: c.tag.current,
+          auth_token: auth.token()
         }
       };
       var successMsg = conf.LANG.USERLIST.INFO.ADD_SUCCESS;
@@ -5601,7 +5636,8 @@ module.exports = (function () {
     if (window.confirm(conf.LANG.USERLIST.INFO.REMOVE_SURE)) {
       m.request({
         method: 'DELETE',
-        url: conf.URLS.USERLIST + '/' + key
+        url: conf.URLS.USERLIST + '/' + key,
+        data: { auth_token: auth.token() }
       }).then(function () {
         var uInfo = auth.userInfo();
         delete uInfo.userlists[key];
@@ -21387,6 +21423,7 @@ module.exports={
         "ACTIVATION_NEEDED": "Your account has not been confirmed",
         "NOT_AUTH": "Not authenticated",
         "PASSWORD_INCORRECT": "Password is not correct",
+        "TOKEN_INCORRECT": "Your token is not correct",
         "ADMIN": "Access denied : you must be an authenticated Etherpad instance admin.",
         "DENIED": "Access denied",
         "DENIED_RECORD": "You're not allowed to get this record",

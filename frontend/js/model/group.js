@@ -61,9 +61,10 @@ module.exports = (function () {
       notif.error({ body: ld.result(conf.LANG, err.error) });
       if (callback) { callback(err); }
     };
+    var r = (auth.isAuthenticated() ? '?auth_token=' + auth.token() : '');
     m.request({
-      url: conf.URLS.GROUP,
-      method: 'GET'
+      url: conf.URLS.GROUP + r,
+      method: 'GET',
     }).then(
       function (resp) {
         model.groups(resp.value.groups); 
@@ -84,8 +85,8 @@ module.exports = (function () {
           .value();
         model.tags(tags);
         m.request({
-          url: conf.URLS.USERLIST,
-          method: 'GET'
+          url: conf.URLS.USERLIST + r,
+          method: 'GET',
         }).then(function (resp) {
           u.userlists = resp.value;
           auth.userInfo(u);
@@ -115,10 +116,11 @@ module.exports = (function () {
 
     var fetchPad = function (group) {
       var opts = {
-        url: conf.URLS.PAD + '/' + keys.pad,
+        url: conf.URLS.PAD + '/' + keys.pad + '?',
         method: 'GET'
       };
-      if (password) { opts.data = { password: password }; }
+      if (password) { opts.url += '&password=' + password; }
+      if (auth.isAuthenticated()) { opts.url += '&auth_token=' + auth.token(); }
       m.request(opts).then(
         function (resp) {
           var data = model.tmp();
@@ -149,10 +151,11 @@ module.exports = (function () {
 
     var fetchGroup = function () {
       var opts = {
-        url: conf.URLS.GROUP + '/' + keys.group,
-        method: 'GET'
+        url: conf.URLS.GROUP + '/' + keys.group + '?',
+        method: 'GET',
       };
-      if (password) { opts.data = { password: password }; }
+      if (password) { opts.url += '&password=' + password; }
+      if (auth.isAuthenticated()) { opts.url += '&auth_token=' + auth.token(); }
       m.request(opts).then(
         function (resp) {
           var data = model.tmp();

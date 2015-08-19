@@ -54,7 +54,8 @@ module.exports = (function () {
     var data = {
       invite: c.isInvite,
       gid: c.group._id,
-      logins: c.tag.current
+      logins: c.tag.current,
+      auth_token: auth.token()
     };
     m.request({
       method: 'POST',

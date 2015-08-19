@@ -51,7 +51,8 @@ module.exports = (function () {
     if (window.confirm(conf.LANG.GROUP.INFO.PAD_REMOVE_SURE)) {
       m.request({
         method: 'DELETE',
-        url: conf.URLS.PAD + '/' + key
+        url: conf.URLS.PAD + '/' + key,
+        data: { auth_token: auth.token() }
       }).then(function (resp) {
         var pads = model.pads();
         delete pads[resp.key];

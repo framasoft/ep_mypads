@@ -98,7 +98,7 @@ module.exports = (function () {
       m.request({
         method: opts.method,
         url: opts.url,
-        data: c.data
+        data: ld.assign(c.data, { auth_token: auth.token() })
       }).then(function (resp) {
         var pads = model.pads();
         pads[resp.key] = resp.value;

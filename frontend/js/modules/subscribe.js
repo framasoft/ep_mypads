@@ -125,7 +125,10 @@ module.exports = (function () {
             method: 'POST',
             url: conf.URLS.LOGIN,
             data: c.data
-          }).then(m.route.bind(null, '/'), errfn);
+          }).then(function (resp) {
+            localStorage.setItem('token', resp.token);
+            m.route('/');
+          }, errfn);
         }, errfn);
       }
     };
@@ -153,13 +156,17 @@ module.exports = (function () {
       m.request({
         method: 'POST',
         url: conf.URLS.CHECK,
-        data: { login: auth.userInfo().login, password: c.data.passwordCurrent }
+        data: {
+          login: auth.userInfo().login,
+          password: c.data.passwordCurrent,
+          auth_token: auth.token()
+        }
       }).then(function () {
         passwordUpdate();
         m.request({
           method: 'PUT',
           url: conf.URLS.USER + '/' + auth.userInfo().login,
-          data: c.data
+          data: ld.assign(c.data, { auth_token: auth.token() })
         }).then(function (resp) {
           auth.userInfo(resp.value);
           notif.success({ body: conf.LANG.USER.AUTH.PROFILE_SUCCESS });
@@ -186,11 +193,16 @@ module.exports = (function () {
         m.request({
           method: 'POST',
           url: conf.URLS.CHECK,
-          data: { login: login, password: password }
+          data: {
+            login: login,
+            password: password,
+            auth_token: auth.token()
+          }
         }).then(function () {
           m.request({
             method: 'DELETE',
-            url: conf.URLS.USER + '/' + login
+            url: conf.URLS.USER + '/' + login,
+            data: { auth_token: auth.token() }
           }).then(function () {
             auth.isAuthenticated(false);
             auth.userInfo(null);

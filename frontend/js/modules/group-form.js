@@ -99,6 +99,7 @@ module.exports = (function () {
         return _o;
       })();
       opts.params.data = ld.assign(c.data, { admin: auth.userInfo()._id });
+      opts.params.data.auth_token = auth.token();
       m.request(opts.params).then(function (resp) {
         var data = model.groups();
         data[resp.key] = resp.value;

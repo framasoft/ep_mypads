@@ -66,6 +66,7 @@ module.exports = (function () {
       }).then(function (resp) {
         auth.isAuthenticated(true);
         auth.userInfo(resp.user);
+        localStorage.setItem('token', resp.token);
         var lang = auth.userInfo().lang;
         if (lang !== conf.USERLANG) {
           conf.updateLang(lang);

@@ -49,7 +49,8 @@ module.exports = (function () {
     if (window.confirm(conf.LANG.USERLIST.INFO.REMOVE_SURE)) {
       m.request({
         method: 'DELETE',
-        url: conf.URLS.USERLIST + '/' + key
+        url: conf.URLS.USERLIST + '/' + key,
+        data: { auth_token: auth.token() }
       }).then(function () {
         var uInfo = auth.userInfo();
         delete uInfo.userlists[key];

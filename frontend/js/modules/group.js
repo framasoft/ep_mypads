@@ -62,7 +62,11 @@ module.exports = (function () {
     m.request({
       url: conf.URLS.USERMARK,
       method: 'POST',
-      data: { type: 'groups', key: gid }
+      data: {
+        type: 'groups',
+        key: gid,
+        auth_token: auth.token()
+      }
     }).then(function () {
       notif.success({ body: conf.LANG.GROUP.MARK_SUCCESS });
       if (successFn) { successFn(); }

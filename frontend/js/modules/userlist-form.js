@@ -106,7 +106,8 @@ module.exports = (function () {
         url: conf.URLS.USERLIST,
         data: {
           name: c.data.name(),
-          logins: c.tag.current
+          logins: c.tag.current,
+          auth_token: auth.token()
         }
       };
       var successMsg = conf.LANG.USERLIST.INFO.ADD_SUCCESS;

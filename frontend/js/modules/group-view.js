@@ -124,7 +124,10 @@ module.exports = (function () {
         m.request({
           method: 'POST',
           url: conf.URLS.GROUP + '/resign',
-          data: { gid: c.group._id }
+          data: {
+            gid: c.group._id,
+            auth_token: auth.token()
+          }
         }).then(function (resp) {
           var data = model.groups();
           delete data[resp.value._id];

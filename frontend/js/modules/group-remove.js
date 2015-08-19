@@ -49,7 +49,8 @@ module.exports = (function () {
     if (window.confirm(conf.LANG.GROUP.INFO.REMOVE_SURE)) {
       m.request({
         method: 'DELETE',
-        url: conf.URLS.GROUP + '/' + m.route.param('key')
+        url: conf.URLS.GROUP + '/' + m.route.param('key'),
+        data: { auth_token: auth.token() }
       }).then(function (resp) {
         var data = model.groups();
         delete data[resp.key];

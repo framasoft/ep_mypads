@@ -87,8 +87,11 @@ module.exports = (function () {
   */
 
   config.init = function (callback) {
-    m.request({ method: 'GET', url: config.URLS.CONF })
-    .then(function (settings) {
+    var r = (auth.isAuthenticated() ? '?auth_token=' + auth.token() : '');
+    m.request({
+      method: 'GET',
+      url: config.URLS.CONF + r
+    }).then(function (settings) {
       config.SERVER = settings.value; 
       auth.isAuthenticated(settings.auth);
       auth.userInfo(settings.user);

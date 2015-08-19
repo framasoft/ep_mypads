@@ -88,7 +88,7 @@ module.exports = (function () {
         m.request({
           method: 'PUT',
           url: conf.URLS.PAD + '/' + p._id,
-          data: p
+          data: ld.assign(p, { auth_token: auth.token() })
         }).then(done, function (err) {
           notif.error({ body: ld.result(conf.LANG, err.error) });
         });

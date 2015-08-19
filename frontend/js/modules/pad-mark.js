@@ -52,7 +52,7 @@ module.exports = (function () {
     m.request({
       url: conf.URLS.USERMARK,
       method: 'POST',
-      data: { type: 'pads', key: pid }
+      data: { type: 'pads', key: pid, auth_token: auth.token() }
     }).then(function () {
       notif.success({ body: conf.LANG.GROUP.MARK_SUCCESS });
       if (successFn) { successFn(); }

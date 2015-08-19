@@ -31,6 +31,7 @@
 
 // External dependencies
 var ld = require('lodash');
+var jwt = require('jsonwebtoken');
 var session;
 var cookieParser;
 var testMode = false;
@@ -77,6 +78,29 @@ module.exports = (function () {
   */
 
   auth.fn = {};
+
+  /**
+  * ### getUser
+  *
+  * `getUser` is a synchronous function that checks if the given encrypted
+  * `token` is valid, ie if login has been already found in local cache and if
+  * the given key is the same as the generated one.
+  * It returns the *user* object in case of success and *false* otherwise.
+  *
+  * TODO: unit test missing
+  */
+
+  auth.fn.getUser = function (token) {
+    var jwt_payload = jwt.decode(token, auth.secret);
+    if (!jwt_payload) { return false; }
+    var login = jwt_payload.login;
+    var userAuth = (login && auth.tokens[login]);
+    if (userAuth && (auth.tokens[login].key === jwt_payload.key)) {
+      return auth.tokens[login];
+    } else {
+      return false;
+    }
+  };
 
   /**
   * ### local

@@ -193,24 +193,6 @@ module.exports = (function () {
     return tpl(data);
   };
 
-  /**
-  * `getUser` is a synchronous function that checks if the given encrypted
-  * `token` is valid, ie if login has been already found in local cache and if
-  * the given key is the same as the generated one.
-  * It returns the *user* object in case of success and *false* otherwise.
-  */
-
-  fn.getUser = function (token) {
-    var jwt_payload = jwt.decode(token, auth.secret);
-    if (!jwt_payload) { return false; }
-    var login = jwt_payload.login;
-    var userAuth = (login && auth.tokens[login]);
-    if (userAuth && (auth.tokens[login].key === jwt_payload.key)) {
-      return auth.tokens[login];
-    } else {
-      return false;
-    }
-  };
 
   /**
   * `ensureAuthenticated` internal is an Express middleware takes `req`,
@@ -246,7 +228,7 @@ module.exports = (function () {
     var rs = req.session;
     var isAdmin = (rs && rs.user && rs.user.is_admin);
     var login = req.params.key;
-    var u = fn.getUser(req.body.auth_token || req.query.auth_token);
+    var u = auth.fn.getUser(req.body.auth_token || req.query.auth_token);
     var isSelf = (u && login === u.login);
     if (isSelf) { req.mypadsLogin = u.login; }
     if (!isAdmin && !isSelf) {
@@ -358,7 +340,7 @@ module.exports = (function () {
     */
 
     app.get(confRoute, function (req, res) {
-      var u = fn.getUser(req.query.auth_token);
+      var u = auth.fn.getUser(req.query.auth_token);
       var rs = req.session;
       var isAdmin = (rs && rs.user && rs.user.is_admin);
       var action = isAdmin ? 'all' : 'public';
@@ -585,7 +567,7 @@ module.exports = (function () {
       }
       // Update needed session values
       if (!stop) {
-        var u = fn.getUser(req.body.auth_token);
+        var u = auth.fn.getUser(req.body.auth_token);
         if (u) {
           auth.tokens[u.login].color = req.body.color || u.color;
           if (!ld.isUndefined(req.body.useLoginAndColorInPads)) {
@@ -848,7 +830,7 @@ module.exports = (function () {
           if (err) {
             return res.status(404).send({ key: key, error: err.message });
           }
-          var u = fn.getUser(req.query.auth_token);
+          var u = auth.fn.getUser(req.query.auth_token);
           var rs = req.session;
           var isAdmin = (rs && rs.user && rs.user.is_admin);
           var isUser = (u && ld.includes(ld.union(g.admins, g.users), u._id));
@@ -911,7 +893,7 @@ module.exports = (function () {
       var rs = req.session;
       var isAdmin = (rs && rs.user && rs.user.is_admin);
       if (isAdmin) { return successFn(); }
-      var u = fn.getUser(req.body.auth_token);
+      var u = auth.fn.getUser(req.body.auth_token);
       if (!u) {
         return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.NOT_AUTH');
       }
@@ -943,7 +925,7 @@ module.exports = (function () {
     app.post(groupRoute, function (req, res) {
       var rs = req.session;
       var isAdmin = (rs && rs.user && rs.user.is_admin);
-      var u = fn.getUser(req.body.auth_token);
+      var u = auth.fn.getUser(req.body.auth_token);
       if (!u) {
         return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.NOT_AUTH');
       }
@@ -1074,7 +1056,8 @@ module.exports = (function () {
             if (!edit && (g.visibility === 'public')) {
               return successFn(req, res, p);
             }
-            var u = fn.getUser(req.body.auth_token || req.query.auth_token);
+            var token = req.body.auth_token || req.query.auth_token;
+            var u = auth.fn.getUser(token);
             if (!u) {
               return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.MUST_BE');
             }
@@ -1123,7 +1106,7 @@ module.exports = (function () {
       var rs = req.session;
       var isAdmin = (rs && rs.user && rs.user.is_admin);
       var u;
-      if (!isAdmin) { u = fn.getUser(req.body.auth_token); }
+      if (!isAdmin) { u = auth.fn.getUser(req.body.auth_token); }
       if (!isAdmin && !u) {
         return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.NOT_AUTH');
       }
@@ -1150,7 +1133,7 @@ module.exports = (function () {
       var rs = req.session;
       var isAdmin = (rs && rs.user && rs.user.is_admin);
       var u;
-      if (!isAdmin) { u = fn.getUser(req.body.auth_token); }
+      if (!isAdmin) { u = auth.fn.getUser(req.body.auth_token); }
       if (!isAdmin && !u) {
         return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.NOT_AUTH');
       }

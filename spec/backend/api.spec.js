@@ -22,6 +22,7 @@
 
   var ld = require('lodash');
   var request = require('request');
+  var jwt = require('jsonwebtoken');
   var api = require('../../api.js');
   var mail = require('../../mail.js');
   var user = require('../../model/user.js');
@@ -92,54 +93,52 @@
 
       describe('auth.check POST', function () {
 
+        var token;
+
         beforeAll(function (done) {
           var params = {
             body: { login: 'guest', password: 'willnotlivelong' }
           };
-          rq.post(authRoute + '/login', params, done);
+          rq.post(authRoute + '/login', params, function (err, resp, body) {
+            if (!err && resp.statusCode === 200) {
+              token = body.token;
+              done();
+            }
+          });
         });
-        afterAll(function (done) { rq.get(authRoute + '/logout', done); });
+        afterAll(function (done) {
+          var b = { body: { auth_token: token } };
+          rq.get(authRoute + '/logout', b, done);
+        });
 
         it('should return an error if params are inexistent', function (done) {
-          rq.post(authRoute + '/check', {}, function (err, resp, body) {
-            expect(resp.statusCode).toBe(400);
-            expect(body.error).toMatch('LOGIN_STR');
+          rq.post(authRoute + '/check', {}, function (err, resp) {
+            expect(resp.statusCode).toBe(401);
             done();
           });
         });
 
-        it('should return an error if password is not set', function(done) {
-          var params = { body: { login: 'guest' } };
-          rq.post(authRoute + '/check', params, function (err, resp, body) {
-            expect(resp.statusCode).toBe(400);
-            expect(body.error).toMatch('PASSWORD_MISSING');
+        it('should return an error if params are bad', function(done) {
+          var params = {
+            body: {
+              login: 'guest',
+              password: 'badOne',
+              auth_token: jwt.sign({}, 'bad')
+            } 
+          };
+          rq.post(authRoute + '/check', params, function (err, resp) {
+            expect(resp.statusCode).toBe(401);
             done();
           });
         });
-
-        it('should return an error if user does not exist', function (done) {
-          var params = { body: { login: 'inexistent', password: 'pass' } };
-          rq.post(authRoute + '/check', params, function (err, resp, body) {
-            expect(resp.statusCode).toBe(400);
-            expect(body.error).toMatch('USER.NOT_FOUND');
-            done();
-          });
-        });
-
-        it('should not auth if user exists but pasword does not match',
-          function (done) {
-            var params = { body: { login: 'guest', password: 'pass' } };
-            rq.post(authRoute + '/check', params, function (err, resp, body) {
-              expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('PASSWORD_INCORRECT');
-              done();
-            });
-          }
-        );
 
         it('should return success otherwise', function (done) {
           var params = {
-            body: { login: 'guest', password: 'willnotlivelong' }
+            body: {
+              login: 'guest',
+              password: 'willnotlivelong',
+              auth_token: token
+            } 
           };
           rq.post(authRoute + '/check', params, function (err, resp, body) {
             expect(resp.statusCode).toBe(200);
@@ -155,7 +154,7 @@
         it('should not auth if params are inexistent', function (done) {
           rq.post(authRoute + '/login', {}, function (err, resp, body) {
             expect(resp.statusCode).toBe(400);
-            expect(body.error).toBe('Missing credentials');
+            expect(body.error).toMatch('PASSWORD_STR');
             done();
           });
         });
@@ -208,14 +207,11 @@
       describe('auth.logout GET', function () {
 
         it('should not logout if not already authenticated', function (done) {
-          rq.get(authRoute + '/logout', { jar: false },
-            function (err, resp, body) {
-              expect(err).toBeNull();
-              expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('AUTHENTICATION.NOT_AUTH');
-              done();
-            }
-          );
+          rq.get(authRoute + '/logout', function (err, resp) {
+            expect(err).toBeNull();
+            expect(resp.statusCode).toBe(401);
+            done();
+          });
         });
 
         it('should logout if authenticated', function (done) {
@@ -225,7 +221,8 @@
           rq.post(authRoute + '/login', params, function (err, resp, body) {
             expect(resp.statusCode).toBe(200);
             expect(body.success).toBeTruthy();
-            rq.get(authRoute + '/logout', function (err, resp, body) {
+            var params = { body: { auth_token: body.token } };
+            rq.get(authRoute + '/logout', params, function (err, resp, body) {
               expect(err).toBeNull();
               expect(resp.statusCode).toBe(200);
               expect(body.success).toBeTruthy();
@@ -273,18 +270,24 @@
 
     describe('configuration API', function () {
       var confRoute = route + 'configuration';
+      var token;
 
       beforeAll(function (done) {
         var kv = { field1: 8, field2: 3, field3: ['a', 'b'] };
         ld.assign(conf.cache, kv);
         var u = { login: 'guest', password: 'willnotlivelong' };
         user.set(u, function () {
-          rq.post(route + 'auth/login', { body: u }, done);
+          rq.post(route + 'auth/login', { body: u }, function (err, resp, b) {
+            if (!err && resp.statusCode === 200) {
+              token = b.token;
+              done();
+            }
+          });
         });
       });
 
       afterAll(function (done) {
-        rq.get(route + 'auth/logout', done);
+        rq.get(route + 'auth/logout', { body: { auth_token: token } },  done);
       });
 
       describe('configuration.all GET', function () {
@@ -298,7 +301,8 @@
 
         it('should reply with filtered settings with GET and no admin role',
           function (done) {
-            rq.get(confRoute, function (err, resp, body) {
+            var params = { body: { auth_token: token } };
+            rq.get(confRoute, params, function (err, resp, body) {
               expect(err).toBeNull();
               expect(resp.statusCode).toBe(200);
               expect(ld.isObject(body.value)).toBeTruthy();
@@ -507,6 +511,7 @@
     describe('user API', function () {
       var userRoute = route + 'user';
       var userlistRoute = route + 'userlist';
+      var token;
 
       beforeAll(function (done) {
         conf.init(function () {
@@ -515,7 +520,14 @@
           set(u, function () {
             set({ login: 'jerry', password: 'willnotlivelong' }, function () {
               set({ login: 'mikey', password: 'willnotlivelong' }, function () {
-                rq.post(route + 'auth/login', { body: u }, done);
+                rq.post(route + 'auth/login', { body: u },
+                  function (err, resp, b) {
+                    if (!err && resp.statusCode === 200) {
+                      token = b.token;
+                      done();
+                    }
+                  }
+                );
               });
             });
           });
@@ -523,7 +535,8 @@
       });
 
       afterAll(function (done) {
-        rq.get(route + 'auth/logout', done);
+        var b = { body: { auth_token: token } };
+        rq.get(route + 'auth/logout', b, done);
       });
 
       describe('user.set/add POST and value as params', function () {
@@ -606,14 +619,17 @@
 
         it('should return error when arguments are not as expected',
           function (done) {
-            rq.put(userRoute + '/guest', function (err, resp, body) {
+            var b = { body: { auth_token: token } };
+            rq.put(userRoute + '/guest', b, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
               expect(body.error).toMatch('PARAM_STR');
-              var b = { body: { login: 'guest', password: '' } };
+              b = { body: { login: 'guest', password: '' } };
+              b.body.auth_token = token;
               rq.put(userRoute + '/guest', b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
                 expect(body.error).toMatch('PARAM_STR');
                 b = { body: { login: 'guest', password: 'secret' } };
+                b.body.auth_token = token;
                 rq.put(userRoute + '/guest', b, function (err, resp, body) {
                   expect(resp.statusCode).toBe(400);
                   expect(body.error).toMatch('PASSWORD_SIZE');
@@ -627,6 +643,7 @@
         it('should return an error if password size is not correct',
           function (done) {
             var b = { body: { login: 'guest', password: '1' } };
+            b.body.auth_token = token;
             rq.put(userRoute + '/guest', b, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
               expect(body.error).toMatch('PASSWORD_SIZE');
@@ -640,7 +657,8 @@
             body: {
               password: 'lovesKubiak',
               firstname: 'Parker',
-              lastname: 'Lewis'
+              lastname: 'Lewis',
+              auth_token: token
             }
           };
           rq.put(userRoute + '/parker', b, function (err, resp, body) {
@@ -696,6 +714,7 @@
         it('should accept updates on an existing user, if he is logged himself',
           function (done) {
             var b = { body: { password: 'missMusso', } };
+            b.body.auth_token = token;
             rq.put(userRoute + '/guest', b, function () {
               b.body.email = 'mikey@randall.com';
               rq.put(userRoute + '/guest', b, function (err, resp, body) {
@@ -765,7 +784,8 @@
         describe('userlist POST', function () {
 
           it('should return an error if no name is sent', function (done) {
-            rq.post(userlistRoute, {}, function (err, resp, body) {
+            var b = { body: { auth_token: token } };
+            rq.post(userlistRoute, b, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
               expect(body.error).toMatch('USERLIST_NAME');
               done();
@@ -774,6 +794,7 @@
 
           it('should allow creation otherwise', function (done) {
             var b = { body: { name: 'friends' } };
+            b.body.auth_token = token;
             rq.post(userlistRoute, b, function (err, resp, body) {
               expect(resp.statusCode).toBe(200);
               expect(body.success).toBeTruthy();
@@ -792,6 +813,7 @@
           it('should return an error if the userlist is not found',
             function (done) {
               var b = { body: { name: 'Useless' } };
+              b.body.auth_token = token;
               rq.put(userlistRoute + '/inexistent', b,
                 function (err, resp, body) {
                   expect(resp.statusCode).toBe(400);
@@ -804,7 +826,8 @@
 
           it('should return an error for set if no uids or no name are given',
             function (done) {
-              rq.put(userlistRoute + '/' + ld.keys(ulists)[0], {},
+              var b = { body: { auth_token: token } };
+              rq.put(userlistRoute + '/' + ld.keys(ulists)[0], b,
                 function (err, resp, body) {
                   expect(resp.statusCode).toBe(400);
                   expect(body.error).toMatch('USERLIST_SET_PARAMS');
@@ -817,6 +840,7 @@
           it('should update a list name', function (done) {
             var ulkey = ld.keys(ulists)[0];
             var b = { body: { name: 'Good friends' } };
+            b.body.auth_token = token;
             rq.put(userlistRoute + '/' + ulkey, b, function (err, resp, body) {
               expect(resp.statusCode).toBe(200);
               expect(body.success).toBeTruthy();
@@ -831,6 +855,7 @@
           it('should update a list with filtered logins', function (done) {
             var ulkey = ld.keys(ulists)[0];
             var b = { body: { logins: ['inexistent', 'mikey', 'jerry'] } };
+            b.body.auth_token = token;
             rq.put(userlistRoute + '/' + ulkey, b, function (err, resp, body) {
               expect(resp.statusCode).toBe(200);
               expect(body.success).toBeTruthy();
@@ -843,6 +868,7 @@
               expect(ld.isArray(ul.users)).toBeTruthy();
               expect(ld.size(ul.users)).toBe(2);
               b = { body: { logins: [] } };
+              b.body.auth_token = token;
               rq.put(userlistRoute + '/' + ulkey, b,
                 function (err, resp, body) {
                   expect(resp.statusCode).toBe(200);
@@ -866,7 +892,8 @@
 
           it('should return userlists of the current logged user',
             function (done) {
-              rq.get(userlistRoute, function (err, resp, body) {
+              var b = { body: { auth_token: token } };
+              rq.get(userlistRoute, b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(200);
                 ulists = body.value;
                 expect(ld.isObject(ulists)).toBeTruthy();
@@ -883,17 +910,21 @@
 
           it('should return an error if the userlist is not found',
             function (done) {
-              rq.del(userlistRoute + '/inexistent', function (err, resp, body) {
-                expect(resp.statusCode).toBe(400);
-                expect(body.error).toMatch('NOT_FOUND');
-                done();
-              });
+              var b = { body: { auth_token: token } };
+              rq.del(userlistRoute + '/inexistent', b,
+                function (err, resp, body) {
+                  expect(resp.statusCode).toBe(400);
+                  expect(body.error).toMatch('NOT_FOUND');
+                  done();
+                }
+              );
             }
           );
 
           it('should otherwise delete an userlist', function (done) {
+            var b = { body: { auth_token: token } };
             var ulkey = ld.keys(ulists)[0];
-            rq.del(userlistRoute + '/' + ulkey, function (err, resp, body) {
+            rq.del(userlistRoute + '/' + ulkey, b, function (err, resp, body) {
               expect(resp.statusCode).toBe(200);
               expect(body.success).toBeTruthy();
               ulists = body.value;
@@ -912,41 +943,37 @@
 
         it('should return error when arguments are not as expected',
           function (done) {
-            withAdmin(function (after) {
-              rq.post(userRoute + 'mark', function (err, resp, body) {
-                expect(resp.statusCode).toBe(400);
-                expect(body.error).toMatch('TYPE_PADSORGROUPS');
-                after();
-              });
-            }, done);
+            var b = { body: { auth_token: token } };
+            rq.post(userRoute + 'mark', b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('TYPE_PADSORGROUPS');
+              done();
+            });
           }
         );
 
         it('will return an error if the bookmark id does not exist',
           function (done) {
-            withAdmin(function (after) {
-              var b = { body: { type: 'pads', key:'xxx' } };
-              rq.post(userRoute + 'mark', b, function (err, resp, body) {
-                expect(resp.statusCode).toBe(404);
-                expect(body.error).toMatch('BOOKMARK_NOT_FOUND');
-                after();
-              });
-            }, done);
+            var b = { body: { type: 'pads', key:'xxx' } };
+            b.body.auth_token = token;
+            rq.post(userRoute + 'mark', b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(404);
+              expect(body.error).toMatch('BOOKMARK_NOT_FOUND');
+              done();
+            });
           }
         );
 
         it('should mark or unmark successfully otherwise',
           function (done) {
-            rq.get(userRoute + '/guest', function (err, resp, body) {
-              var b = {
-                body: {
-                  name: 'group1',
-                  admin: body.value._id,
-                  visibility: 'restricted'
-                }
-              };
+            var b = { body: { auth_token: token } };
+            rq.get(userRoute + '/guest', b, function (err, resp, body) {
+              b.body.name = 'group1';
+              b.body.admin = body.value._id;
+              b.body.visibility = 'restricted';
               rq.post(route + 'group', b, function (err, resp, body) {
                 b = { body: { type: 'groups', key: body.value._id } };
+                b.body.auth_token = token;
                 rq.post(userRoute + 'mark', b, function (err, resp, body) {
                   expect(resp.statusCode).toBe(200);
                   expect(body.success).toBeTruthy();
@@ -1175,7 +1202,8 @@
 
         it('should delete the record and returns the key and success' +
          ' otherwise', function (done) {
-            rq.del(userRoute + '/guest', function (err, resp, body) {
+            var b = { body: { auth_token: token } };
+            rq.del(userRoute + '/guest', b, function (err, resp, body) {
               expect(resp.statusCode).toBe(200);
               expect(body.success).toBeTruthy();
               expect(body.key).toBe('guest');
@@ -1201,6 +1229,7 @@
       var uotherid;
       var gotherid;
       var gprivateid;
+      var token;
 
       beforeAll(function (done) {
         specCommon.reInitDatabase(function () {
@@ -1229,17 +1258,26 @@
                     group.set(gparams, function (err, res) {
                       if (err) { console.log(err); }
                       gprivateid = res._id;
-                      rq.post(route + 'auth/login', { body: params }, done);
+                      rq.post(route + 'auth/login', { body: params },
+                        function (err, resp, body) {
+                          if (!err && resp.statusCode === 200) {
+                            token = body.token;
+                            done();
+                          }
+                        }
+                      );
                     });
                   });
-                });
-              });
+                }
+              );
             });
           });
         });
+      });
 
       afterAll(function (done) {
-        rq.get(route + 'auth/logout', function () {
+        var b = { body: { auth_token: token } };
+        rq.get(route + 'auth/logout', b, function () {
           specCommon.reInitDatabase(done);
         });
       });
@@ -1265,9 +1303,8 @@
                 logins: ['one', 'two'] 
               }
             };
-            rq.post(groupRoute + '/invite', b, function (err, resp, body) {
-              expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('KEY_NOT_FOUND');
+            rq.post(groupRoute + '/invite', b, function (err, resp) {
+              expect(resp.statusCode).toBe(401);
               done();
             });
           }
@@ -1281,9 +1318,8 @@
               logins: ['one', 'two']
             }
           };
-          rq.post(groupRoute + '/invite', b, function (err, resp, body) {
+          rq.post(groupRoute + '/invite', b, function (err, resp) {
             expect(resp.statusCode).toBe(401);
-            expect(body.error).toMatch('DENIED_RECORD_EDIT');
             done();
           });
         });
@@ -1315,7 +1351,8 @@
               body: {
                 invite: true,
                 gid: gid,
-                logins: [u.login, 'inexistent']
+                logins: [u.login, 'inexistent'],
+                auth_token: token
               }
             };
               rq.post(groupRoute + '/invite', b, function (err, resp, body) {
@@ -1336,9 +1373,8 @@
 
         it('should return error when arguments are not as expected',
           function (done) {
-            rq.post(groupRoute + '/resign', function (err, resp, body) {
-              expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('TYPE.ID_STR');
+            rq.post(groupRoute + '/resign', function (err, resp) {
+              expect(resp.statusCode).toBe(401);
               done();
             });
           }
@@ -1347,9 +1383,8 @@
         it('will return an error if the group or user id does not exist',
           function (done) {
             var b = { body: { gid:'xxx', uid: 'xxx' } };
-            rq.post(groupRoute + '/resign', b, function (err, resp, body) {
-              expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('KEY_NOT_FOUND');
+            rq.post(groupRoute + '/resign', b, function (err, resp) {
+              expect(resp.statusCode).toBe(401);
               done();
             });
           }
@@ -1358,9 +1393,8 @@
         it('should forbid resignation if the user is not part of the group',
           function (done) {
             var b = { body: { gid: gotherid } };
-            rq.post(groupRoute + '/resign', b, function (err, resp, body) {
-              expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('GROUP.NOT_USER');
+            rq.post(groupRoute + '/resign', b, function (err, resp) {
+              expect(resp.statusCode).toBe(401);
               done();
             });
           }
@@ -1369,9 +1403,8 @@
         it('should forbid resignation if the user is the unique admin',
           function (done) {
             var b = { body: { gid: gid } };
-            rq.post(groupRoute + '/resign', b, function (err, resp, body) {
-              expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('RESIGN_UNIQUE_ADMIN');
+            rq.post(groupRoute + '/resign', b, function (err, resp) {
+              expect(resp.statusCode).toBe(401);
               done();
             });
           }
@@ -1382,6 +1415,7 @@
             function (err, g) {
               expect(err).toBeNull();
               var b = { body: { gid: g._id } };
+              b.body.auth_token = token;
               rq.post(groupRoute + '/resign', b, function (err, resp, body) {
                 expect(err).toBeNull();
                 expect(resp.statusCode).toBe(200);
@@ -1404,7 +1438,8 @@
       describe('group.getByUser GET', function () {
 
         it('should return groups, pads and users', function (done) {
-          rq.get(groupRoute, function (err, resp, body) {
+          var b = { body: { auth_token: token } };
+          rq.get(groupRoute, b, function (err, resp, body) {
             expect(err).toBeNull();
             expect(resp.statusCode).toBe(200);
             expect(ld.isObject(body.value)).toBeTruthy();
@@ -1460,6 +1495,7 @@
                 name: 'groupPublic',
                 admin: uid,
                 visibility: 'public',
+                auth_token: token
               }
             };
             rq.post(groupRoute, b, function (err, resp, body) {
@@ -1467,7 +1503,7 @@
               expect(resp.statusCode).toBe(200);
               expect(body.success).toBeTruthy();
               var key = body.key;
-              rq.get(route + 'auth/logout', function () {
+              rq.get(route + 'auth/logout', b, function () {
                 rq.get(groupRoute + '/' + key, function (err, resp, body) {
                   expect(err).toBeNull();
                   expect(resp.statusCode).toBe(200);
@@ -1477,7 +1513,14 @@
                   expect(g.name).toBe('groupPublic');
                   expect(ld.size(pads)).toBe(0);
                   var params = { login: 'guest', password: 'willnotlivelong' };
-                  rq.post(route + 'auth/login', { body: params }, done);
+                  rq.post(route + 'auth/login', { body: params },
+                    function (err, resp, body) {
+                      if (!err && resp.statusCode === 200) {
+                        token = body.token;
+                        done();
+                      }
+                    }
+                  );
                 });
               });
             });
@@ -1487,6 +1530,7 @@
         it('should return filtered pads for public access groups',
           function (done) {
             var b = { body: { name: 'public', group: gid } };
+            b.body.auth_token = token;
             rq.post(route + 'pad', b, function (err, resp, body) {
               expect(err).toBeNull();
               expect(resp.statusCode).toBe(200);
@@ -1497,7 +1541,8 @@
                 expect(err).toBeNull();
                 expect(resp.statusCode).toBe(200);
                 expect(body.success).toBeTruthy();
-                rq.get(route + 'auth/logout', function () {
+                b = { body: { auth_token: token } };
+                rq.get(route + 'auth/logout', b, function () {
                   rq.get(groupRoute + '/' + gid, function (err, resp, body) {
                     expect(err).toBeNull();
                     expect(resp.statusCode).toBe(200);
@@ -1506,7 +1551,14 @@
                     expect(ld.size(pads)).toBe(1);
                     expect(ld.values(pads)[0].name).toBe('public');
                     var pms = { login: 'guest', password: 'willnotlivelong' };
-                    rq.post(route + 'auth/login', { body: pms }, done);
+                    rq.post(route + 'auth/login', { body: pms },
+                      function (err, resp, body) {
+                        if (!err && resp.statusCode === 200) {
+                          token = body.token;
+                          done();
+                        }
+                      }
+                    );
                   });
                 });
               });
@@ -1569,7 +1621,7 @@
               expect(resp.statusCode).toBe(200);
               expect(body.key).toBe(gid);
               expect(body.value.name).toBe('g1');
-              expect(ld.size(body.pads)).toBe(2);
+              expect(ld.size(body.pads)).toBe(1);
               done();
             });
           }
@@ -1611,13 +1663,11 @@
 
         it('should return error when arguments are not as expected',
           function (done) {
-            rq.post(groupRoute, function (err, resp, body) {
-              expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('PARAM_STR');
+            rq.post(groupRoute, function (err, resp) {
+              expect(resp.statusCode).toBe(401);
               var b = { body: { visibility: 'public' } };
-              rq.post(groupRoute, b, function (err, resp, body) {
-                expect(resp.statusCode).toBe(400);
-                expect(body.error).toMatch('PARAM_STR');
+              rq.post(groupRoute, b, function (err, resp) {
+                expect(resp.statusCode).toBe(401);
                 done();
               });
             });
@@ -1628,9 +1678,8 @@
           function (done) {
             var b = { body: { name: 'group1', admin: 'inexistentId' } };
             withAdmin(function (after) {
-              rq.post(groupRoute, b, function (err, resp, body) {
-                expect(resp.statusCode).toBe(400);
-                expect(body.error).toMatch('ITEMS_NOT_FOUND');
+              rq.post(groupRoute, b, function (err, resp) {
+                expect(resp.statusCode).toBe(401);
                 after();
               });
             }, done);
@@ -1646,9 +1695,8 @@
                 visibility: 'private'
               }
             };
-            rq.post(groupRoute, b, function (err, resp, body) {
-              expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('PASSWORD_INCORRECT');
+            rq.post(groupRoute, b, function (err, resp) {
+              expect(resp.statusCode).toBe(401);
               done();
             });
           }
@@ -1657,6 +1705,7 @@
         it('should force admin id to be the current user, unless ether admin',
           function (done) {
             var b = { body: { name: 'groupOk', admin: uotherid } };
+            b.body.auth_token = token;
             rq.post(groupRoute, b, function (err, resp, body) {
               expect(err).toBeNull();
               expect(resp.statusCode).toBe(200);
@@ -1684,7 +1733,8 @@
               description: 'a cool new group',
               admin: uid,
               visibility: 'private',
-              password: 'secret'
+              password: 'secret',
+              auth_token: token
             }
           };
           rq.post(groupRoute, b, function (err, resp, body) {
@@ -1695,7 +1745,7 @@
             var key = body.key;
             expect(body.value.name).toBe('groupOk');
             expect(body.value.description).toBe('a cool new group');
-            rq.get(groupRoute + '/' + key,
+            rq.get(groupRoute + '/' + key + '?auth_token=' + token,
               function (err, resp, body) {
                 expect(err).toBeNull();
                 expect(resp.statusCode).toBe(200);
@@ -1721,17 +1771,14 @@
 
         it('should return error when arguments are not as expected',
           function (done) {
-            rq.put(groupRoute + '/' + gid, function (err, resp, body) {
-              expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('PARAM_STR');
+            rq.put(groupRoute + '/' + gid, function (err, resp) {
+              expect(resp.statusCode).toBe(401);
               var b = { body: { name: 'group1' } };
-              rq.put(groupRoute + '/' + gid, b, function (err, resp, body) {
-                expect(resp.statusCode).toBe(400);
-                expect(body.error).toMatch('PARAM_STR');
+              rq.put(groupRoute + '/' + gid, b, function (err, resp) {
+                expect(resp.statusCode).toBe(401);
                 b = { body: { name: 'group1', admin: 'inexistentId' } };
-                rq.put(groupRoute + '/' + gid, b, function (err, resp, body) {
-                  expect(resp.statusCode).toBe(400);
-                  expect(body.error).toMatch('ITEMS_NOT_FOUND');
+                rq.put(groupRoute + '/' + gid, b, function (err, resp) {
+                  expect(resp.statusCode).toBe(401);
                   done();
                 });
               });
@@ -1747,7 +1794,8 @@
               description: 'an updated one',
               admin: uid,
               visibility: 'public',
-              readonly: true
+              readonly: true,
+              auth_token: token
             }
           };
           rq.put(groupRoute + '/' + gid, b, function (err, resp, body) {
@@ -1757,7 +1805,7 @@
             expect(body.key).toBe(gid);
             expect(body.value.name).toBe('gUpdated');
             expect(body.value.description).toBe('an updated one');
-            rq.get(groupRoute + '/' + gid,
+            rq.get(groupRoute + '/' + gid, b,
               function (err, resp, body) {
                 expect(resp.statusCode).toBe(200);
                 expect(body.key).toBe(gid);
@@ -1781,7 +1829,8 @@
               name: 'gCreated',
               admin: uid,
               visibility: 'public',
-              readonly: true
+              readonly: true,
+              auth_token: token
             }
           };
           rq.put(groupRoute + '/newgid', b, function (err, resp, body) {
@@ -1799,7 +1848,8 @@
                 _id: gotherid,
                 name: 'gOtherUpdated',
                 admin: uotherid,
-                visibility: 'public'
+                visibility: 'public',
+                auth_token: token
               }
             };
             rq.put(groupRoute + '/' + gotherid, b, function (err, resp, body) {
@@ -1841,7 +1891,8 @@
       describe('group.del DELETE and id', function () {
         it('will return an error if the group does not exist',
           function (done) {
-            rq.del(groupRoute + '/inexistentId', function (err, resp, body) {
+            var b = { body: { auth_token: token } };
+            rq.del(groupRoute + '/inexistentId', b, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
               expect(body.error).toMatch('KEY_NOT_FOUND');
               done();
@@ -1851,11 +1902,12 @@
 
         it('should deletes the record and returns the key and success' +
          ' otherwise', function (done) {
-            rq.del(groupRoute + '/' + gid, function (err, resp, body) {
+            var b = { body: { auth_token: token } };
+            rq.del(groupRoute + '/' + gid, b, function (err, resp, body) {
               expect(resp.statusCode).toBe(200);
               expect(body.success).toBeTruthy();
               expect(body.key).toBe(gid);
-              rq.get(groupRoute + '/' + gid, function (err, resp, body) {
+              rq.get(groupRoute + '/' + gid, b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(404);
                 expect(body.error).toMatch('KEY_NOT_FOUND');
                 done();
@@ -1866,7 +1918,8 @@
 
         it('should forbid deleting a record when the user is not an admin of' +
           ' the group', function (done) {
-            rq.del(groupRoute + '/' + gotherid, function (err, resp, body) {
+            var b = { body: { auth_token: token } };
+            rq.del(groupRoute + '/' + gotherid, b, function (err, resp, body) {
               expect(err).toBeNull();
               expect(resp.statusCode).toBe(401);
               expect(body.error).toMatch('DENIED_RECORD_EDIT');
@@ -1902,6 +1955,7 @@
       var pid;
       var potherid;
       var ppublicid;
+      var token;
 
       beforeAll(function (done) {
         specCommon.reInitDatabase(function () {
@@ -1934,7 +1988,13 @@
                           }, function (err, p) {
                             ppublicid = p._id;
                             rq.post(route + 'auth/login', { body: params },
-                             done);
+                              function (err, resp, b) {
+                                if (!err && resp.statusCode === 200) {
+                                  token = b.token;
+                                  done();
+                                }
+                              }
+                            );
                           });
                         }
                       );
@@ -1946,8 +2006,10 @@
           });
         });
       });
+
       afterAll(function (done) {
-        rq.get(route + 'auth/logout', function () {
+        var b = { body: { auth_token: token } };
+        rq.get(route + 'auth/logout', b, function () {
           specCommon.reInitDatabase(done);
         });
       });
@@ -1956,7 +2018,8 @@
 
         it('should return an error if the id does not exist',
           function (done) {
-            rq.get(padRoute + '/pinexistent', function (err, resp, body) {
+            var b = { body: { auth_token: token } };
+            rq.get(padRoute + '/pinexistent', b, function (err, resp, body) {
               expect(resp.statusCode).toBe(404);
               expect(body.error).toMatch('KEY_NOT_FOUND');
               done();
@@ -1965,7 +2028,8 @@
         );
 
         it('should forbid access to other pads', function (done) {
-          rq.get(padRoute + '/' + potherid, function (err, resp, body) {
+          var b = { body: { auth_token: token } };
+          rq.get(padRoute + '/' + potherid, b, function (err, resp, body) {
             expect(resp.statusCode).toBe(401);
             expect(body.error).toMatch('DENIED_RECORD');
             done();
@@ -1996,7 +2060,8 @@
 
         it('should give the key and the pad attributes otherwise',
           function (done) {
-            rq.get(padRoute + '/' + pid, function (err, resp, body) {
+            var b = { body: { auth_token: token } };
+            rq.get(padRoute + '/' + pid, b, function (err, resp, body) {
               expect(resp.statusCode).toBe(200);
               expect(body.key).toBe(pid);
               expect(body.value._id).toBe(pid);
@@ -2016,10 +2081,12 @@
 
         it('should return error when arguments are not as expected',
           function (done) {
-            rq.post(padRoute, function (err, resp, body) {
+            var b = { body: { auth_token: token } };
+            rq.post(padRoute, b, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
               expect(body.error).toMatch('PARAM_STR');
               var b = { body: { name: 'pad1' } };
+              b.body.auth_token = token;
               rq.post(padRoute, b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
                 expect(body.error).toMatch('PARAM_STR');
@@ -2032,6 +2099,7 @@
         it('should return an error if pad does not exist',
           function (done) {
             var b = { body: { name: 'pad1', group: gid, _id: 'inexistent' } };
+            b.body.auth_token = token;
             rq.post(padRoute, b, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
               expect(body.error).toMatch('PAD.INEXISTENT');
@@ -2043,6 +2111,7 @@
         it('should return an error if group does not exist',
           function (done) {
             var b = { body: { name: 'pad1', group: 'inexistentId' } };
+            b.body.auth_token = token;
             rq.post(padRoute, b, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
               expect(body.error).toMatch('PAD.ITEMS_NOT_FOUND');
@@ -2058,7 +2127,8 @@
                 name: 'pad1',
                 group: gid,
                 visibility: 'restricted',
-                users: ['inexistentId']
+                users: ['inexistentId'],
+                auth_token: token
               }
             };
             rq.post(padRoute, b, function (err, resp, body) {
@@ -2075,7 +2145,8 @@
               name: 'padOk',
               group: gid,
               visibility: 'private',
-              password: 'secret'
+              password: 'secret',
+              auth_token: token
             }
           };
           rq.post(padRoute, b, function (err, resp, body) {
@@ -2108,9 +2179,11 @@
 
         it('should return error when arguments are not as expected',
           function (done) {
-            rq.put(padRoute, function (err, resp) {
+            var b = { body: { auth_token: token } };
+            rq.put(padRoute, b, function (err, resp) {
               expect(resp.statusCode).toBe(404);
               var b = { body: { name: 'pad1' } };
+              b.body.auth_token = token;
               rq.put(padRoute + '/' + pid, b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
                 expect(body.error).toMatch('PARAM_STR');
@@ -2126,7 +2199,8 @@
               name: 'pother1',
               group: gotherid,
               visibility: 'public',
-              readonly: true
+              readonly: true,
+              auth_token: token
             }
           };
           rq.put(padRoute + '/' + potherid, b, function (err, resp, body) {
@@ -2167,7 +2241,8 @@
               name: 'pCreated',
               group: gid,
               visibility: 'public',
-              readonly: true
+              readonly: true,
+              auth_token: token
             }
           };
           rq.put(padRoute + '/newpid', b, function (err, resp, body) {
@@ -2185,7 +2260,8 @@
               name: 'pUpdated',
               group: gid,
               visibility: 'public',
-              readonly: true
+              readonly: true,
+              auth_token: token
             }
           };
           rq.put(padRoute + '/' + pid, b, function (err, resp, body) {
@@ -2194,7 +2270,8 @@
             expect(body.success).toBeTruthy();
             expect(body.key).toBe(pid);
             expect(body.value.name).toBe('pUpdated');
-            rq.get(padRoute + '/' + pid,
+            b = { body: { auth_token: token } };
+            rq.get(padRoute + '/' + pid, b,
               function (err, resp, body) {
                 expect(resp.statusCode).toBe(200);
                 expect(body.key).toBe(pid);
@@ -2214,7 +2291,8 @@
       describe('pad.del DELETE and id', function () {
         it('will return an error if the pad does not exist',
           function (done) {
-            rq.del(padRoute + '/inexistentId', function (err, resp, body) {
+            var b = { body: { auth_token: token } };
+            rq.del(padRoute + '/inexistentId', b, function (err, resp, body) {
               expect(resp.statusCode).toBe(404);
               expect(body.error).toMatch('KEY_NOT_FOUND');
               done();
@@ -2223,7 +2301,8 @@
         );
 
         it('should forbid removal for other pads', function (done) {
-          rq.del(padRoute + '/' + potherid, function (err, resp, body) {
+          var b = { body: { auth_token: token } };
+          rq.del(padRoute + '/' + potherid, b, function (err, resp, body) {
             expect(err).toBeNull();
             expect(resp.statusCode).toBe(401);
             expect(body.error).toMatch('DENIED_RECORD_EDIT');
@@ -2247,7 +2326,8 @@
 
         it('should deletes the record and returns the key and success' +
          ' otherwise', function (done) {
-            rq.del(padRoute + '/' + pid, function (err, resp, body) {
+            var b = { body: { auth_token: token } };
+            rq.del(padRoute + '/' + pid, b, function (err, resp, body) {
               expect(resp.statusCode).toBe(200);
               expect(body.success).toBeTruthy();
               expect(body.key).toBe(pid);

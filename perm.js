@@ -87,15 +87,17 @@ module.exports = (function () {
   perm.fn.check = function (params) {
     var callback = ld.partial(params.callback, params);
     var checkPass = function (el) {
-      var password = params.req.query.mypadspassword;
+      var rq = params.req.query;
+      var password = (rq ? rq.mypadspassword : false );
       if (!password) { return params.refuse(); }
       auth.fn.isPasswordValid(el, decode(password), function (err, valid) {
         if (err) { return params.unexpected(err); }
         return (valid ? callback() : params.refuse());
       });
     };
-    var login = params.req.mypadsLogin;
-    var uid = login && auth.tokens[login]._id || false;
+    var token = (params.req.query ? params.req.query.auth_token : false);
+    var u = auth.fn.getUser(token);
+    var uid = u && u._id || false;
     // Key not found, not a MyPads pad so next()
     if (!params.pg) { return params.next(); }
     var g = params.pg.group;
@@ -193,10 +195,10 @@ module.exports = (function () {
   perm.padAndAuthor = {};
 
   perm.setNameAndColor = function (req, res, next) {
-    var login = req.mypadsLogin;
-    var u = auth.tokens[login];
-    if (login && u.useLoginAndColorInPads) {
-      var opts = { userName: login };
+    var token = (req.query ? req.query.auth_token : false);
+    var u = auth.fn.getUser(token);
+    if (u && u.useLoginAndColorInPads) {
+      var opts = { userName: u.login };
       if (u.color) {
         opts.userColor = u.color;
       }

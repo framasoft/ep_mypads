@@ -23,9 +23,10 @@
 *  ## Description
 *
 *  This module contains all functions about authentification of MyPads users.
-*  It's mainly based upon the excellent *passport* Node library.
+*  It's mainly based upon the excellent *passport* and *jsonwebtoken* Node
+*  libraries.
 *
-*  TODO : usage of JWT instead of session-based strategy.
+*  TODO: abstract passport.authenticate to allow more easily custom errors
 */
 
 // External dependencies
@@ -47,8 +48,6 @@ catch (e) {
 var passport = require('passport');
 var JWTStrategy = require('passport-jwt').Strategy;
 var cuid = require('cuid');
-// secret per express-session
-var secret = cuid();
 
 // Local dependencies
 var user = require('./model/user.js');
@@ -57,10 +56,18 @@ module.exports = (function () {
   'use strict';
 
   /**
-  * ## Authentification functions
+  * ## Authentification
+  *
+  * - `tokens` holds all actives tokens with user logins as key and user data
+  *   as value, plus a special `key` attribute to check validity
+  * - `secret` is the temporary random string key. It will be reinitialized
+  *   after server relaunch, invaliditing all active users
   */
 
-  var auth = {};
+  var auth = {
+    tokens: {},
+    secret: cuid() // secret per etherpad session
+  };
 
   /**
   * ## Internal functions
@@ -78,35 +85,77 @@ module.exports = (function () {
   */
 
   auth.fn.local = function () {
-    passport.serializeUser(function(user, done) {
-      done(null, user.login);
-    });
-    passport.deserializeUser(function(id, done) {
-      user.get(id, done);
-    });
-    passport.use(new JWTStrategy({ secretOrKey: secret },
-      function (jwt_payload, callback) {
+    var opts = { secretOrKey: auth.secret, passReqToCallback: true };
+    passport.use(new JWTStrategy(opts,
+      function (req, jwt_payload, callback) {
+        //var fail = this.fail;
         var isFS = function (s) { return (ld.isString(s) && !ld.isEmpty(s)); };
         if (!isFS(jwt_payload.login)) {
+          //return fail(new TypeError('BACKEND.ERROR.TYPE.LOGIN_STR'), 400);
           throw new TypeError('BACKEND.ERROR.TYPE.LOGIN_STR');
-        }
-        if (!isFS(jwt_payload.password)) {
-          throw new TypeError('BACKEND.ERROR.TYPE.PASSWORD_STR');
         }
         if (!ld.isFunction(callback)) {
           throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
         }
-        auth.fn.localFn(jwt_payload.login, jwt_payload.password, callback);
+        auth.fn.JWTFn(req, jwt_payload, callback);
       }
     ));
   };
 
+  /*
+  * ### JWTFn
+  *
+  * `JWTFn` is the function used by JWT strategy for verifying if used
+  * encrypted jwt token is correct. It takes:
+  *
+  * - the `req` Express request object, automatically populated from the
+  *   strategy
+  * - the JWT decoded token `jwt_payload` object
+  * - a `password` string
+  * - a `callback` function, returning
+  *   - *Error* if there is a problem
+  *   - *null*, *false* and an object for auth error
+  *   - *null* and the *user* or *token* object for auth success
+  *
+  *  TODO: expiration handling?
+  */
+
+  auth.fn.JWTFn = function (req, jwt_payload, callback) {
+    var login = jwt_payload.login;
+    var token = auth.tokens[login];
+    if (!token || !jwt_payload.key) {
+      var pass = jwt_payload.password;
+      if (!ld.isString(pass)) {
+        return callback(new Error('BACKEND.ERROR.TYPE.PASSWORD_STR'));
+      }
+      user.get(login, function (err, u) {
+        if (err) { return callback(err); }
+        auth.fn.isPasswordValid(u, pass, function (err, isValid) {
+          if (err) { return callback(err); }
+          if (!isValid) {
+            var emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
+            return callback(new Error(emsg), false);
+          }
+          auth.tokens[login] = u;
+          auth.tokens[login].key = cuid();
+          return callback(null, u);
+        });
+      });
+    } else {
+      if (token.key !== jwt_payload.key) {
+        var emsg = 'BACKEND.ERROR.AUTHENTICATION.NOT_AUTH';
+        return callback(new Error(emsg), false);
+      }
+      req.mypadsLogin = login;
+      callback(null, token);
+    }
+  };
 
   /**
   * ### localFn
   *
-  * `localFn` is the function used by `localStrategy` for verifying if login and
-  * password are correct. It takes :
+  * `localFn` is a function that checks if login and password are correct. It
+  * takes :
   *
   * - a `login` string
   * - a `password` string
@@ -169,7 +218,6 @@ module.exports = (function () {
 
   auth.init = function (app) {
     app.use(passport.initialize());
-    app.use(passport.session());
     if (testMode) {
       app.use(cookieParser());
       var cuid = require('cuid');

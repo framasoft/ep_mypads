@@ -24,6 +24,7 @@
   var encode = require('js-base64').Base64.encode;
   var specCommon = require('./common.js');
   var perm = require('../../perm.js');
+  var auth = require('../../auth.js');
   var user = require('../../model/user.js');
   var group = require('../../model/group.js');
   var pad = require('../../model/pad.js');
@@ -107,6 +108,8 @@
                             if (!err) { pads.annie = p; }
                             pad.set(pads.annieOwnPass, function (err, p) {
                               if (!err) { pads.annieOwnPass = p; }
+                              auth.tokens.parker = users.parker;
+                              auth.tokens.jerry = users.jerry;
                               done();
                             });
                           });
@@ -126,7 +129,7 @@
 
     describe('local function check', function () {
       var next = function () { return true; };
-      var req = { params: {}, session: {}, query: {} };
+      var req = { params: {}, query: {}, mypadsLogin: undefined };
       var res = {
         status: function (code) { this.code = code; return this; },
         send: function (msg) { this.msg = msg; return this; }
@@ -141,7 +144,8 @@
       });
 
       it('should allow access for admin user', function (done) {
-        req.session.mypadsUid = users.parker._id;
+        req.mypadsLogin = 'parker';
+        //auth.tokens.parker = { _id: users.parker._id };
         req.params.pid = pads.college._id;
         perm.check(req, res, function () {
           expect(res.code).toBeUndefined();
@@ -161,7 +165,8 @@
       });
 
       it('should allow access to all for public group', function (done) {
-        delete req.session.mypadsUid;
+        delete req.mypadsLogin;
+        //delete auth.tokens.parker;
         req.params.pid = pads.college._id;
         perm.check(req, res, function () {
           expect(res.code).toBeUndefined();
@@ -178,7 +183,8 @@
           expect(res.msg.error).toMatch('UNAUTHORIZED');
           delete res.code;
           delete res.msg;
-          req.session.mypadsUid = users.jerry._id;
+          req.mypadsLogin = 'jerry';
+          //auth.tokens.jerry = { _id: users.jerry._id };
           perm.check(req, res, next);
           setTimeout(function () {
             expect(res.code).toBe(403);
@@ -198,7 +204,8 @@
         group.set(groups.memories, function (err, g) {
           expect(err).toBeNull();
           groups.memories = g;
-          req.session.mypadsUid = users.jerry._id;
+          req.mypadsLogin = 'jerry';
+          //auth.tokens.jerry = { _id: users.jerry._id };
           perm.check(req, res, function () {
             expect(res.code).toBeUndefined();
             expect(res.msg).toBeUndefined();
@@ -210,7 +217,8 @@
       it('should forbid access for private without password', function (done) {
         delete res.code;
         delete res.msg;
-        req.session.mypadsUid = users.jerry._id;
+        req.mypadsLogin = 'jerry';
+        //auth.tokens.jerry = { _id: users.jerry._id };
         req.params.pid = pads.annie._id;
 
         perm.check(req, res, next);
@@ -224,7 +232,8 @@
       it('should forbid access for private with bad password', function (done) {
         delete res.code;
         delete res.msg;
-        req.session.mypadsUid = users.jerry._id;
+        req.mypadsLogin = 'jerry';
+        //auth.tokens.jerry = { _id: users.jerry._id };
         req.params.pid = pads.annie._id;
         req.query.mypadspassword = 'badOne';
 
@@ -239,7 +248,8 @@
       it('should allow access for private with good password', function (done) {
         delete res.code;
         delete res.msg;
-        req.session.mypadsUid = users.jerry._id;
+        req.mypadsLogin = 'jerry';
+        //auth.tokens.jerry = { _id: users.jerry._id };
         req.params.pid = pads.annie._id;
         req.query.mypadspassword = encode('myLovelyGirl');
 
@@ -254,7 +264,8 @@
         function (done) {
           delete res.code;
           delete res.msg;
-          delete req.session.mypadsUid;
+          delete req.mypadsLogin;
+          //delete auth.tokens.jerry;
           delete req.query.mypadspassword;
           req.params.pid = pads.collegePrivate._id;
 
@@ -271,7 +282,8 @@
         function (done) {
           delete res.code;
           delete res.msg;
-          delete req.session.mypadsUid;
+          delete req.mypadsLogin;
+          //delete auth.tokens.jerry;
           req.params.pid = pads.collegePrivate._id;
           req.query.mypadspassword = encode('somePass');
 
@@ -287,7 +299,8 @@
         'private group', function (done) {
           delete res.code;
           delete res.msg;
-          delete req.session.mypadsUid;
+          delete req.mypadsLogin;
+          //delete auth.tokens.jerry;
           req.params.pid = pads.annieOwnPass._id;
           req.query.mypadspassword = encode('badPass');
           perm.check(req, res, next);
@@ -319,7 +332,8 @@
         function (done) {
           delete res.code;
           delete res.msg;
-          delete req.session.mypadsUid;
+          delete req.mypadsLogin;
+          //delete auth.tokens.jerry;
           req.params.pid = pads.memoriesPublic._id;
           perm.check(req, res, next);
           setTimeout(function () {
@@ -334,7 +348,7 @@
 
     describe('local function readonly', function () {
       var next = function () { return true; };
-      var req = { params: {}, session: {} };
+      var req = { params: {}, query: {}, mypadsLogin: undefined };
       var res = {
         status: function (code) { this.code = code; return this; },
         send: function (msg) { this.msg = msg; return this; }
@@ -396,7 +410,7 @@
         function (done) {
           expect(ld.isObject(perm.padAndAuthor)).toBeTruthy();
           expect(ld.isEmpty(perm.padAndAuthor)).toBeTruthy();
-          req.session.mypadsUseLoginAndColorInPads = false;
+          auth.tokens.jerry.useLoginAndColorInPads = false;
           perm.setNameAndColor(req, res, function () {
             expect(ld.isObject(perm.padAndAuthor)).toBeTruthy();
             expect(ld.isEmpty(perm.padAndAuthor)).toBeTruthy();
@@ -410,11 +424,11 @@
           expect(ld.isObject(perm.padAndAuthor)).toBeTruthy();
           expect(ld.isEmpty(perm.padAndAuthor)).toBeTruthy();
           req.params.pid = 'azerty';
-          req.session = {
-            mypadsUseLoginAndColorInPads: true,
-            mypadsLogin: 'parker',
-            mypadsColor: null
-          };
+          req.mypadsLogin = 'parker';
+          ld.assign(auth.tokens.parker, {
+            useLoginAndColorInPads: true,
+            color: null
+          });
           perm.setNameAndColor(req, res, function () {
             expect(ld.size(ld.keys(perm.padAndAuthor))).toBe(1);
             expect(ld.first(ld.keys(perm.padAndAuthor))).toBe('azerty');
@@ -430,11 +444,11 @@
         expect(ld.isObject(perm.padAndAuthor)).toBeTruthy();
         expect(ld.isEmpty(perm.padAndAuthor)).toBeTruthy();
         req.params.pid = 'azerty';
-        req.session = {
-          mypadsUseLoginAndColorInPads: true,
-          mypadsLogin: 'parker',
-          mypadsColor: '#00ff00'
-        };
+        req.mypadsLogin = 'parker';
+        ld.assign(auth.tokens.parker, {
+          useLoginAndColorInPads: true,
+          color: '#00ff00'
+        });
         perm.setNameAndColor(req, res, function () {
           expect(ld.size(ld.keys(perm.padAndAuthor))).toBe(1);
           expect(ld.first(ld.keys(perm.padAndAuthor))).toBe('azerty');
@@ -448,22 +462,21 @@
       it('should remember only the last options for a given pad',
         function (done) {
           req.params.pid = 'azerty';
-          req.session = {
-            mypadsUseLoginAndColorInPads: true,
-            mypadsLogin: 'parker',
-            mypadsColor: '#00ff00'
-          };
+          req.mypadsLogin = 'parker';
+          ld.assign(auth.tokens.parker, {
+            useLoginAndColorInPads: true,
+            color: '#00ff00'
+          });
           perm.setNameAndColor(req, res, function () {
             expect(ld.size(ld.keys(perm.padAndAuthor))).toBe(1);
             expect(ld.first(ld.keys(perm.padAndAuthor))).toBe('azerty');
             var opts = perm.padAndAuthor.azerty;
             expect(opts.userName).toBe('parker');
             expect(opts.userColor).toBe('#00ff00');
-            req.session.mypadsLogin = 'jerry';
+            req.mypadsLogin = 'jerry';
             perm.setNameAndColor(req, res, function () {
-              expect(ld.size(ld.keys(perm.padAndAuthor))).toBe(1);
-              expect(ld.first(ld.keys(perm.padAndAuthor))).toBe('azerty');
-              expect(perm.padAndAuthor.azerty.userName).toBe('jerry');
+              expect(ld.isObject(perm.padAndAuthor)).toBeTruthy();
+              expect(ld.isEmpty(perm.padAndAuthor)).toBeTruthy();
               done();
             });
           });

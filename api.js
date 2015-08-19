@@ -30,6 +30,7 @@ var rFS = require('fs').readFileSync;
 // External dependencies
 var ld = require('lodash');
 var passport = require('passport');
+var jwt = require('jsonwebtoken');
 var express;
 var testMode = false;
 try {
@@ -192,18 +193,32 @@ module.exports = (function () {
     return tpl(data);
   };
 
+  /**
+  * `getUser` is a synchronous function that checks if the given encrypted
+  * `token` is valid, ie if login has been already found in local cache and if
+  * the given key is the same as the generated one.
+  * It returns the *user* object in case of success and *false* otherwise.
+  */
+
+  fn.getUser = function (token) {
+    var jwt_payload = jwt.decode(token, auth.secret);
+    if (!jwt_payload) { return false; }
+    var login = jwt_payload.login;
+    var userAuth = (login && auth.tokens[login]);
+    if (userAuth && (auth.tokens[login].key === jwt_payload.key)) {
+      return auth.tokens[login];
+    } else {
+      return false;
+    }
+  };
 
   /**
   * `ensureAuthenticated` internal is an Express middleware takes `req`,
   * `res` and `next`. It returns error or lets the next middleware go.
+  * It relies on `passport.authenticate` with default strategy : *jwt*.
   */
 
-  fn.ensureAuthenticated = function (req, res, next) {
-    if (!req.isAuthenticated() && !req.session.mypadsLogin) {
-      return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.MUST_BE');
-    }
-    return next();
-  };
+  fn.ensureAuthenticated = passport.authenticate('jwt', { session: false });
 
   /**
   * `ensureAdmin` internal is an Express middleware that takes classic `req`,
@@ -212,7 +227,8 @@ module.exports = (function () {
   */
 
   fn.ensureAdmin = function (req, res, next) {
-    var isAdmin = (req.session.user && req.session.user.is_admin);
+    var rs = req.session;
+    var isAdmin = (rs && rs.user && rs.user.is_admin);
     if (!isAdmin) {
       return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.ADMIN');
     } else {
@@ -227,9 +243,12 @@ module.exports = (function () {
   */
 
   fn.ensureAdminOrSelf = function (req, res, next) {
-    var isAdmin = (req.session.user && req.session.user.is_admin);
-    var login = req.params.key || req.body.login;
-    var isSelf = (login === req.session.mypadsLogin);
+    var rs = req.session;
+    var isAdmin = (rs && rs.user && rs.user.is_admin);
+    var login = req.params.key;
+    var u = fn.getUser(req.body.auth_token || req.query.auth_token);
+    var isSelf = (u && login === u.login);
+    if (isSelf) { req.mypadsLogin = u.login; }
     if (!isAdmin && !isSelf) {
       return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.DENIED');
     } else {
@@ -254,17 +273,14 @@ module.exports = (function () {
 
     app.post(authRoute + '/check', fn.ensureAuthenticated,
       function (req, res) {
-        try {
-          auth.fn.localFn(req.body.login, req.body.password,
-            function (err) {
-              if (err) { return res.status(400).send({ error: err.message }); }
-              res.status(200).send({ success: true });
-            }
-          );
-        }
-        catch (e) {
-          res.status(400).send({ error: e.message });
-        }
+        auth.fn.localFn(req.body.login, req.body.password, function (err, u) {
+          if (err) { return res.status(400).send({ error: err.message }); }
+          if (!u) {
+            var emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
+            return res.status(400).send({ error: emsg });
+          }
+          res.status(200).send({ success: true });
+        });
       }
     );
 
@@ -276,64 +292,46 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/auth/login
     */
 
-    app.post(authRoute + '/login', function (req, res, next) {
-      passport.authenticate('local', function (err, u, info) {
+    app.post(authRoute + '/login', function (req, res) {
+      auth.fn.JWTFn(req, req.body, function (err, u, info) {
         if (err) { return res.status(400).send({ error: err.message }); }
         if (!u) { return res.status(400).send({ error: info.message }); }
-        req.login(u, function (err) {
-          if (err) { return res.status(400).send({ error: err }); }
-          var finish = function () {
-            ld.assign(req.session, {
-              mypadsUid: u._id,
-              mypadsActive: u.active,
-              mypadsLogin: u.login,
-              mypadsColor: u.color,
-              mypadsUseLoginAndColorInPads: u.useLoginAndColorInPads
-            });
-            res.status(200).send({
-              success: true,
-              user: ld.omit(u, 'password')
-            });
-          };
-          if (u.active) {
-            finish();
-          } else {
-            var msg = 'BACKEND.ERROR.AUTHENTICATION.ACTIVATION_NEEDED';
-            return fn.denied(res, msg);
-          }
-        });
-      })(req, res, next);
+        if (u.active) {
+          var token = { login: u.login, key: auth.tokens[u.login].key };
+          return res.status(200).send({
+            success: true,
+            user: ld.omit(u, 'password'),
+            token: jwt.sign(token, auth.secret)
+          });
+        } else {
+          var msg = 'BACKEND.ERROR.AUTHENTICATION.ACTIVATION_NEEDED';
+          return fn.denied(res, msg);
+        }
+      });
     });
 
     /**
-    * GET method : logout, method that destroy current `req.session` and logout
-    * from passport.
+    * GET method : logout, method that destroy current cached token
     *
     * Sample URL:
     * http://etherpad.ndd/mypads/api/auth/logout
     */
 
-    app.get(authRoute + '/logout', function (req, res) {
-      if (req.isAuthenticated() || !!req.session.mypadsLogin) {
-        req.logout();
-        req.session.destroy();
+    app.get(authRoute + '/logout', fn.ensureAuthenticated, function (req, res) {
+      delete auth.tokens[req.mypadsLogin];
         res.status(200).send({ success: true });
-      } else {
-        res.status(400)
-          .send({ error: 'BACKEND.ERROR.AUTHENTICATION.NOT_AUTH' });
-      }
     });
 
     /**
-    * GET method : admin logout, method that destroy current `req.session` and
-    * logout from passport.
+    * GET method : admin logout, method that destroy current `req.session`
     *
     * Sample URL:
     * http://etherpad.ndd/mypads/api/auth/adminlogout
     */
 
     app.get(authRoute + '/adminlogout', function (req, res) {
-      if (req.session.user && req.session.user.is_admin) {
+      var rs = req.session;
+      if (rs && rs.user && rs.user.is_admin) {
         req.session.destroy();
         return res.status(200).send({ success: true });
       } else {
@@ -346,8 +344,6 @@ module.exports = (function () {
 
   /**
   * ## Configuration API
-  *
-  * All methods needs `fn.ensureAuthenticated`
   */
 
   var configurationAPI = function (app) {
@@ -362,21 +358,14 @@ module.exports = (function () {
     */
 
     app.get(confRoute, function (req, res) {
-      req.session = req.session || {};
-      var isAuth = (req.isAuthenticated() || !!req.session.mypadsLogin);
-      var isAdmin = (req.session.user && req.session.user.is_admin);
+      var u = fn.getUser(req.query.auth_token);
+      var rs = req.session;
+      var isAdmin = (rs && rs.user && rs.user.is_admin);
       var action = isAdmin ? 'all' : 'public';
       var value = conf[action]();
-      var resp = { value: value, auth: isAuth };
-      if (isAuth) {
-        user.get(req.session.mypadsLogin, function (err, u) {
-          if (err) { return res.status(400).send({ error: err }); }
-          resp.user = u;
-          res.send(resp);
-        });
-      } else {
-        res.send(resp);
-      }
+      var resp = { value: value, auth: !!u };
+      if (u) { resp.user = u; }
+      res.send(resp);
     });
 
     /**
@@ -451,7 +440,7 @@ module.exports = (function () {
 
     app.get(userlistRoute, fn.ensureAuthenticated,
       function (req, res) {
-        var opts = { crud: 'get', login: req.session.mypadsLogin };
+        var opts = { crud: 'get', login: req.mypadsLogin };
         user.userlist(opts, function (err, u) {
           if (err) { return res.status(400).send({ error: err.message }); }
           res.send({ value: u.userlists });
@@ -478,7 +467,7 @@ module.exports = (function () {
           }
           var opts = {
             crud: 'add',
-            login: req.session.mypadsLogin,
+            login: req.mypadsLogin,
             name: req.body.name,
             uids: uids
           };
@@ -511,7 +500,7 @@ module.exports = (function () {
           }
           var opts = {
             crud: 'set',
-            login: req.session.mypadsLogin,
+            login: req.mypadsLogin,
             ulistid: req.params.key,
             name: req.body.name,
             uids: uids
@@ -539,7 +528,7 @@ module.exports = (function () {
         try {
           var opts = {
             crud: 'del',
-            login: req.session.mypadsLogin,
+            login: req.mypadsLogin,
             ulistid: req.params.key
           };
           user.userlist(opts, function (err, u) {
@@ -596,12 +585,16 @@ module.exports = (function () {
       }
       // Update needed session values
       if (!stop) {
-        req.session.mypadsColor = req.body.color || req.session.mypadsColor;
-        if (!ld.isUndefined(req.body.useLoginAndColorInPads)) {
-          req.session.mypadsUseLoginAndColorInPads =
-            req.body.useLoginAndColorInPads;
+        var u = fn.getUser(req.body.auth_token);
+        if (u) {
+          auth.tokens[u.login].color = req.body.color || u.color;
+          if (!ld.isUndefined(req.body.useLoginAndColorInPads)) {
+            auth.tokens[u.login].useLoginAndColorInPads =
+              req.body.useLoginAndColorInPads;
+          }
         }
-        if (req.session.user && req.session.user.is_admin) {
+        var rs = req.session;
+        if (rs && rs.user && rs.user.is_admin) {
           user.get(value.login, function (err, u) {
             if (err) { return res.status(400).send({ error: err.message }); }
             ld.assign(u, value);
@@ -617,7 +610,7 @@ module.exports = (function () {
 
     /**
     * POST method : `user.set` with user value for user creation
-    * Only method without AdminOrSelf
+    * Only method without permission verification
     *
     * Sample URL:
     * http://etherpad.ndd/mypads/api/user
@@ -643,8 +636,8 @@ module.exports = (function () {
     */
 
     app.delete(userRoute + '/:key', fn.ensureAdminOrSelf, function (req, res) {
-      var isSelf = (req.params.key === req.session.mypadsLogin);
-      if (isSelf) { req.session.destroy(); }
+      var isSelf = (req.params.key === req.mypadsLogin);
+      if (isSelf && req.session) { req.session.destroy(); }
       fn.del(user.del, req, res);
     });
 
@@ -659,7 +652,7 @@ module.exports = (function () {
     app.post(userRoute + 'mark', fn.ensureAuthenticated,
       function (req, res) {
         try {
-          user.mark(req.session.mypadsLogin, req.body.type, req.body.key,
+          user.mark(req.mypadsLogin, req.body.type, req.body.key,
             function (err) {
               if (err) { return res.status(404).send({ error: err.message }); }
               res.send({ success: true });
@@ -801,7 +794,7 @@ module.exports = (function () {
 
     app.get(groupRoute, fn.ensureAuthenticated,
       function (req, res) {
-        user.get(req.session.mypadsLogin, function (err, u) {
+        user.get(req.mypadsLogin, function (err, u) {
           if (err) { return res.status(400).send({ error: err }); }
           try {
             group.getByUser(u, true, function (err, data) {
@@ -855,9 +848,10 @@ module.exports = (function () {
           if (err) {
             return res.status(404).send({ key: key, error: err.message });
           }
-          var isAdmin = (req.session.user && req.session.user.is_admin);
-          var isUser = ld.includes(ld.union(g.admins, g.users),
-            req.session.mypadsUid);
+          var u = fn.getUser(req.query.auth_token);
+          var rs = req.session;
+          var isAdmin = (rs && rs.user && rs.user.is_admin);
+          var isUser = (u && ld.includes(ld.union(g.admins, g.users), u._id));
           var isAllowedForPublic = (g.visibility === 'public');
           if (isAllowedForPublic && !isAdmin && !isUser) {
             pads = ld.transform(pads, function (memo, p, key) {
@@ -914,11 +908,16 @@ module.exports = (function () {
     */
 
     var canEdit = function (req, res, successFn) {
-      var isAdmin = (req.session.user && req.session.user.is_admin);
+      var rs = req.session;
+      var isAdmin = (rs && rs.user && rs.user.is_admin);
       if (isAdmin) { return successFn(); }
+      var u = fn.getUser(req.body.auth_token);
+      if (!u) {
+        return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.NOT_AUTH');
+      }
       group.get(req.params.key, function (err, g) {
         if (err) { return res.status(400).send({ error: err.message }); }
-        var isAllowed = ld.includes(g.admins, req.session.mypadsUid);
+        var isAllowed = ld.includes(g.admins, auth.tokens[u.login]._id);
         if (isAllowed) {
           return successFn();
         } else {
@@ -941,9 +940,14 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/group
     */
 
-    app.post(groupRoute, fn.ensureAuthenticated, function (req, res) {
-      var isAdmin = (req.session.user && req.session.user.is_admin);
-      if (!isAdmin) { req.body.admin = req.session.mypadsUid; }
+    app.post(groupRoute, function (req, res) {
+      var rs = req.session;
+      var isAdmin = (rs && rs.user && rs.user.is_admin);
+      var u = fn.getUser(req.body.auth_token);
+      if (!u) {
+        return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.NOT_AUTH');
+      }
+      if (!isAdmin) { req.body.admin = u._id; }
       _set(req, res);
     });
 
@@ -954,7 +958,7 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/group/xxx
     */
 
-    app.put(groupRoute + '/:key', fn.ensureAuthenticated, function (req, res) {
+    app.put(groupRoute + '/:key', function (req, res) {
       canEdit(req, res, ld.partial(_set, req, res));
     });
 
@@ -965,8 +969,7 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/group/xxxx
     */
 
-    app.delete(groupRoute + '/:key', fn.ensureAuthenticated,
-      function (req, res) {
+    app.delete(groupRoute + '/:key', function (req, res) {
         canEdit(req, res, ld.partial(fn.del, group.del, req, res));
       }
     );
@@ -980,28 +983,26 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/group/invite
     */
 
-    app.post(groupRoute + '/invite', fn.ensureAuthenticated,
-      function (req, res) {
-        if (!req.body.gid) {
-          return res.status(400)
-            .send({ error: 'BACKEND.ERROR.TYPE.PARAMS_REQUIRED' });
-        }
-        req.params.key = req.body.gid;
-        var successFn = ld.partial(function (req, res) {
-          try {
-            group.inviteOrShare(req.body.invite, req.body.gid, req.body.logins,
-              function (err, g) {
-                if (err) {
-                  return res.status(401).send({ error: err.message });
-                }
-                return res.send({ success: true, value: g });
-            });
-          }
-          catch (e) { res.status(400).send({ error: e.message }); }
-        }, req, res);
-        canEdit(req, res, successFn);
+    app.post(groupRoute + '/invite', function (req, res) {
+      if (!req.body.gid) {
+        return res.status(400)
+          .send({ error: 'BACKEND.ERROR.TYPE.PARAMS_REQUIRED' });
       }
-    );
+      req.params.key = req.body.gid;
+      var successFn = ld.partial(function (req, res) {
+        try {
+          group.inviteOrShare(req.body.invite, req.body.gid, req.body.logins,
+            function (err, g) {
+              if (err) {
+                return res.status(401).send({ error: err.message });
+              }
+              return res.send({ success: true, value: g });
+          });
+        }
+        catch (e) { res.status(400).send({ error: e.message }); }
+      }, req, res);
+      canEdit(req, res, successFn);
+    });
 
     /**
     * POST method : `group.resign` with gid group id and current session uid.
@@ -1013,10 +1014,12 @@ module.exports = (function () {
     app.post(groupRoute + '/resign', fn.ensureAuthenticated,
       function (req, res) {
         try {
-          group.resign(req.body.gid, req.session.mypadsUid, function (err, g) {
-            if (err) { return res.status(400).send({ error: err.message }); }
-            return res.send({ success: true, value: g });
-          });
+          group.resign(req.body.gid, auth.tokens[req.mypadsLogin]._id,
+            function (err, g) {
+              if (err) { return res.status(400).send({ error: err.message }); }
+              return res.send({ success: true, value: g });
+            }
+          );
         }
         catch (e) { return res.status(400).send({ error: e.message }); }
       }
@@ -1049,10 +1052,9 @@ module.exports = (function () {
       pad.get(req.params.key, function (err, p) {
         var key = req.params.key;
         if (err) { return res.status(404).send({ error: err.message }); }
-        var isAdmin = (req.session.user && req.session.user.is_admin);
-        if (isAdmin) {
-          return successFn(req, res, p);
-        }
+        var rs = req.session;
+        var isAdmin = (rs && rs.user && rs.user.is_admin);
+        if (isAdmin) { return successFn(req, res, p); }
         if (!edit && (p.visibility === 'public')) {
           return successFn(req, res, p);
         }
@@ -1072,11 +1074,13 @@ module.exports = (function () {
             if (!edit && (g.visibility === 'public')) {
               return successFn(req, res, p);
             }
-            if (!req.isAuthenticated() && !req.session.mypadsLogin) {
+            var u = fn.getUser(req.body.auth_token || req.query.auth_token);
+            if (!u) {
               return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.MUST_BE');
             }
             var users = edit ? g.admins : ld.union(g.admins, g.users);
-            var isAllowed = ld.includes(users, req.session.mypadsUid);
+            var uid = auth.tokens[u.login]._id;
+            var isAllowed = ld.includes(users, uid);
             if (isAllowed) {
               return successFn(req, res, p);
             } else {
@@ -1115,7 +1119,16 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/pad
     */
 
-    app.post(padRoute, fn.ensureAuthenticated, _set);
+    app.post(padRoute, function (req, res) {
+      var rs = req.session;
+      var isAdmin = (rs && rs.user && rs.user.is_admin);
+      var u;
+      if (!isAdmin) { u = fn.getUser(req.body.auth_token); }
+      if (!isAdmin && !u) {
+        return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.NOT_AUTH');
+      }
+      _set(req, res);
+    });
 
     /**
     * PUT method : `pad.set` with group id plus value for existing pad
@@ -1124,8 +1137,7 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/pad/xxx
     */
 
-    app.put(padRoute + '/:key', fn.ensureAuthenticated,
-      ld.partial(canAct, true, _set));
+    app.put(padRoute + '/:key', ld.partial(canAct, true, _set));
 
     /**
     * DELETE method : `pad.del` with pad id
@@ -1134,8 +1146,16 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/pad/xxxx
     */
 
-    app.delete(padRoute + '/:key', fn.ensureAuthenticated,
-      ld.partial(canAct, true, ld.partial(fn.del, pad.del)));
+    app.delete(padRoute + '/:key', function (req, res) {
+      var rs = req.session;
+      var isAdmin = (rs && rs.user && rs.user.is_admin);
+      var u;
+      if (!isAdmin) { u = fn.getUser(req.body.auth_token); }
+      if (!isAdmin && !u) {
+        return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.NOT_AUTH');
+      }
+      canAct(true, ld.partial(fn.del, pad.del), req, res);
+    });
 
   };
 

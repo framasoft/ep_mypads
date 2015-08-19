@@ -69,7 +69,7 @@ module.exports = (function () {
 
   perm.fn.getPadAndGroup = function (pid, callback) {
     pad.get(pid, function (err, p) {
-      if (err) { return callback(null, null); }
+      if (err || !p) { return callback(null, null); }
       group.get(p.group, function (err, g) {
         if (err) { return callback(err); }
         return callback(null, { pad : p, group: g });

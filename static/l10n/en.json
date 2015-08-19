@@ -40,6 +40,7 @@
         "ACTIVATION_NEEDED": "Your account has not been confirmed",
         "NOT_AUTH": "Not authenticated",
         "PASSWORD_INCORRECT": "Password is not correct",
+        "TOKEN_INCORRECT": "Your security token is invalid",
         "ADMIN": "Access denied : you must be an authenticated Etherpad instance admin.",
         "DENIED": "Access denied",
         "DENIED_RECORD": "You're not allowed to get this record",

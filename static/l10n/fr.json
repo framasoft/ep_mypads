@@ -40,6 +40,7 @@
         "ACTIVATION_NEEDED": "Votre compte n'a pas été confirmé",
         "NOT_AUTH": "Pas authentifié",
         "PASSWORD_INCORRECT": "Le mot de passe n'est pas correct",
+        "TOKEN_INCORRECT": "Votre jeton de sécurité est invalide",
         "ADMIN": "Accès interdit : vous devez être un administrateur authentifié de l'instance Etherpad",
         "DENIED": "Accès interdit",
         "DENIED_RECORD": "Vous n'êtes pas autorisé à voir cet enregistrement",

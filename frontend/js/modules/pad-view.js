@@ -145,8 +145,9 @@ module.exports = (function () {
   };
 
   view.pad = function (c) {
-    var link = '/p/' + c.pad._id +
-    (c.sendPass() ? '?mypadspassword=' + encode(c.password()) : '');
+    var p = (c.sendPass() ? '&mypadspassword=' + encode(c.password()) : '');
+    var a = (auth.isAuthenticated() ? '&auth_token=' + auth.token() : '');
+    var link = '/p/' + c.pad._id + '?' + p + a;
     return [
       m('p.external', [
         m('a', {

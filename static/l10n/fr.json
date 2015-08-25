@@ -276,7 +276,7 @@
       "VISIBILITY": "Requis, restreint par défaut aux utilisateurs ou administrateurs invités",
       "READONLY": "Si sélectionné les pads liés seront en lecture seule",
       "PASSWORD": "Requis pour le mode privé",
-      "GROUP_PARAMS": "Par défaut, les pads héritent des paramètres du group dont ils sont partie. Vous pouvez cependant leur fixer des règles spécifiques",
+      "GROUP_PARAMS": "Par défaut, les pads héritent des paramètres du groupe dont ils font partie. Vous pouvez cependant leur fixer des règles spécifiques",
       "ADD_SUCCESS": "Le groupe a été ajouté avec succès",
       "EDIT_SUCCESS": "Le groupe a été mis à jour avec succès",
       "REMOVE_SUCCESS": "Le groupe a été supprimé avec succès",

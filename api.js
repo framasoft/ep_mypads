@@ -445,7 +445,7 @@ module.exports = (function () {
           var uids;
           if (req.body.logins) {
             uids = ld.compact(ld.map(req.body.logins,
-              function (l) { return user.ids[l]; }));
+              function (l) { return user.logins[l]; }));
           }
           var opts = {
             crud: 'add',
@@ -478,7 +478,7 @@ module.exports = (function () {
           var uids;
           if (req.body.logins) {
             uids = ld.compact(ld.map(req.body.logins,
-              function (l) { return user.ids[l]; }));
+              function (l) { return user.logins[l]; }));
           }
           var opts = {
             crud: 'set',
@@ -563,7 +563,7 @@ module.exports = (function () {
       } else {
         key = req.params.key;
         value.login = req.body.login || key;
-        value._id = user.ids[key];
+        value._id = user.logins[key];
       }
       // Update needed session values
       if (!stop) {
@@ -660,7 +660,7 @@ module.exports = (function () {
         err = 'BACKEND.ERROR.TYPE.LOGIN_REQUIRED';
         return res.status(400).send({ error: err });
       }
-      if (!user.ids[login]) {
+      if (!user.logins[login]) {
         err = 'BACKEND.ERROR.USER.NOT_FOUND';
         return res.status(404).send({ error: err });
       }
@@ -699,7 +699,7 @@ module.exports = (function () {
     app.put(api.initialRoute + 'passrecover/:token', function (req, res) {
       var val = mail.tokens[req.params.token];
       var err;
-      var badLogin = (!val || !val.login || !user.ids[val.login]);
+      var badLogin = (!val || !val.login || !user.logins[val.login]);
       var badAction = (!val || !val.action || (val.action !== 'passrecover'));
       if (badLogin || badAction) {
         err = 'BACKEND.ERROR.TOKEN.INCORRECT';

@@ -46,13 +46,13 @@
       });
       afterAll(specCommon.reInitDatabase);
 
-      it('should populate the user.ids field', function (done) {
+      it('should populate the user.logins field', function (done) {
         user.init(function (err) {
           expect(err).toBeNull();
-          expect(ld.isObject(user.ids)).toBeTruthy();
-          expect(ld.size(user.ids)).toBe(2);
-          expect(ld.includes(ld.keys(user.ids), 'parker')).toBeTruthy();
-          expect(ld.includes(ld.keys(user.ids), 'kubiak')).toBeTruthy();
+          expect(ld.isObject(user.logins)).toBeTruthy();
+          expect(ld.size(user.logins)).toBe(2);
+          expect(ld.includes(ld.keys(user.logins), 'parker')).toBeTruthy();
+          expect(ld.includes(ld.keys(user.logins), 'kubiak')).toBeTruthy();
           done();
         });
       });
@@ -109,8 +109,8 @@
             expect(ld.isArray(u.bookmarks.pads)).toBeTruthy();
             var okUls = (ld.isObject(u.userlists) && ld.isEmpty(u.userlists));
             expect(okUls).toBeTruthy();
-            expect(ld.includes(ld.values(user.ids), u._id)).toBeTruthy();
-            expect((user.ids[u.login])).toBe(u._id);
+            expect(ld.includes(ld.values(user.logins), u._id)).toBeTruthy();
+            expect((user.logins[u.login])).toBe(u._id);
             done();
           });
         }
@@ -131,8 +131,8 @@
             expect((ld.isArray(u.groups) && ld.isEmpty(u.groups))).toBeTruthy();
             var okUls = (ld.isObject(u.userlists) && ld.isEmpty(u.userlists));
             expect(okUls).toBeTruthy();
-            expect(ld.includes(ld.values(user.ids), u._id)).toBeTruthy();
-            expect((user.ids[u.login])).toBe(u._id);
+            expect(ld.includes(ld.values(user.logins), u._id)).toBeTruthy();
+            expect((user.logins[u.login])).toBe(u._id);
             done();
           });
         }
@@ -329,7 +329,7 @@
           expect(err).toBeNull();
           expect(_u).toBeDefined();
           expect(_u.login).toBe('parker');
-          expect(user.ids.parker).toBeUndefined();
+          expect(user.logins.parker).toBeUndefined();
           user.get('parker', function (err, u) {
             expect(ld.isError(err)).toBeTruthy();
             expect(u).toBeUndefined();
@@ -551,7 +551,7 @@
         crud: 'set',
         login: 'parker',
         ulistid: ulistid,
-        uids: [ user.ids.mikey, user.ids.jerry, 'fakeOne' ]
+        uids: [ user.logins.mikey, user.logins.jerry, 'fakeOne' ]
       };
       user.userlist(opts, function (err, u) {
         expect(err).toBeNull();
@@ -561,8 +561,8 @@
         expect(ul.name).toBe('Good friends');
         expect(ld.isArray(ul.uids)).toBeTruthy();
         expect(ld.size(ul.uids)).toBe(2);
-        expect(ul.uids[0]).toBe(user.ids.mikey);
-        expect(ul.uids[1]).toBe(user.ids.jerry);
+        expect(ul.uids[0]).toBe(user.logins.mikey);
+        expect(ul.uids[1]).toBe(user.logins.jerry);
         expect(ld.size(ul.users)).toBe(2);
         expect(ul.users[0].login).toBe('mikey');
         parker = u;
@@ -794,7 +794,7 @@
 
     describe('checkLogin', function () {
       beforeAll(function () {
-        user.ids = {
+        user.logins = {
           'parker': '087654321',
           'jerry': 'azertyuiop'
         };
@@ -825,7 +825,7 @@
             u = { login: 'park', _id: '087654321' };
             user.fn.checkLogin('087654321', u, function (err) {
               expect(err).toBeNull();
-              expect(user.ids.parker).toBeUndefined();
+              expect(user.logins.parker).toBeUndefined();
               done();
             });
           });

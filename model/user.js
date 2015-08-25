@@ -43,11 +43,12 @@ module.exports = (function () {
   *
   * It initially contains :
   *
-  * - `ids`, an in memory object to map `_id` to `login` field and ensures
+  * - `logins`, an in memory object to map `_id` to `login` field and ensures
   *   uniqueness of logins
+  * - `emails`, which have the same purpose for emails
   */
 
-  var user = { ids: {} };
+  var user = { logins: {}, emails: {} };
 
   /**
   * ## Internal Functions
@@ -225,8 +226,8 @@ module.exports = (function () {
 
   user.fn.checkLogin = function (_id, u, callback) {
     if (!_id) {
-      var exists = (!ld.isUndefined(user.ids[u.login]) ||
-        (ld.includes(ld.values(user.ids), u._id)));
+      var exists = (!ld.isUndefined(user.logins[u.login]) ||
+        (ld.includes(ld.values(user.logins), u._id)));
       if (exists) {
         var e = new Error('BACKEND.ERROR.USER.ALREADY_EXISTS');
         return callback(e);
@@ -234,11 +235,11 @@ module.exports = (function () {
       return callback(null);
     } else {
       // u.login has changed for existing user
-      if (ld.isUndefined(user.ids[u.login])) {
-        var key = ld.findKey(user.ids, function (uid) {
+      if (ld.isUndefined(user.logins[u.login])) {
+        var key = ld.findKey(user.logins, function (uid) {
           return uid === _id;
         });
-        delete user.ids[key];
+        delete user.logins[key];
       }
       return callback(null);
     }
@@ -265,7 +266,7 @@ module.exports = (function () {
       throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
     }
     callback(null, ld.reduce(logins, function (memo, login) {
-      var key = user.ids[login];
+      var key = user.logins[login];
       if (key) { memo.push(key); }
       return memo;
     }, []));
@@ -274,8 +275,9 @@ module.exports = (function () {
   /**
   * ### getDel
   *
-  * Local `getDel` wrapper that uses `user.ids` object to ensure uniqueness of
-  * login and _id fields before returning `common.getDel` with *UPREFIX* fixed.
+  * Local `getDel` wrapper that uses `user.logins` object to ensure uniqueness
+  * of login and _id fields before returning `common.getDel` with *UPREFIX*
+  * fixed.
   * It also handles secondary indexes for *model.group* elements and removes
   * all groups where the user was the only administrator.
   *
@@ -288,13 +290,13 @@ module.exports = (function () {
     if (!ld.isString(login) || ld.isEmpty(login)) {
       throw new TypeError('BACKEND.ERROR.TYPE.LOGIN_STR');
     }
-    if (ld.isUndefined(user.ids[login])) {
+    if (ld.isUndefined(user.logins[login])) {
       return callback(new Error('BACKEND.ERROR.USER.NOT_FOUND'));
     }
     var cb = callback;
     if (del) {
       cb = function (err, u) {
-        delete user.ids[u.login];
+        delete user.logins[u.login];
         if (u.groups.length) {
           var GPREFIX = storage.DBPREFIX.GROUP;
           storage.fn.getKeys(
@@ -325,7 +327,7 @@ module.exports = (function () {
         }
       };
     }
-    common.getDel(del, UPREFIX, user.ids[login], cb);
+    common.getDel(del, UPREFIX, user.logins[login], cb);
   };
 
   /**
@@ -341,7 +343,7 @@ module.exports = (function () {
   user.fn.set = function (u, callback) {
     storage.db.set(UPREFIX + u._id, u, function (err) {
       if (err) { return callback(err); }
-      user.ids[u.login] = u._id;
+      user.logins[u.login] = u._id;
       return callback(null, u);
     });
   };
@@ -363,7 +365,7 @@ module.exports = (function () {
       if (err) { return callback(err); }
       storage.fn.getKeys(keys, function (err, results) {
         if (results) {
-          user.ids = ld.transform(results, function (memo, val, key) {
+          user.logins = ld.transform(results, function (memo, val, key) {
             if (val) { memo[val.login] = key.replace(UPREFIX, ''); }
           });
         }
@@ -393,7 +395,7 @@ module.exports = (function () {
   * - a classic `callback` function returning *Error* if error, *null* otherwise
   *   and the user object
   *
-  * It takes care of updating correcly the `user.ids` in-memory index.
+  * It takes care of updating correcly the `user.logins` in-memory index.
   * `groups` array and `bookmarks` object can't be fixed here but will be
   * retrieved from database in case of update.
   */
@@ -496,7 +498,7 @@ module.exports = (function () {
     user.get(opts.login, function (err, u) {
       if (err) { return callback(err); }
       var setUids = function () {
-        var allUids = ld.values(user.ids);
+        var allUids = ld.values(user.logins);
         var uids = ld.filter(opts.uids, ld.partial(ld.includes, allUids));
         u.userlists[opts.ulistid].uids = uids;
       };

@@ -834,6 +834,48 @@
 
     });
 
+    describe('checkEmail', function () {
+      beforeAll(function () {
+        user.emails = {
+          'parker@lewis.me': '087654321',
+          'jerry@tremolo.lol': 'azertyuiop'
+        };
+      });
+      afterAll(function (done) { user.init(done); });
+
+      it('should return an error if add and existing email', function (done) {
+        var u = { _id: 'azertyuiop', email: 'jerry@tremolo.lol' };
+        user.fn.checkEmail(undefined, u, function (err) {
+          expect(ld.isError(err)).toBeTruthy();
+          expect(err).toMatch('USER.EMAIL_ALREADY_EXISTS');
+          u = { _id: 'anotherone', email: 'jerry@tremolo.lol' };
+          user.fn.checkEmail(undefined, u, function (err) {
+            expect(ld.isError(err)).toBeTruthy();
+            expect(err).toMatch('USER.EMAIL_ALREADY_EXISTS');
+            done();
+          });
+        });
+      });
+
+      it('should pay attention to email when edit, returns null',
+        function (done) {
+          var u = { _id: '087654321', email: 'parker@lewis.me' };
+          user.fn.checkEmail('087654321', u, function (err) {
+            expect(err).toBeNull();
+            expect(user.emails['parker@lewis.me']).toBeDefined();
+            u.email = 'parker@lewis.biz';
+            user.fn.checkEmail('087654321', u, function (err) {
+              expect(err).toBeNull();
+              expect(user.emails['parker@lewis.me']).toBeUndefined();
+              expect(user.emails['parker@lewis.biz']).toBeDefined();
+              done();
+            });
+          });
+        }
+      );
+
+    });
+
     describe('user getIdsFromLogins', function () {
 
       it('should throw errors if arguments are not provided as expected',

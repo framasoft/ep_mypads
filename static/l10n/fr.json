@@ -59,6 +59,7 @@
       },
       "USER": {
         "ALREADY_EXISTS": "L'utilisateur existe déjà, merci de choisir un autre identifiant",
+        "EMAIL_ALREADY_EXISTS": "Ce mail utilisateur a déjà été utilisé, merci d'en indiquer un autre",
         "NOT_FOUND": "Utilisateur non trouvé",
         "BOOKMARK_NOT_FOUND": "Favori non trouvé",
         "USERLIST_NOT_FOUND": "Liste utilisateur non trouvée"

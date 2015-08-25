@@ -59,6 +59,7 @@
       },
       "USER": {
         "ALREADY_EXISTS": "User already exists, please choose another login",
+        "EMAIL_ALREADY_EXISTS": "This user email has already been used, please choose another one",
         "NOT_FOUND": "User not found",
         "BOOKMARK_NOT_FOUND": "Bookmark not found",
         "USERLIST_NOT_FOUND": "Userlist not found"

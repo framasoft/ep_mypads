@@ -246,6 +246,45 @@ module.exports = (function () {
   };
 
   /**
+  * ### checkEmail
+  *
+  * This is a function which check if email is already taken for new
+  * users and if the email has changed for existing users (updates).
+  *
+  * It takes, as arguments
+  *
+  * - the given `id`, from `params._id` from `user.set`
+  * - the assigned `u` user object
+  * - a callback
+  *
+  * It returns, through the callback, an *Error* if the email is already here,
+  * *null* otherwise.
+  */
+
+  user.fn.checkEmail = function (_id, u, callback) {
+    if (!_id) {
+      var exists = (!ld.isUndefined(user.emails[u.email]) ||
+        (ld.includes(ld.values(user.emails), u._id)));
+      if (exists) {
+        var e = new Error('BACKEND.ERROR.USER.EMAIL_ALREADY_EXISTS');
+        return callback(e);
+      }
+      return callback(null);
+    } else {
+      // u.email has changed for existing user
+      if (ld.isUndefined(user.emails[u.email])) {
+        var key = ld.findKey(user.emails, function (uid) {
+          return uid === _id;
+        });
+        delete user.emails[key];
+        user.emails[u.email] = _id;
+      }
+      return callback(null);
+    }
+  };
+
+
+  /**
   * ### getIdsFromLogins
   *
   * `getIdsFromLogins` is a private asynchronous function that checks if given

@@ -36,6 +36,7 @@ module.exports = (function () {
   }
   var ld = require('lodash');
   var cuid = require('cuid');
+  var slugg = require('slugg');
   var common = require('./common.js');
   var storage = require('../storage.js');
   var group = require('./group.js');
@@ -269,7 +270,7 @@ module.exports = (function () {
         check();
       });
     } else {
-      p._id = cuid();
+      p._id = (slugg(p.name) + '-' + cuid.slug());
       check();
     }
   };

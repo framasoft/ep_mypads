@@ -27,6 +27,7 @@ module.exports = (function () {
   // Dependencies
   var ld = require('lodash');
   var cuid = require('cuid');
+  var slugg = require('slugg');
   var storage = require('../storage.js');
   var common = require('./common.js');
   var user = require('./user.js');
@@ -206,7 +207,7 @@ module.exports = (function () {
         check();
       });
     } else {
-      g._id = cuid();
+      g._id = (slugg(g.name) + '-' + cuid.slug());
       g.pads = [];
       check();
     }

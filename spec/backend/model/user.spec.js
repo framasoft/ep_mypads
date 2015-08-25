@@ -95,6 +95,7 @@
           }, function (err, u) {
             expect(err).toBeNull();
             expect(u._id).toBeDefined();
+            expect(ld.startsWith(u._id, 'parker-')).toBeTruthy();
             expect(u.active).toBeTruthy();
             expect(u.active).not.toBe(conf.get('checkMails'));
             expect(u.login).toBe('parker');
@@ -208,6 +209,7 @@
               },
                 function (err, u) {
                   expect(err).toBeNull();
+                  expect(ld.startsWith(u._id, 'mikey-')).toBeTruthy();
                   expect(u.login).toBe('mikey');
                   expect(u.email).toBe('mik@randall.com');
                   expect(u.firstname).toBe('Michael');
@@ -262,6 +264,7 @@
       user.get('parker', function (err, u) {
         expect(err).toBeNull();
         expect(u._id).toBeDefined();
+        expect(ld.startsWith(u._id, 'parker-')).toBeTruthy();
         expect(u.login).toBe('parker');
         expect(ld.isObject(u.password)).toBeTruthy();
         expect(u.firstname).toBe('Parker');

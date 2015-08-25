@@ -164,6 +164,7 @@
             group.set(params, function (err, g) {
               expect(err).toBeNull();
               expect(ld.isString(g._id)).toBeTruthy();
+              expect(ld.startsWith(g._id, 'college-')).toBeTruthy();
               expect(g._id).not.toBe('will not be given');
               expect(g.name).toBe('college');
               expect(ld.isArray(g.admins)).toBeTruthy();
@@ -196,6 +197,7 @@
         group.set(params, function (err, g) {
           expect(err).toBeNull();
           expect(ld.isString(g._id)).toBeTruthy();
+          expect(ld.startsWith(g._id, 'college2-')).toBeTruthy();
           expect(g.name).toBe('college2');
           expect(g.description).toBe('A strange place');
           expect(ld.isArray(g.admins)).toBeTruthy();
@@ -299,6 +301,7 @@
         group.set(params, function (err, g) {
           expect(err).toBeNull();
           expect(ld.isString(g._id)).toBeTruthy();
+          expect(ld.startsWith(g._id, 'college2-')).toBeFalsy();
           expect(g.name).toBe('college2');
           expect(g.description).toBe('A very strange place');
           expect(ld.isArray(g.admins)).toBeTruthy();
@@ -350,6 +353,7 @@
           group.set(params, function (err, g) {
             expect(err).toBeNull();
             expect(ld.isString(g._id)).toBeTruthy();
+            expect(ld.startsWith(g._id, 'collegerenamed-')).toBeFalsy();
             expect(g.name).toBe('collegeRenamed');
             expect(ld.isObject(g.password)).toBeTruthy();
             expect(g.password.salt).toBeDefined();
@@ -386,6 +390,7 @@
         group.get(gparams._id, function (err, g) {
           expect(err).toBeNull();
           expect(ld.isString(g._id)).toBeTruthy();
+          expect(ld.startsWith(g._id, 'college-')).toBeTruthy();
           expect(g.name).toBe('college');
           expect(ld.isArray(g.admins)).toBeTruthy();
           expect(ld.first(g.admins)).toBe(gadm._id);
@@ -432,6 +437,7 @@
           expect(ld.isObject(g)).toBeTruthy();
           expect(ld.isObject(pads)).toBeTruthy();
           expect(ld.isString(g._id)).toBeTruthy();
+          expect(ld.startsWith(g._id, 'college-')).toBeTruthy();
           expect(g.name).toBe('college');
           pads = ld.values(pads);
           expect(ld.size(pads)).toBe(ld.size(g.pads));

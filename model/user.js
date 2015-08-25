@@ -29,6 +29,7 @@ module.exports = (function () {
   var crypto = require('crypto');
   var ld = require('lodash');
   var cuid = require('cuid');
+  var slugg = require('slugg');
   var conf = require('../configuration.js');
   var storage = require('../storage.js');
   var common = require('./common.js');
@@ -400,7 +401,7 @@ module.exports = (function () {
   user.set = function (params, callback) {
     common.addSetInit(params, callback, ['login', 'password']);
     var u = user.fn.assignProps(params);
-    u._id = u._id || cuid();
+    u._id = u._id || (slugg(u.login) + '-' + cuid.slug());
     user.fn.checkLogin(params._id, u, function (err) {
       if (err) { return callback(err); }
       // Update/Edit case

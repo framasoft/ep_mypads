@@ -130,6 +130,7 @@
             expect(err).toBeNull();
             expect(ld.isObject(p)).toBeTruthy();
             expect(p._id).toBeDefined();
+            expect(ld.startsWith(p._id, 'conqueringtheworld-')).toBeTruthy();
             expect(p.name).toBe('conqueringTheWorld');
             expect(p.group).toBe(ggroup._id);
             expect(p.visibility).toBeNull();
@@ -196,6 +197,7 @@
             expect(err).toBeNull();
             expect(ld.isObject(p)).toBeTruthy();
             expect(p._id).toBeDefined();
+            expect(ld.startsWith(p._id, 'trapfrank-')).toBeTruthy();
             expect(p.name).toBe('trapFrank');
             expect(p.group).toBe(ggroup._id);
             expect(p.visibility).toBe('restricted');
@@ -219,6 +221,7 @@
               pad.set(p, function (err, p) {
                 expect(err).toBeNull();
                 expect(p._id).toBeDefined();
+                expect(ld.startsWith(p._id, 'trapfrank-')).toBeTruthy();
                 expect(p.name).toBe('TRAPFrank');
                 expect(p.visibility).toBe('private');
                 expect(p.password.salt).toBe(pass.salt);
@@ -238,6 +241,7 @@
           expect(err).toBeNull();
           expect(ld.isObject(p)).toBeTruthy();
           expect(p._id).toBe(gpad._id);
+          expect(ld.startsWith(p._id, 'shellynator-')).toBeFalsy();
           expect(p.name).toBe('shellyNator');
           expect(p.group).toBe(gpad.group);
           expect(p.visibility).toBe('restricted');

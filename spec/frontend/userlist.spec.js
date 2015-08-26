@@ -147,8 +147,8 @@ module.exports = (function () {
                   expect($ulist.querySelector('dd').textContent).toBe('1');
                   window.setTimeout(done, 100);
                 }, 200);
-              }, 100);
-            }, 100);
+              }, 200);
+            }, 200);
           });
 
         });

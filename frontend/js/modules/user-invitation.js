@@ -54,7 +54,7 @@ module.exports = (function () {
     var data = {
       invite: c.isInvite,
       gid: c.group._id,
-      logins: c.tag.current,
+      loginsOrEmails: c.tag.current,
       auth_token: auth.token()
     };
     m.request({
@@ -83,6 +83,7 @@ module.exports = (function () {
 
     if (!auth.isAuthenticated()) { return m.route('/login'); }
 
+    var uInfo = auth.userInfo();
     var c = {};
     c.isInvite = (m.route.param('action') === 'invite');
 
@@ -93,9 +94,10 @@ module.exports = (function () {
       users = ld.reduce(users, function (memo, val) {
         memo.byId[val._id] = val;
         memo.byLogin[val.login] = val;
+        memo.byEmail[val.email] = val;
         return memo;
-      }, { byId: {}, byLogin: {} });
-      c.users = users.byLogin;
+      }, { byId: {}, byLogin: {}, byEmail: {} });
+      c.users = ld.merge(users.byLogin, users.byEmail);
       var current = ld(users.byId)
         .pick(c.isInvite ? c.group.users : c.group.admins)
         .values()
@@ -106,7 +108,7 @@ module.exports = (function () {
         label: conf.LANG.GROUP.INVITE_USER.USERS_SELECTION,
         current: current,
         placeholder: conf.LANG.GROUP.INVITE_USER.PLACEHOLDER,
-        tags: ld.pull(ld.keys(c.users), auth.userInfo().login)
+        tags: ld.pull(ld.keys(c.users), uInfo.login, uInfo.email)
       });
     };
     if (ld.isEmpty(model.groups())) { model.fetch(init); } else { init(); }
@@ -119,7 +121,7 @@ module.exports = (function () {
     */
 
     c.userlistAdd = function (ulid) {
-      var ul = auth.userInfo().userlists[ulid];
+      var ul = uInfo.userlists[ulid];
       c.tag.current = ld.union(c.tag.current, ld.pluck(ul.users, 'login'));
     };
 

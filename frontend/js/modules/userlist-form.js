@@ -78,6 +78,7 @@ module.exports = (function () {
         ld.each(ul.users, function (user) {
           if (!ld.includes(memo, user.login)) {
             memo.push(user.login);
+            memo.push(user.email);
           }
         });
         return memo;
@@ -106,7 +107,7 @@ module.exports = (function () {
         url: conf.URLS.USERLIST,
         data: {
           name: c.data.name(),
-          logins: c.tag.current,
+          loginsOrEmails: c.tag.current,
           auth_token: auth.token()
         }
       };

@@ -448,7 +448,7 @@ module.exports = (function () {
           var uids;
           if (req.body.loginsOrEmails) {
             uids = ld.compact(ld.map(req.body.loginsOrEmails,
-              function (l) { return user.loginsOrEmails[l]; }));
+              function (l) { return user.logins[l] || user.emails[l]; }));
           }
           var opts = {
             crud: 'add',
@@ -481,7 +481,7 @@ module.exports = (function () {
           var uids;
           if (req.body.loginsOrEmails) {
             uids = ld.compact(ld.map(req.body.loginsOrEmails,
-              function (l) { return user.logins[l]; }));
+              function (l) { return user.logins[l] || user.emails[l]; }));
           }
           var opts = {
             crud: 'set',

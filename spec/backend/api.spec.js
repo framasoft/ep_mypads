@@ -909,9 +909,9 @@
           it('should update a list with filtered logins or emails',
             function (done) {
               var ulk = ld.keys(ulists)[0];
-              var b = {
-                body: { loginsOrEmails: ['inexistent', 'mikey', 'jerry'] }
-              };
+              var b = { body: {
+                loginsOrEmails: ['inexistent', 'mikey@randall.me', 'jerry']
+              } };
               b.body.auth_token = token;
               rq.put(userlistRoute + '/' + ulk, b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(200);

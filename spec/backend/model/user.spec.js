@@ -306,18 +306,24 @@
       });
     });
 
-    it('should return the user otherwise', function (done) {
+    it('should return the user otherwise from login as email', function (done) {
       user.get('parker', function (err, u) {
         expect(err).toBeNull();
-        expect(u._id).toBeDefined();
-        expect(ld.startsWith(u._id, 'parker-')).toBeTruthy();
+        var parkerId = u._id;
+        expect(parkerId).toBeDefined();
+        expect(ld.startsWith(parkerId, 'parker-')).toBeTruthy();
         expect(u.login).toBe('parker');
         expect(ld.isObject(u.password)).toBeTruthy();
         expect(u.firstname).toBe('Parker');
         expect(u.lastname).toBe('Lewis');
         expect(u.email).toBe('parker@lewis.me');
         expect(ld.isString(u.email)).toBeTruthy();
-        done();
+        user.get('parker@lewis.me', function (err, u) {
+          expect(err).toBeNull();
+          expect(u._id).toBe(parkerId);
+          expect(u.login).toBe('parker');
+          done();
+        });
       });
     });
   });

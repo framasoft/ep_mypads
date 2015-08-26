@@ -324,16 +324,18 @@ module.exports = (function () {
   * It also handles secondary indexes for *model.group* elements and removes
   * all groups where the user was the only administrator.
   *
-  * It takes the mandatory `login` string as argument and return an error if
-  * login already exists. It also takes a mandatory `callback` function.
+  * It takes the mandatory `loginOrEmail` string as argument and return an
+  * error if login already exists. It also takes a mandatory `callback`
+  * function.
   *
   */
 
-  user.fn.getDel = function (del, login, callback) {
-    if (!ld.isString(login) || ld.isEmpty(login)) {
+  user.fn.getDel = function (del, loginOrEmail, callback) {
+    if (!ld.isString(loginOrEmail) || ld.isEmpty(loginOrEmail)) {
       throw new TypeError('BACKEND.ERROR.TYPE.LOGIN_STR');
     }
-    if (ld.isUndefined(user.logins[login])) {
+    var uid = user.logins[loginOrEmail] || user.emails[loginOrEmail];
+    if (ld.isUndefined(uid)) {
       return callback(new Error('BACKEND.ERROR.USER.NOT_FOUND'));
     }
     var cb = callback;
@@ -371,7 +373,7 @@ module.exports = (function () {
         }
       };
     }
-    common.getDel(del, UPREFIX, user.logins[login], cb);
+    common.getDel(del, UPREFIX, uid, cb);
   };
 
   /**

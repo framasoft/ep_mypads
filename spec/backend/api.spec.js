@@ -1046,17 +1046,27 @@
 
       describe('user password recovery POST', function () {
 
-        it('should complain about missing login', function (done) {
+        it('should complain about missing email', function (done) {
           rq.post(route + 'passrecover', function (err, resp, body) {
             expect(err).toBeNull();
             expect(resp.statusCode).toBe(400);
-            expect(body.error).toMatch('LOGIN_REQUIRED');
+            expect(body.error).toMatch('TYPE');
+            done();
+          });
+        });
+
+        it('should complain about invalid email', function (done) {
+          var b = { body: { email: 'inexistent' } };
+          rq.post(route + 'passrecover', b, function (err, resp, body) {
+            expect(err).toBeNull();
+            expect(resp.statusCode).toBe(400);
+            expect(body.error).toMatch('TYPE');
             done();
           });
         });
 
         it('should complain about not found user', function (done) {
-          var b = { body: { login: 'inexistent' } };
+          var b = { body: { email: 'inexistent@example.org' } };
           rq.post(route + 'passrecover', b, function (err, resp, body) {
             expect(err).toBeNull();
             expect(resp.statusCode).toBe(404);
@@ -1067,7 +1077,7 @@
 
         it('should complain about not configured rootUrl setting',
           function (done) {
-            var b = { body: { login: 'guest' } };
+            var b = { body: { email: 'guest@phantomatic.weird' } };
             rq.post(route + 'passrecover', b, function (err, resp, body) {
               expect(err).toBeNull();
               expect(resp.statusCode).toBe(501);
@@ -1080,7 +1090,7 @@
         it('should complain about not configured mail settings',
           function (done) {
             conf.cache.rootUrl = 'http://localhost:8042';
-            var b = { body: { login: 'guest' } };
+            var b = { body: { email: 'guest@phantomatic.weird' } };
             rq.post(route + 'passrecover', b, function (err, resp, body) {
               expect(err).toBeNull();
               expect(resp.statusCode).toBe(501);

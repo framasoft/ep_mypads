@@ -650,20 +650,20 @@ module.exports = (function () {
 
     /**
     * POST method : special password recovery with mail sending.
-    * Need to have the login into the body
+    * Need to have the email address into the body
     * 
     * Sample URL:
     * http://etherpad.ndd/mypads/api/passrecover
     */
 
     app.post(api.initialRoute + 'passrecover', function (req, res) {
-      var login = req.body.login;
+      var email = req.body.email;
       var err;
-      if (!login || ld.isEmpty(login)) {
-        err = 'BACKEND.ERROR.TYPE.LOGIN_REQUIRED';
+      if (!ld.isEmail(email)) {
+        err = 'BACKEND.ERROR.TYPE.MAIL';
         return res.status(400).send({ error: err });
       }
-      if (!user.logins[login]) {
+      if (!user.emails[email]) {
         err = 'BACKEND.ERROR.USER.NOT_FOUND';
         return res.status(404).send({ error: err });
       }
@@ -671,15 +671,15 @@ module.exports = (function () {
         err = 'BACKEND.ERROR.CONFIGURATION.ROOTURL_NOT_CONFIGURED';
         return res.status(501).send({ error: err });
       }
-      user.get(login, function (err, u) {
+      user.get(email, function (err, u) {
         if (err) { return res.status(400).send({ error: err }); }
-        var token = mail.genToken({ login: login, action: 'passrecover' });
+        var token = mail.genToken({ login: u.login, action: 'passrecover' });
         console.log(conf.get('rootUrl') + '/mypads/index.html?/passrecover/' +
           token);
         var subject = fn.mailMessage('PASSRECOVER_SUBJECT', {
           title: conf.get('title') });
         var message = fn.mailMessage('PASSRECOVER', {
-          login: login,
+          login: u.login,
           title: conf.get('title'),
           url: conf.get('rootUrl') + '/mypads/index.html?/passrecover/' + token,
           duration: conf.get('tokenDuration')

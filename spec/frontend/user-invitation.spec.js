@@ -143,11 +143,11 @@ module.exports = (function () {
           }, 100);
         });
 
-        it('should allow entering new users by login and removing some ' +
-          'of them', function (done) {
+        it('should allow entering new users by login or email and ' +
+          'removing some of them', function (done) {
             fill($el.ipt, 'jerry');
             $el.ok.click();
-            fill($el.ipt, 'frank');
+            fill($el.ipt, 'frank@gracefanclub.org');
             $el.ok.click();
             fill($el.ipt, 'johnny');
             $el.ok.click();
@@ -158,7 +158,7 @@ module.exports = (function () {
               window.setTimeout(function () {
                 expect(users.length).toBe(4);
                 expect(users[0].textContent).toBe('jerry');
-                expect(users[1].textContent).toBe('frank');
+                expect(users[1].textContent).toBe('frank@gracefanclub.org');
                 expect(users[2].textContent).toBe('johnny');
                 expect(users[3].textContent).toBe('parker');
                 users[2].querySelector('i.icon-cancel').click();
@@ -167,7 +167,7 @@ module.exports = (function () {
                   window.setTimeout(function () {
                     expect(users.length).toBe(3);
                     expect(users[0].textContent).toBe('jerry');
-                    expect(users[1].textContent).toBe('frank');
+                    expect(users[1].textContent).toBe('frank@gracefanclub.org');
                     expect(users[2].textContent).toBe('parker');
                     expect($el.datalist.children.length).toBe(1);
                     expect($el.datalist.children[0].value).toBe('johnny');

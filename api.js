@@ -445,20 +445,23 @@ module.exports = (function () {
     app.post(userlistRoute, fn.ensureAuthenticated,
       function (req, res) {
         try {
-          var uids;
-          if (req.body.loginsOrEmails) {
-            uids = ld.compact(ld.map(req.body.loginsOrEmails,
-              function (l) { return user.logins[l] || user.emails[l]; }));
-          }
+          var users = { absent: [], present: [] };
+          var lm = req.body.loginsOrEmails;
+          if (lm) { users = user.fn.getIdsFromLoginsOrEmails(lm); }
           var opts = {
             crud: 'add',
             login: req.mypadsLogin,
-            name: req.body.name,
-            uids: uids
+            name: req.body.name
           };
+          if (users.uids) { opts.uids = users.uids; }
           user.userlist(opts, function (err, u) {
             if (err) { return res.status(400).send({ error: err.message }); }
-            res.send({ success: true, value: u.userlists });
+            return res.send({
+              success: true,
+              value: u.userlists,
+              present: users.present,
+              absent: users.absent
+            });
           });
         }
         catch (e) { return res.status(400).send({ error: e.message }); }
@@ -478,21 +481,24 @@ module.exports = (function () {
     app.put(userlistRoute + '/:key', fn.ensureAuthenticated,
       function (req, res) {
         try {
-          var uids;
-          if (req.body.loginsOrEmails) {
-            uids = ld.compact(ld.map(req.body.loginsOrEmails,
-              function (l) { return user.logins[l] || user.emails[l]; }));
-          }
+          var users = { absent: [], present: [] };
+          var lm = req.body.loginsOrEmails;
+          if (lm) { users = user.fn.getIdsFromLoginsOrEmails(lm); }
           var opts = {
             crud: 'set',
             login: req.mypadsLogin,
             ulistid: req.params.key,
-            name: req.body.name,
-            uids: uids
+            name: req.body.name
           };
+          if (users.uids) { opts.uids = users.uids; }
           user.userlist(opts, function (err, u) {
             if (err) { return res.status(400).send({ error: err.message }); }
-            res.send({ success: true, value: u.userlists });
+            return res.send({
+              success: true,
+              value: u.userlists,
+              present: users.present,
+              absent: users.absent
+            });
           });
         }
         catch (e) { return res.status(400).send({ error: e.message }); }

@@ -1437,12 +1437,12 @@
                 expect(body.success).toBeTruthy();
                 expect(ld.isObject(body.value)).toBeTruthy();
                 expect(ld.first(body.value.users)).toBe(u._id);
-                expect(ld.isObject(body.accepted)).toBeTruthy();
-                expect(ld.isObject(body.refused)).toBeTruthy();
-                expect(ld.size(body.accepted)).toBe(1);
-                expect(ld.first(body.accepted)).toBe(u.login);
-                expect(ld.size(body.refused)).toBe(1);
-                expect(ld.first(body.refused)).toBe('inexistent');
+                expect(ld.isObject(body.present)).toBeTruthy();
+                expect(ld.isObject(body.absent)).toBeTruthy();
+                expect(ld.size(body.present)).toBe(1);
+                expect(ld.first(body.present)).toBe(u.login);
+                expect(ld.size(body.absent)).toBe(1);
+                expect(ld.first(body.absent)).toBe('inexistent');
                 done();
               });
             });

@@ -279,7 +279,10 @@ module.exports = (function () {
         if (err) { return res.status(400).send({ error: err.message }); }
         if (!u) { return res.status(400).send({ error: info.message }); }
         if (u.active) {
-          var token = { login: u.login, key: auth.tokens[u.login].key };
+          var token = {
+            login: u.login,
+            key: auth.tokens[u.login].key
+          };
           return res.status(200).send({
             success: true,
             user: ld.omit(u, 'password'),

@@ -190,7 +190,6 @@ module.exports = (function () {
         res[v] = ld.isString(p[v]) ? p[v] : '';
         return res;
     }, {});
-    u.email = (ld.isEmail(p.email)) ? p.email : '';
     u.groups = [];
     u.bookmarks = { groups: [], pads: [] };
     u.userlists = {};
@@ -202,7 +201,12 @@ module.exports = (function () {
     }
     var langs = ld.keys(conf.cache.languages);
     u.lang = (ld.includes(langs, p.lang) ? p.lang : 'en');
-    return ld.assign({ _id: p._id, login: p.login, password: p.password }, u);
+    return ld.assign({
+      _id: p._id,
+      login: p.login,
+      password: p.password,
+      email: p.email
+    }, u);
   };
 
   /**
@@ -271,13 +275,11 @@ module.exports = (function () {
       }
       return callback(null);
     } else {
-      // u.email has changed for existing user
       if (ld.isUndefined(user.emails[u.email])) {
         var key = ld.findKey(user.emails, function (uid) {
           return uid === _id;
         });
         delete user.emails[key];
-        user.emails[u.email] = _id;
       }
       return callback(null);
     }
@@ -314,9 +316,9 @@ module.exports = (function () {
   /**
   * ### getDel
   *
-  * Local `getDel` wrapper that uses `user.logins` object to ensure uniqueness
-  * of login and _id fields before returning `common.getDel` with *UPREFIX*
-  * fixed.
+  * Local `getDel` wrapper that uses `user` in memory indexes to ensure
+  * uniqueness of login, email and _id fields before returning `common.getDel`
+  * with *UPREFIX* fixed.
   * It also handles secondary indexes for *model.group* elements and removes
   * all groups where the user was the only administrator.
   *
@@ -336,6 +338,7 @@ module.exports = (function () {
     if (del) {
       cb = function (err, u) {
         delete user.logins[u.login];
+        delete user.emails[u.email];
         if (u.groups.length) {
           var GPREFIX = storage.DBPREFIX.GROUP;
           storage.fn.getKeys(
@@ -383,6 +386,7 @@ module.exports = (function () {
     storage.db.set(UPREFIX + u._id, u, function (err) {
       if (err) { return callback(err); }
       user.logins[u.login] = u._id;
+      user.emails[u.email] = u._id;
       return callback(null, u);
     });
   };
@@ -404,9 +408,15 @@ module.exports = (function () {
       if (err) { return callback(err); }
       storage.fn.getKeys(keys, function (err, results) {
         if (results) {
-          user.logins = ld.transform(results, function (memo, val, key) {
-            if (val) { memo[val.login] = key.replace(UPREFIX, ''); }
-          });
+          var memo = ld.reduce(results, function (memo, val, key) {
+            if (val) {
+              var k = key.replace(UPREFIX, '');
+              memo.logins[val.login] = k;
+              memo.emails[val.email] = k;
+            }
+            return memo;
+          }, { logins: {}, emails: {} });
+          ld.assign(user, memo);
         }
         callback(null);
       });
@@ -424,7 +434,7 @@ module.exports = (function () {
   *   - required `login` string
   *   - required `password` string, between *conf.passwordMin* and
   *   *conf.passwordMax*, will be an object with `hash` and `salt` strings
-  *   - optional `email` string, used for communication
+  *   - required `email` string, used for communication
   *   - optional `firstname` string
   *   - optional `lastname` string
   *   - optional `organization` string
@@ -434,36 +444,42 @@ module.exports = (function () {
   * - a classic `callback` function returning *Error* if error, *null* otherwise
   *   and the user object
   *
-  * It takes care of updating correcly the `user.logins` in-memory index.
-  * `groups` array and `bookmarks` object can't be fixed here but will be
-  * retrieved from database in case of update.
+  * It takes care of updating correcly the `user.logins` and `user.emails`
+  * in-memory indexes. `groups` array and `bookmarks` object can't be fixed
+  * here but will be retrieved from database in case of update.
   */
 
   user.set = function (params, callback) {
     common.addSetInit(params, callback, ['login', 'password']);
+    if (!ld.isEmail(params.email)) {
+      throw new TypeError('BACKEND.ERROR.TYPE.EMAIL');
+    }
     var u = user.fn.assignProps(params);
     u._id = u._id || (slugg(u.login) + '-' + cuid.slug());
     user.fn.checkLogin(params._id, u, function (err) {
       if (err) { return callback(err); }
-      // Update/Edit case
-      if (params._id) {
-        user.get(u.login, function (err, dbuser) {
-          if (err) { return callback(err); }
-          u.groups = dbuser.groups;
-          u.bookmarks = dbuser.bookmarks;
-          u.userlists = dbuser.userlists;
-          u.active = dbuser.active;
-          user.fn.genPassword(dbuser, u, function (err, u) {
+      user.fn.checkEmail(params._id, u, function (err) {
+        if (err) { return callback(err); }
+        // Update/Edit case
+        if (params._id) {
+          user.get(u.login, function (err, dbuser) {
+            if (err) { return callback(err); }
+            u.groups = dbuser.groups;
+            u.bookmarks = dbuser.bookmarks;
+            u.userlists = dbuser.userlists;
+            u.active = dbuser.active;
+            user.fn.genPassword(dbuser, u, function (err, u) {
+              if (err) { return callback(err); }
+              user.fn.set(u, callback);
+            });
+          });
+        } else {
+          user.fn.genPassword(null, u, function (err, u) {
             if (err) { return callback(err); }
             user.fn.set(u, callback);
           });
-        });
-      } else {
-        user.fn.genPassword(null, u, function (err, u) {
-          if (err) { return callback(err); }
-          user.fn.set(u, callback);
-        });
-      }
+        }
+      });
     });
   };
 

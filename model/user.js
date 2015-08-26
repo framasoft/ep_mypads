@@ -549,7 +549,7 @@ module.exports = (function () {
       (ld.isUndefined(opts.ulistid))) {
         throw new TypeError('BACKEND.ERROR.TYPE.USERLIST_ID');
     }
-    if ((opts.crud === 'add') && (ld.isUndefined(opts.name))) {
+    if ((opts.crud === 'add') && (!ld.isString(opts.name))) {
       throw new TypeError('BACKEND.ERROR.TYPE.USERLIST_NAME');
     }
     if ((opts.crud === 'set') && 
@@ -586,7 +586,7 @@ module.exports = (function () {
           });
           break;
         case 'add':
-          opts.ulistid = cuid();
+          opts.ulistid = (slugg(opts.name) + '-' + cuid.slug());
           u.userlists[opts.ulistid] = { name: opts.name };
           if (opts.uids) {
             setUids();

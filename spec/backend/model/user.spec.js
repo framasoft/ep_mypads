@@ -575,6 +575,7 @@
       var opts = { crud: 'add', login: 'parker', name: 'friends' };
       user.userlist(opts, function (err, u) {
         expect(err).toBeNull();
+        expect(ld.startsWith(ld.keys(u.userlists)[0], 'friends-')).toBeTruthy();
         var ulists = ld.values(u.userlists);
         expect(ld.size(ulists)).toBe(1);
         var ul = ld.first(ulists);
@@ -586,7 +587,7 @@
       });
     });
 
-    it('should update a list name', function (done) {
+    it('should update a list name but not the uid', function (done) {
       var ulistid = ld.first(ld.keys(parker.userlists));
       var opts = {
         crud: 'set',
@@ -597,6 +598,7 @@
       user.userlist(opts, function (err, u) {
         expect(err).toBeNull();
         var ulists = ld.values(u.userlists);
+        expect(ld.startsWith(ld.keys(u.userlists)[0], 'friends-')).toBeTruthy();
         expect(ld.size(ulists)).toBe(1);
         var ul = ld.first(ulists);
         expect(ul.name).toBe('Good friends');

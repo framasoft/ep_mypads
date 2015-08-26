@@ -294,8 +294,11 @@ module.exports = (function () {
   * it to expected values : unique identifiers, before saving it to database.
   *
   * It takes an array of users `logins` and `emails`.
-  * It returns an object with keys corresponding to `loginsMails` and values to
-  * *false* if users have not been found and uid otherwise.
+  * It returns an object with :
+  *
+  * - `uids` for found users
+  * - `present` users logins or emails
+  * - `absent` users logins or emails
   */
 
   user.fn.getIdsFromLoginsOrEmails = function (loginsMails) {
@@ -303,10 +306,15 @@ module.exports = (function () {
       throw new TypeError('BACKEND.ERROR.TYPE.LOGINS_ARR');
     }
     return ld.reduce(loginsMails, function (memo, lm) {
-      var key = user.logins[lm] || user.emails[lm];
-      memo[lm] = key || false;
+      var uid = user.logins[lm] || user.emails[lm];
+      if (uid) {
+        memo.uids.push(uid);
+        memo.present.push(lm);
+      } else {
+        memo.absent.push(lm);
+      }
       return memo;
-    }, {});
+    }, { uids: [], present: [], absent: [] });
   };
 
   /**

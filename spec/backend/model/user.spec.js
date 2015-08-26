@@ -959,14 +959,17 @@
             var users = ['shelly', 'inexistent'];
             var res = user.fn.getIdsFromLoginsOrEmails(users);
             expect(ld.isObject(res)).toBeTruthy();
-            expect(ld.size(res)).toBe(2);
-            expect(res.shelly).toBe(u._id);
-            expect(res.inexistent).toBeFalsy();
+            expect(ld.size(res.uids)).toBe(1);
+            expect(ld.first(res.uids)).toBe(u._id);
+            expect(ld.size(res.present)).toBe(1);
+            expect(ld.first(res.present)).toBe('shelly');
+            expect(ld.size(res.absent)).toBe(1);
+            expect(ld.first(res.absent)).toBe('inexistent');
             users[0] = 'shelly@lewis.me';
             res = user.fn.getIdsFromLoginsOrEmails(users);
-            expect(err).toBeNull();
-            expect(ld.size(res)).toBe(2);
-            expect(res['shelly@lewis.me']).toBe(u._id);
+            expect(ld.size(res.present)).toBe(1);
+            expect(ld.first(res.present)).toBe('shelly@lewis.me');
+            expect(ld.size(res.absent)).toBe(1);
             done();
           });
         }

@@ -35,6 +35,7 @@ module.exports = (function () {
   var common = require('./common.js');
   var UPREFIX = storage.DBPREFIX.USER;
   var CPREFIX = storage.DBPREFIX.CONF;
+  var auth;
 
   /**
   *  ## Description
@@ -393,6 +394,8 @@ module.exports = (function () {
       if (err) { return callback(err); }
       user.logins[u.login] = u._id;
       user.emails[u.email] = u._id;
+      if (!auth) { auth = require('../auth.js'); }
+      ld.assign(auth.tokens[u.login], u);
       return callback(null, u);
     });
   };

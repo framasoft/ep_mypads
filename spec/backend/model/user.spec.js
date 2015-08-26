@@ -176,7 +176,6 @@
           login: 'kubiak',
           password: 'lovesMyself',
           email: 'parker@lewis.me' }, function (err, u) {
-            console.log(err);
             expect(ld.isError(err)).toBeTruthy();
             expect(u).toBeUndefined();
             done();

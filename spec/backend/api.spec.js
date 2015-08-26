@@ -906,39 +906,43 @@
             });
           });
 
-          it('should update a list with filtered logins', function (done) {
-            var ulkey = ld.keys(ulists)[0];
-            var b = { body: { logins: ['inexistent', 'mikey', 'jerry'] } };
-            b.body.auth_token = token;
-            rq.put(userlistRoute + '/' + ulkey, b, function (err, resp, body) {
-              expect(resp.statusCode).toBe(200);
-              expect(body.success).toBeTruthy();
-              ulists = body.value;
-              expect(ld.isObject(ulists)).toBeTruthy();
-              var ul = ld.values(ulists)[0];
-              expect(ul.name).toBe('Good friends');
-              expect(ld.isArray(ul.uids)).toBeTruthy();
-              expect(ld.size(ul.uids)).toBe(2);
-              expect(ld.isArray(ul.users)).toBeTruthy();
-              expect(ld.size(ul.users)).toBe(2);
-              b = { body: { logins: [] } };
+          it('should update a list with filtered logins or emails',
+            function (done) {
+              var ulk = ld.keys(ulists)[0];
+              var b = {
+                body: { loginsOrEmails: ['inexistent', 'mikey', 'jerry'] }
+              };
               b.body.auth_token = token;
-              rq.put(userlistRoute + '/' + ulkey, b,
-                function (err, resp, body) {
-                  expect(resp.statusCode).toBe(200);
-                  expect(body.success).toBeTruthy();
-                  ulists = body.value;
-                  var ul = ld.values(ulists)[0];
-                  expect(ul.name).toBe('Good friends');
-                  expect(ld.isArray(ul.uids)).toBeTruthy();
-                  expect(ld.isEmpty(ul.uids)).toBeTruthy();
-                  expect(ld.isArray(ul.users)).toBeTruthy();
-                  expect(ld.isEmpty(ul.users)).toBeTruthy();
-                  done();
-                }
-              );
-            });
-          });
+              rq.put(userlistRoute + '/' + ulk, b, function (err, resp, body) {
+                expect(resp.statusCode).toBe(200);
+                expect(body.success).toBeTruthy();
+                ulists = body.value;
+                expect(ld.isObject(ulists)).toBeTruthy();
+                var ul = ld.values(ulists)[0];
+                expect(ul.name).toBe('Good friends');
+                expect(ld.isArray(ul.uids)).toBeTruthy();
+                expect(ld.size(ul.uids)).toBe(2);
+                expect(ld.isArray(ul.users)).toBeTruthy();
+                expect(ld.size(ul.users)).toBe(2);
+                b = { body: { loginsOrEmails: [] } };
+                b.body.auth_token = token;
+                rq.put(userlistRoute + '/' + ulk, b,
+                  function (err, resp, body) {
+                    expect(resp.statusCode).toBe(200);
+                    expect(body.success).toBeTruthy();
+                    ulists = body.value;
+                    var ul = ld.values(ulists)[0];
+                    expect(ul.name).toBe('Good friends');
+                    expect(ld.isArray(ul.uids)).toBeTruthy();
+                    expect(ld.isEmpty(ul.uids)).toBeTruthy();
+                    expect(ld.isArray(ul.users)).toBeTruthy();
+                    expect(ld.isEmpty(ul.users)).toBeTruthy();
+                    done();
+                  }
+                );
+              });
+            }
+          );
 
         });
 

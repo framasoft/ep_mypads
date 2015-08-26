@@ -129,6 +129,27 @@ module.exports = (function () {
         }, 100);
       });
 
+      it('should disallow subscription for existing email', function (done) {
+        fill($el.login, 'betterParker');
+        fill($el.password, 'betterPassword123');
+        fill($el.passwordConfirm, 'betterPassword123');
+        fill($el.email, 'parker@lewis.me');
+        expect($el.form.checkValidity()).toBeTruthy();
+        expect($el.login.checkValidity()).toBeTruthy();
+        expect($el.password.checkValidity()).toBeTruthy();
+        expect($el.email.checkValidity()).toBeTruthy();
+        $el.submit.click();
+        window.setTimeout(function () {
+          expect(app.location.search).toBe(hash);
+          var $error = app.document.querySelectorAll('body > section p');
+          $error = $error[$error.length - 1];
+          expect($error.textContent)
+            .toMatch('This user email has already been used');
+          $error.click();
+          done();
+        }, 100);
+      });
+
       it('should allow subscription with good filling', function (done) {
         var login = 'mikey-' + new Date().getTime();
         fill($el.login, login);

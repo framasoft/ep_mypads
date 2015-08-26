@@ -326,38 +326,36 @@ module.exports = (function () {
     if (!ld.isFunction(callback)) {
       throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
     }
-    user.fn.getIdsFromLoginsOrEmails(loginsOrEmails, function (err, uids) {
+    var uids = user.fn.getIdsFromLoginsOrEmails(loginsOrEmails);
+    var users = ld.reduce(uids, function (memo, v, k) {
+      if (v) {
+        memo.uids.push(v);
+        memo.accepted.push(k);
+      } else {
+        memo.refused.push(k);
+      }
+      return memo;
+    }, { uids: [], accepted: [], refused: [] });
+    group.get(gid, function (err, g) {
       if (err) { return callback(err); }
-      var users = ld.reduce(uids, function (memo, v, k) {
-        if (v) {
-          memo.uids.push(v);
-          memo.accepted.push(k);
-        } else {
-          memo.refused.push(k);
+      var removed;
+      if (invite) {
+        removed = ld.difference(g.users, users.uids);
+        g.users = ld.reject(users.uids, ld.partial(ld.includes, g.admins));
+      } else {
+        removed = ld.difference(g.admins, users.uids);
+        g.admins = ld.reject(users.uids, ld.partial(ld.includes, g.users));
+        if ((ld.size(g.admins)) === 0) {
+          var e = new Error('BACKEND.ERROR.GROUP.RESIGN_UNIQUE_ADMIN');
+          return callback(e);
         }
-        return memo;
-      }, { uids: [], accepted: [], refused: [] });
-      group.get(gid, function (err, g) {
+      }
+      // indexUsers with deletion for full reindexation process
+      group.fn.indexUsers(true, g._id, removed, function (err) {
         if (err) { return callback(err); }
-        var removed;
-        if (invite) {
-          removed = ld.difference(g.users, users.uids);
-          g.users = ld.reject(users.uids, ld.partial(ld.includes, g.admins));
-        } else {
-          removed = ld.difference(g.admins, users.uids);
-          g.admins = ld.reject(users.uids, ld.partial(ld.includes, g.users));
-          if ((ld.size(g.admins)) === 0) {
-            var e = new Error('BACKEND.ERROR.GROUP.RESIGN_UNIQUE_ADMIN');
-            return callback(e);
-          }
-        }
-        // indexUsers with deletion for full reindexation process
-        group.fn.indexUsers(true, g._id, removed, function (err) {
+        group.fn.set(g, function (err, g) {
           if (err) { return callback(err); }
-          group.fn.set(g, function (err, g) {
-            if (err) { return callback(err); }
-            callback(null, g, ld.omit(users, 'uids'));
-          });
+          callback(null, g, ld.omit(users, 'uids'));
         });
       });
     });

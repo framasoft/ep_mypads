@@ -301,7 +301,7 @@ module.exports = (function () {
   *
   * - `invite` boolean, *true* for user invitation, *false* for admin sharing;
   * - `gid` group unique identifier;
-  * - array of users `logins`;
+  * - array of users `loginsOrEmails`;
   * - `callback` function calling with  *error* if error or *null* and the
   *   updated group otherwise.
   *
@@ -312,20 +312,20 @@ module.exports = (function () {
   * local groups.
   */
 
-  group.inviteOrShare = function (invite, gid, logins, callback) {
+  group.inviteOrShare = function (invite, gid, loginsOrEmails, callback) {
     if (!ld.isBoolean(invite)) {
       throw new TypeError('BACKEND.ERROR.TYPE.INVITE_BOOL');
     }
     if (!ld.isString(gid)) {
       throw new TypeError('BACKEND.ERROR.TYPE.GID_STR');
     }
-    if (!ld.isArray(logins)) {
+    if (!ld.isArray(loginsOrEmails)) {
       throw new TypeError('BACKEND.ERROR.TYPE.LOGINS_ARR');
     }
     if (!ld.isFunction(callback)) {
       throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
     }
-    user.fn.getIdsFromLogins(logins, function (err, uids) {
+    user.fn.getIdsFromLoginsOrEmails(loginsOrEmails, function (err, uids) {
       if (err) { return callback(err); }
       group.get(gid, function (err, g) {
         if (err) { return callback(err); }

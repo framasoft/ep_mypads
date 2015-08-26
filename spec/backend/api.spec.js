@@ -1358,7 +1358,7 @@
               body: {
                 invite: true,
                 gid:'xxx',
-                logins: ['one', 'two'] 
+                loginsOrEmails: ['one', 'two'] 
               }
             };
             rq.post(groupRoute + '/invite', b, function (err, resp) {
@@ -1373,7 +1373,7 @@
             body: {
               invite: true,
               gid: gotherid,
-              logins: ['one', 'two']
+              loginsOrEmails: ['one', 'two']
             }
           };
           rq.post(groupRoute + '/invite', b, function (err, resp) {
@@ -1387,7 +1387,7 @@
             body: {
               invite: true,
               gid: gotherid,
-              logins: ['one', 'two']
+              loginsOrEmails: ['one', 'two']
             }
           };
           withAdmin(function (after) {
@@ -1413,7 +1413,7 @@
               body: {
                 invite: true,
                 gid: gid,
-                logins: [u.login, 'inexistent'],
+                loginsOrEmails: [u.login, 'inexistent'],
                 auth_token: token
               }
             };

@@ -205,7 +205,7 @@
     "QUIT_GROUP": "Quit the group",
     "INVITE_USER": {
       "IU": "Invite users",
-      "HELP": "<h4>Userlists</h4><p>You can select one or more userlists. Each click will add all members of the selected userlist to invited users.</p><h4>Invite users</h4><p>This field accepts one login at a time. When ENTER is typed, or OK is clicked, the login is added to the list of invited users. A list of known users helps you to fill the login.</p><h4>Users</h4><p>This list contains all selected users. You can remove one by clicking the sign after each login.</p><h4>Note</h4><p>Please note that, for instance, registered users will be automatically added to your group. In short term, external users will receive a mail for creating an account.</p>",
+      "HELP": "<h4>Userlists</h4><p>You can select one or more userlists. Each click will add all members of the selected userlist to invited users.</p><h4>Invite users</h4><p>This field accepts one login or email at a time. When ENTER is typed, or OK is clicked, the filled data is added to the list of invited users. A list of known users helps you to fill the login or email.</p><h4>Users</h4><p>This list contains all selected users. You can remove one by clicking the sign after each item.</p><h4>Note</h4><p>Please note that, for instance, registered users will be automatically added to your group. In short term, external users will receive a mail for creating an account.</p>",
       "USERS_SELECTION": "Users selection",
       "USERS_SELECTED": "Selected users",
       "PLACEHOLDER": "Enter login",
@@ -306,7 +306,7 @@
     "ADD": "Create a new userlist",
     "EDIT": "Edit userlist ",
     "HELP": "<p>Here you can find all your userlists, ordered by creation date. Summary information are available with the name of each userlist and the number of users linked.</p><p>Through action icons, located on top right of each userlist, you can edit or remove lists. Details are available in the form view, via edit action.</p>",
-    "FORM_HELP": "<h3>Name</h3><p>You must give a name to the userlist, in order to be able to identify it.</p><h3>Users</h3><p>You can add as many users as you want. To do it, please enter the login and click on the 'OK' button. Note that already known users can be selected from the input.</p><p>To remove users, click on the cross located at the right of each login.</p>",
+    "FORM_HELP": "<h3>Name</h3><p>You must give a name to the userlist, in order to be able to identify it.</p><h3>Users</h3><p>You can add as many users as you want. To do it, please enter the login or email and click on the 'OK' button. Note that already known users can be selected from the input.</p><p>To remove users, click on the cross located at the right of each login.</p>",
     "FIELD": {
       "NAME": "Name",
       "USERS": "Users",

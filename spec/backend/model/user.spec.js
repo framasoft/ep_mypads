@@ -171,7 +171,7 @@
         });
       });
 
-      xit('should deny usage of an existing email', function (done) {
+      it('should deny usage of an existing email', function (done) {
         user.set({
           login: 'kubiak',
           password: 'lovesMyself',
@@ -932,15 +932,15 @@
 
     });
 
-    describe('user getIdsFromLogins', function () {
+    describe('user getIdsFromLoginsOrEmails', function () {
 
       it('should throw errors if arguments are not provided as expected',
         function () {
-          expect(user.fn.getIdsFromLogins).toThrow();
-          expect(ld.partial(user.fn.getIdsFromLogins, 'notArray')).toThrow();
-          expect(ld.partial(user.fn.getIdsFromLogins, [], 'notFn')).toThrow();
-          expect(ld.partial(user.fn.getIdsFromLogins, false, function () {}))
-            .toThrow();
+          var getIds = user.fn.getIdsFromLoginsOrEmails;
+          expect(getIds).toThrow();
+          expect(ld.partial(getIds, 'notArray')).toThrow();
+          expect(ld.partial(getIds, [], 'notFn')).toThrow();
+          expect(ld.partial(getIds, false, function () {})).toThrow();
         }
       );
 
@@ -954,12 +954,18 @@
           user.set(u, function (err, u) {
             expect(err).toBeNull();
             var users = ['shelly', 'inexistent'];
-            user.fn.getIdsFromLogins(users, function (err, res) {
+            user.fn.getIdsFromLoginsOrEmails(users, function (err, res) {
               expect(err).toBeNull();
               expect(ld.isArray(res)).toBeTruthy();
               expect(ld.size(res)).toBe(1);
               expect(ld.first(res)).toBe(u._id);
-              done();
+              users[0] = 'shelly@lewis.me';
+              user.fn.getIdsFromLoginsOrEmails(users, function (err, res) {
+                expect(err).toBeNull();
+                expect(ld.size(res)).toBe(1);
+                expect(ld.first(res)).toBe(u._id);
+                done();
+              });
             });
           });
         }

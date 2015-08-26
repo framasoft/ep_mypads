@@ -287,27 +287,29 @@ module.exports = (function () {
 
 
   /**
-  * ### getIdsFromLogins
+  * ### getIdsFromLoginsOrEmails
   *
-  * `getIdsFromLogins` is a private asynchronous function that checks if given
-  * data, users or admins logins, are correct and transforms it to expected
-  * values : unique identifiers, before saving it to database.
+  * `getIdsFromLoginsOrEmails` is a private asynchronous function that checks
+  * if given data, users or admins logins or emails, are correct and transforms
+  * it to expected values : unique identifiers, before saving it to database.
   *
   * It takes :
   *
-  * - array of users  `logins`;
+  * - array of users `logins` and `emails`;
   * - `callback` function with *null* and the array with unique identifiers.
+  *
+  * TODO #43 #45 #54 return rejected loginsMails to group.inviteOrShare and API
   */
 
-  user.fn.getIdsFromLogins = function (logins, callback) {
-    if (!ld.isArray(logins)) {
+  user.fn.getIdsFromLoginsOrEmails = function (loginsMails, callback) {
+    if (!ld.isArray(loginsMails)) {
       throw new TypeError('BACKEND.ERROR.TYPE.LOGINS_ARR');
     }
     if (!ld.isFunction(callback)) {
       throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
     }
-    callback(null, ld.reduce(logins, function (memo, login) {
-      var key = user.logins[login];
+    callback(null, ld.reduce(loginsMails, function (memo, lm) {
+      var key = user.logins[lm] || user.emails[lm];
       if (key) { memo.push(key); }
       return memo;
     }, []));

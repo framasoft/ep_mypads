@@ -961,7 +961,7 @@ module.exports = (function () {
 
     /**
     * POST method : `group.inviteOrShare` with gid group id, array of all
-    * concerned logins and invite boolean
+    * concerned loginsOrEmails and invite boolean
     * This method is open to all authenticated users.
     *
     * Sample URL:
@@ -976,8 +976,8 @@ module.exports = (function () {
       req.params.key = req.body.gid;
       var successFn = ld.partial(function (req, res) {
         try {
-          group.inviteOrShare(req.body.invite, req.body.gid, req.body.logins,
-            function (err, g) {
+          group.inviteOrShare(req.body.invite, req.body.gid,
+            req.body.loginsOrEmails, function (err, g) {
               if (err) {
                 return res.status(401).send({ error: err.message });
               }

@@ -137,6 +137,8 @@
             expect(ld.isObject(p)).toBeTruthy();
             expect(p._id).toBeDefined();
             expect(ld.startsWith(p._id, 'conqueringtheworld-')).toBeTruthy();
+            expect(p.ctime).toBeDefined();
+            expect(ld.isNumber(p.ctime)).toBeTruthy();
             expect(p.name).toBe('conqueringTheWorld');
             expect(p.group).toBe(ggroup._id);
             expect(p.visibility).toBeNull();
@@ -247,6 +249,7 @@
           expect(err).toBeNull();
           expect(ld.isObject(p)).toBeTruthy();
           expect(p._id).toBe(gpad._id);
+          expect(p.ctime).toBe(gpad.ctime);
           expect(ld.startsWith(p._id, 'shellynator-')).toBeFalsy();
           expect(p.name).toBe('shellyNator');
           expect(p.group).toBe(gpad.group);

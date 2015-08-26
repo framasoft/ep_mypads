@@ -181,6 +181,10 @@ module.exports = (function () {
   * group via `model.pad` creation or update. Also, `password` is repopulated
   * from old value if the group has already been set as *private* and no
   * `password` has been given.
+  *
+  *   Finally, in case of new group, it sets the unique identifier to the name
+  *   slugged and suffixes by random id generator and uses a special ctime
+  *   field for epoch time.
   */
 
   group.set = function (params, callback) {
@@ -204,11 +208,13 @@ module.exports = (function () {
         if ((res.visibility === 'private') && !g.password) {
           g.password = res.password;
         }
+        g.ctime = res.ctime;
         check();
       });
     } else {
       g._id = (slugg(g.name) + '-' + cuid.slug());
       g.pads = [];
+      g.ctime = Date.now();
       check();
     }
   };

@@ -112,6 +112,7 @@
             expect(err).toBeNull();
             expect(u._id).toBeDefined();
             expect(ld.startsWith(u._id, 'parker-')).toBeTruthy();
+            expect(ld.isNumber(u.ctime)).toBeTruthy();
             expect(u.active).toBeTruthy();
             expect(u.active).not.toBe(conf.get('checkMails'));
             expect(u.login).toBe('parker');
@@ -238,7 +239,7 @@
       });
 
       it('should allow setting of an existing user, and gets back its groups,' +
-        ' bookmarks, userlists and active', function (done) {
+        ' bookmarks, userlists, active and ctime', function (done) {
           group.set({ name: 'g1', admin: mikey._id }, function (err) {
             expect(err).toBeNull();
             var opts = { crud: 'add', login: 'mikey', name: 'u1' };
@@ -255,6 +256,7 @@
                 function (err, u) {
                   expect(err).toBeNull();
                   expect(ld.startsWith(u._id, 'mikey-')).toBeTruthy();
+                  expect(ld.isNumber(u.ctime)).toBeTruthy();
                   expect(u.login).toBe('mikey');
                   expect(u.email).toBe('mik@randall.com');
                   expect(u.firstname).toBe('Michael');

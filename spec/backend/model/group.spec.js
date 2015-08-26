@@ -169,6 +169,7 @@
             group.set(params, function (err, g) {
               expect(err).toBeNull();
               expect(ld.isString(g._id)).toBeTruthy();
+              expect(ld.isNumber(g.ctime)).toBeTruthy();
               expect(ld.startsWith(g._id, 'college-')).toBeTruthy();
               expect(g._id).not.toBe('will not be given');
               expect(g.name).toBe('college');
@@ -306,6 +307,7 @@
         group.set(params, function (err, g) {
           expect(err).toBeNull();
           expect(ld.isString(g._id)).toBeTruthy();
+          expect(ld.isNumber(g.ctime)).toBeTruthy();
           expect(ld.startsWith(g._id, 'college2-')).toBeFalsy();
           expect(g.name).toBe('college2');
           expect(g.description).toBe('A very strange place');

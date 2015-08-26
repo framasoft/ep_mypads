@@ -464,25 +464,25 @@ module.exports = (function () {
       throw new TypeError('BACKEND.ERROR.TYPE.EMAIL');
     }
     var u = user.fn.assignProps(params);
-    u._id = u._id || (slugg(u.login) + '-' + cuid.slug());
     user.fn.checkLogin(params._id, u, function (err) {
       if (err) { return callback(err); }
       user.fn.checkEmail(params._id, u, function (err) {
         if (err) { return callback(err); }
         // Update/Edit case
         if (params._id) {
+          u._id = params._id;
           user.get(u.login, function (err, dbuser) {
             if (err) { return callback(err); }
-            u.groups = dbuser.groups;
-            u.bookmarks = dbuser.bookmarks;
-            u.userlists = dbuser.userlists;
-            u.active = dbuser.active;
+            ld.assign(u, ld.pick(dbuser,
+              ['ctime', 'groups', 'bookmarks', 'userlists', 'active']));
             user.fn.genPassword(dbuser, u, function (err, u) {
               if (err) { return callback(err); }
               user.fn.set(u, callback);
             });
           });
         } else {
+          u._id = (slugg(u.login) + '-' + cuid.slug());
+          u.ctime = Date.now();
           user.fn.genPassword(null, u, function (err, u) {
             if (err) { return callback(err); }
             user.fn.set(u, callback);

@@ -39,23 +39,30 @@
         specCommon.reInitDatabase(function () {
           var genId = function () { return UPREFIX + cuid(); };
           var kv = {};
-          kv[genId()] = { login: 'parker' };
-          kv[genId()] = { login: 'kubiak' };
+          kv[genId()] = { login: 'parker', email: 'parker@lewis.me' };
+          kv[genId()] = { login: 'kubiak', email: 'kubiak@lawrence.me' };
           storage.fn.setKeys(kv, done);
         });
       });
       afterAll(specCommon.reInitDatabase);
 
-      it('should populate the user.logins field', function (done) {
-        user.init(function (err) {
-          expect(err).toBeNull();
-          expect(ld.isObject(user.logins)).toBeTruthy();
-          expect(ld.size(user.logins)).toBe(2);
-          expect(ld.includes(ld.keys(user.logins), 'parker')).toBeTruthy();
-          expect(ld.includes(ld.keys(user.logins), 'kubiak')).toBeTruthy();
-          done();
-        });
-      });
+      it('should populate the user.logins and user.emails fields',
+        function (done) {
+          user.init(function (err) {
+            expect(err).toBeNull();
+            expect(ld.isObject(user.logins)).toBeTruthy();
+            expect(ld.size(user.logins)).toBe(2);
+            expect(ld.includes(ld.keys(user.logins), 'parker')).toBeTruthy();
+            expect(ld.includes(ld.keys(user.logins), 'kubiak')).toBeTruthy();
+            expect(ld.isObject(user.emails)).toBeTruthy();
+            expect(ld.size(user.emails)).toBe(2);
+            var ldimails = ld.partial(ld.includes, ld.keys(user.emails));
+            expect(ldimails('parker@lewis.me')).toBeTruthy();
+            expect(ldimails('kubiak@lawrence.me')).toBeTruthy();
+            done();
+          });
+        }
+      );
 
     });
 
@@ -67,31 +74,40 @@
       });
       afterAll(specCommon.reInitDatabase);
 
-      it('should return a TypeError and a message if either login or password' +
-        ' aren\'t given; nor callback function', function () {
+      it('should return a TypeError and a message if either login, password' +
+        ' or email aren\'t given; nor callback function', function () {
         expect(user.set).toThrow();
         expect(ld.partial(user.set, { another: 'object' })).toThrow();
         expect(ld.partial(user.set, { login: 'Johnny' })).toThrow();
         expect(ld.partial(user.set, { password: 'secret' })).toThrow();
         expect(ld.partial(user.set, { login: 'john', password: 'secret' }))
           .toThrow();
+        var p = { login: 'john', password: 'secret', email: 'john@valid.org' };
+        expect(ld.partial(user.set, p)).toThrow();
+        expect(ld.partial(user.set, { login: 'john', password: 'secret' },
+          ld.noop)).toThrow();
+        p.email = 'invalidMail';
+        expect(ld.partial(user.set, p, ld.noop)).toThrow();
       });
 
       it('should return an Error to the callback if password size is not' +
         ' appropriate', function (done) {
-        user.set({ login: 'bob', password: '1'}, function (err) {
-          expect(ld.isError(err)).toBeTruthy();
-          done();
-        });
+        user.set({ login: 'bob', password: '1', email: 'bob@x.org'},
+          function (err) {
+            expect(ld.isError(err)).toBeTruthy();
+            done();
+          }
+        );
       });
 
-      it('should accept any creation if login & password are fixed',
+      it('should accept any creation if login & password & email are fixed',
         function (done) {
           user.set({
             login: 'parker',
             password: 'lovesKubiak',
             firstname: 'Parker',
-            lastname: 'Lewis'
+            lastname: 'Lewis',
+            email: 'parker@lewis.me'
           }, function (err, u) {
             expect(err).toBeNull();
             expect(u._id).toBeDefined();
@@ -111,6 +127,8 @@
             expect(okUls).toBeTruthy();
             expect(ld.includes(ld.values(user.logins), u._id)).toBeTruthy();
             expect((user.logins[u.login])).toBe(u._id);
+            expect(ld.includes(ld.values(user.emails), u._id)).toBeTruthy();
+            expect((user.emails[u.email])).toBe(u._id);
             done();
           });
         }
@@ -121,6 +139,7 @@
           user.set({
             login: 'grace',
             password: 'isTheDirector',
+            email: 'grace@santodomingo.biz',
             groups: ['one', 'two'],
             userlists: { uidxxxx: { name: 'u1', users: [] } }
           }, function (err, u) {
@@ -133,14 +152,31 @@
             expect(okUls).toBeTruthy();
             expect(ld.includes(ld.values(user.logins), u._id)).toBeTruthy();
             expect((user.logins[u.login])).toBe(u._id);
+            expect((user.emails[u.email])).toBe(u._id);
             done();
           });
         }
       );
 
       it('should deny usage of an existing login', function (done) {
-        user.set({ login: 'parker', password: 'lovesKubiak' },
-          function (err, u) {
+        var p = {
+          login: 'parker',
+          password: 'lovesKubiak',
+          email: 'parker@lewis.me'
+        };
+        user.set(p, function (err, u) {
+          expect(ld.isError(err)).toBeTruthy();
+          expect(u).toBeUndefined();
+          done();
+        });
+      });
+
+      xit('should deny usage of an existing email', function (done) {
+        user.set({
+          login: 'kubiak',
+          password: 'lovesMyself',
+          email: 'parker@lewis.me' }, function (err, u) {
+            console.log(err);
             expect(ld.isError(err)).toBeTruthy();
             expect(u).toBeUndefined();
             done();
@@ -153,13 +189,16 @@
       var mikey;
       beforeAll(function (done) {
         conf.init(function () {
-          user.set({ login: 'mikey', password: 'principalMusso' },
-            function (err, u) {
-              if (err) { console.log(err); }
-              mikey = u;
-              done();
-            }
-          );
+          mikey = {
+            login: 'mikey',
+            password: 'principalMusso',
+            email: 'mikey@randall.me'
+          };
+          user.set(mikey, function (err, u) {
+            if (err) { console.log(err); }
+            mikey = u;
+            done();
+          });
         });
       });
 
@@ -173,7 +212,8 @@
 
       it('should return an Error if the user does not already exist',
         function (done) {
-          user.set({ _id: 'inexistent', login: 'i', password: 'p' },
+          var p = { _id: 'inex', login: 'i', password: 'p', email: 'm@m.org' };
+          user.set(p,
             function (err, u) {
               expect(ld.isError(err)).toBeTruthy();
               expect(u).toBeUndefined();
@@ -185,11 +225,17 @@
 
       it('should return an Error to the callback if password size is not' +
         ' appropriate', function (done) {
-        user.set({ login: 'bob', password: '1'}, function (err, res) {
-          expect(ld.isError(err)).toBeTruthy();
-          expect(res).toBeUndefined();
-          done();
-        });
+          var p = {
+            login: 'bob',
+            password: '1',
+            email: 'bob@example.org'
+          };
+          user.set(p, function (err, res) {
+            expect(ld.isError(err)).toBeTruthy();
+            expect(res).toBeUndefined();
+            done();
+          }
+        );
       });
 
       it('should allow setting of an existing user, and gets back its groups,' +
@@ -239,7 +285,8 @@
           login: 'parker',
           password: 'lovesKubiak',
           firstname: 'Parker',
-          lastname: 'Lewis'
+          lastname: 'Lewis',
+          email: 'parker@lewis.me'
         }, done);
       });
     });
@@ -269,6 +316,7 @@
         expect(ld.isObject(u.password)).toBeTruthy();
         expect(u.firstname).toBe('Parker');
         expect(u.lastname).toBe('Lewis');
+        expect(u.email).toBe('parker@lewis.me');
         expect(ld.isString(u.email)).toBeTruthy();
         done();
       });
@@ -282,12 +330,14 @@
           login: 'parker',
           password: 'lovesKubiak',
           firstname: 'Parker',
-          lastname: 'Lewis'
+          lastname: 'Lewis',
+          email: 'parker@lewis.me'
         }, function (err, parker) {
           if (err) { console.log(err); }
           user.set({
             login: 'frank',
-            password: 'frankfrank'
+            password: 'frankfrank',
+            email: 'frank@keller.me'
           }, function (err, frank) {
             if (err) { console.log(err); }
             group.set({
@@ -330,6 +380,7 @@
           expect(_u).toBeDefined();
           expect(_u.login).toBe('parker');
           expect(user.logins.parker).toBeUndefined();
+          expect(user.emails['parker@lewis.me']).toBeUndefined();
           user.get('parker', function (err, u) {
             expect(ld.isError(err)).toBeTruthy();
             expect(u).toBeUndefined();
@@ -358,7 +409,8 @@
           login: 'parker',
           password: 'lovesKubiak',
           firstname: 'Parker',
-          lastname: 'Lewis'
+          lastname: 'Lewis',
+          email: 'parker@lewis.me'
         }, function (err, u) {
           if (err) { console.log(err); }
           parker = u;
@@ -434,21 +486,28 @@
           login: 'parker',
           password: 'lovesKubiak',
           firstname: 'Parker',
-          lastname: 'Lewis'
+          lastname: 'Lewis',
+          email: 'parker@lewis.me'
         }, function (err, u) {
           if (err) { console.log(err); }
           parker = u;
-          user.set({ login: 'jerry', password: 'likesParker' },
-            function (err) {
+          var jerry = {
+            login: 'jerry',
+            password: 'likesParker',
+            email: 'jerry@steiner.me'
+          };
+          user.set(jerry, function (err) {
+            if (err) { console.log(err); }
+            var mikey = {
+              login: 'mikey',
+              password: 'likesParker',
+              email: 'mikey@randall.me'
+            };
+            user.set(mikey, function (err) {
               if (err) { console.log(err); }
-              user.set({ login: 'mikey', password: 'likesParker' },
-                function (err) {
-                  if (err) { console.log(err); }
-                  done();
-                }
-              );
-            }
-          );
+              done();
+            });
+          });
         });
       });
     });
@@ -785,9 +844,7 @@
           params.email = 'notenamail@@@@';
           params.lang = 'notAValidOne';
           u = user.fn.assignProps(params);
-          var ue = u.email;
           expect(u.lang).toBe('en');
-          expect(ld.isString(ue) && ld.isEmpty(ue)).toBeTruthy();
         }
       );
     });
@@ -867,7 +924,6 @@
             user.fn.checkEmail('087654321', u, function (err) {
               expect(err).toBeNull();
               expect(user.emails['parker@lewis.me']).toBeUndefined();
-              expect(user.emails['parker@lewis.biz']).toBeDefined();
               done();
             });
           });
@@ -890,7 +946,11 @@
 
       it('should return an array of uid otherwise, filtering not found users',
         function (done) {
-          var u = { login: 'shelly', password: 'aGoodOneAndStrong' };
+          var u = {
+            login: 'shelly',
+            password: 'aGoodOneAndStrong',
+            email: 'shelly@lewis.me'
+          };
           user.set(u, function (err, u) {
             expect(err).toBeNull();
             var users = ['shelly', 'inexistent'];

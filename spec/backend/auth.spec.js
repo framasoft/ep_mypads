@@ -73,7 +73,8 @@
           login: 'parker',
           password: 'lovesKubiak',
           firstname: 'Parker',
-          lastname: 'Lewis'
+          lastname: 'Lewis',
+          email: 'parker@lewis.me'
         };
         user.set(params, done);
       });

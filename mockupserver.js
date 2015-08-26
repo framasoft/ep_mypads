@@ -54,7 +54,8 @@
             if (err) { console.log(err); }
             user.set({
               login: 'shelly',
-              password: 'feelsGoodWithFrank'
+              password: 'feelsGoodWithFrank',
+              email: 'shelly@lewis.me'
             }, function (err, shelly) {
               if (err) { console.log(err); }
               var opts = {

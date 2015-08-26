@@ -34,16 +34,22 @@
 
   var initAll = function (done) {
     specCommon.reInitDatabase(function () {
-      user.set({ login: 'parker', password: 'lovesKubiak' }, function (err, u) {
-        if (!err) { guser = u; }
-        group.set({ name: 'college', admin: guser._id }, function (err, g) {
-          if (!err) { ggroup = g; }
-          pad.set({ name: 'exam1', group: ggroup._id }, function (err, p) {
-            if (!err) { gpad = p; }
-            done();
+      user.set(
+        {
+          login: 'parker',
+          password: 'lovesKubiak',
+          email: 'parker@lewis.me'
+        }, function (err, u) {
+          if (!err) { guser = u; }
+          group.set({ name: 'college', admin: guser._id }, function (err, g) {
+            if (!err) { ggroup = g; }
+            pad.set({ name: 'exam1', group: ggroup._id }, function (err, p) {
+              if (!err) { gpad = p; }
+              done();
+            });
           });
-        });
-      });
+        }
+      );
     });
   };
 

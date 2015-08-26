@@ -38,12 +38,17 @@
       password: 'lovesKubiak',
       firstname: 'Parker',
       lastname: 'Lewis',
+      email: 'parker@lewis.me',
       groups: []
     };
     gusers = [];
     gpads = [];
     var users = ld.map(['frank', 'grace','shelly', 'mikey', 'jerry'],
-      function (val) { return { login: val, password: 'lovesKubiak' }; });
+      function (val) { return {
+        login: val,
+        password: 'lovesKubiak',
+        email: val + '@santodomingo.edu'
+      }; });
     specCommon.reInitDatabase(function () {
       user.set(gadm, function (err, u) {
         if (err) { console.log(err); }

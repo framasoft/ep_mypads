@@ -33,8 +33,16 @@
 
   describe('perm', function () {
     var users = {
-      parker: { login: 'parker', password: 'lovesKubiak' },
-      jerry: { login: 'jerry', password: 'lovesKubiakToo' }
+      parker: {
+        login: 'parker',
+        password: 'lovesKubiak',
+        email: 'parker@lewis.me'
+      },
+      jerry: {
+        login: 'jerry',
+        password: 'lovesKubiakToo',
+        email: 'jerry@steiner.me'
+      }
     };
     var groups = {};
     var pads = {};

@@ -64,6 +64,13 @@
       });
     };
 
+    /* Global local variables */
+    var guest = {
+      login: 'guest',
+      password: 'willnotlivelong',
+      email: 'guest@phantomatic.net'
+    };
+
     beforeAll(function (done) {
       specCommon.mockupExpressServer();
       specCommon.reInitDatabase(function () {
@@ -86,7 +93,7 @@
 
       beforeAll(function (done) {
         specCommon.reInitDatabase(function () {
-          user.set({ login: 'guest', password: 'willnotlivelong' }, done);
+          user.set(guest, done);
         });
       });
       afterAll(specCommon.reInitDatabase);
@@ -96,9 +103,7 @@
         var token;
 
         beforeAll(function (done) {
-          var params = {
-            body: { login: 'guest', password: 'willnotlivelong' }
-          };
+          var params = { body: guest };
           rq.post(authRoute + '/login', params, function (err, resp, body) {
             if (!err && resp.statusCode === 200) {
               token = body.token;
@@ -123,6 +128,7 @@
             body: {
               login: 'guest',
               password: 'badOne',
+              email: 'guest@phantomatic.net',
               auth_token: jwt.sign({}, 'bad')
             } 
           };
@@ -137,6 +143,7 @@
             body: {
               login: 'guest',
               password: 'willnotlivelong',
+              email: 'guest@phantomatic.net',
               auth_token: token
             } 
           };
@@ -179,7 +186,8 @@
 
         it('should not auth if user exists but pasword does not match',
           function (done) {
-            var params = { body: { login: 'guest', password: 'pass' } };
+            var params = { body: ld.clone(guest) };
+            params.body.password = 'anotherOne';
             rq.post(authRoute + '/login', params, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
               expect(body.error).toMatch('PASSWORD_INCORRECT');
@@ -189,9 +197,7 @@
         );
 
         it('should auth otherwise', function (done) {
-          var params = {
-            body: { login: 'guest', password: 'willnotlivelong' }
-          };
+          var params = { body: guest };
           rq.post(authRoute + '/login', params, function (err, resp, body) {
             expect(resp.statusCode).toBe(200);
             expect(body.success).toBeTruthy();
@@ -215,9 +221,7 @@
         });
 
         it('should logout if authenticated', function (done) {
-          var params = {
-            body: { login: 'guest', password: 'willnotlivelong' }
-          };
+          var params = { body: guest };
           rq.post(authRoute + '/login', params, function (err, resp, body) {
             expect(resp.statusCode).toBe(200);
             expect(body.success).toBeTruthy();
@@ -275,14 +279,15 @@
       beforeAll(function (done) {
         var kv = { field1: 8, field2: 3, field3: ['a', 'b'] };
         ld.assign(conf.cache, kv);
-        var u = { login: 'guest', password: 'willnotlivelong' };
-        user.set(u, function () {
-          rq.post(route + 'auth/login', { body: u }, function (err, resp, b) {
-            if (!err && resp.statusCode === 200) {
-              token = b.token;
-              done();
+        user.set(guest, function () {
+          rq.post(route + 'auth/login', { body: guest },
+            function (err, resp, b) {
+              if (!err && resp.statusCode === 200) {
+                token = b.token;
+                done();
+              }
             }
-          });
+          );
         });
       });
 
@@ -484,7 +489,11 @@
 
       beforeAll(function (done) {
         conf.cache.checkMails = true;
-        var params = { login: 'shelly', password: 'lovesKubiak' };
+        var params = {
+          login: 'shelly',
+          password: 'lovesKubiak',
+          email: 'shelly@lewis.me'
+        };
         user.set(params, done);
       });
 
@@ -516,11 +525,17 @@
       beforeAll(function (done) {
         conf.init(function () {
           var set = require('../../model/user.js').set;
-          var u = { login: 'guest', password: 'willnotlivelong' };
-          set(u, function () {
-            set({ login: 'jerry', password: 'willnotlivelong' }, function () {
-              set({ login: 'mikey', password: 'willnotlivelong' }, function () {
-                rq.post(route + 'auth/login', { body: u },
+          set(guest, function () {
+            var p = {
+              login: 'jerry',
+              password: 'willnotlivelong',
+              email: 'jerry@steiner.me'
+            };
+            set(p, function () {
+              p.login = 'mikey';
+              p.email = 'mikey@randall.me';
+              set(p, function () {
+                rq.post(route + 'auth/login', { body: guest },
                   function (err, resp, b) {
                     if (!err && resp.statusCode === 200) {
                       token = b.token;
@@ -550,7 +565,11 @@
               rq.post(userRoute, b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
                 expect(body.error).toMatch('PARAM_STR');
-                b = { body: { login: 'parker', password: 'secret' } };
+                b = { body: {
+                  login: 'parker',
+                  password: 'secret',
+                  email: 'parker@lewis.me'
+                } };
                 rq.post(userRoute, b, function (err, resp, body) {
                   expect(resp.statusCode).toBe(400);
                   expect(body.error).toMatch('PASSWORD_SIZE');
@@ -563,7 +582,11 @@
 
         it('should return an error if password size is not correct',
           function (done) {
-            var b = { body: { login: 'parker', password: '1' } };
+            var b = { body: {
+              login: 'parker',
+              password: '1',
+              email: 'parker@lewis.me'
+            } };
             rq.post(userRoute, b, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
               expect(body.error).toMatch('PASSWORD_SIZE');
@@ -578,7 +601,8 @@
               login: 'parker',
               password: 'lovesKubiak',
               firstname: 'Parker',
-              lastname: 'Lewis'
+              lastname: 'Lewis',
+              email: 'parker@lewis.me'
             }
           };
           rq.post(userRoute, b, function (err, resp, body) {
@@ -602,11 +626,32 @@
 
         it('should return an error if the login/key already exists',
           function (done) {
-            var b = { body: { login: 'mikey', password: 'missMusso', } };
+            var b = { body: {
+              login: 'mikey',
+              password: 'missMusso',
+              email: 'mikey@randall.me'
+            } };
             rq.post(userRoute, b, function () {
               rq.post(userRoute, b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
                 expect(body.error).toMatch('USER.ALREADY_EXISTS');
+                done();
+              });
+            });
+          }
+        );
+
+        it('should return an error if the email already exists',
+          function (done) {
+            var b = { body: {
+              login: 'martin',
+              password: 'mondovideo',
+              email: 'jerry@steiner.me'
+            } };
+            rq.post(userRoute, b, function () {
+              rq.post(userRoute, b, function (err, resp, body) {
+                expect(resp.statusCode).toBe(400);
+                expect(body.error).toMatch('USER.EMAIL_ALREADY_EXISTS');
                 done();
               });
             });
@@ -632,8 +677,13 @@
                 b.body.auth_token = token;
                 rq.put(userRoute + '/guest', b, function (err, resp, body) {
                   expect(resp.statusCode).toBe(400);
-                  expect(body.error).toMatch('PASSWORD_SIZE');
-                  done();
+                  expect(body.error).toMatch('EMAIL');
+                  b.body.email = 'guest@phantomatic.net';
+                  rq.put(userRoute + '/guest', b, function (err, resp, body) {
+                    expect(resp.statusCode).toBe(400);
+                    expect(body.error).toMatch('PASSWORD_SIZE');
+                    done();
+                  });
                 });
               });
             });
@@ -642,7 +692,11 @@
 
         it('should return an error if password size is not correct',
           function (done) {
-            var b = { body: { login: 'guest', password: '1' } };
+            var b = { body: {
+              login: 'guest',
+              password: '1',
+              email: 'guest@phantomatic.net'
+            } };
             b.body.auth_token = token;
             rq.put(userRoute + '/guest', b, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
@@ -658,6 +712,7 @@
               password: 'lovesKubiak',
               firstname: 'Parker',
               lastname: 'Lewis',
+              email: 'parker@lewis.me',
               auth_token: token
             }
           };
@@ -674,7 +729,8 @@
             body: {
               password: 'lovesKubiak',
               firstname: 'Parker',
-              lastname: 'Lewis'
+              lastname: 'Lewis',
+              email: 'parker@lewis.me'
             }
           };
           withAdmin(function (after) {
@@ -713,17 +769,15 @@
 
         it('should accept updates on an existing user, if he is logged himself',
           function (done) {
-            var b = { body: { password: 'missMusso', } };
+            var b = { body: guest };
+            b.body.email =  'guest@phantomatic.weird';
             b.body.auth_token = token;
-            rq.put(userRoute + '/guest', b, function () {
-              b.body.email = 'mikey@randall.com';
-              rq.put(userRoute + '/guest', b, function (err, resp, body) {
-                expect(resp.statusCode).toBe(200);
-                expect(body.success).toBeTruthy();
-                expect(body.key).toBe('guest');
-                expect(body.value.email).toBe('mikey@randall.com');
-                done();
-              });
+            rq.put(userRoute + '/guest', b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(200);
+              expect(body.success).toBeTruthy();
+              expect(body.key).toBe('guest');
+              expect(body.value.email).toBe('guest@phantomatic.weird');
+              done();
             });
           }
         );
@@ -1233,8 +1287,12 @@
 
       beforeAll(function (done) {
         specCommon.reInitDatabase(function () {
-          var params = { login: 'guest', password: 'willnotlivelong' };
-          var oparams = { login: 'other', password: 'willnotlivelong' };
+          var params = guest;
+          var oparams = {
+            login: 'other',
+            password: 'willnotlivelong',
+            email: 'other@phantomatic.net'
+          };
           user.set(params, function (err, u) {
             if (err) { console.log(err); }
             uid = u._id;
@@ -1344,7 +1402,11 @@
         });
 
         it('should invite successfully otherwise', function (done) {
-          var params = { login: 'franky', password: 'willnotlivelong' };
+          var params = {
+            login: 'franky',
+            password: 'willnotlivelong',
+            email: 'franky@keller.me'
+          };
           user.set(params, function (err, u) {
             expect(err).toBeNull();
             var b = {
@@ -1959,7 +2021,7 @@
 
       beforeAll(function (done) {
         specCommon.reInitDatabase(function () {
-          var params = { login: 'guest', password: 'willnotlivelong' };
+          var params = guest;
           user.set(params, function (err, u) {
             if (err) { console.log(err); }
             uid = u._id;
@@ -1969,7 +2031,11 @@
               pad.set({ name: 'p1', group: g._id }, function (err, p) {
                 if (err) { console.log(err); }
                 pid = p._id;
-                var oparams = { login: 'other', password: 'willnotlivelong' };
+                var oparams = {
+                  login: 'other',
+                  password: 'willnotlivelong',
+                  email: 'other@phantomatic.net'
+                };
                 user.set(oparams, function (err, u) {
                   if (err) { console.log(err); }
                   uotherid = u._id;

@@ -136,7 +136,8 @@ module.exports = (function () {
 
   notif.warning = function (options, callback) {
     options.title = conf.LANG.NOTIFICATION.WARNING;
-    options.cls = options.icon = 'warning';
+    options.cls = 'warning';
+    options.icon = 'attention';
     options.timeout = 15;
     notif.send(options, callback);
   };

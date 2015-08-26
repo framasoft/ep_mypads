@@ -4801,7 +4801,18 @@ module.exports = (function () {
     }).then(function (resp) {
       model.fetch(function () {
         var lpfx = c.isInvite ? 'INVITE_USER' : 'ADMIN_SHARE';
-        notif.success({ body: conf.LANG.GROUP[lpfx].SUCCESS });
+        var msg;
+        if (resp.present.length > 0) {
+          msg = conf.LANG.GROUP[lpfx].SUCCESS + resp.present.join(', ');
+          notif.success({ body: msg });
+        }
+        if (resp.absent.length > 0) {
+          msg = conf.LANG.GROUP[lpfx].FAILURE + resp.absent.join(', ');
+          notif.warning({ body: msg });
+        }
+        if ((resp.absent.length === 0) && (resp.present.length === 0)) {
+          notif.success({ body: conf.LANG.NOTIFICATION.SUCCESS_GENERIC });
+        }
         if (successFn) { successFn(resp); }
       });
     }, function (err) {
@@ -5475,6 +5486,15 @@ module.exports = (function () {
         u.userlists = resp.value;
         auth.userInfo(u);
         notif.success({ body: successMsg });
+        var msg;
+        if (resp.present.length > 0) {
+          msg = conf.LANG.USERLIST.INFO.USER_SUCCESS + resp.present.join(', ');
+          notif.success({ body: msg });
+        }
+        if (resp.absent.length > 0) {
+          msg = conf.LANG.USERLIST.INFO.USER_FAILURE + resp.absent.join(', ');
+          notif.warning({ body: msg });
+        }
         m.route('/myuserlists');
       }, function (err) {
         notif.error({ body: ld.result(conf.LANG, err.error) });
@@ -6036,7 +6056,8 @@ module.exports = (function () {
 
   notif.warning = function (options, callback) {
     options.title = conf.LANG.NOTIFICATION.WARNING;
-    options.cls = options.icon = 'warning';
+    options.cls = 'warning';
+    options.icon = 'attention';
     options.timeout = 15;
     notif.send(options, callback);
   };
@@ -21491,6 +21512,7 @@ module.exports={
   },
   "NOTIFICATION": {
     "SUCCESS": "Success",
+    "SUCCESS_GENERIC": "Action has been successfully achieved",
     "INFO": "Info",
     "ERROR": "Error",
     "ERROR_UNEXPECTED": "An unexpected error has been raised. Please contact the administrator.",
@@ -21597,12 +21619,14 @@ module.exports={
       "USERS_SELECTED": "Selected users",
       "PLACEHOLDER": "Enter login",
       "INPUT_HELP": "You can invite as many users as you want",
-      "SUCCESS": "User invitation has been successfully achieved"
+      "SUCCESS": "User invitation has been successfully achieved for ",
+      "FAILURE": "You can't invite users who have no account in this instance : "
     },
     "INVITE_USERLIST": "Invite a list of users",
     "ADMIN_SHARE": {
       "AS": "Administration sharing",
-      "SUCCESS": "Administration sharing has been successfully achieved"
+      "SUCCESS": "Administration sharing has been successfully achieved for ",
+      "FAILURE": "You can't share administration with users who have no account in this instance : "
     },
     "SORT": {
       "TITLE": "Sort by",
@@ -21705,7 +21729,9 @@ module.exports={
       "EDIT_SUCCESS": "Userlist has been successfully updated",
       "REMOVE_SURE": "Are you sure you want to remove this userlist?",
       "REMOVE_SUCCESS": "Userlist has been successfully removed",
-      "USER_INVITE": "By selecting a userlist, you will invite all its users at the same time"
+      "USER_INVITE": "By selecting a userlist, you will invite all its users at the same time",
+      "USER_SUCCESS": "User adding has been successfull for ",
+      "USER_FAILURE": "You can't add users who have no account in this instance : "
     },
     "ERR": {
       "NAME": "The name of the userlist is required"

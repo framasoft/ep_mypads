@@ -104,6 +104,7 @@
   },
   "NOTIFICATION": {
     "SUCCESS": "Success",
+    "SUCCESS_GENERIC": "Action has been successfully achieved",
     "INFO": "Info",
     "ERROR": "Error",
     "ERROR_UNEXPECTED": "An unexpected error has been raised. Please contact the administrator.",
@@ -210,12 +211,14 @@
       "USERS_SELECTED": "Selected users",
       "PLACEHOLDER": "Enter login",
       "INPUT_HELP": "You can invite as many users as you want",
-      "SUCCESS": "User invitation has been successfully achieved"
+      "SUCCESS": "User invitation has been successfully achieved for ",
+      "FAILURE": "You can't invite users who have no account in this instance : "
     },
     "INVITE_USERLIST": "Invite a list of users",
     "ADMIN_SHARE": {
       "AS": "Administration sharing",
-      "SUCCESS": "Administration sharing has been successfully achieved"
+      "SUCCESS": "Administration sharing has been successfully achieved for ",
+      "FAILURE": "You can't share administration with users who have no account in this instance : "
     },
     "SORT": {
       "TITLE": "Sort by",
@@ -318,7 +321,9 @@
       "EDIT_SUCCESS": "Userlist has been successfully updated",
       "REMOVE_SURE": "Are you sure you want to remove this userlist?",
       "REMOVE_SUCCESS": "Userlist has been successfully removed",
-      "USER_INVITE": "By selecting a userlist, you will invite all its users at the same time"
+      "USER_INVITE": "By selecting a userlist, you will invite all its users at the same time",
+      "USER_SUCCESS": "User adding has been successfull for ",
+      "USER_FAILURE": "You can't add users who have no account in this instance : "
     },
     "ERR": {
       "NAME": "The name of the userlist is required"

@@ -104,6 +104,7 @@
   },
   "NOTIFICATION": {
     "SUCCESS": "Succès",
+    "SUCCESS_GENERIC": "L'action a été achevée avec succès",
     "INFO": "Info",
     "ERROR": "Erreur",
     "ERROR_UNEXPECTED": "Une erreur inattendue est arrivée. Merci de contacter l'administrateur.",
@@ -210,12 +211,14 @@
       "USERS_SELECTED": "Utilisateurs sélectionnés",
       "PLACEHOLDER": "Saisissez l'identifiant",
       "INPUT_HELP": "Vous pouvez inviter autant d'utilisateurs que vous le souhaitez",
-      "SUCCESS": "L'invitation s'est déroulée avec succès"
+      "SUCCESS": "L'invitation s'est déroulée avec succès pour ",
+      "FAILURE": "Vous ne pouvez pas inviter des utilisateurs qui ne possèdent pas de compte sur cette instance : "
     },
     "INVITE_USERLIST": "Inviter une liste d'utilisateurs",
     "ADMIN_SHARE": {
       "AS": "Partage d'administration",
-      "SUCCESS": "La partage d'administration s'est achevé avec succès"
+      "SUCCESS": "La partage d'administration s'est achevé avec succès pour ",
+      "FAILURE": "Vous ne pouvez pas partager l'administration de ce groupe avec des utilisateurs qui ne possèdent pas de compte sur cette instance : "
     },
     "SORT": {
       "TITLE": "Ranger par",
@@ -318,7 +321,9 @@
       "EDIT_SUCCESS": "La liste utilisateurs a été mise à jour avec succès",
       "REMOVE_SURE": "Voulez-vous vraiment supprimer cette liste d'utilisateurs ?",
       "REMOVE_SUCCESS": "La liste d'utilisateurs a été supprimée avec succès",
-      "USER_INVITE": "En sélectionnant une liste, vous inviterez tous ses utilisateurs en même temps"
+      "USER_INVITE": "En sélectionnant une liste, vous inviterez tous ses utilisateurs en même temps",
+      "USER_SUCCESS": "L'ajout d'utilisateurs a été réalisé avec succès pour ",
+      "USER_FAILURE": "Vous ne pouvez pas ajouter des utilisateurs qui ne possèdent pas de compte sur cette instance : "
     },
     "ERR": {
       "NAME": "Le nom de la liste utilisateurs est obligatoire"

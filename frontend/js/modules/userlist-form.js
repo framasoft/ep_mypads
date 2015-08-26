@@ -123,6 +123,15 @@ module.exports = (function () {
         u.userlists = resp.value;
         auth.userInfo(u);
         notif.success({ body: successMsg });
+        var msg;
+        if (resp.present.length > 0) {
+          msg = conf.LANG.USERLIST.INFO.USER_SUCCESS + resp.present.join(', ');
+          notif.success({ body: msg });
+        }
+        if (resp.absent.length > 0) {
+          msg = conf.LANG.USERLIST.INFO.USER_FAILURE + resp.absent.join(', ');
+          notif.warning({ body: msg });
+        }
         m.route('/myuserlists');
       }, function (err) {
         notif.error({ body: ld.result(conf.LANG, err.error) });

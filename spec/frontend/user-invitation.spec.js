@@ -182,9 +182,17 @@ module.exports = (function () {
         it('should update groups with existing users only', function (done) {
           $el.submit.click();
           window.setTimeout(function () {
-            qfirst('body > section > div p').click();
+            var $notif = qfirst('body > section.notification');
+            expect($notif.textContent)
+              .toMatch('achieved for frank@gracefanclub.org, parker');
+            expect($notif.textContent)
+              .toMatch('no account in this instance : jerry');
+            var notif = $notif.querySelectorAll('p');
+            notif[0].click();
+            notif[1].click();
             var users = qall('section.users ul')[1].querySelectorAll('li');
             window.setTimeout(function () {
+              qfirst('body > section.notification p').click();
               expect(users.length).toBe(1);
               expect(users[0].textContent).toMatch('frank');
               qfirst('a[href$=invite]').click();
@@ -199,7 +207,7 @@ module.exports = (function () {
                   }, 100);
                 }, 100);
               }, 200);
-            });
+            }, 100);
           }, 200);
         });
 
@@ -209,7 +217,9 @@ module.exports = (function () {
           window.setTimeout(function () {
             submit.click();
             window.setTimeout(function () {
-              qfirst('body > section > div p').click();
+              var $notif = qfirst('body > section.notification p');
+              expect($notif.textContent).toMatch('successfully achieved');
+              $notif.click();
               var users = qfirst('section.users p');
               window.setTimeout(function () {
                 expect(users.textContent).toMatch('No user');
@@ -223,7 +233,7 @@ module.exports = (function () {
                 }, 100);
               }, 100);
             }, 200);
-          }, 100);
+          }, 200);
         });
 
       });

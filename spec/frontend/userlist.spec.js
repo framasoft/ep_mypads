@@ -137,15 +137,24 @@ module.exports = (function () {
                 expect($opts[1].textContent).toBe('inexistent');
                 $el.submit.click();
                 window.setTimeout(function () {
-                  var $notif = qfirst('body > section p');
+                  var $notif = qfirst('body > section.notification');
                   expect($notif.innerHTML)
                     .toMatch('Userlist has been successfully created');
-                  $notif.click();
+                  expect($notif.innerHTML)
+                    .toMatch('no account in this instance : inexistent');
+                  expect($notif.innerHTML).toMatch('successfull for frank');
+                  var notifs = $notif.querySelectorAll('p');
+                  notifs[0].click();
+                  notifs[1].click();
+                  notifs[2].click();
                   var $ulist = qall('section.group ul.group li')[1];
                   expect($ulist.querySelector('h4').textContent)
                     .toBe('secretlist');
                   expect($ulist.querySelector('dd').textContent).toBe('1');
-                  window.setTimeout(done, 100);
+                  window.setTimeout(function () {
+                    qfirst('body > section.notification p').click();
+                    window.setTimeout(done, 100);
+                  }, 100);
                 }, 200);
               }, 200);
             }, 200);
@@ -179,8 +188,8 @@ module.exports = (function () {
             window.setTimeout(function () {
               $el.submit.click();
               window.setTimeout(function () {
-                var $notif = qfirst('body > section p');
-                expect($notif.innerHTML)
+                var $notif = qfirst('body > section.notification p');
+                expect($notif.textContent)
                   .toMatch('Userlist has been successfully updated');
                 $notif.click();
                 var $ulist = qall('section.group ul.group li')[1];

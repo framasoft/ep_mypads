@@ -62,9 +62,20 @@ module.exports = (function () {
       url: conf.URLS.GROUP + '/invite',
       data: data
     }).then(function (resp) {
+      var lpfx = c.isInvite ? 'INVITE_USER' : 'ADMIN_SHARE';
+      var msg;
+      if (resp.present.length > 0) {
+        msg = conf.LANG.GROUP[lpfx].SUCCESS + resp.present.join(', ');
+        notif.success({ body: msg });
+      }
+      if (resp.absent.length > 0) {
+        msg = conf.LANG.GROUP[lpfx].FAILURE + resp.absent.join(', ');
+        notif.warning({ body: msg });
+      }
+      if ((resp.absent.length === 0) && (resp.present.length === 0)) {
+        notif.success({ body: conf.LANG.NOTIFICATION.SUCCESS_GENERIC });
+      }
       model.fetch(function () {
-        var lpfx = c.isInvite ? 'INVITE_USER' : 'ADMIN_SHARE';
-        notif.success({ body: conf.LANG.GROUP[lpfx].SUCCESS });
         if (successFn) { successFn(resp); }
       });
     }, function (err) {

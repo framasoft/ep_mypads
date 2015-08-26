@@ -326,16 +326,7 @@ module.exports = (function () {
     if (!ld.isFunction(callback)) {
       throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
     }
-    var uids = user.fn.getIdsFromLoginsOrEmails(loginsOrEmails);
-    var users = ld.reduce(uids, function (memo, v, k) {
-      if (v) {
-        memo.uids.push(v);
-        memo.accepted.push(k);
-      } else {
-        memo.refused.push(k);
-      }
-      return memo;
-    }, { uids: [], accepted: [], refused: [] });
+    var users = user.fn.getIdsFromLoginsOrEmails(loginsOrEmails);
     group.get(gid, function (err, g) {
       if (err) { return callback(err); }
       var removed;

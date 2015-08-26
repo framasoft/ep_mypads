@@ -12,6 +12,7 @@
         "PASSWORD_STR": "Password must be a string",
         "PASSWORD_MISSING": "Missing password",
         "PASSWORD_SIZE": "Password size is too short or too long",
+        "MAIL": "Email is invalid",
         "ID_STR": "_id, when defined, must be a string",
         "USER_INVALID": "User is invalid",
         "WITHEXTRA_BOOL": "withExtra must be a boolean",

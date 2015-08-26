@@ -12,6 +12,7 @@
         "PASSWORD_STR": "Password doit être une chaîne de caractères",
         "PASSWORD_MISSING": "Le mot de passe est manquant",
         "PASSWORD_SIZE": "La taille du mot de passe est invalide",
+        "MAIL": "Le mail est invalide",
         "ID_STR": "_id, lorsque défini, doit être une chaîne de caractères",
         "USER_INVALID": "User n'est pas valide",
         "WITHEXTRA_BOOL": "withExtra doit être un booléen",

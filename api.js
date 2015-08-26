@@ -977,11 +977,11 @@ module.exports = (function () {
       var successFn = ld.partial(function (req, res) {
         try {
           group.inviteOrShare(req.body.invite, req.body.gid,
-            req.body.loginsOrEmails, function (err, g) {
+            req.body.loginsOrEmails, function (err, g, uids) {
               if (err) {
                 return res.status(401).send({ error: err.message });
               }
-              return res.send({ success: true, value: g });
+              return res.send(ld.assign({ success: true, value: g }, uids));
           });
         }
         catch (e) { res.status(400).send({ error: e.message }); }

@@ -289,30 +289,24 @@ module.exports = (function () {
   /**
   * ### getIdsFromLoginsOrEmails
   *
-  * `getIdsFromLoginsOrEmails` is a private asynchronous function that checks
+  * `getIdsFromLoginsOrEmails` is a private synchronous function that checks
   * if given data, users or admins logins or emails, are correct and transforms
   * it to expected values : unique identifiers, before saving it to database.
   *
-  * It takes :
-  *
-  * - array of users `logins` and `emails`;
-  * - `callback` function with *null* and an object with keys corresponding to
-  *   `loginsMails` and values to *false* if users have not been found and uid
-  *   otherwise.
+  * It takes an array of users `logins` and `emails`.
+  * It returns an object with keys corresponding to `loginsMails` and values to
+  * *false* if users have not been found and uid otherwise.
   */
 
-  user.fn.getIdsFromLoginsOrEmails = function (loginsMails, callback) {
+  user.fn.getIdsFromLoginsOrEmails = function (loginsMails) {
     if (!ld.isArray(loginsMails)) {
       throw new TypeError('BACKEND.ERROR.TYPE.LOGINS_ARR');
     }
-    if (!ld.isFunction(callback)) {
-      throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
-    }
-    callback(null, ld.reduce(loginsMails, function (memo, lm) {
+    return ld.reduce(loginsMails, function (memo, lm) {
       var key = user.logins[lm] || user.emails[lm];
       memo[lm] = key || false;
       return memo;
-    }, {}));
+    }, {});
   };
 
   /**

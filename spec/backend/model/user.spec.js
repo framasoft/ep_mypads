@@ -944,8 +944,6 @@
           var getIds = user.fn.getIdsFromLoginsOrEmails;
           expect(getIds).toThrow();
           expect(ld.partial(getIds, 'notArray')).toThrow();
-          expect(ld.partial(getIds, [], 'notFn')).toThrow();
-          expect(ld.partial(getIds, false, function () {})).toThrow();
         }
       );
 
@@ -959,20 +957,17 @@
           user.set(u, function (err, u) {
             expect(err).toBeNull();
             var users = ['shelly', 'inexistent'];
-            user.fn.getIdsFromLoginsOrEmails(users, function (err, res) {
-              expect(err).toBeNull();
-              expect(ld.isObject(res)).toBeTruthy();
-              expect(ld.size(res)).toBe(2);
-              expect(res.shelly).toBe(u._id);
-              expect(res.inexistent).toBeFalsy();
-              users[0] = 'shelly@lewis.me';
-              user.fn.getIdsFromLoginsOrEmails(users, function (err, res) {
-                expect(err).toBeNull();
-                expect(ld.size(res)).toBe(2);
-                expect(res['shelly@lewis.me']).toBe(u._id);
-                done();
-              });
-            });
+            var res = user.fn.getIdsFromLoginsOrEmails(users);
+            expect(ld.isObject(res)).toBeTruthy();
+            expect(ld.size(res)).toBe(2);
+            expect(res.shelly).toBe(u._id);
+            expect(res.inexistent).toBeFalsy();
+            users[0] = 'shelly@lewis.me';
+            res = user.fn.getIdsFromLoginsOrEmails(users);
+            expect(err).toBeNull();
+            expect(ld.size(res)).toBe(2);
+            expect(res['shelly@lewis.me']).toBe(u._id);
+            done();
           });
         }
       );

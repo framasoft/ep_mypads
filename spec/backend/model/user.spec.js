@@ -949,7 +949,7 @@
         }
       );
 
-      it('should return an array of uid otherwise, filtering not found users',
+      it('should return an object with uid, fixing not found users to false',
         function (done) {
           var u = {
             login: 'shelly',
@@ -961,14 +961,15 @@
             var users = ['shelly', 'inexistent'];
             user.fn.getIdsFromLoginsOrEmails(users, function (err, res) {
               expect(err).toBeNull();
-              expect(ld.isArray(res)).toBeTruthy();
-              expect(ld.size(res)).toBe(1);
-              expect(ld.first(res)).toBe(u._id);
+              expect(ld.isObject(res)).toBeTruthy();
+              expect(ld.size(res)).toBe(2);
+              expect(res.shelly).toBe(u._id);
+              expect(res.inexistent).toBeFalsy();
               users[0] = 'shelly@lewis.me';
               user.fn.getIdsFromLoginsOrEmails(users, function (err, res) {
                 expect(err).toBeNull();
-                expect(ld.size(res)).toBe(1);
-                expect(ld.first(res)).toBe(u._id);
+                expect(ld.size(res)).toBe(2);
+                expect(res['shelly@lewis.me']).toBe(u._id);
                 done();
               });
             });

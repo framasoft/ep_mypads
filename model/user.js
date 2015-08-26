@@ -296,9 +296,9 @@ module.exports = (function () {
   * It takes :
   *
   * - array of users `logins` and `emails`;
-  * - `callback` function with *null* and the array with unique identifiers.
-  *
-  * TODO #43 #45 #54 return rejected loginsMails to group.inviteOrShare and API
+  * - `callback` function with *null* and an object with keys corresponding to
+  *   `loginsMails` and values to *false* if users have not been found and uid
+  *   otherwise.
   */
 
   user.fn.getIdsFromLoginsOrEmails = function (loginsMails, callback) {
@@ -310,9 +310,9 @@ module.exports = (function () {
     }
     callback(null, ld.reduce(loginsMails, function (memo, lm) {
       var key = user.logins[lm] || user.emails[lm];
-      if (key) { memo.push(key); }
+      memo[lm] = key || false;
       return memo;
-    }, []));
+    }, {}));
   };
 
   /**

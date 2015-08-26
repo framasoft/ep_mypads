@@ -596,24 +596,32 @@
         }
       );
 
-      it('should return an array of uid otherwise, filtering not found users',
-        function (done) {
-          var users = ['shelly', 'mikey', 'inexist'];
-          group.inviteOrShare(true, gparams._id, users, function (err, res) {
-            expect(err).toBeNull();
-            expect(ld.isObject(res)).toBeTruthy();
-            expect(ld.size(res.users)).toBe(ld.size(users) - 1);
-            var nbAdmins = res.admins.length;
-            var admins = ['guest', 'grace', 'inexist'];
-            group.inviteOrShare(false, gparams._id, admins,
-              function (err, res) {
-                expect(err).toBeNull();
-                expect(ld.isObject(res)).toBeTruthy();
-                expect(ld.size(res.admins)).toBe(nbAdmins - 1);
-                done();
-              }
-            );
-          });
+      it('should return the updated group and an object containing accepted ' +
+        ' and refused logins or emails otherwise', function (done) {
+          var users = ['shelly@santodomingo.edu', 'mikey', 'inexist'];
+          group.inviteOrShare(true, gparams._id, users,
+            function (err, res, uids) {
+              expect(err).toBeNull();
+              expect(ld.isObject(res)).toBeTruthy();
+              expect(ld.size(res.users)).toBe(ld.size(users) - 1);
+              expect(ld.size(uids.accepted)).toBe(2);
+              expect(ld.size(uids.refused)).toBe(1);
+              expect(uids.refused[0]).toBe('inexist');
+              var nbAdmins = res.admins.length;
+              var admins = ['guest', 'grace', 'inexist'];
+              group.inviteOrShare(false, gparams._id, admins,
+                function (err, res, uids) {
+                  expect(err).toBeNull();
+                  expect(ld.isObject(res)).toBeTruthy();
+                  expect(ld.size(res.admins)).toBe(nbAdmins - 1);
+                  expect(ld.size(uids.accepted)).toBe(1);
+                  expect(uids.accepted[0]).toBe('grace');
+                  expect(ld.size(uids.refused)).toBe(2);
+                  done();
+                }
+              );
+            }
+          );
         }
       );
 

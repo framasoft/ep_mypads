@@ -303,7 +303,8 @@ module.exports = (function () {
   * - `gid` group unique identifier;
   * - array of users `loginsOrEmails`;
   * - `callback` function calling with  *error* if error or *null* and the
-  *   updated group otherwise.
+  *   updated group otherwise, plus accepted and refused invitations logins or
+  *   emails.
   *
   * It takes care of exclusion of admins and users : admin status is a
   * escalation of user.
@@ -327,15 +328,24 @@ module.exports = (function () {
     }
     user.fn.getIdsFromLoginsOrEmails(loginsOrEmails, function (err, uids) {
       if (err) { return callback(err); }
+      var users = ld.reduce(uids, function (memo, v, k) {
+        if (v) {
+          memo.uids.push(v);
+          memo.accepted.push(k);
+        } else {
+          memo.refused.push(k);
+        }
+        return memo;
+      }, { uids: [], accepted: [], refused: [] });
       group.get(gid, function (err, g) {
         if (err) { return callback(err); }
         var removed;
         if (invite) {
-          removed = ld.difference(g.users, uids);
-          g.users = ld.reject(uids, ld.partial(ld.includes, g.admins));
+          removed = ld.difference(g.users, users.uids);
+          g.users = ld.reject(users.uids, ld.partial(ld.includes, g.admins));
         } else {
-          removed = ld.difference(g.admins, uids);
-          g.admins = ld.reject(uids, ld.partial(ld.includes, g.users));
+          removed = ld.difference(g.admins, users.uids);
+          g.admins = ld.reject(users.uids, ld.partial(ld.includes, g.users));
           if ((ld.size(g.admins)) === 0) {
             var e = new Error('BACKEND.ERROR.GROUP.RESIGN_UNIQUE_ADMIN');
             return callback(e);
@@ -346,7 +356,7 @@ module.exports = (function () {
           if (err) { return callback(err); }
           group.fn.set(g, function (err, g) {
             if (err) { return callback(err); }
-            callback(null, g);
+            callback(null, g, ld.omit(users, 'uids'));
           });
         });
       });

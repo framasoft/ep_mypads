@@ -187,7 +187,8 @@ module.exports = (function () {
     * If already sorted by the same field, it reverses order.
     */
 
-    c.sortField = m.prop();
+    window.c = c;
+    c.sortField = m.prop('ctime');
     c.sortAsc = m.prop(true);
     c.sortBy = function (field) {
       if (c.sortField() === field) { c.sortAsc(!c.sortAsc()); }
@@ -211,7 +212,7 @@ module.exports = (function () {
     */
 
     c.computeGroups = function () {
-      c.groups = ld(model.groups()).values().sortBy('name').value();
+      c.groups = ld(model.groups()).values().sortBy(c.sortField()).value();
       var userGroups = u().bookmarks.groups;
       c.groups = ld.reduce(c.groups, function (memo, g) {
         for (var k in c.filters) {
@@ -229,7 +230,6 @@ module.exports = (function () {
         return memo;
       }, { bookmarked: [], archived: [], normal: [] });
     };
-
 
     // Bootstrapping
     if (ld.isEmpty(model.groups())) {
@@ -253,7 +253,7 @@ module.exports = (function () {
       return m('button', {
         class: (c.sortField() === field) ? 'active': '',
         onclick: ld.partial(c.sortBy, field)
-      }, txt);
+      }, txt + ' ' + (c.sortAsc() ? 'ASC' : 'DESC'));
     };
     return m('section.sort.block-group', [
       m('h3.block', [
@@ -262,7 +262,7 @@ module.exports = (function () {
           { 'data-msg': conf.LANG.GROUP.SORT.HELP })
       ]),
       m('ul.block-group', [
-        m('li.block', [ btn('_id', conf.LANG.GROUP.PAD.SORT_BY_CREATION) ]),
+        m('li.block', [ btn('ctime', conf.LANG.GROUP.PAD.SORT_BY_CREATION) ]),
         m('li.block', [ btn('name', conf.LANG.GROUP.PAD.SORT_BY_NAME) ]),
       ])
     ]);

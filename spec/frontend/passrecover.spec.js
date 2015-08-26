@@ -44,7 +44,7 @@ module.exports = (function () {
         window.setTimeout(function () {
           $el = {
             form: qfirst('form#passrec-form'),
-            login: qfirst('input[name=login]'),
+            email: qfirst('input[name=email]'),
             submit: qfirst('input[type=submit]')
           };
           window.setTimeout(done, 100);
@@ -56,17 +56,17 @@ module.exports = (function () {
         window.setTimeout(done, 200);
       });
 
-      describe('password recovery from login', function () {
+      describe('password recovery from email', function () {
 
-        it('should forbid submision whith no login fill', function () {
+        it('should forbid submision whith no email fill', function () {
           $el.submit.click();
-          expect($el.login.checkValidity()).toBeFalsy();
+          expect($el.email.checkValidity()).toBeFalsy();
           expect($el.form.checkValidity()).toBeFalsy();
         });
 
-        it('should return an error if inexistent login is filled',
+        it('should return an error if inexistent email is filled',
           function (done) {
-            fill($el.login, 'inexistent');
+            fill($el.email, 'inexistent@example.org');
             $el.submit.click();
             window.setTimeout(function () {
               var $err = qfirst('body > section.notification div.error p');
@@ -79,7 +79,7 @@ module.exports = (function () {
 
         it('should return an error if mail management has not been configured',
           function (done) {
-            fill($el.login, 'parker');
+            fill($el.email, 'parker@lewis.me');
             $el.submit.click();
             window.setTimeout(function () {
               var $err = qfirst('body > section.notification div.error p');

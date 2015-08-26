@@ -4308,7 +4308,7 @@ module.exports = (function () {
     var c = {
       token: m.route.param('token')
     };
-    var fields = (c.token ? ['password', 'passwordConfirm'] : ['login']);
+    var fields = (c.token ? ['password', 'passwordConfirm'] : ['email']);
     form.initFields(c, fields);
     
     var errFn = function (err) {
@@ -4348,12 +4348,12 @@ module.exports = (function () {
   var view = {};
 
   view.form = function (c) {
-    var login = user.view.field.login(c);
+    var email = user.view.field.email(c);
     return m('form.block', {
       id: 'passrec-form',
       onsubmit: c.submit
       }, [
-        m('fieldset.block-group', [ login.label, login.input, login.icon ]),
+        m('fieldset.block-group', [ email.label, email.input, email.icon ]),
         m('input.block.send', {
           form: 'passrec-form',
           type: 'submit',

@@ -77,6 +77,24 @@ module.exports = (function () {
     return callback(opts);
   };
 
+  /**
+  * WIP function to use at uninstall of MyPads : erase all MyPads data
+  */
+
+  hooks.removeAllData = function () {
+    var storage = require('./storage.js');
+    storage.db.findKeys(storage.DBPREFIX.GLOBAL + '*', null,
+      function (err, keys) {
+        console.log('Keys to be removed : ' + keys.join(', '));
+        if (err) { throw err; }
+        storage.fn.delKeys(keys, function (err) {
+          if (err) { throw err; }
+          console.log('data successfully removed');
+        });
+      }
+    );
+  };
+
   return hooks;
 
 }).call(this);

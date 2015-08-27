@@ -78,21 +78,28 @@ module.exports = (function () {
   };
 
   /**
-  * WIP function to use at uninstall of MyPads : erase all MyPads data
+  * `removeAllData` is a hook function used when MyPads is uninstalled from
+  * Etherpad admin interface. It erases all MyPads data from database after
+  * checking that the plugin uninstalled is really MyPads.
   */
 
-  hooks.removeAllData = function () {
-    var storage = require('./storage.js');
-    storage.db.findKeys(storage.DBPREFIX.GLOBAL + '*', null,
-      function (err, keys) {
-        console.log('Keys to be removed : ' + keys.join(', '));
-        if (err) { throw err; }
-        storage.fn.delKeys(keys, function (err) {
-          if (err) { throw err; }
-          console.log('data successfully removed');
-        });
-      }
-    );
+  hooks.removeAllData = function (name, context, callback) {
+    if ((name === 'pluginUninstall') && (context.plugin_name === 'ep_mypads')) {
+      var storage = require('./storage.js');
+      storage.db.findKeys(storage.DBPREFIX.GLOBAL + '*', null,
+        function (err, keys) {
+          console.log('Keys to be removed : ' + keys.join(', '));
+          if (err) { return callback(err); }
+          storage.fn.delKeys(keys, function (err) {
+            if (err) { return callback(err); }
+            console.log('data successfully removed');
+            callback(null);
+          });
+        }
+      );
+    } else {
+      callback(null);
+    }
   };
 
   return hooks;

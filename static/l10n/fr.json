@@ -182,7 +182,7 @@
   },
   "GROUP": {
     "MYGROUPS": "Mes groupes",
-    "HELP": "Les groupes contiennent des pads. Vous avez besoin de créer au moins un groupe.",
+    "HELP": "Les groupes peuvent contenir des pads. Vous trouverez ici vos groupes, c'est à dire ceux que vous avez créés et ceux auxquels vous avez été explicitement invités",
     "GROUP": "Groupe",
     "GROUPS": "Groupes",
     "NONE": "Aucun groupe",

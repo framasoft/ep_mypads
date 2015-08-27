@@ -182,7 +182,7 @@
   },
   "GROUP": {
     "MYGROUPS": "My Groups",
-    "HELP": "Groups contain pads, you need at least to create one of them",
+    "HELP": "Groups can contain pads. Here are your groups : those you have created, those you have been explicitly invited",
     "GROUP": "Group",
     "GROUPS": "Groups",
     "NONE": "No group",

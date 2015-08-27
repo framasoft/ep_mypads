@@ -167,7 +167,6 @@ module.exports = (function () {
           var padSortBtns = qall('section.pad p.sort button');
           var creationSort = padSortBtns[0];
           var nameSort = padSortBtns[1];
-          creationSort.click();
           window.setTimeout(function () {
             var names = qall('section.pads ul li span.name');
             expect(names[0].textContent).toBe('Loving Annie');
@@ -208,9 +207,9 @@ module.exports = (function () {
           app.window.prompt = function (title, val) { link = val; };
           var padShare = app.document
             .querySelectorAll('button[title=Share]');
-          padShare[2].click();
+          padShare[1].click();
           window.setTimeout(function () {
-            expect(link).toMatch('/pad/view/another-one-[a-z0-9]+$');
+            expect(link).toMatch('/pad/view/loving-annie-[a-z0-9]+$');
             done();
           }, 100);
         });

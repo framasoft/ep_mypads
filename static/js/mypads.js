@@ -2042,9 +2042,9 @@ module.exports = (function () {
           });
         } else {
           c.isAdmin = false;
-          c.pads = ld.compact(ld.map(c.group.pads, function (x) {
+          c.pads = ld.sortBy(ld.compact(ld.map(c.group.pads, function (x) {
             return data.pads()[x];
-          }));
+          })), 'ctime');
         }
       };
       if (model.groups()[key]) {
@@ -2071,7 +2071,7 @@ module.exports = (function () {
     * If already sorted by the same field, it reverses order.
     */
 
-    c.sortField = m.prop();
+    c.sortField = m.prop('ctime');
     c.sortAsc = m.prop(true);
     c.sortBy = function (field) {
       if (c.sortField() === field) { c.sortAsc(!c.sortAsc()); }
@@ -2120,8 +2120,8 @@ module.exports = (function () {
         if (err) { return c.sendPass(false); }
         var data = c.isGuest ? model.tmp() : model;
         c.group = data.groups()[key];
-        c.pads = ld.compact(ld.map(c.group.pads, 
-          function (x) { return data.pads()[x]; }));
+        c.pads = ld.sortBy(ld.compact(ld.map(c.group.pads, 
+          function (x) { return data.pads()[x]; })), 'ctime');
         c.sendPass(true);
       });
     };
@@ -2193,7 +2193,7 @@ module.exports = (function () {
     m('span', conf.LANG.GROUP.PAD.SORT_BY),
     m('button', {
       type: 'button',
-      onclick: ld.partial(c.sortBy, '_id')
+      onclick: ld.partial(c.sortBy, 'ctime')
     }, conf.LANG.GROUP.PAD.SORT_BY_CREATION),
     m('button', {
       type: 'button',
@@ -21406,7 +21406,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {

@@ -207,7 +207,6 @@ module.exports = (function () {
             var sel = 'section.sort ul li button';
             var $btns = app.document.querySelectorAll(sel);
             var $sortBy = { creation: $btns[0], name: $btns[1] };
-            $sortBy.creation.click();
             window.setTimeout(function () {
               var titles = $el.common.querySelectorAll('li header h4');
               expect(titles[0].textContent).toBe('memories');

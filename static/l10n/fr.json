@@ -104,10 +104,10 @@
   },
   "NOTIFICATION": {
     "SUCCESS": "Succès",
-    "SUCCESS_GENERIC": "L'action a été achevée avec succès",
+    "SUCCESS_GENERIC": "L'action s'est achevée avec succès",
     "INFO": "Info",
     "ERROR": "Erreur",
-    "ERROR_UNEXPECTED": "Une erreur inattendue est arrivée. Merci de contacter l'administrateur.",
+    "ERROR_UNEXPECTED": "Une erreur inattendue s'est produite. Merci de contacter l'administrateur.",
     "WARNING": "Avertissement"
   },
   "TAG": {
@@ -148,7 +148,7 @@
       "EMAIL": "L'adresse mail est nécessaire pour la procédure de récupération de mot de passe",
       "COLOR": "Le code hexadécimal pour la couleur que vous souhaitez utiliser par défaut pour les pads",
       "LANG": "Selon la configuration de votre navigateur par défaut, dépend de ceux disponibles sur MyPads",
-      "USELOGINANDCOLORINPADS": "Utiliser vos identifiant et couleur dans les pads par défaut ?",
+      "USELOGINANDCOLORINPADS": "Utiliser votre identifiant et votre couleur dans les pads par défaut ?",
       "PASSWORD_BEGIN": "Doit être compris entre ",
       "PASSWORD_END": " caractères",
       "PASSWORD_CHECK": "Pour confirmer : doit être le même que le mot de passe",
@@ -171,8 +171,8 @@
     "AUTH": {
       "SUCCESS": "Authentification réussie ! Bienvenue.",
       "SUCCESS_OUT": "Vous avez été déconnecté avec succès.",
-      "SUBSCRIBE_SUCCESS": "Inscription complétée avec succès ! Bienvenue.",
-      "SUBSCRIBE_CONFIRM_SUCCESS": "Inscription complétée avec succès. Un email vous a été envoyé afin de confirmer votre adresse email avant que vous puissiez vous identifier.",
+      "SUBSCRIBE_SUCCESS": "Inscription terminée avec succès ! Bienvenue.",
+      "SUBSCRIBE_CONFIRM_SUCCESS": "Inscription terminée avec succès. Un email vous a été envoyé afin de confirmer votre adresse email avant que vous puissiez vous identifier.",
       "PROFILE_SUCCESS": "Profil mis à jour avec succès.",
       "WELCOME": "Bienvenue"
     },
@@ -233,10 +233,10 @@
     "FIELD": {
       "NAME": "Nom",
       "DESCRIPTION": "Description",
-      "VISIBILITY": "Visibilité",
-      "PRIVATE": "Privé",
-      "RESTRICTED": "Restreint",
-      "PUBLIC": "Public",
+      "VISIBILITY": "Accès",
+      "PRIVATE": "privés",
+      "RESTRICTED": "restreints",
+      "PUBLIC": "publics",
       "READONLY": "Lecture seule",
       "GROUP_PARAMS": "Paramètres du groupe ?"
     },
@@ -277,7 +277,7 @@
     },
     "INFO": {
       "NAME": "Nom",
-      "DESCRIPTION": "Un texte optionnel pour décrire votre groupe",
+      "DESCRIPTION": "Un texte facultatif pour décrire votre groupe",
       "VISIBILITY": "Requis, restreint par défaut aux utilisateurs ou administrateurs invités",
       "READONLY": "Si sélectionné les pads liés seront en lecture seule",
       "PASSWORD": "Requis pour le mode privé",
@@ -316,9 +316,9 @@
       "USERS_HELP": "Ajoutez autant d'utilisateurs que vous le souhaitez"
     },
     "INFO": {
-      "NAME": "Nom de la liste utilisateurs",
-      "ADD_SUCCESS": "La liste utilisateurs a été créée avec succès",
-      "EDIT_SUCCESS": "La liste utilisateurs a été mise à jour avec succès",
+      "NAME": "Nom de la liste d'utilisateurs",
+      "ADD_SUCCESS": "La liste d'utilisateurs a été créée avec succès",
+      "EDIT_SUCCESS": "La liste d'utilisateurs a été mise à jour avec succès",
       "REMOVE_SURE": "Voulez-vous vraiment supprimer cette liste d'utilisateurs ?",
       "REMOVE_SUCCESS": "La liste d'utilisateurs a été supprimée avec succès",
       "USER_INVITE": "En sélectionnant une liste, vous inviterez tous ses utilisateurs en même temps",

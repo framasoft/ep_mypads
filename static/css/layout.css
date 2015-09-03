@@ -97,6 +97,8 @@ input[type=text]:focus, input[type=password]:focus {
   border-right-width: 0.3em;
 }
 
+input[type=color] { padding: 0.3em; height: 2em; }
+
 input:invalid, select:invalid { border-color: #cc2d18; }
 
 input.send {

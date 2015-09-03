@@ -234,9 +234,9 @@
       "NAME": "Nom",
       "DESCRIPTION": "Description",
       "VISIBILITY": "Accès",
-      "PRIVATE": "privés",
-      "RESTRICTED": "restreints",
-      "PUBLIC": "publics",
+      "PRIVATE": "Privé",
+      "RESTRICTED": "Restreint",
+      "PUBLIC": "Public",
       "READONLY": "Lecture seule",
       "GROUP_PARAMS": "Paramètres du groupe ?"
     },

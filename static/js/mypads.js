@@ -2750,7 +2750,7 @@ module.exports = (function () {
                 {
                   class: 'user' + ((c.filterVisibVal === f) ? ' active' : ''),
                   onclick: ld.partial(c.filterVisibility, f) 
-                }, conf.LANG.GROUP.GROUPS + ' ' +
+                }, conf.LANG.GROUP.FIELD.VISIBILITY + ' : ' +
                   conf.LANG.GROUP.FIELD[f.toUpperCase()]);
             });
           })()
@@ -21406,7 +21406,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {
@@ -21590,7 +21590,7 @@ module.exports=module.exports=module.exports={
   },
   "GROUP": {
     "MYGROUPS": "My Groups",
-    "HELP": "Groups contain pads, you need at least to create one of them",
+    "HELP": "Groups can contain pads. Here are your groups : those you have created, those you have been explicitly invited",
     "GROUP": "Group",
     "GROUPS": "Groups",
     "NONE": "No group",

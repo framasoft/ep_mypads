@@ -326,7 +326,7 @@ module.exports = (function () {
                 {
                   class: 'user' + ((c.filterVisibVal === f) ? ' active' : ''),
                   onclick: ld.partial(c.filterVisibility, f) 
-                }, conf.LANG.GROUP.GROUPS + ' ' +
+                }, conf.LANG.GROUP.FIELD.VISIBILITY + ' : ' +
                   conf.LANG.GROUP.FIELD[f.toUpperCase()]);
             });
           })()

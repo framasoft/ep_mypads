@@ -131,7 +131,7 @@ footer.group > ul > li, div.tag > ul > li {
   cursor: pointer;
 }
 footer.group > ul > li.active {
-  background-color: #ab2a0e;
+  background-color: #304219;
 }
 
 /* Pads specific */
@@ -202,7 +202,7 @@ section.group-aside section.filter ul li > button:focus, section.group-aside sec
 }
 
 section.group-aside section.filter ul li > button.active, section.group-aside section.sort ul li > button.active, section.group-aside section.tag li button.active {
-  background-color: #ab2a0e;
+  background-color: #304219;
 }
 section.group-aside section.filter ul li > button.active:after, section.group-aside section.sort ul li > button.active:after, section.group-aside section.tag li button.active:after {
   content: ' ✓';

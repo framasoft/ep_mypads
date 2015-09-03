@@ -2678,7 +2678,10 @@ module.exports = (function () {
       return m('button', {
         class: (c.sortField() === field) ? 'active': '',
         onclick: ld.partial(c.sortBy, field)
-      }, txt + ' ' + (c.sortAsc() ? 'ASC' : 'DESC'));
+      }, [
+        m('span', txt),
+        m('i.icon-' +  (c.sortAsc() ? 'up-dir' : 'down-dir'))
+      ]);
     };
     return m('section.sort.block-group', [
       m('h3.block', [
@@ -21413,7 +21416,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {

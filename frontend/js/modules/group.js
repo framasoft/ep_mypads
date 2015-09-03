@@ -253,7 +253,10 @@ module.exports = (function () {
       return m('button', {
         class: (c.sortField() === field) ? 'active': '',
         onclick: ld.partial(c.sortBy, field)
-      }, txt + ' ' + (c.sortAsc() ? 'ASC' : 'DESC'));
+      }, [
+        m('span', txt),
+        m('i.icon-' +  (c.sortAsc() ? 'up-dir' : 'down-dir'))
+      ]);
     };
     return m('section.sort.block-group', [
       m('h3.block', [

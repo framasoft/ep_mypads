@@ -54,7 +54,7 @@ module.exports = (function () {
           fill(qfirst('input[name=password]'), 'lovesKubiak');
           qfirst('input[type=submit]').click();
           window.setTimeout(function () {
-            qall('a[href$=view]')[2].click();
+            qall('a[href$=view]')[4].click();
             window.setTimeout(function () {
               qfirst('section.pad a[href$=add]').click();
               window.setTimeout(function () {

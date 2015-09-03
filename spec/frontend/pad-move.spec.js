@@ -51,7 +51,7 @@ module.exports = (function () {
             'lovesKubiak');
           qfirst('input[type=submit]').click();
           window.setTimeout(function () {
-            qall('a[href$=view]')[2].click();
+            qall('a[href$=view]')[4].click();
             window.setTimeout(function () {
               qfirst('a[href$="pad/move"]').click();
               window.setTimeout(function () {

@@ -44,7 +44,7 @@ module.exports = (function () {
             'lovesKubiak');
           app.document.querySelector('input[type=submit]').click();
           window.setTimeout(function () {
-            app.document.querySelectorAll('a[href$=view]')[6].click();
+            app.document.querySelectorAll('a[href$=view]')[9].click();
             app.document.querySelector('body > section p').click();
             done();
           }, 200);

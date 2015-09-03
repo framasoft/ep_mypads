@@ -41,7 +41,7 @@ module.exports = (function () {
         fill(app.document.querySelector('input[name=password]'), 'lovesKubiak');
         app.document.querySelector('input[type=submit]').click();
         window.setTimeout(function () {
-          app.document.querySelectorAll('a[href$=view]')[2].click();
+          app.document.querySelectorAll('a[href$=view]')[4].click();
           window.setTimeout(function () {
             qfirst('body > section > div p').click();
             window.setTimeout(done, 100);

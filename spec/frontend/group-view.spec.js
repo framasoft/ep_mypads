@@ -45,7 +45,7 @@ module.exports = (function () {
         fill(app.document.querySelector('input[name=password]'), password);
         app.document.querySelector('input[type=submit]').click();
         window.setTimeout(function () {
-          app.document.querySelectorAll('a[href$=view]')[2].click();
+          app.document.querySelectorAll('a[href$=view]')[4].click();
           window.setTimeout(function () {
             $el = {
               group: first('dl.group'),
@@ -283,7 +283,7 @@ module.exports = (function () {
         beforeAll(function (done) {
           app.document.querySelector('a[href$=mypads]').click();
           window.setTimeout(function () {
-            app.document.querySelectorAll('a[href$=view]')[4].click();
+            app.document.querySelectorAll('a[href$=view]')[7].click();
             window.setTimeout(function () {
               $el = { groupQuit: first('button.cancel') };
               window.setTimeout(done, 100);

@@ -2841,10 +2841,16 @@ module.exports = (function () {
         m('dt.block', conf.LANG.GROUP.PAD.PADS),
         m('dd.block', [
           ld.size(g.pads), (function () {
+            var icons = [];
             if (isAdmin) {
-              return m('a', { href: padRoute + '/pad/add', config: m.route }, [
-                m('i.icon-plus-squared', { title: conf.LANG.GROUP.PAD.ADD }) ]);
+              icons.push(m('a',
+                { href: padRoute + '/pad/add', config: m.route }, [
+                m('i.icon-plus-squared', { title: conf.LANG.GROUP.PAD.ADD }) ]
+              ));
             }
+            icons.push(m('a', { href: padRoute + '/view', config: m.route }, [
+              m('i.icon-book-open', { title: conf.LANG.GROUP.VIEW_MANAGE }) ]));
+            return icons;
           })()
         ]),
         m('dt.block', conf.LANG.GROUP.PAD.VISIBILITY),
@@ -21407,7 +21413,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {

@@ -33,5 +33,20 @@ module.exports = (function () {
   auth.userInfo = m.prop();
   auth.token = function () { return localStorage.getItem('token'); };
   auth.isAuthenticated = m.prop(!!auth.token());
+
+  auth.fn = {};
+
+  /**
+  * ### xhrConfig
+  *
+  * `xhrConfig` sets *Authorization* header for XML Requests. It takes a `xhr`
+  * object for m.request and sets Authorization header with `auth.token`
+  * property.
+  */
+
+  auth.fn.xhrConfig = function (xhr) {
+    xhr.setRequestHeader('Authorization', 'JWT ' + auth.token());
+  };
+
   return auth;
 }).call(this);

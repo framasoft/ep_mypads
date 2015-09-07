@@ -87,10 +87,10 @@ module.exports = (function () {
   */
 
   config.init = function (callback) {
-    var r = (auth.isAuthenticated() ? '?auth_token=' + auth.token() : '');
     m.request({
       method: 'GET',
-      url: config.URLS.CONF + r
+      url: config.URLS.CONF,
+      data: (auth.isAuthenticated() ? { auth_token: auth.token() } : undefined )
     }).then(function (settings) {
       config.SERVER = settings.value; 
       auth.isAuthenticated(settings.auth);

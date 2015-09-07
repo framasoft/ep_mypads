@@ -46,7 +46,8 @@ module.exports = (function () {
       if (!auth.isAuthenticated()) { return m.route('/login'); }
       m.request({
         method: 'GET',
-        url: conf.URLS.LOGOUT + '?auth_token=' + auth.token()
+        url: conf.URLS.LOGOUT,
+        config: auth.fn.xhrConfig
       }).then(function () {
         auth.isAuthenticated(false);
         auth.userInfo(null);

@@ -61,23 +61,17 @@ module.exports = (function () {
       notif.error({ body: ld.result(conf.LANG, err.error) });
       if (callback) { callback(err); }
     };
-    var r = (auth.isAuthenticated() ? '?auth_token=' + auth.token() : '');
+    var isAuth = auth.isAuthenticated();
+    var data = (isAuth ?  { auth_token: auth.token() } : undefined);
     m.request({
-      url: conf.URLS.GROUP + r,
+      url: conf.URLS.GROUP,
       method: 'GET',
+      data: data
     }).then(
       function (resp) {
         model.groups(resp.value.groups); 
         model.pads(resp.value.pads);
         var u = auth.userInfo();
-        /*
-        model.admins(resp.value.admins);
-        if (ld.size(model.admins()) === 0) {
-          var admins = {};
-          admins[u._id] = u;
-          model.admins(admins);
-        }
-        */
         model.users(resp.value.users);
         var tags = ld(resp.value.groups)
           .values()
@@ -87,8 +81,9 @@ module.exports = (function () {
           .value();
         model.tags(tags);
         m.request({
-          url: conf.URLS.USERLIST + r,
+          url: conf.URLS.USERLIST,
           method: 'GET',
+          data: data
         }).then(function (resp) {
           u.userlists = resp.value;
           auth.userInfo(u);

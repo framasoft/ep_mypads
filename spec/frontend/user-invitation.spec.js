@@ -192,7 +192,6 @@ module.exports = (function () {
             notif[1].click();
             var users = qall('section.users ul')[1].querySelectorAll('li');
             window.setTimeout(function () {
-              qfirst('body > section.notification p').click();
               expect(users.length).toBe(1);
               expect(users[0].textContent).toMatch('frank');
               qfirst('a[href$=invite]').click();

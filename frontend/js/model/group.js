@@ -69,13 +69,15 @@ module.exports = (function () {
       function (resp) {
         model.groups(resp.value.groups); 
         model.pads(resp.value.pads);
-        model.admins(resp.value.admins);
         var u = auth.userInfo();
+        /*
+        model.admins(resp.value.admins);
         if (ld.size(model.admins()) === 0) {
           var admins = {};
           admins[u._id] = u;
           model.admins(admins);
         }
+        */
         model.users(resp.value.users);
         var tags = ld(resp.value.groups)
           .values()

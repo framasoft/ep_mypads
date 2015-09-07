@@ -504,7 +504,6 @@
               expect(ld.isObject(groupsFull)).toBeTruthy();
               expect(ld.isObject(groupsFull.groups)).toBeTruthy();
               expect(ld.isObject(groupsFull.pads)).toBeTruthy();
-              expect(ld.isObject(groupsFull.admins)).toBeTruthy();
               expect(ld.isObject(groupsFull.users)).toBeTruthy();
               var groups = groupsFull.groups;
               var key = gadm.groups[0];
@@ -513,7 +512,7 @@
               expect(groups[key].readonly).toBeTruthy();
               var pad = ld.first(ld.values(groupsFull.pads));
               expect(pad.name).toBe('pad1');
-              var admin = ld.first(ld.values(groupsFull.admins));
+              var admin = ld.first(ld.values(groupsFull.users));
               expect(admin.login).toBe('frank');
               done();
             }

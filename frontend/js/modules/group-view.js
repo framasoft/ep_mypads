@@ -70,9 +70,11 @@ module.exports = (function () {
         c.group = data.groups()[key];
         if (!c.isGuest) {
           c.isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
-          ld.forEach(['pads', 'admins', 'users'], function (f) {
-            c[f] = ld.map(c.group[f], function (x) { return model[f]()[x]; });
-          });
+          var pads = model.pads();
+          var users = model.users();
+          c.pads = ld.map(c.group.pads, function (x) { return pads[x]; });
+          c.users = ld.map(c.group.users, function (x) { return users[x]; });
+          c.admins = ld.map(c.group.admins, function (x) { return users[x]; });
         } else {
           c.isAdmin = false;
           c.pads = ld.sortBy(ld.compact(ld.map(c.group.pads, function (x) {

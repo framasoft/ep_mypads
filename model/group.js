@@ -600,32 +600,34 @@ module.exports = (function () {
   * ### getPadsAndUsersByGroups
   *
   * `getPadsAndUsersByGroups` is an asynchronous private function which return
-  * *pad* and *user* objects from an object of *group* objects (key: group).
+  * *pads* and *users* objects from an object of *group* objects (key: group).
   * It also takes a classic `callback` function.
   */
 
   group.fn.getPadsAndUsersByGroups = function (groups, callback) {
-    var defs = { pads: PPREFIX, admins: UPREFIX, users: UPREFIX };
+    var defs = { pads: PPREFIX, users: UPREFIX };
+    var addPfx = function (pfx, values) {
+      return ld.map(values, function (v) { return pfx + v; });
+    };
     var keys = ld.reduce(groups, function (memo, val) {
-      ld.forIn(defs, function (pfx, f) {
-        memo[f] = ld.union(memo[f], ld.map(val[f],
-          function (v) { return pfx + v; }));
-      });
+      memo.pads = ld.union(memo.pads, addPfx(PPREFIX, val.pads));
+      memo.users = ld.union(memo.users, addPfx(UPREFIX, val.users),
+        addPfx(UPREFIX, val.admins));
       return memo;
-    }, { pads: [], admins: [], users: [] });
-      storage.fn.getKeys(ld.flatten(ld.values(keys)), function (err, res) {
-        if (err) { return callback(err); }
-        res = ld.reduce(res, function (memo, val, key) {
-          var field;
-          ld.forIn(keys, function (vals, f) {
-            if (ld.includes(vals, key)) { field = f; }
-          });
-          key = key.substr(defs[field].length);
-          memo[field][key] = val;
-          return memo;
-        }, { groups: groups, pads: {}, admins: {}, users: {} });
-        callback(null, res);
-      });
+    }, { pads: [], users: [] });
+    storage.fn.getKeys(ld.flatten(ld.values(keys)), function (err, res) {
+      if (err) { return callback(err); }
+      res = ld.reduce(res, function (memo, val, key) {
+        var field;
+        ld.forIn(keys, function (vals, f) {
+          if (ld.includes(vals, key)) { field = f; }
+        });
+        key = key.substr(defs[field].length);
+        memo[field][key] = val;
+        return memo;
+      }, { groups: groups, pads: {}, users: {} });
+      callback(null, res);
+    });
   };
 
   return group;

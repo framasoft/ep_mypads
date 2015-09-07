@@ -1528,13 +1528,12 @@
             expect(ld.isObject(body.value.groups)).toBeTruthy();
             expect(ld.isObject(body.value.pads)).toBeTruthy();
             expect(ld.isObject(body.value.users)).toBeTruthy();
-            expect(ld.isObject(body.value.admins)).toBeTruthy();
             var groups = body.value.groups;
             var key = ld.first(ld.keys(groups));
             expect(groups[key].name).toBe('g1');
             expect(groups[key].visibility).toBe('public');
             expect(groups[key].password).toBeUndefined();
-            var admin = ld.first(ld.values(body.value.admins));
+            var admin = ld.first(ld.values(body.value.users));
             expect(admin.login).toBe('guest');
             expect(admin._id).toBeDefined();
             expect(admin.firstname).toBeDefined();

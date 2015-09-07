@@ -401,13 +401,15 @@ module.exports = (function () {
       function (resp) {
         model.groups(resp.value.groups); 
         model.pads(resp.value.pads);
-        model.admins(resp.value.admins);
         var u = auth.userInfo();
+        /*
+        model.admins(resp.value.admins);
         if (ld.size(model.admins()) === 0) {
           var admins = {};
           admins[u._id] = u;
           model.admins(admins);
         }
+        */
         model.users(resp.value.users);
         var tags = ld(resp.value.groups)
           .values()
@@ -2038,9 +2040,11 @@ module.exports = (function () {
         c.group = data.groups()[key];
         if (!c.isGuest) {
           c.isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
-          ld.forEach(['pads', 'admins', 'users'], function (f) {
-            c[f] = ld.map(c.group[f], function (x) { return model[f]()[x]; });
-          });
+          var pads = model.pads();
+          var users = model.users();
+          c.pads = ld.map(c.group.pads, function (x) { return pads[x]; });
+          c.users = ld.map(c.group.users, function (x) { return users[x]; });
+          c.admins = ld.map(c.group.admins, function (x) { return users[x]; });
         } else {
           c.isAdmin = false;
           c.pads = ld.sortBy(ld.compact(ld.map(c.group.pads, function (x) {
@@ -4848,7 +4852,7 @@ module.exports = (function () {
     var init = function () {
       var group = m.route.param('group');
       c.group = model.groups()[group];
-      var users = ld.merge(model.admins(), model.users());
+      var users = model.users();
       users = ld.reduce(users, function (memo, val) {
         memo.byId[val._id] = val;
         memo.byLogin[val.login] = val;
@@ -21416,7 +21420,7 @@ if (typeof module != "undefined" && module !== null && module.exports) module.ex
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
 },{}],"/mnt/share/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
-module.exports={
+module.exports=module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {

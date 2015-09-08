@@ -338,10 +338,12 @@ module.exports = (function () {
       var removed;
       if (invite) {
         removed = ld.difference(g.users, users.uids);
-        g.users = ld.reject(users.uids, ld.partial(ld.includes, g.admins));
+        g.users = ld.unique(ld.reject(users.uids,
+          ld.partial(ld.includes, g.admins)));
       } else {
         removed = ld.difference(g.admins, users.uids);
-        g.admins = ld.reject(users.uids, ld.partial(ld.includes, g.users));
+        g.admins = ld.unique(ld.reject(users.uids,
+          ld.partial(ld.includes, g.users)));
         if ((ld.size(g.admins)) === 0) {
           var e = new Error('BACKEND.ERROR.GROUP.RESIGN_UNIQUE_ADMIN');
           return callback(e);

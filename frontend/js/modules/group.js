@@ -399,8 +399,8 @@ module.exports = (function () {
       actions.push(m('a', {
         href: padRoute + '/edit',
         config: m.route,
-        title: conf.LANG.GROUP.EDIT
-      }, [ m('i.icon-pencil') ]),
+        title: conf.LANG.MENU.CONFIG
+      }, [ m('i.icon-tools') ]),
       m('a', {
         href: padRoute + '/remove',
         config: m.route,

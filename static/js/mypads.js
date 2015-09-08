@@ -2259,16 +2259,16 @@ module.exports = (function () {
             m('a', {
               href: route + '/pad/view/' + p._id,
               config: m.route,
-              title: conf.LANG.GROUP.VIEW
-            }, [ m('i.icon-book-open') ])
+              title: conf.LANG.GROUP.EDIT
+            }, [ m('i.icon-pencil') ])
           ];
           if (c.isAdmin) {
             actions.push(
               m('a', {
                 href: route + '/pad/edit/' + p._id,
                 config: m.route,
-                title: conf.LANG.GROUP.EDIT
-              }, [ m('i.icon-pencil') ]),
+                title: conf.LANG.MENU.CONFIG
+              }, [ m('i.icon-tools') ]),
               m('a', {
                 href: route + '/pad/remove/' + p._id,
                 config: m.route,
@@ -2852,8 +2852,8 @@ module.exports = (function () {
       actions.push(m('a', {
         href: padRoute + '/edit',
         config: m.route,
-        title: conf.LANG.GROUP.EDIT
-      }, [ m('i.icon-pencil') ]),
+        title: conf.LANG.MENU.CONFIG
+      }, [ m('i.icon-tools') ]),
       m('a', {
         href: padRoute + '/remove',
         config: m.route,

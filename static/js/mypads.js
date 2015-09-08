@@ -419,6 +419,7 @@ module.exports = (function () {
         model.groups(resp.value.groups); 
         model.pads(resp.value.pads);
         var u = auth.userInfo();
+        resp.value.users[u._id] = u;
         model.users(resp.value.users);
         var tags = ld(resp.value.groups)
           .values()

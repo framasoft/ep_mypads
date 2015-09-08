@@ -396,8 +396,8 @@ module.exports = (function () {
         m('a', {
           href: '/mypads/group/' + c.group._id + '/edit',
           config: m.route,
-          title: conf.LANG.GROUP.EDIT
-        }, [ m('i.icon-pencil'), m('span', conf.LANG.GROUP.EDIT) ]),
+          title: conf.LANG.MENU.CONFIG
+        }, [ m('i.icon-tools'), m('span', conf.LANG.MENU.CONFIG) ]),
         m('a', {
           href: '/mypads/group/' + c.group._id + '/remove',
           config: m.route,

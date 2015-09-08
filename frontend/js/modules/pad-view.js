@@ -231,8 +231,8 @@ module.exports = (function () {
             return m('a', {
               href: route + '/pad/edit/' + c.pad._id,
               config: m.route,
-              title: conf.LANG.GROUP.EDIT
-            }, [ m('i.icon-pencil'), m('span', conf.LANG.GROUP.EDIT) ]);
+              title: conf.LANG.MENU.CONFIG
+            }, [ m('i.icon-tools'), m('span', conf.LANG.MENU.CONFIG) ]);
             }
         })(),
         (function () {

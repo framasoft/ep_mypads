@@ -126,7 +126,7 @@ module.exports = (function () {
       describe('group edition', function () {
 
         beforeEach(function (done) {
-          app.document.querySelector('a[title=Edit]').click();
+          app.document.querySelector('a[title=Configuration]').click();
           window.setTimeout(function () {
             $el = { 
               form: first('form'),

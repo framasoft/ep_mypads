@@ -142,7 +142,8 @@ module.exports = (function () {
 
         beforeAll(function (done) {
           // Go to last pad edit
-          qall('section.pad ul li span.actions a[title=Edit]')[3].click();
+          qall('section.pad ul li span.actions a[title=Configuration]')[3]
+            .click();
           window.setTimeout(function () {
             $el = populate();
             window.setTimeout(done, 100);

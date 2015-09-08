@@ -96,7 +96,8 @@ module.exports = (function () {
           window.setTimeout(function () {
             expect(actions.btns[0].getAttribute('title')).toBe('Bookmark');
             expect(actions.btns[1].getAttribute('title')).toBe('Share');
-            expect(actions.links[0].getAttribute('title')).toBe('Edit');
+            expect(actions.links[0].getAttribute('title'))
+              .toBe('Configuration');
             expect(actions.links[0].getAttribute('href')).toMatch('/pad/edit');
             expect(actions.links[1].getAttribute('title')).toBe('Remove');
             expect(actions.links[1].getAttribute('href'))

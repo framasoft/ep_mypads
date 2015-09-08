@@ -148,7 +148,8 @@
       var req = { params: {}, query: {} };
       var res = {
         status: function (code) { this.code = code; return this; },
-        send: function (msg) { this.msg = msg; return this; }
+        send: function (msg) { this.msg = msg; return this; },
+        redirect: function (route) { this.route = route; return this; }
       };
 
       it('should pass if pad has not been created by mypads', function (done) {
@@ -193,15 +194,12 @@
         req.params.pid = pads.memories._id;
         perm.check(req, res, next);
         setTimeout(function () {
-          expect(res.code).toBe(403);
-          expect(res.msg.error).toMatch('UNAUTHORIZED');
-          delete res.code;
-          delete res.msg;
+          expect(res.route).toMatch(req.params.pid);
+          delete res.route;
           req.query.auth_token = getJwt('jerry');
           perm.check(req, res, next);
           setTimeout(function () {
-            expect(res.code).toBe(403);
-            expect(res.msg.error).toMatch('UNAUTHORIZED');
+            expect(res.route).toMatch(req.params.pid);
             done();
           }, 100);
         }, 100);
@@ -227,60 +225,52 @@
       });
 
       it('should forbid access for private without password', function (done) {
-        delete res.code;
-        delete res.msg;
+        delete res.route;
         req.query.auth_token = getJwt('jerry');
         req.params.pid = pads.annie._id;
 
         perm.check(req, res, next);
         setTimeout(function () {
-          expect(res.code).toBe(403);
-          expect(res.msg.error).toMatch('UNAUTHORIZED');
+          expect(res.route).toMatch(req.params.pid);
           done();
         }, 100);
       });
 
       it('should forbid access for private with bad password', function (done) {
-        delete res.code;
-        delete res.msg;
+        delete res.route;
         req.query.auth_token = getJwt('jerry');
         req.params.pid = pads.annie._id;
         req.query.mypadspassword = 'badOne';
 
         perm.check(req, res, next);
         setTimeout(function () {
-          expect(res.code).toBe(403);
-          expect(res.msg.error).toMatch('UNAUTHORIZED');
+          expect(res.route).toMatch(req.params.pid);
           done();
         }, 100);
       });
 
       it('should allow access for private with good password', function (done) {
-        delete res.code;
-        delete res.msg;
+        delete res.route;
         req.query.auth_token = getJwt('jerry');
         req.params.pid = pads.annie._id;
         req.query.mypadspassword = encode('myLovelyGirl');
 
         perm.check(req, res, function () {
-          expect(res.code).toBeUndefined();
-          expect(res.msg).toBeUndefined();
+          expect(res.route).toBeUndefined();
           done();
         });
       });
 
       it('should forbid access to private pad in public group',
         function (done) {
-          delete res.code;
-          delete res.msg;
+          delete res.route;
           delete req.query.auth_token;
           delete req.query.mypadspassword;
           req.params.pid = pads.collegePrivate._id;
 
           perm.check(req, res, next);
           setTimeout(function () {
-            expect(res.code).toBe(403);
-            expect(res.msg.error).toMatch('UNAUTHORIZED');
+            expect(res.route).toMatch(req.params.pid);
             done();
           }, 100);
         }
@@ -288,15 +278,13 @@
 
       it('should allow access to private pad in public group with password',
         function (done) {
-          delete res.code;
-          delete res.msg;
+          delete res.route;
           delete req.query.auth_token;
           req.params.pid = pads.collegePrivate._id;
           req.query.mypadspassword = encode('somePass');
 
           perm.check(req, res, function () {
-            expect(res.code).toBeUndefined();
-            expect(res.msg).toBeUndefined();
+            expect(res.route).toBeUndefined();
             done();
           });
         }
@@ -304,28 +292,22 @@
 
       it('should allow access to private pad with its own password in ' +
         'private group', function (done) {
-          delete res.code;
-          delete res.msg;
+          delete res.route;
           delete req.query.auth_token;
           req.params.pid = pads.annieOwnPass._id;
           req.query.mypadspassword = encode('badPass');
           perm.check(req, res, next);
           setTimeout(function () {
-            expect(res.code).toBe(403);
-            expect(res.msg.error).toMatch('UNAUTHORIZED');
-            delete res.code;
-            delete res.msg;
+            expect(res.route).toMatch(req.params.pid);
+            delete res.route;
             req.query.mypadspassword = encode('myLovelyGirl');
             perm.check(req, res, next);
             setTimeout(function () {
-              expect(res.code).toBe(403);
-              expect(res.msg.error).toMatch('UNAUTHORIZED');
-              delete res.code;
-              delete res.msg;
+              expect(res.route).toMatch(req.params.pid);
+              delete res.route;
               req.query.mypadspassword = encode('v3rYS3cre7');
               perm.check(req, res, function () {
-                expect(res.code).toBeUndefined();
-                expect(res.msg).toBeUndefined();
+                expect(res.route).toBeUndefined();
                 done();
               });
             }, 100);

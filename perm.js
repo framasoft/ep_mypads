@@ -164,8 +164,9 @@ module.exports = (function () {
       });
     };
     var refuse = function () {
-      return res.status(403)
-        .send({ error: 'BACKEND.ERROR.PERMISSION.UNAUTHORIZED' });
+      var mypadsRoute = '/mypads/index.html?/mypads/group/' + 
+        params.pg.group._id + '/pad/view/' + params.pg.pad._id;
+      return res.redirect(mypadsRoute);
     };
     var params = {
       req: req,

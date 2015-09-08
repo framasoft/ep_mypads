@@ -206,10 +206,10 @@
     "QUIT_GROUP": "Quitter le groupe",
     "INVITE_USER": {
       "IU": "Inviter des utilisateurs",
-      "HELP": "<h4>Liste d'utilisateurs</h4><p>Vous pouvez sélectionner une ou plusieurs listes. En en choisissant une, ses membres seront tous invités.</p><h4>Inviter des utilisateurs</h4><p>Ce champ accepte un identifiant ou email à la fois. Quand vous pressez ENTRÉE ou cliquez sur OK, l'élément saisi est ajouté à la liste des utilisateurs invités. Une liste d'utilisateurs connus vous aide à saisir.</p><h4>Utilisateurs</h4><p>Cette liste contient tous les utilisateurs sélectionnés. Vous pouvez les supprimer en cliquant sur le signe derrière chaque élément.</p><h4>Note</h4><p>Merci de noter que, pour le moment, seuls les utilisateurs enregistrés pourront être ajoutés à votre groupe. Cela signifie que les utilisateurs externes à Mypads ne recevront pas de mail pour les inviter à créer un compte.</p>",
+      "HELP": "<h4>Liste d'utilisateurs</h4><p>Vous pouvez sélectionner une ou plusieurs listes. En en choisissant une, ses membres seront tous invités.</p><h4>Inviter des utilisateurs</h4><p>Ce champ accepte un email ou identifiant à la fois. Quand vous pressez ENTRÉE ou cliquez sur OK, l'élément saisi est ajouté à la liste des utilisateurs invités. Une liste d'utilisateurs connus vous aide à saisir.</p><h4>Utilisateurs</h4><p>Cette liste contient tous les utilisateurs sélectionnés. Vous pouvez les supprimer en cliquant sur le signe derrière chaque élément.</p><h4>Note</h4><p>Merci de noter que, pour le moment, seuls les utilisateurs enregistrés pourront être ajoutés à votre groupe. Cela signifie que les utilisateurs externes à Mypads ne recevront pas de mail pour les inviter à créer un compte.</p>",
       "USERS_SELECTION": "Sélection d'utilisateurs",
       "USERS_SELECTED": "Utilisateurs sélectionnés",
-      "PLACEHOLDER": "Saisissez l'identifiant",
+      "PLACEHOLDER": "Mail ou identifiant",
       "INPUT_HELP": "Vous pouvez inviter autant d'utilisateurs que vous le souhaitez",
       "SUCCESS": "L'invitation s'est déroulée avec succès pour ",
       "FAILURE": "Vous ne pouvez pas inviter des utilisateurs qui ne possèdent pas de compte sur cette instance : "
@@ -309,7 +309,7 @@
     "ADD": "Créer une nouvelle liste d'utilisateurs",
     "EDIT": "Modifier la liste utilisateurs ",
     "HELP": "<p>Vous trouverez ici toutes vos listes d'utilisateurs, rangées par date de création. Des informations résumées sont disponibles avec le nom de chaque liste et le nombre d'utilisateurs liés.</p><p>Avec les icônes d'actions, situées en haut à droite de chaque liste, vous pouvez modifier ou supprimer les listes. Davantage de détails sont disponibles sur le formulaire d'édition.</p>",
-    "FORM_HELP": "<h3>Nom</h3><p>Vous devez saisir un nom pour la liste d'utilisateurs, afin de pouvoir l'identifier.</p><h3>Utilisateurs</h3><p>Vous pouvez ajouter autant d'utilisateurs que vous le souhaitez. Pour cela, entrez l'identifiant ou l'adresse email et cliquez sur le bouton 'OK'. Notez que les utilisateurs déjà connus peuvent être sélectionnés depuis la zone de saisie.</p><p>Pour supprimer des utilisateurs, cliquez sur le croix située à la droite de chaque identifiant.</p>",
+    "FORM_HELP": "<h3>Nom</h3><p>Vous devez saisir un nom pour la liste d'utilisateurs, afin de pouvoir l'identifier.</p><h3>Utilisateurs</h3><p>Vous pouvez ajouter autant d'utilisateurs que vous le souhaitez. Pour cela, entrez l'adresse email ou l'identifiant et cliquez sur le bouton 'OK'. Notez que les utilisateurs déjà connus peuvent être sélectionnés depuis la zone de saisie.</p><p>Pour supprimer des utilisateurs, cliquez sur le croix située à la droite de chaque utilisateur.</p>",
     "FIELD": {
       "NAME": "Nom",
       "USERS": "Utilisateurs",

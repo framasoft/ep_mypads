@@ -246,20 +246,22 @@ section.pad iframe {
 }
 
 /* Tablet and Up */
-@media (min-width: 40em) {
+@media (min-width: 40em) and (max-width: 90em) {
   ul.group > li {
     width: 48%;
     padding: 0.5em;
     margin: 0.3em;
   }
+  ul.group > li:nth-child(2n+1) { clear: left; }
 }
 /* Desktop and Up */
-@media (min-width: 90em) {
+@media (min-width: 90em) and (max-width: 110em) {
   ul.group > li {
     width: 31%;
     padding: 0.5em;
     margin: 0.5em 0.3em;
   }
+  ul.group > li:nth-child(3n+1) { clear: left; }
   section.pads, section.users { width: 50%; }
   section.pads { padding-right: 0.5em; }
   section.users { padding-left: 0.5em; }
@@ -272,4 +274,5 @@ section.pad iframe {
     padding: 0.5em;
     margin: 0.5em 0.3em;
   }
+  ul.group > li:nth-child(4n+1) { clear: left; }
 }

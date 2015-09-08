@@ -1064,20 +1064,34 @@ module.exports = (function () {
             if (err) { return res.status(400).send({ error: err.message }); }
             if (!edit && (g.visibility === 'public')) {
               return successFn(req, res, p);
-            }
-            var token = req.body.auth_token || req.query.auth_token;
-            var u = auth.fn.getUser(token);
-            if (!u) {
-              return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.MUST_BE');
-            }
-            var users = edit ? g.admins : ld.union(g.admins, g.users);
-            var uid = auth.tokens[u.login]._id;
-            var isAllowed = ld.includes(users, uid);
-            if (isAllowed) {
-              return successFn(req, res, p);
+            } else if (!edit && (g.visibility === 'private')) {
+              auth.fn.isPasswordValid(g, req.query.password,
+                function (err, valid) {
+                  if (!err && !valid) {
+                    err = { message: 'BACKEND.ERROR.PERMISSION.UNAUTHORIZED' };
+                  }
+                  if (err) {
+                    return res.status(401)
+                      .send({ key: key, error: err.message });
+                  }
+                  return successFn(req, res, p);
+                }
+              );
             } else {
-              var msg = edit ? 'DENIED_RECORD_EDIT' : 'DENIED_RECORD';
-              return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.' + msg);
+              var token = req.body.auth_token || req.query.auth_token;
+              var u = auth.fn.getUser(token);
+              if (!u) {
+                return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.MUST_BE');
+              }
+              var users = edit ? g.admins : ld.union(g.admins, g.users);
+              var uid = auth.tokens[u.login]._id;
+              var isAllowed = ld.includes(users, uid);
+              if (isAllowed) {
+                return successFn(req, res, p);
+              } else {
+                var msg = edit ? 'DENIED_RECORD_EDIT' : 'DENIED_RECORD';
+                return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.' + msg);
+              }
             }
           });
         }

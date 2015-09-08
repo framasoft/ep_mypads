@@ -67,6 +67,16 @@ module.exports = (function () {
       }
     };
 
+    c.addMultiple = function (textarea) {
+      var v = textarea.value;
+      if (v.length !== 0) {
+        v = ld.compact(v.split('\n'));
+        c.current = ld.union(c.current, v);
+        c.tags = ld.difference(c.tags, v);
+        textarea.value = '';
+      }
+    };
+
     return c;
   };
 

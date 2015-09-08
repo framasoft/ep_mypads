@@ -80,6 +80,7 @@
     "DESCRIPTION": "MyPads est un plugin <a href='http://etherpad.org/'>Etherpad</a> qui a été financé en 2014 par <a href='http://fr.ulule.com/etherpad-framapad/supporters/'>413 contributeurs</a> sur Ulule et porté par l'association <a href='http://framasoft.org'>Framasoft</a>. Il prend en charge<ul><li>des utilisateurs et leur authentification;</li><li>des groupes de pads par utilisateur, illimités et partageables;</li><li>les pads qui leur sont attachés, donne la possibilité d'inviter des utilisateurs connus à les utiliser, les rendre privés sous contrainte de mot de passe ou les fixer en accès public.</li></ul>",
     "FOOTER": "Propulsé par <a href='https://git.framasoft.org/framasoft/ep_mypads'>MyPads</a><br>Publié sous la licence Apache 2.0",
     "AND": "et",
+    "OR": "ou",
     "YES": "oui",
     "NO": "non"
   },
@@ -313,7 +314,9 @@
     "FIELD": {
       "NAME": "Nom",
       "USERS": "Utilisateurs",
-      "USERS_HELP": "Ajoutez autant d'utilisateurs que vous le souhaitez"
+      "USERS_HELP": "Ajoutez autant d'utilisateurs que vous le souhaitez",
+      "USERSAREA_PLACEHOLDER": "Un email ou identifiant par ligne",
+      "USERSAREA_HELP": "Vous pouvez ajouter autant d'emails ou d'identifiants que vous le souhaitez"
     },
     "INFO": {
       "NAME": "Nom de la liste d'utilisateurs",

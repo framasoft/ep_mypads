@@ -2388,8 +2388,8 @@ module.exports = (function () {
         m('a', {
           href: '/mypads/group/' + c.group._id + '/edit',
           config: m.route,
-          title: conf.LANG.GROUP.EDIT
-        }, [ m('i.icon-pencil'), m('span', conf.LANG.GROUP.EDIT) ]),
+          title: conf.LANG.MENU.CONFIG
+        }, [ m('i.icon-tools'), m('span', conf.LANG.MENU.CONFIG) ]),
         m('a', {
           href: '/mypads/group/' + c.group._id + '/remove',
           config: m.route,
@@ -4260,8 +4260,8 @@ module.exports = (function () {
             return m('a', {
               href: route + '/pad/edit/' + c.pad._id,
               config: m.route,
-              title: conf.LANG.GROUP.EDIT
-            }, [ m('i.icon-pencil'), m('span', conf.LANG.GROUP.EDIT) ]);
+              title: conf.LANG.MENU.CONFIG
+            }, [ m('i.icon-tools'), m('span', conf.LANG.MENU.CONFIG) ]);
             }
         })(),
         (function () {
@@ -4987,7 +4987,21 @@ module.exports = (function () {
           c.add(document.getElementById(c.name + '-input'));
         },
       }, conf.LANG.USER.OK),
-      tag.views.datalist(c)
+      tag.views.datalist(c),
+      m('label.block', conf.LANG.GLOBAL.OR),
+      m('textarea.block', {
+        name: 'usersArea',
+        placeholder: conf.LANG.USERLIST.FIELD.USERSAREA_PLACEHOLDER,
+      }),
+      m('i', {
+        class: 'block tooltip icon-info-circled tag',
+        'data-msg': conf.LANG.USERLIST.FIELD.USERSAREA_HELP }),
+      m('button.block.ok', {
+        type: 'button',
+        onclick: function () {
+          c.addMultiple(document.querySelector('textarea[name=usersArea]'));
+        },
+      }, conf.LANG.USER.OK),
     ]);
   };
 
@@ -5600,7 +5614,21 @@ module.exports = (function () {
           c.add(document.getElementById(c.name + '-input'));
         },
       }, conf.LANG.USER.OK),
-      tag.views.datalist(c)
+      tag.views.datalist(c),
+      m('label.block', conf.LANG.GLOBAL.OR),
+      m('textarea.block', {
+        name: 'usersArea',
+        placeholder: conf.LANG.USERLIST.FIELD.USERSAREA_PLACEHOLDER,
+      }),
+      m('i', {
+        class: 'block tooltip icon-info-circled tag',
+        'data-msg': conf.LANG.USERLIST.FIELD.USERSAREA_HELP }),
+      m('button.block.ok', {
+        type: 'button',
+        onclick: function () {
+          c.addMultiple(document.querySelector('textarea[name=usersArea]'));
+        },
+      }, conf.LANG.USER.OK),
     ]);
   };
 
@@ -6202,6 +6230,16 @@ module.exports = (function () {
         if (!ld.includes(c.current, v)) { c.current.push(v); }
         ld.pull(c.tags, v);
         input.value = '';
+      }
+    };
+
+    c.addMultiple = function (textarea) {
+      var v = textarea.value;
+      if (v.length !== 0) {
+        v = ld.compact(v.split('\n'));
+        c.current = ld.union(c.current, v);
+        c.tags = ld.difference(c.tags, v);
+        textarea.value = '';
       }
     };
 
@@ -21543,6 +21581,7 @@ module.exports={
     "DESCRIPTION": "MyPads is an <a href='http://etherpad.org/'>Etherpad</a> plugin which have been founded in 2014 on Ulule by <a href='http://ulule.com/etherpad-framapad/supporters/'>413 backers</a> and organized by the non-profit organization <a href='http://framasoft.org'>Framasoft</a>. It handles :<ul><li>users and their authentication; </li><li>groups of pads per user, unlimited, sharable;</li><li>attached pads, with choice between invite known users to use them, making them private with password or letting them public.</li></ul>",
     "FOOTER": "Powered by <a href='https://git.framasoft.org/framasoft/ep_mypads'>MyPads</a><br>Published under Apache License 2.0",
     "AND": "and",
+    "OR": "or",
     "YES": "yes",
     "NO": "no"
   },
@@ -21776,7 +21815,9 @@ module.exports={
     "FIELD": {
       "NAME": "Name",
       "USERS": "Users",
-      "USERS_HELP": "Add as many users as you want"
+      "USERS_HELP": "Add as many users as you want",
+      "USERSAREA_PLACEHOLDER": "One email or login per line",
+      "USERSAREA_HELP": "You can add as many emails or logins you want"
     },
     "INFO": {
       "NAME": "Name of the userlist",

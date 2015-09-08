@@ -186,7 +186,21 @@ module.exports = (function () {
           c.add(document.getElementById(c.name + '-input'));
         },
       }, conf.LANG.USER.OK),
-      tag.views.datalist(c)
+      tag.views.datalist(c),
+      m('label.block', conf.LANG.GLOBAL.OR),
+      m('textarea.block', {
+        name: 'usersArea',
+        placeholder: conf.LANG.USERLIST.FIELD.USERSAREA_PLACEHOLDER,
+      }),
+      m('i', {
+        class: 'block tooltip icon-info-circled tag',
+        'data-msg': conf.LANG.USERLIST.FIELD.USERSAREA_HELP }),
+      m('button.block.ok', {
+        type: 'button',
+        onclick: function () {
+          c.addMultiple(document.querySelector('textarea[name=usersArea]'));
+        },
+      }, conf.LANG.USER.OK),
     ]);
   };
 

@@ -52,6 +52,7 @@ module.exports = (function () {
     if (!auth.isAuthenticated()) {
       return m.route('/login');
     }
+    document.title = conf.LANG.BOOKMARK.TITLE + ' - ' + conf.SERVER.title;
 
     var c = {};
 

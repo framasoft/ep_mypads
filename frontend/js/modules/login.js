@@ -49,6 +49,7 @@ module.exports = (function () {
 
   login.controller = function () {
     var c = {};
+    document.title = conf.SERVER.title;
     form.initFields(c, ['login', 'password']);
 
     /**
@@ -71,8 +72,8 @@ module.exports = (function () {
         if (lang !== conf.USERLANG) {
           conf.updateLang(lang);
         }
-        document.title += ' - ' + conf.LANG.USER.AUTH.WELCOME + ' ' +
-          resp.user.login;
+        document.title = ' - ' + conf.LANG.USER.AUTH.WELCOME + ' ' +
+          resp.user.login + conf.SERVER.title;
         notif.success({ body: conf.LANG.USER.AUTH.SUCCESS });
         m.route('/');
       }, function (err) {

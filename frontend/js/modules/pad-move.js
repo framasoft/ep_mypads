@@ -48,6 +48,7 @@ module.exports = (function () {
 
   move.controller = function () {
     if (!auth.isAuthenticated()) { return m.route('/login'); }
+    document.title = conf.LANG.GROUP.PAD.MOVE_TITLE + ' - ' + conf.SERVER.title;
 
     var c = { data: { newGroup: m.prop() } };
     var gid = m.route.param('group');

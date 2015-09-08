@@ -56,6 +56,9 @@ module.exports = (function () {
 
     var init = function () {
       c.addView = m.prop(!key);
+      document.title = (c.addView() ? conf.LANG.GROUP.PAD.ADD :
+        conf.LANG.GROUP.PAD.EDIT);
+      document.title += ' - ' + conf.SERVER.title;
       c.fields = ['name', 'visibility', 'password', 'readonly'];
       form.initFields(c, c.fields);
       if (!c.addView()) {

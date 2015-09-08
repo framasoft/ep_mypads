@@ -56,6 +56,9 @@ module.exports = (function () {
     var c = {};
     var init = function () {
       c.addView = m.prop(m.route() === '/mypads/group/add');
+      document.title = (c.addView() ? conf.LANG.GROUP.ADD :
+        conf.LANG.GROUP.EDIT_GROUP);
+      document.title += ' - ' + conf.SERVER.title;
       c.fields = ['name', 'description', 'visibility', 'password', 'readonly'];
       form.initFields(c, c.fields);
       c.data.visibility('restricted');

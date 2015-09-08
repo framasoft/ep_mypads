@@ -90,6 +90,9 @@ module.exports = (function () {
         placeholder: conf.LANG.GROUP.INVITE_USER.PLACEHOLDER,
         tags: tags
       });
+      document.title = (c.addView() ? conf.LANG.USERLIST.ADD :
+        conf.LANG.USERLIST.EDIT);
+      document.title += ' - ' + conf.SERVER.title;
     };
 
     if (ld.isEmpty(model.groups())) { model.fetch(init); } else { init(); }

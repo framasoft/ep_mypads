@@ -48,6 +48,8 @@ module.exports = (function () {
 
   admin.controller = function () {
     if (!auth.isAdmin()) { return m.route('/admin'); }
+    document.title = conf.LANG.ADMIN.FORM_USERS_SEARCH + ' - ' +
+      conf.SERVER.title;
 
     var c = { user: m.prop(false) };
 

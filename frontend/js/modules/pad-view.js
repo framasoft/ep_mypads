@@ -75,6 +75,8 @@ module.exports = (function () {
         var data = c.isGuest ? model.tmp() : model;
         c.group = data.groups()[c.gid] || {};
         c.pad = data.pads()[c.pid];
+        document.title = conf.LANG.GROUP.PAD.PAD + ' ' + c.pad.name;
+        document.title += ' - ' + conf.SERVER.title;
         c.isAdmin = (function () {
           if (c.isAuth && c.group.admins) {
             return ld.includes(c.group.admins, auth.userInfo()._id);

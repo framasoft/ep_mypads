@@ -48,6 +48,7 @@ module.exports = (function () {
 
   admin.controller = function () {
     if (!auth.isAdmin()) { return m.route('/admin'); }
+    document.title = conf.LANG.ADMIN.FORM_USER_EDIT + ' - ' + conf.SERVER.title;
     var c = {
       adminView: m.prop(true),
       profileView: m.prop(false),
@@ -120,7 +121,7 @@ module.exports = (function () {
 
   view.main = function (c) {
     var elements = [
-      m('h2.block', conf.LANG.ADMIN.FORM_USER_EDIT),
+      m('h2.block', conf.LANG.ADMIN.FORM_USER_EDIT + ' ' + c.user().login),
       subscribe.views.form(c)
     ];
     return m('section', { class: 'block-group user' }, elements);

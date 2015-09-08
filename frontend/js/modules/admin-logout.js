@@ -49,6 +49,7 @@ module.exports = (function () {
       url: conf.URLS.AUTH + '/adminlogout',
       method: 'GET'
     }).then(function () {
+      document.title = conf.SERVER.title;
       notif.success({ body: conf.LANG.USER.AUTH.SUCCESS_OUT });
     }, function (err) {
       notif.error({ body: ld.result(conf.LANG, err.error) });

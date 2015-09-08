@@ -52,6 +52,9 @@ module.exports = (function () {
   subscribe.controller = function () {
     var c = { adminView: m.prop(false) };
     c.profileView = m.prop((m.route() === '/myprofile'));
+    document.title = (c.profileView() ? conf.LANG.USER.PROFILE :
+      conf.LANG.USER.SUBSCRIBE);
+    document.title += ' - ' + conf.SERVER.title;
     if (c.profileView() && !auth.isAuthenticated()) {
       return m.route('/login');
     }

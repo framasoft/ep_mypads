@@ -638,6 +638,7 @@ module.exports = (function () {
       url: conf.URLS.AUTH + '/adminlogout',
       method: 'GET'
     }).then(function () {
+      document.title = conf.SERVER.title;
       notif.success({ body: conf.LANG.USER.AUTH.SUCCESS_OUT });
     }, function (err) {
       notif.error({ body: ld.result(conf.LANG, err.error) });
@@ -699,6 +700,7 @@ module.exports = (function () {
 
   admin.controller = function () {
     if (!auth.isAdmin()) { return m.route('/admin'); }
+    document.title = conf.LANG.ADMIN.FORM_USER_EDIT + ' - ' + conf.SERVER.title;
     var c = {
       adminView: m.prop(true),
       profileView: m.prop(false),
@@ -771,7 +773,7 @@ module.exports = (function () {
 
   view.main = function (c) {
     var elements = [
-      m('h2.block', conf.LANG.ADMIN.FORM_USER_EDIT),
+      m('h2.block', conf.LANG.ADMIN.FORM_USER_EDIT + ' ' + c.user().login),
       subscribe.views.form(c)
     ];
     return m('section', { class: 'block-group user' }, elements);
@@ -914,6 +916,8 @@ module.exports = (function () {
 
   admin.controller = function () {
     if (!auth.isAdmin()) { return m.route('/admin'); }
+    document.title = conf.LANG.ADMIN.FORM_USERS_SEARCH + ' - ' +
+      conf.SERVER.title;
 
     var c = { user: m.prop(false) };
 
@@ -1073,6 +1077,7 @@ module.exports = (function () {
   */
 
   admin.controller = function () {
+    document.title = conf.LANG.ADMIN.FORM_LOGIN + ' - ' + conf.SERVER.title;
     var c = {};
     auth.isAuthenticated(false);
     form.initFields(c, ['login', 'password']);
@@ -1109,6 +1114,8 @@ module.exports = (function () {
           return c.data.passwordMax();
         };
         auth.isAdmin(true);
+        document.title = conf.LANG.ADMIN.FORM_SETTINGS + ' - ' +
+          conf.SERVER.title;
         notif.success({ body: conf.LANG.USER.AUTH.SUCCESS });
       }, function (err) {
         notif.error({ body: ld.result(conf.LANG, err.error) });
@@ -1481,6 +1488,7 @@ module.exports = (function () {
     if (!auth.isAuthenticated()) {
       return m.route('/login');
     }
+    document.title = conf.LANG.BOOKMARK.TITLE + ' - ' + conf.SERVER.title;
 
     var c = {};
 
@@ -1652,6 +1660,9 @@ module.exports = (function () {
     var c = {};
     var init = function () {
       c.addView = m.prop(m.route() === '/mypads/group/add');
+      document.title = (c.addView() ? conf.LANG.GROUP.ADD :
+        conf.LANG.GROUP.EDIT_GROUP);
+      document.title += ' - ' + conf.SERVER.title;
       c.fields = ['name', 'description', 'visibility', 'password', 'readonly'];
       form.initFields(c, c.fields);
       c.data.visibility('restricted');
@@ -2061,6 +2072,8 @@ module.exports = (function () {
             return data.pads()[x];
           })), 'ctime');
         }
+        document.title = conf.LANG.GROUP.GROUP + ' ' + c.group.name +
+          ' - ' + conf.SERVER.title;
       };
       if (model.groups()[key]) {
         _init();
@@ -2523,6 +2536,7 @@ module.exports = (function () {
     if (!auth.isAuthenticated()) {
       return m.route('/login');
     }
+    document.title = conf.LANG.GROUP.MYGROUPS + ' - ' + conf.SERVER.title;
     var c = { groups: {} };
 
     /**
@@ -3229,6 +3243,7 @@ module.exports = (function () {
 
   login.controller = function () {
     var c = {};
+    document.title = conf.SERVER.title;
     form.initFields(c, ['login', 'password']);
 
     /**
@@ -3251,8 +3266,8 @@ module.exports = (function () {
         if (lang !== conf.USERLANG) {
           conf.updateLang(lang);
         }
-        document.title += ' - ' + conf.LANG.USER.AUTH.WELCOME + ' ' +
-          resp.user.login;
+        document.title = ' - ' + conf.LANG.USER.AUTH.WELCOME + ' ' +
+          resp.user.login + conf.SERVER.title;
         notif.success({ body: conf.LANG.USER.AUTH.SUCCESS });
         m.route('/');
       }, function (err) {
@@ -3440,6 +3455,9 @@ module.exports = (function () {
 
     var init = function () {
       c.addView = m.prop(!key);
+      document.title = (c.addView() ? conf.LANG.GROUP.PAD.ADD :
+        conf.LANG.GROUP.PAD.EDIT);
+      document.title += ' - ' + conf.SERVER.title;
       c.fields = ['name', 'visibility', 'password', 'readonly'];
       form.initFields(c, c.fields);
       if (!c.addView()) {
@@ -3719,6 +3737,7 @@ module.exports = (function () {
 
   move.controller = function () {
     if (!auth.isAuthenticated()) { return m.route('/login'); }
+    document.title = conf.LANG.GROUP.PAD.MOVE_TITLE + ' - ' + conf.SERVER.title;
 
     var c = { data: { newGroup: m.prop() } };
     var gid = m.route.param('group');
@@ -4084,6 +4103,8 @@ module.exports = (function () {
         var data = c.isGuest ? model.tmp() : model;
         c.group = data.groups()[c.gid] || {};
         c.pad = data.pads()[c.pid];
+        document.title = conf.LANG.GROUP.PAD.PAD + ' ' + c.pad.name;
+        document.title += ' - ' + conf.SERVER.title;
         c.isAdmin = (function () {
           if (c.isAuth && c.group.admins) {
             return ld.includes(c.group.admins, auth.userInfo()._id);
@@ -4329,6 +4350,7 @@ module.exports = (function () {
     if (auth.isAuthenticated()) {
       m.route('/logout');
     }
+    document.title = conf.LANG.USER.PASSRECOVER + ' - ' + conf.SERVER.title;
 
     var c = {
       token: m.route.param('token')
@@ -4477,6 +4499,9 @@ module.exports = (function () {
   subscribe.controller = function () {
     var c = { adminView: m.prop(false) };
     c.profileView = m.prop((m.route() === '/myprofile'));
+    document.title = (c.profileView() ? conf.LANG.USER.PROFILE :
+      conf.LANG.USER.SUBSCRIBE);
+    document.title += ' - ' + conf.SERVER.title;
     if (c.profileView() && !auth.isAuthenticated()) {
       return m.route('/login');
     }
@@ -5478,6 +5503,9 @@ module.exports = (function () {
         placeholder: conf.LANG.GROUP.INVITE_USER.PLACEHOLDER,
         tags: tags
       });
+      document.title = (c.addView() ? conf.LANG.USERLIST.ADD :
+        conf.LANG.USERLIST.EDIT);
+      document.title += ' - ' + conf.SERVER.title;
     };
 
     if (ld.isEmpty(model.groups())) { model.fetch(init); } else { init(); }
@@ -5757,6 +5785,7 @@ module.exports = (function () {
 
   userlist.controller = function () {
     if (!auth.isAuthenticated()) { return m.route('/login'); }
+    document.title = conf.LANG.MENU.USERLIST + ' - ' + conf.SERVER.title;
 
     var c = {};
 

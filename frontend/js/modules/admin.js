@@ -47,6 +47,7 @@ module.exports = (function () {
   */
 
   admin.controller = function () {
+    document.title = conf.LANG.ADMIN.FORM_LOGIN + ' - ' + conf.SERVER.title;
     var c = {};
     auth.isAuthenticated(false);
     form.initFields(c, ['login', 'password']);
@@ -83,6 +84,8 @@ module.exports = (function () {
           return c.data.passwordMax();
         };
         auth.isAdmin(true);
+        document.title = conf.LANG.ADMIN.FORM_SETTINGS + ' - ' +
+          conf.SERVER.title;
         notif.success({ body: conf.LANG.USER.AUTH.SUCCESS });
       }, function (err) {
         notif.error({ body: ld.result(conf.LANG, err.error) });

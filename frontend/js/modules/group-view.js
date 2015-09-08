@@ -81,6 +81,8 @@ module.exports = (function () {
             return data.pads()[x];
           })), 'ctime');
         }
+        document.title = conf.LANG.GROUP.GROUP + ' ' + c.group.name +
+          ' - ' + conf.SERVER.title;
       };
       if (model.groups()[key]) {
         _init();

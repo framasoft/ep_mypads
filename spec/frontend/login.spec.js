@@ -119,7 +119,6 @@ module.exports = (function () {
         window.setTimeout(function () {
           var $success = first('body > section p');
           expect($success.parentNode.className).toMatch('success');
-          expect(app.document.title).toMatch('parker');
           $success.click();
           window.setTimeout(function () {
             expect(app.location.search).toBe('?/mypads');

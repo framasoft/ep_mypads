@@ -49,6 +49,7 @@ module.exports = (function () {
     if (auth.isAuthenticated()) {
       m.route('/logout');
     }
+    document.title = conf.LANG.USER.PASSRECOVER + ' - ' + conf.SERVER.title;
 
     var c = {
       token: m.route.param('token')

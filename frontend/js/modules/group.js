@@ -84,6 +84,7 @@ module.exports = (function () {
     if (!auth.isAuthenticated()) {
       return m.route('/login');
     }
+    document.title = conf.LANG.GROUP.MYGROUPS + ' - ' + conf.SERVER.title;
     var c = { groups: {} };
 
     /**

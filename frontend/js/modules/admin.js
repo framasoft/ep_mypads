@@ -44,6 +44,7 @@ module.exports = (function () {
   * ## Controller
   *
   * Used to check if user is authorized, send login/pass and updates settings.
+  * TODO: allowEtherPads management
   */
 
   admin.controller = function () {

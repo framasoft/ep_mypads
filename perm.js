@@ -43,6 +43,7 @@ catch (e) {
 }
 var ld = require('lodash');
 var decode = require('js-base64').Base64.decode;
+var conf = require('./configuration.js');
 var auth = require('./auth.js');
 var pad = require('./model/pad.js');
 var group = require('./model/group.js');
@@ -98,8 +99,10 @@ module.exports = (function () {
     var token = (params.req.query ? params.req.query.auth_token : false);
     var u = auth.fn.getUser(token);
     var uid = u && u._id || false;
-    // Key not found, not a MyPads pad so next()
-    if (!params.pg) { return params.next(); }
+    // Key not found, not a MyPads pad so depends on allowEtherPads
+    if (!params.pg) {
+      return params[(conf.get('allowEtherPads') ? 'next' : 'unexpected')]();
+    }
     var g = params.pg.group;
     var p = params.pg.pad;
     // If admin of the group or pad or group publics, ok
@@ -218,15 +221,19 @@ module.exports = (function () {
   *
   * `iniŧ` is a synchronous function used to set up authentification. It :
   *
-  * - initializes local strategy by default
-  * - uses of passport middlwares for express
-  * - launch session middleware bundled with express, using secret phrase saved
-  *   in database
+  * - initializes routes with `check` and `setNameAndColor`
+  * - if configuration option `forbidPublicPads` is *true*, redirects etherpad
+  *   homepage to MyPads and forbids direct creation from /p/pid (via `check`)
   */
 
   perm.init = function (app) {
     app.all('/p/:pid', perm.check);
     app.all('/p/:pid', perm.setNameAndColor);
+    if (!conf.get('allowEtherPads')) {
+      app.get('/', function (req, res) {
+        return res.redirect('/mypads');
+      });
+    }
   };
 
   return perm;

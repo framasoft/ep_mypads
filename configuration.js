@@ -51,6 +51,7 @@ module.exports = (function() {
     DEFAULTS: {
       title: 'MyPads',
       rootUrl: '',
+      allowEtherPads: true,
       passwordMin: 8,
       passwordMax: 30,
       languages: { en: 'English', fr: 'Français' },

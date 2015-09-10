@@ -47,19 +47,19 @@
       password: 'willnotlivelong',
       email: 'guest@phantomatic.net'
     };
+    var etherAdmin = {
+      login: 'admin',
+      password: 'admin',
+      is_admin: 'true'
+    };
 
     beforeAll(function (done) {
       specCommon.mockupExpressServer();
       specCommon.reInitDatabase(function () {
         conf.init(function () {
           api.init(specCommon.express.app, function () {
-            var jwt_payload = {
-              login: 'admin',
-              password: 'admin',
-              is_admin: 'true'
-            };
-            auth.adminTokens[jwt_payload.login] = jwt_payload;
-            admToken = jwt.sign(jwt_payload, auth.secret);
+            auth.adminTokens[etherAdmin.login] = etherAdmin;
+            admToken = jwt.sign(etherAdmin, auth.secret);
             rq = request.defaults({ json: true });
             setTimeout(done, 500);
           });
@@ -227,6 +227,71 @@
         });
 
       });
+
+      describe('auth.adminlogin POST', function () {
+
+        it('should not auth if params are inexistent', function (done) {
+          rq.post(authRoute + '/admin/login', {}, function (err, resp, body) {
+            expect(resp.statusCode).toBe(400);
+            expect(body.error).toMatch('PASSWORD_STR');
+            done();
+          });
+        });
+
+        it('should not auth if params are incorrect', function (done) {
+          var params = { body: { login: 'inexistent', password: 123 } };
+          rq.post(authRoute + '/admin/login', params,
+            function (err, resp, body) {
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('PASSWORD_STR');
+              done();
+            }
+          );
+        });
+
+        it('should not auth if user does not exist', function (done) {
+          var params = { body: { login: 'inexistent', password: 'pass' } };
+          rq.post(authRoute + '/admin/login', params,
+            function (err, resp, body) {
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('USER.NOT_FOUND');
+              done();
+            }
+          );
+        });
+
+        it('should not auth if user exists but pasword does not match',
+          function (done) {
+            var params = { body: ld.clone(etherAdmin) };
+            params.body.password = 'anotherOne';
+            rq.post(authRoute + '/admin/login', params,
+              function (err, resp, body) {
+                expect(resp.statusCode).toBe(400);
+                expect(body.error).toMatch('PASSWORD_INCORRECT');
+                done();
+              }
+            );
+          }
+        );
+
+        it('should auth otherwise', function (done) {
+          var params = { body: etherAdmin };
+          rq.post(authRoute + '/admin/login', params,
+            function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(200);
+              expect(body.success).toBeTruthy();
+              expect(body.token).toBeDefined();
+              admToken = body.token;
+              done();
+            }
+          );
+        });
+
+      });
+
+      describe('auth.adminlogout GET', function () {});
+
     });
 
     describe('unAuth legitimate tests', function () {

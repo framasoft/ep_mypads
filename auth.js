@@ -32,19 +32,20 @@
 // External dependencies
 var ld = require('lodash');
 var jwt = require('jsonwebtoken');
-var session;
-var cookieParser;
-var testMode = false;
+var settings;
 try {
   // Normal case : when installed as a plugin
-  session = require('../ep_etherpad-lite/node_modules/express-session');
-  cookieParser = require('../ep_etherpad-lite/node_modules/cookie-parser');
+  settings = require('../ep_etherpad-lite/node/utils/Settings');
 }
 catch (e) {
   // Testing case : we need to mock the express dependency
-  testMode = true;
-  session = require('express-session');
-  cookieParser = require('cookie-parser');
+  settings = {
+    users: {
+      admin: { password: 'admin', is_admin: true },
+      grace: { password: 'admin', is_admin: true },
+      parker: { password: 'lovesKubiak', is_admin: false }
+    }
+  };
 }
 var passport = require('passport');
 var JWTStrategy = require('passport-jwt').Strategy;
@@ -67,6 +68,7 @@ module.exports = (function () {
 
   var auth = {
     tokens: {},
+    adminTokens: {},
     secret: cuid() // secret per etherpad session
   };
 
@@ -112,21 +114,68 @@ module.exports = (function () {
     var opts = { secretOrKey: auth.secret, passReqToCallback: true };
     passport.use(new JWTStrategy(opts,
       function (req, jwt_payload, callback) {
-        //var fail = this.fail;
         var isFS = function (s) { return (ld.isString(s) && !ld.isEmpty(s)); };
         if (!isFS(jwt_payload.login)) {
-          //return fail(new TypeError('BACKEND.ERROR.TYPE.LOGIN_STR'), 400);
           throw new TypeError('BACKEND.ERROR.TYPE.LOGIN_STR');
         }
         if (!ld.isFunction(callback)) {
           throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
         }
-        auth.fn.JWTFn(req, jwt_payload, callback);
+        auth.fn.JWTFn(req, jwt_payload, false, callback);
       }
     ));
   };
 
-  /*
+  /**
+  * ### checkMyPadsUser
+  *
+  * `checkMyPadsUser` checks user existence from given `login` and `pass`. It
+  * uses the last argument, `callback` function, to return an *error* or *null*
+  * and the *user* object.
+  */
+
+  auth.fn.checkMyPadsUser = function (login, pass, callback) {
+    user.get(login, function (err, u) {
+      if (err) { return callback(err); }
+      auth.fn.isPasswordValid(u, pass, function (err, isValid) {
+        if (err) { return callback(err); }
+        if (!isValid) {
+          var emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
+          return callback(new Error(emsg), false);
+        }
+        return callback(null, u);
+      });
+    });
+  };
+
+  /**
+  * ### checkAdminUser
+  *
+  * `checkAdminUser` checks admin existence from given `login` and `pass`. It
+  * uses the last argument, `callback` function, to return an *error* or *null*
+  * and the *user* object.
+  */
+
+  auth.fn.checkAdminUser = function (login, pass, callback) {
+    if (!settings || !settings.users || !settings.users[login]) {
+      return callback(new Error('BACKEND.ERROR.USER.NOT_FOUND'), null);
+    }
+    var u = settings.users[login];
+    u.login = login;
+    var emsg;
+    if (pass !== u.password) {
+      emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
+      return callback(new Error(emsg, false));
+    }
+    if (!u.is_admin) {
+      emsg = 'BACKEND.ERROR.AUTHENTICATION.ADMIN';
+      return callback(new Error(emsg, false));
+    }
+    return callback(null, u);
+  };
+
+
+  /**
   * ### JWTFn
   *
   * `JWTFn` is the function used by JWT strategy for verifying if used
@@ -144,26 +193,21 @@ module.exports = (function () {
   *  TODO: expiration handling?
   */
 
-  auth.fn.JWTFn = function (req, jwt_payload, callback) {
+  auth.fn.JWTFn = function (req, jwt_payload, admin, callback) {
+    var checkFn = (admin ? auth.fn.checkAdminUser : auth.fn.checkMyPadsUser);
+    var ns = (admin ? 'adminTokens' : 'tokens');
     var login = jwt_payload.login;
-    var token = auth.tokens[login];
+    var token = auth[ns][login];
     if (!token || !jwt_payload.key) {
       var pass = jwt_payload.password;
       if (!ld.isString(pass)) {
         return callback(new Error('BACKEND.ERROR.TYPE.PASSWORD_STR'));
       }
-      user.get(login, function (err, u) {
-        if (err) { return callback(err); }
-        auth.fn.isPasswordValid(u, pass, function (err, isValid) {
-          if (err) { return callback(err); }
-          if (!isValid) {
-            var emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
-            return callback(new Error(emsg), false);
-          }
-          auth.tokens[login] = u;
-          auth.tokens[login].key = cuid();
-          return callback(null, u);
-        });
+      checkFn(login, pass, function (err, u) {
+        if (err) { return callback(err, u); }
+        auth[ns][login] = u;
+        auth[ns][login].key = cuid();
+        return callback(null, u);
       });
     } else {
       if (token.key !== jwt_payload.key) {
@@ -242,25 +286,6 @@ module.exports = (function () {
 
   auth.init = function (app) {
     app.use(passport.initialize());
-    if (testMode) {
-      app.use(cookieParser());
-      var cuid = require('cuid');
-      var hour = 3600000;
-      app.use(session({
-        secret: cuid(),
-        resave: false,
-        saveUninitialized: false,
-        cookie: { maxAge: hour }
-      }));
-      app.get('/admin', function (req, res) {
-        req.session.user = { is_admin: true };
-        return res.status(200).send({ success: true });
-      });
-      app.get('/admin/logout', function (req, res) {
-        req.session.user = { is_admin: false };
-        return res.status(200).send({ success: true });
-      });
-    }
     auth.fn.local();
   };
 

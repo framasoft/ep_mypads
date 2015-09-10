@@ -65,7 +65,7 @@
       });
     });
 
-    describe('localFn', function () {
+    describe('localFn and checkMyPadsUser', function () {
     var params;
     beforeAll(function (done) {
       specCommon.reInitDatabase(function () {
@@ -110,6 +110,42 @@
           }
         );
       });
+    });
+
+    describe('checkAdminUser', function () {
+
+      it('should not auth if admin does not exist', function (done) {
+        auth.fn.checkAdminUser('inexistent', 'passw0rd', function (err, u) {
+          expect(err).toMatch('USER.NOT_FOUND');
+          expect(u).toBeNull();
+          done();
+        });
+      });
+
+      it('should not auth if password does not match', function (done) {
+        auth.fn.checkAdminUser('admin', 'badPassW0rd', function (err, u) {
+          expect(err).toMatch('AUTHENTICATION.PASSWORD_INCORRECT');
+          expect(u).toBeFalsy();
+          done();
+        });
+      });
+
+      it('should not auth if user is not admin', function (done) {
+        auth.fn.checkAdminUser('parker', 'lovesKubiak', function (err, u) {
+          expect(err).toMatch('AUTHENTICATION.ADMIN');
+          expect(u).toBeFalsy();
+          done();
+        });
+      });
+
+      it('should auth if login and password match', function (done) {
+        auth.fn.checkAdminUser('admin', 'admin', function (err, u) {
+          expect(err).toBeNull();
+          expect(u).toBeDefined();
+          done();
+        });
+      });
+
     });
   });
 

@@ -44,8 +44,8 @@ module.exports = (function () {
         window.setTimeout(function () {
           // Go to admin users page
           qfirst('footer a[href$=admin]').click();
-          fill(qfirst('input[name=login]'), 'parker');
-          fill(qfirst('input[name=password]'), 'parkerEtherAdmin');
+          fill(qfirst('input[name=login]'), 'grace');
+          fill(qfirst('input[name=password]'), 'admin');
           qfirst('input[type=submit]').click();
           window.setTimeout(function () {
             qfirst('body > section p').click();

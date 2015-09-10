@@ -67,7 +67,8 @@ module.exports = (function () {
       e.preventDefault();
       m.request({
         method: 'GET',
-        url: conf.URLS.USER + '/' + c.data.login()
+        url: conf.URLS.USER + '/' + c.data.login(),
+        data: { auth_token: auth.admToken() }
       }).then(function (resp) {
         c.user(resp.value);
         notif.info({ body: conf.LANG.ADMIN.INFO.USER_FOUND });

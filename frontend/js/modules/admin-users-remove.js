@@ -50,7 +50,8 @@ module.exports = (function () {
     if (window.confirm(conf.LANG.ADMIN.INFO.USER_REMOVE_SURE)) {
       m.request({
         method: 'DELETE',
-        url: conf.URLS.USER + '/' + login
+        url: conf.URLS.USER + '/' + login,
+        data: { auth_token: auth.admToken() }
       }).then(function () {
         notif.success({
           body: conf.LANG.USER.INFO.REMOVE_ACCOUNT_SUCCESS

@@ -229,11 +229,13 @@ module.exports = (function () {
   perm.init = function (app) {
     app.all('/p/:pid', perm.check);
     app.all('/p/:pid', perm.setNameAndColor);
-    if (!conf.get('allowEtherPads')) {
-      app.get('/', function (req, res) {
+    app.get('/', function (req, res, next) {
+      if (conf.get('allowEtherPads')) {
+        return next();
+      } else {
         return res.redirect('/mypads');
-      });
-    }
+      }
+    });
   };
 
   return perm;

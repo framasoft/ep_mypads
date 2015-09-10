@@ -43,13 +43,14 @@ module.exports = (function () {
   */
 
   logout.controller = function () {
-    auth.isAdmin(false);
     m.route('/');
     m.request({
-      url: conf.URLS.AUTH + '/adminlogout',
-      method: 'GET'
+      url: conf.URLS.AUTH + '/admin/logout',
+      method: 'GET',
+      data: { auth_token: auth.admToken() }
     }).then(function () {
       document.title = conf.SERVER.title;
+      localStorage.removeItem('admToken');
       notif.success({ body: conf.LANG.USER.AUTH.SUCCESS_OUT });
     }, function (err) {
       notif.error({ body: ld.result(conf.LANG, err.error) });

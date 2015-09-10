@@ -52,11 +52,14 @@ module.exports = (function () {
     var c = {};
     auth.isAuthenticated(false);
     form.initFields(c, ['login', 'password']);
-    var init = function () {
+    var init = function (resp) {
+      if (resp) { localStorage.setItem('admToken', resp.token); }
       m.request({
         url: conf.URLS.CONF,
-        method: 'GET'
+        method: 'GET',
+        data: { auth_token: auth.admToken() }
       }).then(function (resp) {
+        if (!resp.auth) { return localStorage.removeItem('admToken'); }
         form.initFields(c, ['title', 'rootUrl', 'passwordMin', 'passwordMax',
           'defaultLanguage', 'checkMails', 'tokenDuration', 'SMTPHost',
           'SMTPPort', 'SMTPSSL', 'SMTPTLS', 'SMTPUser', 'SMTPPass',
@@ -84,7 +87,6 @@ module.exports = (function () {
         c.data.passwordMax.toJSON = function () {
           return c.data.passwordMax();
         };
-        auth.isAdmin(true);
         document.title = conf.LANG.ADMIN.FORM_SETTINGS + ' - ' +
           conf.SERVER.title;
         notif.success({ body: conf.LANG.USER.AUTH.SUCCESS });
@@ -98,24 +100,21 @@ module.exports = (function () {
     * ### login
     *
     * `login` is an asynchronous function that is called after admin login
-    * attempt. It uses crafted credentials to log with basic auth to etherpad
+    * attempt. It uses API admin login with m.request.
+    *
+    * It uses crafted credentials to log with basic auth to etherpad
     * instance. If it's a success, settings page will be set up, taking care of
     * integer fields like `passwordMin`.
     */
 
     c.login = function (e) {
       e.preventDefault();
-      var credentials = c.data.login() + ':' + c.data.password();
-      var url = document.location.protocol + '//' + credentials + '@' +
-        document.location.host + '/admin';
       m.request({
-        url: url,
-        method: 'GET',
-        deserialize: function () {}
-      }).then(init, function () {
-        auth.isAdmin(false);
-        var emsg = conf.LANG.BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT;
-        notif.error({ body: emsg });
+        url: conf.URLS.AUTH + '/admin/login',
+        method: 'POST',
+        data: c.data
+      }).then(init, function (err) {
+        notif.error({ body: ld.result(conf.LANG, err.error) });
       });
     };
 
@@ -142,7 +141,7 @@ module.exports = (function () {
           m.request({
             method: 'PUT',
             url: conf.URLS.CONF + '/' + pair[0],
-            data: { value: pair[1]() }
+            data: { value: pair[1](), auth_token: auth.admToken() }
           }).then(function (resp) {
             if (pairs.length > 0) {
               _set(pairs.pop());

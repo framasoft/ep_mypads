@@ -70,16 +70,16 @@ module.exports = (function () {
 
         it('should allow submission with conform login and password',
           function (done) {
-            fill($el.login,'mikey');
-            fill($el.password,'goodSizePass');
+            fill($el.login, 'mikey');
+            fill($el.password, 'goodSizePass');
             expect($el.form.checkValidity()).toBeTruthy();
             done();
           }
         );
 
         it('should login if user and pass are ok', function (done) {
-          fill($el.login, 'parker');
-          fill($el.password, 'parkerEtherAdmin');
+          fill($el.login, 'grace');
+          fill($el.password, 'admin');
           expect($el.form.checkValidity()).toBeTruthy();
           $el.submit.click();
           window.setTimeout(function () {

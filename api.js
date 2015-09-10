@@ -210,9 +210,12 @@ module.exports = (function () {
   fn.isAdmin = function (req) {
     var token = req.query.auth_token || req.body.auth_token;
     if (!token) { return false; }
-    var jwt_payload = jwt.verify(token, auth.secret);
-    var admin = auth.adminTokens[jwt_payload.login];
-    return (admin && (admin.key === jwt_payload.key));
+    try {
+      var jwt_payload = jwt.verify(token, auth.secret);
+      var admin = auth.adminTokens[jwt_payload.login];
+      return (admin && (admin.key === jwt_payload.key));
+    }
+    catch (e) { return false; }
   };
 
   /**
@@ -377,7 +380,8 @@ module.exports = (function () {
       var isAdmin = fn.isAdmin(req);
       var action = isAdmin ? 'all' : 'public';
       var value = conf[action]();
-      var resp = { value: value, auth: !!u };
+      var resp = { value: value };
+      resp.auth = (isAdmin ? true : !!u);
       if (u) { resp.user = u; }
       res.send(resp);
     });

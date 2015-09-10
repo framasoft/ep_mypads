@@ -203,15 +203,26 @@ module.exports = (function () {
   fn.ensureAuthenticated = passport.authenticate('jwt', { session: false });
 
   /**
+  * `isAdmin` internal is a function that checks if current connnected user is
+  * an Etherpad instance admin or not. It returns a boolean.
+  */
+
+  fn.isAdmin = function (req) {
+    var token = req.query.auth_token || req.body.auth_token;
+    if (!token) { return false; }
+    var jwt_payload = jwt.verify(token, auth.secret);
+    var admin = auth.adminTokens[jwt_payload.login];
+    return (admin && (admin.key === jwt_payload.key));
+  };
+
+  /**
   * `ensureAdmin` internal is an Express middleware that takes classic `req`,
   * `res` and `next`. It returns an error if the connected user is not
-  * autenticated by Etherpad as the instance admin (ATM via /admin).
+  * an Etherpad instance admin.
   */
 
   fn.ensureAdmin = function (req, res, next) {
-    var rs = req.session;
-    var isAdmin = (rs && rs.user && rs.user.is_admin);
-    if (!isAdmin) {
+    if (!fn.isAdmin(req)) {
       return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.ADMIN');
     } else {
       return next();
@@ -225,12 +236,14 @@ module.exports = (function () {
   */
 
   fn.ensureAdminOrSelf = function (req, res, next) {
-    var rs = req.session;
-    var isAdmin = (rs && rs.user && rs.user.is_admin);
+    var isAdmin = fn.isAdmin(req);
+
+    var token = (req.body.auth_token || req.query.auth_token);
     var login = req.params.key;
-    var u = auth.fn.getUser(req.body.auth_token || req.query.auth_token);
+    var u = auth.fn.getUser(token);
     var isSelf = (u && login === u.login);
     if (isSelf) { req.mypadsLogin = u.login; }
+
     if (!isAdmin && !isSelf) {
       return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.DENIED');
     } else {
@@ -275,7 +288,7 @@ module.exports = (function () {
     */
 
     app.post(authRoute + '/login', function (req, res) {
-      auth.fn.JWTFn(req, req.body, function (err, u, info) {
+      auth.fn.JWTFn(req, req.body, false, function (err, u, info) {
         if (err) { return res.status(400).send({ error: err.message }); }
         if (!u) { return res.status(400).send({ error: info.message }); }
         if (u.active) {
@@ -304,25 +317,42 @@ module.exports = (function () {
 
     app.get(authRoute + '/logout', fn.ensureAuthenticated, function (req, res) {
       delete auth.tokens[req.mypadsLogin];
-        res.status(200).send({ success: true });
+      res.status(200).send({ success: true });
     });
 
     /**
-    * GET method : admin logout, method that destroy current `req.session`
+    * POST method : admin login, method that checks credentials and create
+    * admin token in case of success
     *
     * Sample URL:
-    * http://etherpad.ndd/mypads/api/auth/adminlogout
+    * http://etherpad.ndd/mypads/api/auth/admin/login
     */
 
-    app.get(authRoute + '/adminlogout', function (req, res) {
-      var rs = req.session;
-      if (rs && rs.user && rs.user.is_admin) {
-        req.session.destroy();
-        return res.status(200).send({ success: true });
-      } else {
-        res.status(400)
-          .send({ error: 'BACKEND.ERROR.AUTHENTICATION.NOT_AUTH' });
-      }
+    app.post(authRoute + '/admin/login', function (req, res) {
+      auth.fn.JWTFn(req, req.body, true, function (err, u, info) {
+        if (err) { return res.status(400).send({ error: err.message }); }
+        if (!u) { return res.status(400).send({ error: info.message }); }
+        var token = {
+          login: u.login,
+          key: auth.adminTokens[u.login].key
+        };
+        return res.status(200).send({
+          success: true,
+          token: jwt.sign(token, auth.secret)
+        });
+      });
+    });
+
+    /**
+    * GET method : admin logout, method that destroy current admin token
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/auth/admin/logout
+    */
+
+    app.get(authRoute + '/admin/logout', fn.ensureAdmin, function (req, res) {
+      delete auth.adminTokens[req.mypadsLogin];
+      return res.status(200).send({ success: true });
     });
 
   };
@@ -344,8 +374,7 @@ module.exports = (function () {
 
     app.get(confRoute, function (req, res) {
       var u = auth.fn.getUser(req.query.auth_token);
-      var rs = req.session;
-      var isAdmin = (rs && rs.user && rs.user.is_admin);
+      var isAdmin = fn.isAdmin(req);
       var action = isAdmin ? 'all' : 'public';
       var value = conf[action]();
       var resp = { value: value, auth: !!u };
@@ -584,8 +613,7 @@ module.exports = (function () {
               req.body.useLoginAndColorInPads;
           }
         }
-        var rs = req.session;
-        if (rs && rs.user && rs.user.is_admin) {
+        if (fn.isAdmin(req)) {
           user.get(value.login, function (err, u) {
             if (err) { return res.status(400).send({ error: err.message }); }
             ld.assign(u, value);
@@ -628,7 +656,7 @@ module.exports = (function () {
 
     app.delete(userRoute + '/:key', fn.ensureAdminOrSelf, function (req, res) {
       var isSelf = (req.params.key === req.mypadsLogin);
-      if (isSelf && req.session) { req.session.destroy(); }
+      if (isSelf) { delete auth.tokens[req.mypadsLogin]; }
       fn.del(user.del, req, res);
     });
 
@@ -840,8 +868,7 @@ module.exports = (function () {
             return res.status(404).send({ key: key, error: err.message });
           }
           var u = auth.fn.getUser(req.query.auth_token);
-          var rs = req.session;
-          var isAdmin = (rs && rs.user && rs.user.is_admin);
+          var isAdmin = fn.isAdmin(req);
           var isUser = (u && ld.includes(ld.union(g.admins, g.users), u._id));
           var isAllowedForPublic = (g.visibility === 'public');
           if (isAllowedForPublic && !isAdmin && !isUser) {
@@ -899,8 +926,7 @@ module.exports = (function () {
     */
 
     var canEdit = function (req, res, successFn) {
-      var rs = req.session;
-      var isAdmin = (rs && rs.user && rs.user.is_admin);
+      var isAdmin = fn.isAdmin(req);
       if (isAdmin) { return successFn(); }
       var u = auth.fn.getUser(req.body.auth_token);
       if (!u) {
@@ -932,10 +958,9 @@ module.exports = (function () {
     */
 
     app.post(groupRoute, function (req, res) {
-      var rs = req.session;
-      var isAdmin = (rs && rs.user && rs.user.is_admin);
+      var isAdmin = fn.isAdmin(req);
       var u = auth.fn.getUser(req.body.auth_token);
-      if (!u) {
+      if (!u && !isAdmin) {
         return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.NOT_AUTH');
       }
       if (!isAdmin) { req.body.admin = u._id; }
@@ -1043,8 +1068,7 @@ module.exports = (function () {
       pad.get(req.params.key, function (err, p) {
         var key = req.params.key;
         if (err) { return res.status(404).send({ error: err.message }); }
-        var rs = req.session;
-        var isAdmin = (rs && rs.user && rs.user.is_admin);
+        var isAdmin = fn.isAdmin(req);
         if (isAdmin) { return successFn(req, res, p); }
         if (!edit && (p.visibility === 'public')) {
           return successFn(req, res, p);
@@ -1126,8 +1150,7 @@ module.exports = (function () {
     */
 
     app.post(padRoute, function (req, res) {
-      var rs = req.session;
-      var isAdmin = (rs && rs.user && rs.user.is_admin);
+      var isAdmin = fn.isAdmin(req);
       var u;
       if (!isAdmin) { u = auth.fn.getUser(req.body.auth_token); }
       if (!isAdmin && !u) {
@@ -1153,8 +1176,7 @@ module.exports = (function () {
     */
 
     app.delete(padRoute + '/:key', function (req, res) {
-      var rs = req.session;
-      var isAdmin = (rs && rs.user && rs.user.is_admin);
+      var isAdmin = fn.isAdmin(req);
       var u;
       if (!isAdmin) { u = auth.fn.getUser(req.body.auth_token); }
       if (!isAdmin && !u) {

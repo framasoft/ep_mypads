@@ -25,6 +25,7 @@
   var jwt = require('jsonwebtoken');
   var api = require('../../api.js');
   var mail = require('../../mail.js');
+  var auth = require('../../auth.js');
   var user = require('../../model/user.js');
   var group = require('../../model/group.js');
   var pad = require('../../model/pad.js');
@@ -36,33 +37,9 @@
     * initializate API routes.
     */
     var route = 'http://127.0.0.1:8042' + api.initialRoute;
-    var adminRoute = 'http://127.0.0.1:8042/admin';
-    var adminLogoutRoute = adminRoute + '/logout';
+    var admToken;
     var rq;
     var conf = require('../../configuration.js');
-    var j = request.jar();
-
-    /**
-    * `withAdmin` decorator function, that :
-    *
-    * - uses mocked admin login first
-    * - launch given `fn` as argument; this function must take an `after`
-    *   callback function
-    * - calls the `after` function and finally the jasmine `done` end of test
-    */
-
-    var withAdmin = function (fn, done) {
-      var after = function () {
-        rq.get(adminLogoutRoute, function (err) {
-          expect(err).toBeNull();
-          done();
-        });
-      };
-      rq.get(adminRoute, function (err) {
-        expect(err).toBeNull();
-        fn(after);
-      });
-    };
 
     /* Global local variables */
     var guest = {
@@ -76,7 +53,14 @@
       specCommon.reInitDatabase(function () {
         conf.init(function () {
           api.init(specCommon.express.app, function () {
-            rq = request.defaults({ json: true, jar: j });
+            var jwt_payload = {
+              login: 'admin',
+              password: 'admin',
+              is_admin: 'true'
+            };
+            auth.adminTokens[jwt_payload.login] = jwt_payload;
+            admToken = jwt.sign(jwt_payload, auth.secret);
+            rq = request.defaults({ json: true });
             setTimeout(done, 500);
           });
         });
@@ -84,6 +68,7 @@
     });
 
     afterAll(function (done) {
+      auth.adminTokens = {};
       specCommon.unmockExpressServer();
       specCommon.reInitDatabase(done);
     });
@@ -321,17 +306,16 @@
 
         it('should reply with all settings with GET method if admin',
           function (done) {
-            withAdmin(function (after) {
-              rq.get(confRoute, function (err, resp, body) {
-                expect(err).toBeNull();
-                expect(resp.statusCode).toBe(200);
-                expect(ld.isObject(body.value)).toBeTruthy();
-                expect(body.value.field1).toBe(8);
-                expect(body.value.field2).toBe(3);
-                expect(ld.size(body.value.field3)).toBe(2);
-                after();
-              });
-            }, done);
+            var b = { body: { auth_token: admToken } };
+            rq.get(confRoute, b, function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(200);
+              expect(ld.isObject(body.value)).toBeTruthy();
+              expect(body.value.field1).toBe(8);
+              expect(body.value.field2).toBe(3);
+              expect(ld.size(body.value.field3)).toBe(2);
+              done();
+            });
           }
         );
       });
@@ -350,26 +334,24 @@
 
         it('should return an error if the field does not exist',
           function (done) {
-            withAdmin(function (after) {
-              rq.get(confRoute + '/inexistent', function (err, resp, body) {
-                expect(resp.statusCode).toBe(404);
-                expect(body.error).toMatch('CONFIGURATION.KEY_NOT_FOUND');
-                expect(body.key).toBe('inexistent');
-                after();
-              });
-            }, done);
+            var b = { body: { auth_token: admToken } };
+            rq.get(confRoute + '/inexistent', b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(404);
+              expect(body.error).toMatch('CONFIGURATION.KEY_NOT_FOUND');
+              expect(body.key).toBe('inexistent');
+              done();
+            });
           }
         );
 
         it('should give the key and the value otherwise', function (done) {
-          withAdmin(function (after) {
-            rq.get(confRoute + '/field1', function (err, resp, body) {
-              expect(resp.statusCode).toBe(200);
-              expect(body.key).toBe('field1');
-              expect(body.value).toBe(8);
-              after();
-            });
-          }, done);
+          var b = { body: { auth_token: admToken } };
+          rq.get(confRoute + '/field1', b, function (err, resp, body) {
+            expect(resp.statusCode).toBe(200);
+            expect(body.key).toBe('field1');
+            expect(body.value).toBe(8);
+            done();
+          });
         });
       });
 
@@ -377,73 +359,71 @@
 
         it('post : should return an error if key and/or value are not provided',
           function (done) {
-            withAdmin(function (after) {
-              rq.post(confRoute, function (err, resp, body) {
+            var b = { body: { auth_token: admToken } };
+            rq.post(confRoute, b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('KEY_STR');
+              b.body.key = 'field1';
+              rq.post(confRoute, b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
-                expect(body.error).toMatch('KEY_STR');
-                var b = { body: { key: 'field1' } };
-                rq.post(confRoute, b, function (err, resp, body) {
-                  expect(resp.statusCode).toBe(400);
-                  expect(body.error).toMatch('VALUE_REQUIRED');
-                  after();
-                });
+                expect(body.error).toMatch('VALUE_REQUIRED');
+                done();
               });
-            }, done);
+            });
           }
         );
 
         it('put : should return an error if key is not in URL and if no value',
           function (done) {
-            withAdmin(function (after) {
-              rq.put(confRoute, function (err, resp, body) {
-                expect(resp.statusCode).toBe(404);
-                expect(body).toMatch('Cannot PUT');
-                rq.put(confRoute + '/field1', function (err, resp, body) {
-                  expect(resp.statusCode).toBe(400);
-                  expect(body.error).toMatch('VALUE_REQUIRED');
-                  after();
-                });
+            var b = { body: { auth_token: admToken } };
+            rq.put(confRoute, b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(404);
+              expect(body).toMatch('Cannot PUT');
+              rq.put(confRoute + '/field1', b, function (err, resp, body) {
+                expect(resp.statusCode).toBe(400);
+                expect(body.error).toMatch('VALUE_REQUIRED');
+                done();
               });
-            }, done);
+            });
           }
         );
 
         it('post : should save good request like expected', function (done) {
-          var b = { body: { key: 'field1', value: 'éèà' } };
-          withAdmin(function (after) {
-            rq.post(confRoute, b, function (err, resp, body) {
-              expect(err).toBeNull();
+          var b = { body: {
+            key: 'field1',
+            value: 'éèà',
+            auth_token: admToken
+          } };
+          rq.post(confRoute, b, function (err, resp, body) {
+            expect(err).toBeNull();
+            expect(resp.statusCode).toBe(200);
+            expect(body.success).toBeTruthy();
+            expect(body.key).toBe(b.body.key);
+            expect(body.value).toBe(b.body.value);
+            rq.get(confRoute + '/' + b.body.key, b, function (err, resp, body) {
               expect(resp.statusCode).toBe(200);
-              expect(body.success).toBeTruthy();
               expect(body.key).toBe(b.body.key);
               expect(body.value).toBe(b.body.value);
-              rq.get(confRoute + '/' + b.body.key, function (err, resp, body) {
-                expect(resp.statusCode).toBe(200);
-                expect(body.key).toBe(b.body.key);
-                expect(body.value).toBe(b.body.value);
-                after();
-              });
+              done();
             });
-          }, done);
+          });
         });
 
         it('put : should save good request like expected', function (done) {
-          var b = { body: { value: 42 } };
-          withAdmin(function (after) {
-            rq.put(confRoute + '/field1', b, function (err, resp, body) {
-              expect(err).toBeNull();
+          var b = { body: { value: 42, auth_token: admToken } };
+          rq.put(confRoute + '/field1', b, function (err, resp, body) {
+            expect(err).toBeNull();
+            expect(resp.statusCode).toBe(200);
+            expect(body.success).toBeTruthy();
+            expect(body.key).toBe('field1');
+            expect(body.value).toBe(b.body.value);
+            rq.get(confRoute + '/field1', b, function (err, resp, body) {
               expect(resp.statusCode).toBe(200);
-              expect(body.success).toBeTruthy();
               expect(body.key).toBe('field1');
               expect(body.value).toBe(b.body.value);
-              rq.get(confRoute + '/field1', function (err, resp, body) {
-                expect(resp.statusCode).toBe(200);
-                expect(body.key).toBe('field1');
-                expect(body.value).toBe(b.body.value);
-                after();
-              });
+              done();
             });
-          }, done);
+          });
         });
 
 
@@ -453,32 +433,30 @@
 
         it('will not return an error if the field does not exist',
           function (done) {
-            withAdmin(function (after) {
-              rq.del(confRoute + '/inexistent', function (err, resp, body) {
-                expect(resp.statusCode).toBe(200);
-                expect(body.success).toBeTruthy();
-                expect(body.key).toBe('inexistent');
-                after();
-              });
-            }, done);
+            var b = { body: { auth_token: admToken } };
+            rq.del(confRoute + '/inexistent', b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(200);
+              expect(body.success).toBeTruthy();
+              expect(body.key).toBe('inexistent');
+              done();
+            });
           }
         );
 
         it('should deletes the record and returns the key, value and success' +
-         ' otherwise', function (done) {
-           withAdmin(function (after) {
-            rq.del(confRoute + '/field1', function (err, resp, body) {
+          ' otherwise', function (done) {
+            var b = { body: { auth_token: admToken } };
+            rq.del(confRoute + '/field1', b, function (err, resp, body) {
               expect(resp.statusCode).toBe(200);
               expect(body.success).toBeTruthy();
               expect(body.key).toBe('field1');
-              rq.get(confRoute + '/field1', function (err, resp, body) {
+              rq.get(confRoute + '/field1', b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(404);
                 expect(body.error).toMatch('CONFIGURATION.KEY_NOT_FOUND');
                 expect(body.key).toBe('field1');
-                after();
+                done();
               });
             });
-           }, done);
           }
         );
 
@@ -549,11 +527,6 @@
         });
       });
 
-      afterAll(function (done) {
-        var b = { body: { auth_token: token } };
-        rq.get(route + 'auth/logout', b, done);
-      });
-
       describe('user.set/add POST and value as params', function () {
 
         it('should return error when arguments are not as expected',
@@ -612,15 +585,14 @@
             expect(body.key).toBe('parker');
             expect(body.value.login).toBe('parker');
             expect(body.value.lastname).toBe('Lewis');
-            withAdmin(function (after) {
-              rq.get(userRoute + '/parker', function (err, resp, body) {
-                expect(resp.statusCode).toBe(200);
-                expect(body.value.login).toBe('parker');
-                expect(body.value.firstname).toBe('Parker');
-                expect(ld.isArray(body.value.groups)).toBeTruthy();
-                after();
-              });
-            }, done);
+            b = { body: { auth_token: admToken } };
+            rq.get(userRoute + '/parker', b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(200);
+              expect(body.value.login).toBe('parker');
+              expect(body.value.firstname).toBe('Parker');
+              expect(ld.isArray(body.value.groups)).toBeTruthy();
+              done();
+            });
           });
         });
 
@@ -730,41 +702,38 @@
               password: 'lovesKubiak',
               firstname: 'Parker',
               lastname: 'Lewis',
-              email: 'parker@lewis.me'
+              email: 'parker@lewis.me',
+              auth_token: admToken
             }
           };
-          withAdmin(function (after) {
-            rq.put(userRoute + '/parker', b, function (err, resp, body) {
-              expect(err).toBeNull();
+          rq.put(userRoute + '/parker', b, function (err, resp, body) {
+            expect(err).toBeNull();
+            expect(resp.statusCode).toBe(200);
+            expect(body.success).toBeTruthy();
+            expect(body.key).toBe('parker');
+            expect(body.value.login).toBe('parker');
+            expect(body.value.lastname).toBe('Lewis');
+            rq.get(userRoute + '/parker', b, function (err, resp, body) {
               expect(resp.statusCode).toBe(200);
-              expect(body.success).toBeTruthy();
-              expect(body.key).toBe('parker');
               expect(body.value.login).toBe('parker');
-              expect(body.value.lastname).toBe('Lewis');
-              rq.get(userRoute + '/parker', function (err, resp, body) {
-                expect(resp.statusCode).toBe(200);
-                expect(body.value.login).toBe('parker');
-                expect(body.value.firstname).toBe('Parker');
-                expect(ld.isArray(body.value.groups)).toBeTruthy();
-                after();
-              });
+              expect(body.value.firstname).toBe('Parker');
+              expect(ld.isArray(body.value.groups)).toBeTruthy();
+              done();
             });
-          }, done);
+          });
         });
 
         it('should accept changes with no password if admin', function (done) {
-          var b = { body: { organization: 'secret' } };
-          withAdmin(function (after) {
-            rq.put(userRoute + '/parker', b, function (err, resp, body) {
-              expect(err).toBeNull();
-              expect(resp.statusCode).toBe(200);
-              expect(body.success).toBeTruthy();
-              expect(body.key).toBe('parker');
-              expect(body.value.login).toBe('parker');
-              expect(body.value.organization).toBe('secret');
-              after();
-            });
-          }, done);
+          var b = { body: { organization: 'secret', auth_token: admToken } };
+          rq.put(userRoute + '/parker', b, function (err, resp, body) {
+            expect(err).toBeNull();
+            expect(resp.statusCode).toBe(200);
+            expect(body.success).toBeTruthy();
+            expect(body.key).toBe('parker');
+            expect(body.value.login).toBe('parker');
+            expect(body.value.organization).toBe('secret');
+            done();
+          });
         });
 
         it('should accept updates on an existing user, if he is logged himself',
@@ -804,29 +773,27 @@
 
         it('should return an error if the login does not exist',
           function (done) {
-            withAdmin(function (after) {
-              rq.get(userRoute + '/inexistent', function (err, resp, body) {
-                expect(resp.statusCode).toBe(404);
-                expect(body.error).toMatch('USER.NOT_FOUND');
-                expect(body.key).toBe('inexistent');
-                after();
-              });
-            }, done);
+            var b = { body: { auth_token: admToken } };
+            rq.get(userRoute + '/inexistent', b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(404);
+              expect(body.error).toMatch('USER.NOT_FOUND');
+              expect(body.key).toBe('inexistent');
+              done();
+            });
           }
         );
 
         it('should give the login/key and the user attributes, password' +
           ' excepted otherwise',
           function (done) {
-            withAdmin(function (after) {
-              rq.get(userRoute + '/parker', function (err, resp, body) {
-                expect(resp.statusCode).toBe(200);
-                expect(body.value.login).toBe('parker');
-                expect(body.value.firstname).toBe('Parker');
-                expect(ld.isArray(body.value.groups)).toBeTruthy();
-                after();
-              });
-            }, done);
+            var b = { body: { auth_token: admToken } };
+            rq.get(userRoute + '/parker', b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(200);
+              expect(body.value.login).toBe('parker');
+              expect(body.value.firstname).toBe('Parker');
+              expect(ld.isArray(body.value.groups)).toBeTruthy();
+              done();
+            });
           }
         );
 
@@ -1115,14 +1082,14 @@
               expect(err).toBeNull();
               expect(resp.statusCode).toBe(400);
               expect(body.error).toMatch('TOKEN.INCORRECT');
-              var token = mail.genToken({ login: 'guest', action: 'another' });
-              rq.put(route + 'passrecover/' + token,
+              var mtk = mail.genToken({ login: 'guest', action: 'another' });
+              rq.put(route + 'passrecover/' + mtk,
                 function (err, resp, body) {
                   expect(err).toBeNull();
                   expect(resp.statusCode).toBe(400);
                   expect(body.error).toMatch('TOKEN.INCORRECT');
-                  token = mail.genToken({ action: 'passrecover' });
-                  rq.put(route + 'passrecover/' + token,
+                  mtk = mail.genToken({ action: 'passrecover' });
+                  rq.put(route + 'passrecover/' + mtk,
                     function (err, resp, body) {
                       expect(err).toBeNull();
                       expect(resp.statusCode).toBe(400);
@@ -1258,13 +1225,12 @@
 
         it('will return an error if the user does not exist',
           function (done) {
-            withAdmin(function (after) {
-              rq.del(userRoute + '/inexistent', function (err, resp, body) {
-                expect(resp.statusCode).toBe(404);
-                expect(body.error).toMatch('USER.NOT_FOUND');
-                after();
-              });
-            }, done);
+            var b = { body: { auth_token: admToken } };
+            rq.del(userRoute + '/inexistent', b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(404);
+              expect(body.error).toMatch('USER.NOT_FOUND');
+              done();
+            });
           }
         );
 
@@ -1275,13 +1241,12 @@
               expect(resp.statusCode).toBe(200);
               expect(body.success).toBeTruthy();
               expect(body.key).toBe('guest');
-              withAdmin(function (after) {
-                rq.get(userRoute + '/guest', function (err, resp, body) {
-                  expect(resp.statusCode).toBe(404);
-                  expect(body.error).toMatch('USER.NOT_FOUND');
-                  after();
-                });
-              }, done);
+              b.body.auth_token = admToken;
+              rq.get(userRoute + '/guest', b, function (err, resp, body) {
+                expect(resp.statusCode).toBe(404);
+                expect(body.error).toMatch('USER.NOT_FOUND');
+                done();
+              });
             });
           }
         );
@@ -1401,18 +1366,17 @@
             body: {
               invite: true,
               gid: gotherid,
-              loginsOrEmails: ['one', 'two']
+              loginsOrEmails: ['one', 'two'],
+              auth_token: admToken
             }
           };
-          withAdmin(function (after) {
-            rq.post(groupRoute + '/invite', b, function (err, resp, body) {
-              expect(resp.statusCode).toBe(200);
-              expect(body.success).toBeTruthy();
-              expect(ld.isObject(body.value)).toBeTruthy();
-              expect(body.value._id).toBe(gotherid);
-              after();
-            });
-          }, done);
+          rq.post(groupRoute + '/invite', b, function (err, resp, body) {
+            expect(resp.statusCode).toBe(200);
+            expect(body.success).toBeTruthy();
+            expect(ld.isObject(body.value)).toBeTruthy();
+            expect(body.value._id).toBe(gotherid);
+            done();
+          });
         });
 
         it('should invite successfully otherwise', function (done) {
@@ -1709,14 +1673,13 @@
         );
 
         it('should allow access to all groups for admin', function (done) {
-          withAdmin(function (after) {
-            rq.get(groupRoute + '/' + gotherid, function (err, resp, body) {
-              expect(resp.statusCode).toBe(200);
-              expect(body.key).toBe(gotherid);
-              expect(body.value.name).toBe('gother1');
-              after();
-            });
-          }, done);
+          var b = { body: { auth_token: admToken } };
+          rq.get(groupRoute + '/' + gotherid, b, function (err, resp, body) {
+            expect(resp.statusCode).toBe(200);
+            expect(body.key).toBe(gotherid);
+            expect(body.value.name).toBe('gother1');
+            done();
+          });
         });
 
         it('should give the key and the group attributes otherwise',
@@ -1757,13 +1720,18 @@
 
         it('should return an error if admin user does not exist',
           function (done) {
-            var b = { body: { name: 'group1', admin: 'inexistentId' } };
-            withAdmin(function (after) {
-              rq.post(groupRoute, b, function (err, resp) {
-                expect(resp.statusCode).toBe(401);
-                after();
-              });
-            }, done);
+            var b = {
+              body: {
+                name: 'group1',
+                admin: 'inexistentId',
+                auth_token: admToken
+              }
+            };
+            rq.post(groupRoute, b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('GROUP.ITEMS_NOT_FOUND');
+              done();
+            });
           }
         );
 
@@ -1795,14 +1763,13 @@
               expect(body.value.name).toBe('groupOk');
               expect(body.value.admins[0]).not.toBe(uotherid);
               expect(body.value.admins[0]).toBe(uid);
-              withAdmin(function (after) {
-                rq.post(groupRoute, b, function (err, resp, body) {
-                  expect(err).toBeNull();
-                  expect(resp.statusCode).toBe(200);
-                  expect(body.value.admins[0]).toBe(uotherid);
-                  after();
-                });
-              }, done);
+              b.body.auth_token = admToken;
+              rq.post(groupRoute, b, function (err, resp, body) {
+                expect(err).toBeNull();
+                expect(resp.statusCode).toBe(200);
+                expect(body.value.admins[0]).toBe(uotherid);
+                done();
+              });
             });
           }
         );
@@ -1950,20 +1917,19 @@
                 _id: goid,
                 name: 'gOtherUpdated',
                 admin: uotherid,
-                visibility: 'public'
+                visibility: 'public',
+                auth_token: admToken
               }
             };
-            withAdmin(function (after) {
-              rq.put(groupRoute + '/' + goid, b, function (err, resp, body) {
-                expect(err).toBeNull();
-                expect(resp.statusCode).toBe(200);
-                expect(body.key).toBe(goid);
-                expect(body.value._id).toBe(goid);
-                expect(body.value.name).toBe('gOtherUpdated');
-                expect(body.value.visibility).toBe('public');
-                after();
-              });
-            }, done);
+            rq.put(groupRoute + '/' + goid, b, function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(200);
+              expect(body.key).toBe(goid);
+              expect(body.value._id).toBe(goid);
+              expect(body.value.name).toBe('gOtherUpdated');
+              expect(body.value.visibility).toBe('public');
+              done();
+            });
           }
         );
 
@@ -2011,15 +1977,14 @@
 
         it('should allow deleting a record if the user is a global admin',
           function (done) {
-            withAdmin(function (after) {
-              rq.del(groupRoute + '/' + gotherid, function (err, resp, body) {
-                expect(err).toBeNull();
-                expect(resp.statusCode).toBe(200);
-                expect(body.success).toBeTruthy();
-                expect(body.key).toBe(gotherid);
-                after();
-              });
-            }, done);
+            var b = { body: { auth_token: admToken } };
+            rq.del(groupRoute + '/' + gotherid, b, function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(200);
+              expect(body.success).toBeTruthy();
+              expect(body.key).toBe(gotherid);
+              done();
+            });
           }
         );
 
@@ -2122,15 +2087,14 @@
         });
 
         it('should allow access to other pads if admin', function (done) {
-          withAdmin(function (after) {
-            rq.get(padRoute + '/' + potherid, function (err, resp, body) {
-              expect(resp.statusCode).toBe(200);
-              expect(body.key).toBe(potherid);
-              expect(body.value._id).toBe(potherid);
-              expect(body.value.name).toBe('pother1');
-              after();
-            });
-          }, done);
+          var b = { body: { auth_token: admToken } };
+          rq.get(padRoute + '/' + potherid, b, function (err, resp, body) {
+            expect(resp.statusCode).toBe(200);
+            expect(body.key).toBe(potherid);
+            expect(body.value._id).toBe(potherid);
+            expect(body.value.name).toBe('pother1');
+            done();
+          });
         });
 
         it('should allow access to public pads', function (done) {
@@ -2303,21 +2267,20 @@
               name: 'pother1',
               group: gotherid,
               visibility: 'public',
-              readonly: true
+              readonly: true,
+              auth_token: admToken
             }
           };
-          withAdmin(function (after) {
-            rq.put(padRoute + '/' + potherid, b, function (err, resp, body) {
-              expect(err).toBeNull();
-              expect(resp.statusCode).toBe(200);
-              expect(body.success).toBeTruthy();
-              expect(body.key).toBe(potherid);
-              expect(body.value._id).toBe(potherid);
-              expect(body.value.visibility).toBe('public');
-              expect(body.value.readonly).toBeTruthy();
-              after();
-            });
-          }, done);
+          rq.put(padRoute + '/' + potherid, b, function (err, resp, body) {
+            expect(err).toBeNull();
+            expect(resp.statusCode).toBe(200);
+            expect(body.success).toBeTruthy();
+            expect(body.key).toBe(potherid);
+            expect(body.value._id).toBe(potherid);
+            expect(body.value.visibility).toBe('public');
+            expect(body.value.readonly).toBeTruthy();
+            done();
+          });
         });
 
         it('should also not create a non existent pad', function (done) {
@@ -2397,15 +2360,14 @@
 
         it('should allow removal of all pads if the user is global admin',
           function (done) {
-            withAdmin(function (after) {
-              rq.del(padRoute + '/' + potherid, function (err, resp, body) {
-                expect(err).toBeNull();
-                expect(resp.statusCode).toBe(200);
-                expect(body.success).toBeTruthy();
-                expect(body.key).toBe(potherid);
-                after();
-              });
-            }, done);
+            var b = { body: { auth_token: admToken } };
+            rq.del(padRoute + '/' + potherid, b, function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(200);
+              expect(body.success).toBeTruthy();
+              expect(body.key).toBe(potherid);
+              done();
+            });
           }
         );
 

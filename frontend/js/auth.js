@@ -29,7 +29,8 @@ module.exports = (function () {
   var m = require('mithril');
 
   var auth = {};
-  auth.isAdmin = m.prop(false);
+  auth.admToken = function () { return localStorage.getItem('admToken'); };
+  auth.isAdmin = function () { return !!auth.admToken(); };
   auth.userInfo = m.prop();
   auth.token = function () { return localStorage.getItem('token'); };
   auth.isAuthenticated = m.prop(!!auth.token());

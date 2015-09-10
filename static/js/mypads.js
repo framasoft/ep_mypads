@@ -65,7 +65,8 @@ module.exports = (function () {
   var m = require('mithril');
 
   var auth = {};
-  auth.isAdmin = m.prop(false);
+  auth.admToken = function () { return localStorage.getItem('admToken'); };
+  auth.isAdmin = function () { return !!auth.admToken(); };
   auth.userInfo = m.prop();
   auth.token = function () { return localStorage.getItem('token'); };
   auth.isAuthenticated = m.prop(!!auth.token());
@@ -633,13 +634,14 @@ module.exports = (function () {
   */
 
   logout.controller = function () {
-    auth.isAdmin(false);
     m.route('/');
     m.request({
-      url: conf.URLS.AUTH + '/adminlogout',
-      method: 'GET'
+      url: conf.URLS.AUTH + '/admin/logout',
+      method: 'GET',
+      data: { auth_token: auth.admToken() }
     }).then(function () {
       document.title = conf.SERVER.title;
+      localStorage.removeItem('admToken');
       notif.success({ body: conf.LANG.USER.AUTH.SUCCESS_OUT });
     }, function (err) {
       notif.error({ body: ld.result(conf.LANG, err.error) });
@@ -747,7 +749,7 @@ module.exports = (function () {
         m.request({
           method: 'PUT',
           url: conf.URLS.USER + '/' + c.data.login(),
-          data: c.data
+          data: ld.assign(c.data, { auth_token: auth.admToken() })
         }).then(function (resp) {
           auth.userInfo(resp.value);
           notif.success({ body: conf.LANG.USER.AUTH.PROFILE_SUCCESS });
@@ -757,7 +759,8 @@ module.exports = (function () {
 
     m.request({
       method: 'GET',
-      url: conf.URLS.USER + '/' + m.route.param('login')
+      url: conf.URLS.USER + '/' + m.route.param('login'),
+      data: { auth_token: auth.admToken() }
     }).then(function (resp) {
       c.user(resp.value);
       init();
@@ -851,7 +854,8 @@ module.exports = (function () {
     if (window.confirm(conf.LANG.ADMIN.INFO.USER_REMOVE_SURE)) {
       m.request({
         method: 'DELETE',
-        url: conf.URLS.USER + '/' + login
+        url: conf.URLS.USER + '/' + login,
+        data: { auth_token: auth.admToken() }
       }).then(function () {
         notif.success({
           body: conf.LANG.USER.INFO.REMOVE_ACCOUNT_SUCCESS
@@ -936,7 +940,8 @@ module.exports = (function () {
       e.preventDefault();
       m.request({
         method: 'GET',
-        url: conf.URLS.USER + '/' + c.data.login()
+        url: conf.URLS.USER + '/' + c.data.login(),
+        data: { auth_token: auth.admToken() }
       }).then(function (resp) {
         c.user(resp.value);
         notif.info({ body: conf.LANG.ADMIN.INFO.USER_FOUND });
@@ -1075,6 +1080,7 @@ module.exports = (function () {
   * ## Controller
   *
   * Used to check if user is authorized, send login/pass and updates settings.
+  * TODO: allowEtherPads management
   */
 
   admin.controller = function () {
@@ -1082,11 +1088,14 @@ module.exports = (function () {
     var c = {};
     auth.isAuthenticated(false);
     form.initFields(c, ['login', 'password']);
-    var init = function () {
+    var init = function (resp) {
+      if (resp) { localStorage.setItem('admToken', resp.token); }
       m.request({
         url: conf.URLS.CONF,
-        method: 'GET'
+        method: 'GET',
+        data: { auth_token: auth.admToken() }
       }).then(function (resp) {
+        if (!resp.auth) { return localStorage.removeItem('admToken'); }
         form.initFields(c, ['title', 'rootUrl', 'passwordMin', 'passwordMax',
           'defaultLanguage', 'checkMails', 'tokenDuration', 'SMTPHost',
           'SMTPPort', 'SMTPSSL', 'SMTPTLS', 'SMTPUser', 'SMTPPass',
@@ -1114,7 +1123,6 @@ module.exports = (function () {
         c.data.passwordMax.toJSON = function () {
           return c.data.passwordMax();
         };
-        auth.isAdmin(true);
         document.title = conf.LANG.ADMIN.FORM_SETTINGS + ' - ' +
           conf.SERVER.title;
         notif.success({ body: conf.LANG.USER.AUTH.SUCCESS });
@@ -1128,24 +1136,21 @@ module.exports = (function () {
     * ### login
     *
     * `login` is an asynchronous function that is called after admin login
-    * attempt. It uses crafted credentials to log with basic auth to etherpad
+    * attempt. It uses API admin login with m.request.
+    *
+    * It uses crafted credentials to log with basic auth to etherpad
     * instance. If it's a success, settings page will be set up, taking care of
     * integer fields like `passwordMin`.
     */
 
     c.login = function (e) {
       e.preventDefault();
-      var credentials = c.data.login() + ':' + c.data.password();
-      var url = document.location.protocol + '//' + credentials + '@' +
-        document.location.host + '/admin';
       m.request({
-        url: url,
-        method: 'GET',
-        deserialize: function () {}
-      }).then(init, function () {
-        auth.isAdmin(false);
-        var emsg = conf.LANG.BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT;
-        notif.error({ body: emsg });
+        url: conf.URLS.AUTH + '/admin/login',
+        method: 'POST',
+        data: c.data
+      }).then(init, function (err) {
+        notif.error({ body: ld.result(conf.LANG, err.error) });
       });
     };
 
@@ -1172,7 +1177,7 @@ module.exports = (function () {
           m.request({
             method: 'PUT',
             url: conf.URLS.CONF + '/' + pair[0],
-            data: { value: pair[1]() }
+            data: { value: pair[1](), auth_token: auth.admToken() }
           }).then(function (resp) {
             if (pairs.length > 0) {
               _set(pairs.pop());

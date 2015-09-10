@@ -379,6 +379,7 @@
               expect(body.value.field1).toBe(8);
               expect(body.value.field2).toBe(3);
               expect(ld.size(body.value.field3)).toBe(2);
+              expect(body.auth).toBeTruthy();
               done();
             });
           }

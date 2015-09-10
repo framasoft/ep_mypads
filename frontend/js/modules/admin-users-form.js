@@ -94,7 +94,7 @@ module.exports = (function () {
         m.request({
           method: 'PUT',
           url: conf.URLS.USER + '/' + c.data.login(),
-          data: c.data
+          data: ld.assign(c.data, { auth_token: auth.admToken() })
         }).then(function (resp) {
           auth.userInfo(resp.value);
           notif.success({ body: conf.LANG.USER.AUTH.PROFILE_SUCCESS });
@@ -104,7 +104,8 @@ module.exports = (function () {
 
     m.request({
       method: 'GET',
-      url: conf.URLS.USER + '/' + m.route.param('login')
+      url: conf.URLS.USER + '/' + m.route.param('login'),
+      data: { auth_token: auth.admToken() }
     }).then(function (resp) {
       c.user(resp.value);
       init();

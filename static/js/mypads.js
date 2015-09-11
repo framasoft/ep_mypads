@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/home/fabien/bak/code/node/ep_mypads/frontend.js":[function(require,module,exports){
 /**
 *  # Frontend Entry Point
 *
@@ -33,7 +33,7 @@
   conf.init(route.init);
 }).call(this);
 
-},{"./frontend/js/configuration.js":3,"./frontend/js/route.js":34}],2:[function(require,module,exports){
+},{"./frontend/js/configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","./frontend/js/route.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/route.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js":[function(require,module,exports){
 /**
 *  # Authentification module
 *
@@ -88,7 +88,7 @@ module.exports = (function () {
   return auth;
 }).call(this);
 
-},{"mithril":43}],3:[function(require,module,exports){
+},{"mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js":[function(require,module,exports){
 /**
 *  # Configuration
 *
@@ -203,7 +203,7 @@ module.exports = (function () {
   return config;
 }).call(this);
 
-},{"../../static/l10n/en.json":44,"./auth.js":2,"./widgets/notification.js":35,"lodash":42,"mithril":43}],4:[function(require,module,exports){
+},{"../../static/l10n/en.json":"/home/fabien/bak/code/node/ep_mypads/static/l10n/en.json","./auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","./widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js":[function(require,module,exports){
 /**
 *  # Form helpers functions
 *
@@ -345,7 +345,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"mithril":43}],5:[function(require,module,exports){
+},{"mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js":[function(require,module,exports){
 /**
 *  # Group List module
 *
@@ -528,7 +528,7 @@ module.exports = (function () {
   return model;
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../widgets/notification.js":35,"lodash":42,"mithril":43}],6:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/accountconfirm.js":[function(require,module,exports){
 /**
 *  # Account confirmation module
 *
@@ -588,7 +588,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../configuration.js":3,"../widgets/notification.js":35,"lodash":42,"mithril":43}],7:[function(require,module,exports){
+},{"../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-logout.js":[function(require,module,exports){
 /**
 *  # Admin logout module
 *
@@ -652,7 +652,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../widgets/notification.js":35,"lodash":42,"mithril":43}],8:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users-form.js":[function(require,module,exports){
 /**
 *  # Admin Users Form edition module
 *
@@ -801,7 +801,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../helpers/form.js":4,"../widgets/notification.js":35,"./layout.js":18,"./subscribe.js":28,"lodash":42,"mithril":43}],9:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./subscribe.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users-remove.js":[function(require,module,exports){
 /**
 *  # Admin user remove module
 *
@@ -870,7 +870,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../widgets/notification.js":35,"lodash":42,"mithril":43}],10:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users.js":[function(require,module,exports){
 /**
 *  # Admin Users Management module
 *
@@ -1033,7 +1033,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../helpers/form.js":4,"../widgets/notification.js":35,"./layout.js":18,"./user.js":30,"lodash":42,"mithril":43}],11:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./user.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js":[function(require,module,exports){
 /**
 *  # Admin module
 *
@@ -1096,10 +1096,10 @@ module.exports = (function () {
         data: { auth_token: auth.admToken() }
       }).then(function (resp) {
         if (!resp.auth) { return localStorage.removeItem('admToken'); }
-        form.initFields(c, ['title', 'rootUrl', 'passwordMin', 'passwordMax',
-          'defaultLanguage', 'checkMails', 'tokenDuration', 'SMTPHost',
-          'SMTPPort', 'SMTPSSL', 'SMTPTLS', 'SMTPUser', 'SMTPPass',
-          'SMTPEmailFrom']);
+        form.initFields(c, ['title', 'rootUrl', 'allowEtherPads',
+          'passwordMin', 'passwordMax', 'defaultLanguage', 'checkMails',
+          'tokenDuration', 'SMTPHost', 'SMTPPort', 'SMTPSSL', 'SMTPTLS',
+          'SMTPUser', 'SMTPPass', 'SMTPEmailFrom']);
         c.currentConf = resp.value;
         ld.forIn(resp.value, function (v, k) {
           c.data[k] = m.prop(v);
@@ -1301,6 +1301,16 @@ module.exports = (function () {
         );
         return { label: label, icon: icon, select: select };
       })(),
+      allowEtherPads: (function () {
+        var icon = form.icon(c, 'allowEtherPads', A.INFO.ALLOW_ETHERPADS);
+        var f = form.field(c, 'allowEtherPads', A.FIELD.ALLOW_ETHERPADS, icon);
+        ld.assign(f.input.attrs, {
+          type: 'checkbox',
+          checked: c.data.allowEtherPads(),
+          onchange: m.withAttr('checked', c.data.allowEtherPads)
+        });
+        return f;
+      })(),
       checkMails: (function () {
         var icon = form.icon(c, 'checkMails', A.INFO.CHECKMAILS);
         var f = form.field(c, 'checkMails', A.FIELD.CHECKMAILS, icon);
@@ -1378,7 +1388,8 @@ module.exports = (function () {
         m('div', [ f.title.label, f.title.input, f.title.icon,
           f.rootUrl.label, f.rootUrl.input, f.rootUrl.icon,
           f.defaultLanguage.label, f.defaultLanguage.select,
-          f.defaultLanguage.icon
+          f.defaultLanguage.icon, f.allowEtherPads.label,
+          f.allowEtherPads.input, f.allowEtherPads.icon
         ])
       ]),
       m('fieldset.block-group', [
@@ -1439,7 +1450,7 @@ module.exports = (function () {
   return admin;
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../helpers/form.js":4,"../widgets/notification.js":35,"./layout.js":18,"./user.js":30,"lodash":42,"mithril":43}],12:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./user.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/bookmark.js":[function(require,module,exports){
 /**
 *  # Bookmark List module
 *
@@ -1607,7 +1618,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../model/group.js":5,"./group.js":16,"./layout.js":18,"./pad-mark.js":22,"lodash":42,"mithril":43}],13:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","./group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./pad-mark.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-mark.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js":[function(require,module,exports){
 /**
 *  # Group form module
 *
@@ -1921,7 +1932,7 @@ module.exports = (function () {
   return gf;
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../helpers/form.js":4,"../model/group.js":5,"../widgets/notification.js":35,"../widgets/tag.js":36,"./layout.js":18,"lodash":42,"mithril":43}],14:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../model/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","../widgets/tag.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/tag.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js":[function(require,module,exports){
 /**
 *  # Group remove module
 *
@@ -1994,7 +2005,7 @@ module.exports = (function () {
   return remove;
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../model/group.js":5,"../widgets/notification.js":35,"lodash":42,"mithril":43}],15:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-view.js":[function(require,module,exports){
 /**
 *  # Group View module
 *
@@ -2455,7 +2466,7 @@ module.exports = (function () {
   return group;
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../model/group.js":5,"../widgets/notification.js":35,"./layout.js":18,"./pad-mark.js":22,"./pad-share.js":25,"lodash":42,"mithril":43}],16:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./pad-mark.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-mark.js","./pad-share.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-share.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js":[function(require,module,exports){
 /**
 *  # Group List module
 *
@@ -2975,7 +2986,7 @@ module.exports = (function () {
   return group;
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../model/group.js":5,"../widgets/notification.js":35,"./layout.js":18,"./pad-share.js":25,"lodash":42,"mithril":43}],17:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./pad-share.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-share.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js":[function(require,module,exports){
 /**
 *  # Home module
 *
@@ -3026,7 +3037,7 @@ module.exports = (function () {
   return home;
 }).call(this);
 
-},{"../auth.js":2,"./layout.js":18,"mithril":43}],18:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js":[function(require,module,exports){
 /**
 *  # Layout
 *
@@ -3197,7 +3208,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../widgets/notification.js":35,"lodash":42,"mithril":43}],19:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js":[function(require,module,exports){
 /**
 *  # Login module
 *
@@ -3332,7 +3343,7 @@ module.exports = (function () {
   return login;
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../helpers/form.js":4,"../widgets/notification.js":35,"./layout.js":18,"./user.js":30,"lodash":42,"mithril":43}],20:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./user.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js":[function(require,module,exports){
 /**
 *  # Home module
 *
@@ -3402,7 +3413,7 @@ module.exports = (function () {
   return logout;
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../model/group.js":5,"../widgets/notification.js":35,"lodash":42,"mithril":43}],21:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-form.js":[function(require,module,exports){
 /**
 *  # Pad creation and edition module
 *
@@ -3626,7 +3637,7 @@ module.exports = (function () {
   return pf;
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../helpers/form.js":4,"../model/group.js":5,"../widgets/notification.js":35,"./group-form.js":13,"./layout.js":18,"lodash":42,"mithril":43}],22:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../model/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./group-form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-mark.js":[function(require,module,exports){
 /**
 *  # Pad bookmarking module
 *
@@ -3692,7 +3703,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../widgets/notification.js":35,"lodash":42,"mithril":43}],23:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-move.js":[function(require,module,exports){
 /**
 *  # Pad migration from a group to another
 *
@@ -3907,7 +3918,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../model/group.js":5,"../widgets/notification.js":35,"./layout.js":18,"lodash":42,"mithril":43}],24:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-remove.js":[function(require,module,exports){
 /**
 *  # Pad remove module
 *
@@ -3985,7 +3996,7 @@ module.exports = (function () {
   return remove;
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../model/group.js":5,"../widgets/notification.js":35,"lodash":42,"mithril":43}],25:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-share.js":[function(require,module,exports){
 /**
 *  # Pad and group sharing module
 *
@@ -4031,7 +4042,7 @@ module.exports = (function () {
   };
 }).call(this);
 
-},{"../configuration.js":3}],26:[function(require,module,exports){
+},{"../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-view.js":[function(require,module,exports){
 /**
 *  # Group View module
 *
@@ -4304,7 +4315,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../model/group.js":5,"./layout.js":18,"./pad-mark.js":22,"./pad-share.js":25,"js-base64":41,"lodash":42,"mithril":43}],27:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./pad-mark.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-mark.js","./pad-share.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-share.js","js-base64":"/home/fabien/bak/code/node/ep_mypads/node_modules/js-base64/base64.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/passrecover.js":[function(require,module,exports){
 /**
 *  # Password recovery module
 *
@@ -4450,7 +4461,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../helpers/form.js":4,"../widgets/notification.js":35,"./layout.js":18,"./user.js":30,"lodash":42,"mithril":43}],28:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./user.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js":[function(require,module,exports){
 /**
 *  # Subscription module
 *
@@ -4790,7 +4801,7 @@ module.exports = (function () {
   return subscribe;
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../helpers/form.js":4,"../model/group.js":5,"../widgets/notification.js":35,"./layout.js":18,"./user.js":30,"lodash":42,"mithril":43}],29:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../model/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","./user.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/user-invitation.js":[function(require,module,exports){
 /**
 *  # User invitation and admin sharing module
 *
@@ -5061,7 +5072,7 @@ module.exports = (function () {
   return invite;
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../helpers/form.js":4,"../model/group.js":5,"../widgets/notification.js":35,"../widgets/tag.js":36,"./layout.js":18,"lodash":42,"mithril":43}],30:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../model/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","../widgets/tag.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/tag.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/user.js":[function(require,module,exports){
 /**
 *  # User module
 *
@@ -5430,7 +5441,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../configuration.js":3,"../helpers/form.js":4,"lodash":42,"mithril":43}],31:[function(require,module,exports){
+},{"../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist-form.js":[function(require,module,exports){
 /**
 *  # Userlist form module
 *
@@ -5695,7 +5706,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../helpers/form.js":4,"../model/group.js":5,"../widgets/notification.js":35,"../widgets/tag.js":36,"./layout.js":18,"lodash":42,"mithril":43}],32:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../helpers/form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/helpers/form.js","../model/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","../widgets/tag.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/tag.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist-remove.js":[function(require,module,exports){
 /**
 *  # Userlist remove module
 *
@@ -5769,7 +5780,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../widgets/notification.js":35,"lodash":42,"mithril":43}],33:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../widgets/notification.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist.js":[function(require,module,exports){
 /**
 *  # Userlists module
 *
@@ -5900,7 +5911,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../auth.js":2,"../configuration.js":3,"../model/group.js":5,"./layout.js":18,"lodash":42,"mithril":43}],34:[function(require,module,exports){
+},{"../auth.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/auth.js","../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","../model/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/model/group.js","./layout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/layout.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/route.js":[function(require,module,exports){
 /**
 *  # Routing module
 *
@@ -6005,7 +6016,7 @@ module.exports = (function () {
   return route;
 }).call(this);
 
-},{"./modules/accountconfirm.js":6,"./modules/admin-logout.js":7,"./modules/admin-users-form.js":8,"./modules/admin-users-remove.js":9,"./modules/admin-users.js":10,"./modules/admin.js":11,"./modules/bookmark.js":12,"./modules/group-form.js":13,"./modules/group-remove.js":14,"./modules/group-view.js":15,"./modules/group.js":16,"./modules/home.js":17,"./modules/login.js":19,"./modules/logout.js":20,"./modules/pad-form.js":21,"./modules/pad-move.js":23,"./modules/pad-remove.js":24,"./modules/pad-view.js":26,"./modules/passrecover.js":27,"./modules/subscribe.js":28,"./modules/user-invitation.js":29,"./modules/userlist-form.js":31,"./modules/userlist-remove.js":32,"./modules/userlist.js":33,"mithril":43}],35:[function(require,module,exports){
+},{"./modules/accountconfirm.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/accountconfirm.js","./modules/admin-logout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-logout.js","./modules/admin-users-form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users-form.js","./modules/admin-users-remove.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users-remove.js","./modules/admin-users.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin-users.js","./modules/admin.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/admin.js","./modules/bookmark.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/bookmark.js","./modules/group-form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-form.js","./modules/group-remove.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-remove.js","./modules/group-view.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group-view.js","./modules/group.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/group.js","./modules/home.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/home.js","./modules/login.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/login.js","./modules/logout.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/logout.js","./modules/pad-form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-form.js","./modules/pad-move.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-move.js","./modules/pad-remove.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-remove.js","./modules/pad-view.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/pad-view.js","./modules/passrecover.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/passrecover.js","./modules/subscribe.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/subscribe.js","./modules/user-invitation.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/user-invitation.js","./modules/userlist-form.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist-form.js","./modules/userlist-remove.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist-remove.js","./modules/userlist.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/modules/userlist.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/notification.js":[function(require,module,exports){
 /**
 *  # Notification module
 *
@@ -6168,7 +6179,7 @@ module.exports = (function () {
 
 }).call(this);
 
-},{"../configuration.js":3,"mithril":43}],36:[function(require,module,exports){
+},{"../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/frontend/js/widgets/tag.js":[function(require,module,exports){
 
 /**
 *  # Tag field module
@@ -6325,7 +6336,7 @@ module.exports = (function () {
   return tag;
 }).call(this);
 
-},{"../configuration.js":3,"lodash":42,"mithril":43}],37:[function(require,module,exports){
+},{"../configuration.js":"/home/fabien/bak/code/node/ep_mypads/frontend/js/configuration.js","lodash":"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js","mithril":"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js"}],"/home/fabien/bak/code/node/ep_mypads/node_modules/browserify/node_modules/buffer/index.js":[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -7637,7 +7648,7 @@ function decodeUtf8Char (str) {
   }
 }
 
-},{"base64-js":38,"ieee754":39,"is-array":40}],38:[function(require,module,exports){
+},{"base64-js":"/home/fabien/bak/code/node/ep_mypads/node_modules/browserify/node_modules/buffer/node_modules/base64-js/lib/b64.js","ieee754":"/home/fabien/bak/code/node/ep_mypads/node_modules/browserify/node_modules/buffer/node_modules/ieee754/index.js","is-array":"/home/fabien/bak/code/node/ep_mypads/node_modules/browserify/node_modules/buffer/node_modules/is-array/index.js"}],"/home/fabien/bak/code/node/ep_mypads/node_modules/browserify/node_modules/buffer/node_modules/base64-js/lib/b64.js":[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -7763,7 +7774,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],39:[function(require,module,exports){
+},{}],"/home/fabien/bak/code/node/ep_mypads/node_modules/browserify/node_modules/buffer/node_modules/ieee754/index.js":[function(require,module,exports){
 exports.read = function(buffer, offset, isLE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -7849,7 +7860,7 @@ exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],40:[function(require,module,exports){
+},{}],"/home/fabien/bak/code/node/ep_mypads/node_modules/browserify/node_modules/buffer/node_modules/is-array/index.js":[function(require,module,exports){
 
 /**
  * isArray
@@ -7884,7 +7895,7 @@ module.exports = isArray || function (val) {
   return !! val && '[object Array]' == str.call(val);
 };
 
-},{}],41:[function(require,module,exports){
+},{}],"/home/fabien/bak/code/node/ep_mypads/node_modules/js-base64/base64.js":[function(require,module,exports){
 /*
  * $Id: base64.js,v 2.15 2014/04/05 12:58:57 dankogai Exp dankogai $
  *
@@ -8080,7 +8091,7 @@ module.exports = isArray || function (val) {
     }
 })(this);
 
-},{"buffer":37}],42:[function(require,module,exports){
+},{"buffer":"/home/fabien/bak/code/node/ep_mypads/node_modules/browserify/node_modules/buffer/index.js"}],"/home/fabien/bak/code/node/ep_mypads/node_modules/lodash/index.js":[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -20435,7 +20446,7 @@ module.exports = isArray || function (val) {
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],43:[function(require,module,exports){
+},{}],"/home/fabien/bak/code/node/ep_mypads/node_modules/mithril/mithril.js":[function(require,module,exports){
 var m = (function app(window, undefined) {
 	var OBJECT = "[object Object]", ARRAY = "[object Array]", STRING = "[object String]", FUNCTION = "function";
 	var type = {}.toString;
@@ -21503,8 +21514,8 @@ var m = (function app(window, undefined) {
 if (typeof module != "undefined" && module !== null && module.exports) module.exports = m;
 else if (typeof define === "function" && define.amd) define(function() {return m});
 
-},{}],44:[function(require,module,exports){
-module.exports={
+},{}],"/home/fabien/bak/code/node/ep_mypads/static/l10n/en.json":[function(require,module,exports){
+module.exports=module.exports={
   "BACKEND": {
     "ERROR": {
       "TYPE": {
@@ -21858,6 +21869,7 @@ module.exports={
       "PASSWORD_MIN": "Minimum size",
       "PASSWORD_MAX": "Maximum size",
       "LANGUAGE_DEFAULT": "Default language",
+      "ALLOW_ETHERPADS": "Anonymous pads",
       "CHECKMAILS": "Check user mails",
       "TOKEN_DURATION": "Token validity",
       "SMTP_HOST": "SMTP Host",
@@ -21877,6 +21889,7 @@ module.exports={
       "PASSWORD_MIN": "Password minimum number of characters",
       "PASSWORD_MAX": "Password maximum number of characters",
       "LANGUAGE_DEFAULT": "Default language for guest MyPads users",
+      "ALLOW_ETHERPADS": "Allow classic anonymous pads from on the Etherpad instance, created from the root URL of the server",
       "CHECKMAILS": "Check user mail given at subscription",
       "TOKEN_DURATION": "The time, in minutes, generated tokens are valid until users confirm their subscription",
       "SMTP_HOST": "Domain name where the SMTP Server belongs to",
@@ -21905,4 +21918,4 @@ module.exports={
   }
 }
 
-},{}]},{},[1]);
+},{}]},{},["/home/fabien/bak/code/node/ep_mypads/frontend.js"]);

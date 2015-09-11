@@ -60,10 +60,10 @@ module.exports = (function () {
         data: { auth_token: auth.admToken() }
       }).then(function (resp) {
         if (!resp.auth) { return localStorage.removeItem('admToken'); }
-        form.initFields(c, ['title', 'rootUrl', 'passwordMin', 'passwordMax',
-          'defaultLanguage', 'checkMails', 'tokenDuration', 'SMTPHost',
-          'SMTPPort', 'SMTPSSL', 'SMTPTLS', 'SMTPUser', 'SMTPPass',
-          'SMTPEmailFrom']);
+        form.initFields(c, ['title', 'rootUrl', 'allowEtherPads',
+          'passwordMin', 'passwordMax', 'defaultLanguage', 'checkMails',
+          'tokenDuration', 'SMTPHost', 'SMTPPort', 'SMTPSSL', 'SMTPTLS',
+          'SMTPUser', 'SMTPPass', 'SMTPEmailFrom']);
         c.currentConf = resp.value;
         ld.forIn(resp.value, function (v, k) {
           c.data[k] = m.prop(v);
@@ -265,6 +265,16 @@ module.exports = (function () {
         );
         return { label: label, icon: icon, select: select };
       })(),
+      allowEtherPads: (function () {
+        var icon = form.icon(c, 'allowEtherPads', A.INFO.ALLOW_ETHERPADS);
+        var f = form.field(c, 'allowEtherPads', A.FIELD.ALLOW_ETHERPADS, icon);
+        ld.assign(f.input.attrs, {
+          type: 'checkbox',
+          checked: c.data.allowEtherPads(),
+          onchange: m.withAttr('checked', c.data.allowEtherPads)
+        });
+        return f;
+      })(),
       checkMails: (function () {
         var icon = form.icon(c, 'checkMails', A.INFO.CHECKMAILS);
         var f = form.field(c, 'checkMails', A.FIELD.CHECKMAILS, icon);
@@ -342,7 +352,8 @@ module.exports = (function () {
         m('div', [ f.title.label, f.title.input, f.title.icon,
           f.rootUrl.label, f.rootUrl.input, f.rootUrl.icon,
           f.defaultLanguage.label, f.defaultLanguage.select,
-          f.defaultLanguage.icon
+          f.defaultLanguage.icon, f.allowEtherPads.label,
+          f.allowEtherPads.input, f.allowEtherPads.icon
         ])
       ]),
       m('fieldset.block-group', [

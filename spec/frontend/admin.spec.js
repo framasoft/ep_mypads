@@ -102,6 +102,7 @@ module.exports = (function () {
             lang: qfirst('select[name=defaultLanguage]'),
             passwordMin: qfirst('input[name=passwordMin]'),
             passwordMax: qfirst('input[name=passwordMax]'),
+            allowEtherPads: qfirst('input[name=allowEtherPads]'),
             checkMails: qfirst('input[name=checkMails]'),
             tokenDuration: qfirst('input[name=tokenDuration]'),
             SMTPHost: qfirst('input[name=SMTPHost]'),
@@ -127,6 +128,7 @@ module.exports = (function () {
           expect($el.passwordMin.checkValidity()).toBeTruthy();
           expect($el.passwordMax.value).toBe('30');
           expect($el.passwordMax.checkValidity()).toBeTruthy();
+          expect($el.allowEtherPads.value).toBe('true');
           expect($el.checkMails.value.length).toBe(0);
           expect($el.tokenDuration.value).toBe('60');
           expect($el.SMTPHost.value.length).toBe(0);

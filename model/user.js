@@ -201,7 +201,8 @@ module.exports = (function () {
       u.useLoginAndColorInPads = true;
     }
     var langs = ld.keys(conf.cache.languages);
-    u.lang = (ld.includes(langs, p.lang) ? p.lang : 'en');
+    var defaultLang = conf.get('defaultLanguage');
+    u.lang = (ld.includes(langs, p.lang) ? p.lang : defaultLang);
     return ld.assign({
       _id: p._id,
       login: p.login,

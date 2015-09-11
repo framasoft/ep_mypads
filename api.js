@@ -183,12 +183,13 @@ module.exports = (function () {
 
   /**
   * `mailMessage` is an internal helper that computed email templates. It takes
-  * the `tpl` key of the template and the `date` needed.
+  * the `tpl` key of the template and the `data` needed. Optionally, a
+  * `lang`uage can be defined.
   * It returns the computed template.
   */
 
-  fn.mailMessage = function (tpl, data) {
-    var lang = conf.get('defaultLanguage');
+  fn.mailMessage = function (tpl, data, lang) {
+    lang = lang || conf.get('defaultLanguage');
     tpl = ld.template(api.l10n.mail[lang][tpl]);
     return tpl(data);
   };
@@ -587,6 +588,13 @@ module.exports = (function () {
           var url = conf.get('rootUrl') +
             '/mypads/index.html?/accountconfirm/' + token;
           console.log(url);
+          var lang = (function () {
+            if (ld.includes(ld.keys(conf.cache.languages), req.body.lang)) {
+              return req.body.lang;
+            } else {
+              return conf.get('defaultLanguage');
+            }
+          })();
           var subject = fn.mailMessage('ACCOUNT_CONFIRMATION_SUBJECT', {
             title: conf.get('title') });
           var message = fn.mailMessage('ACCOUNT_CONFIRMATION', {
@@ -594,13 +602,13 @@ module.exports = (function () {
             title: conf.get('title'),
             url: url,
             duration: conf.get('tokenDuration')
-          });
+          }, lang);
           mail.send(req.body.email, subject, message, function (err) {
             if (err) {
               stop = true;
               return res.status(501).send({ error: err });
             }
-          });
+          }, lang);
         }
       } else {
         key = req.params.key;
@@ -715,13 +723,13 @@ module.exports = (function () {
         console.log(conf.get('rootUrl') + '/mypads/index.html?/passrecover/' +
           token);
         var subject = fn.mailMessage('PASSRECOVER_SUBJECT', {
-          title: conf.get('title') });
+          title: conf.get('title') }, u.lang);
         var message = fn.mailMessage('PASSRECOVER', {
           login: u.login,
           title: conf.get('title'),
           url: conf.get('rootUrl') + '/mypads/index.html?/passrecover/' + token,
           duration: conf.get('tokenDuration')
-        });
+        }, u.lang);
         mail.send(u.email, subject, message, function (err) {
           if (err) { return res.status(501).send({ error: err }); }
           return res.send({ success: true });

@@ -116,7 +116,6 @@ module.exports = (function () {
             m.route('/');
             return notif.success({ body: msg });
           } else {
-            auth.isAuthenticated(true);
             auth.userInfo(resp.value);
             notif.success({ body: conf.LANG.USER.AUTH.SUBSCRIBE_SUCCESS });
           }
@@ -207,7 +206,7 @@ module.exports = (function () {
             url: conf.URLS.USER + '/' + login,
             data: { auth_token: auth.token() }
           }).then(function () {
-            auth.isAuthenticated(false);
+            localStorage.removeItem('token');
             auth.userInfo(null);
             model.init();
             document.title = conf.SERVER.title;

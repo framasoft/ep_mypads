@@ -44,13 +44,13 @@ module.exports = (function () {
   * ## Controller
   *
   * Used to check if user is authorized, send login/pass and updates settings.
-  * TODO: allowEtherPads management
+  * Logout from classical MyPads user account to avoid menu conflicts.
   */
 
   admin.controller = function () {
     document.title = conf.LANG.ADMIN.FORM_LOGIN + ' - ' + conf.SERVER.title;
     var c = {};
-    auth.isAuthenticated(false);
+    localStorage.removeItem('token');
     form.initFields(c, ['login', 'password']);
     var init = function (resp) {
       if (resp) { localStorage.setItem('admToken', resp.token); }

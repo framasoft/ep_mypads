@@ -43,7 +43,6 @@ module.exports = (function () {
   */
 
   logout.controller = function () {
-    m.route('/');
     m.request({
       url: conf.URLS.AUTH + '/admin/logout',
       method: 'GET',
@@ -52,8 +51,10 @@ module.exports = (function () {
       document.title = conf.SERVER.title;
       localStorage.removeItem('admToken');
       notif.success({ body: conf.LANG.USER.AUTH.SUCCESS_OUT });
+      m.route('/');
     }, function (err) {
       notif.error({ body: ld.result(conf.LANG, err.error) });
+      m.route('/');
     });
   };
 

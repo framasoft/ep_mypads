@@ -93,7 +93,9 @@ module.exports = (function () {
       data: (auth.isAuthenticated() ? { auth_token: auth.token() } : undefined )
     }).then(function (settings) {
       config.SERVER = settings.value; 
-      auth.isAuthenticated(settings.auth);
+      if (!settings.auth && auth.isAuthenticated()) {
+        localStorage.removeItem('token');
+      }
       auth.userInfo(settings.user);
       var ulang = window.navigator.userLanguage || window.navigator.language;
       ulang = ld.find(ld.keys(config.SERVER.languages), function (l) {

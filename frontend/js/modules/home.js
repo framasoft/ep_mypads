@@ -34,11 +34,13 @@ module.exports = (function () {
 
   var home = {
     controller: function () {
-      if (auth.isAuthenticated()) {
-        m.route('/mypads');
-      } else {
-        m.route('/login');
+      if (auth.isAdmin()) {
+        return m.route('/admin');
       }
+      if (auth.isAuthenticated()) {
+        return m.route('/mypads');
+      }
+      m.route('/login');
     },
     view: function () {
       return layout.view(m('p', 'empty home'), m('p', 'empty aside'));

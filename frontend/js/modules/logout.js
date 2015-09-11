@@ -49,7 +49,6 @@ module.exports = (function () {
         url: conf.URLS.LOGOUT,
         config: auth.fn.xhrConfig
       }).then(function () {
-        auth.isAuthenticated(false);
         auth.userInfo(null);
         localStorage.removeItem('token');
         model.init();

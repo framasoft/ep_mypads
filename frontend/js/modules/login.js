@@ -65,7 +65,6 @@ module.exports = (function () {
         url: conf.URLS.LOGIN,
         data: c.data
       }).then(function (resp) {
-        auth.isAuthenticated(true);
         auth.userInfo(resp.user);
         localStorage.setItem('token', resp.token);
         var lang = auth.userInfo().lang;

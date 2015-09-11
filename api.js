@@ -738,7 +738,7 @@ module.exports = (function () {
     });
 
     /**
-    * PUT method : password recovery with token and new email
+    * PUT method : password recovery with token and new password
     * Need to have the login into the body
     * 
     * Sample URL:
@@ -767,6 +767,7 @@ module.exports = (function () {
       user.get(val.login, function (err, u) {
         if (err) { return res.status(400).send({ error: err.message }); }
         u.password = pass;
+        if (!u.active) { u.active = true; }
         user.set(u, function (err) {
           if (err) { return res.status(400).send({ error: err.message }); }
           res.send({ success: true, login: val.login });

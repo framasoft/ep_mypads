@@ -137,7 +137,8 @@ module.exports = (function () {
             model.tmp(data);
             return callback(null, { key: keys.pad, value: value });
           }
-          if (err.error === 'BACKEND.ERROR.PERMISSION.UNAUTHORIZED') {
+          if ((err.error === 'BACKEND.ERROR.PERMISSION.UNAUTHORIZED') ||
+            (err.error === 'BACKEND.ERROR.CONFIGURATION.KEY_NOT_FOUND')) {
             return errFn(err);
           }
           if (group) {

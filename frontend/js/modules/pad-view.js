@@ -75,6 +75,7 @@ module.exports = (function () {
         var data = c.isGuest ? model.tmp() : model;
         c.group = data.groups()[c.gid] || {};
         c.pad = data.pads()[c.pid];
+        if (!c.pad) { return m.route('/mypads'); }
         document.title = conf.LANG.GROUP.PAD.PAD + ' ' + c.pad.name;
         document.title += ' - ' + conf.SERVER.title;
         c.isAdmin = (function () {
@@ -218,8 +219,11 @@ module.exports = (function () {
           }
         })(),
         (function () {
-          if (c.group && c.group.visibility &&
-            c.group.visibility !== 'restricted') {
+          var isGroupSharable = (c.group && c.group.visibility &&
+            c.group.visibility !== 'restricted');
+          var isPadSharable = (c.pad.visibility &&
+            c.pad.visibility !== 'restricted');
+          if (isGroupSharable || isPadSharable) {
               return m('button', {
                 title: conf.LANG.GROUP.SHARE,
                 onclick: padShare.bind(c, c.group._id, c.pad._id)

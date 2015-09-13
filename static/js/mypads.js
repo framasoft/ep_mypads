@@ -488,7 +488,8 @@ module.exports = (function () {
             model.tmp(data);
             return callback(null, { key: keys.pad, value: value });
           }
-          if (err.error === 'BACKEND.ERROR.PERMISSION.UNAUTHORIZED') {
+          if ((err.error === 'BACKEND.ERROR.PERMISSION.UNAUTHORIZED') ||
+            (err.error === 'BACKEND.ERROR.CONFIGURATION.KEY_NOT_FOUND')) {
             return errFn(err);
           }
           if (group) {
@@ -2065,7 +2066,7 @@ module.exports = (function () {
 
     var key = m.route.param('key');
     var c = {
-      group: { tags: [] },
+      group: { visibility: '', tags: [] },
       privatePassword: m.prop(''),
       sendPass: m.prop(false)
     };
@@ -4124,6 +4125,7 @@ module.exports = (function () {
         var data = c.isGuest ? model.tmp() : model;
         c.group = data.groups()[c.gid] || {};
         c.pad = data.pads()[c.pid];
+        if (!c.pad) { return m.route('/mypads'); }
         document.title = conf.LANG.GROUP.PAD.PAD + ' ' + c.pad.name;
         document.title += ' - ' + conf.SERVER.title;
         c.isAdmin = (function () {
@@ -4267,8 +4269,11 @@ module.exports = (function () {
           }
         })(),
         (function () {
-          if (c.group && c.group.visibility &&
-            c.group.visibility !== 'restricted') {
+          var isGroupSharable = (c.group && c.group.visibility &&
+            c.group.visibility !== 'restricted');
+          var isPadSharable = (c.pad.visibility &&
+            c.pad.visibility !== 'restricted');
+          if (isGroupSharable || isPadSharable) {
               return m('button', {
                 title: conf.LANG.GROUP.SHARE,
                 onclick: padShare.bind(c, c.group._id, c.pad._id)

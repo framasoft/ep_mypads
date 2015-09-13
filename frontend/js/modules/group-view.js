@@ -53,7 +53,7 @@ module.exports = (function () {
 
     var key = m.route.param('key');
     var c = {
-      group: { tags: [] },
+      group: { visibility: '', tags: [] },
       privatePassword: m.prop(''),
       sendPass: m.prop(false)
     };

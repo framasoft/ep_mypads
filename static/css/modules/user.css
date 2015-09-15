@@ -1,4 +1,4 @@
-/* User Module asbtraction : login, subscribe, profile */
+/* User Module asbtraction : login, subscribe, profile, userlist form */
 /* Main */
 
 section.user {
@@ -44,7 +44,7 @@ div.tag label {
 
 i.icon-cancel {
   cursor: pointer;
-} 
+}
 
 section.remove-account {
   padding-top: 1em;

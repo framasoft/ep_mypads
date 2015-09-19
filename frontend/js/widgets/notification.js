@@ -88,19 +88,19 @@ module.exports = (function () {
       var n = notif.model.items[id];
       ctrl.delayClose(id, n.timeout);
       var closeFn = ctrl.close.bind(ctrl, id, n.timeout);
-      return m('div.block-group', {
+      return m('div', {
         class: n.cls ? n.cls : '',
         onclick: (n.click ? n.click : closeFn)
       }, [
-        m('header', { class: 'block' }, [
-          (n.icon ? m('i', { class: 'icon-' + n.icon }) : ''),
-          m('span', n.title)
+        m('header', [
+          (n.icon ? m('i', { class: 'glyphicon glyphicon-' + n.icon }) : ''),
+          m('span', ' '+n.title)
         ]),
         m('i', {
-          class: 'block close icon-cancel-circled',
+          class: 'close glyphicon glyphicon-remove-circle',
           onclick: closeFn
         }),
-        m('p', { class: 'block' }, m.trust(n.body))
+        m('p', m.trust(n.body))
       ]);
     }));
   };
@@ -122,30 +122,30 @@ module.exports = (function () {
 
   notif.success = function (options, callback) {
     options.title = options.title || conf.LANG.NOTIFICATION.SUCCESS;
-    options.cls = 'success';
-    options.icon = 'check';
+    options.cls = 'alert alert-success';
+    options.icon = 'ok';
     notif.send(options, callback);
   };
 
   notif.info = function (options, callback) {
     options.title = options.title || conf.LANG.NOTIFICATION.INFO;
-    options.cls = 'info';
-    options.icon = 'info-circled';
+    options.cls = 'alert alert-info';
+    options.icon = 'info-sign';
     notif.send(options, callback);
   };
 
   notif.warning = function (options, callback) {
     options.title = conf.LANG.NOTIFICATION.WARNING;
-    options.cls = 'warning';
-    options.icon = 'attention';
+    options.cls = 'alert alert-warning';
+    options.icon = 'warning-sign';
     options.timeout = 15;
     notif.send(options, callback);
   };
 
   notif.error = function (options, callback) {
     options.title = conf.LANG.NOTIFICATION.ERROR;
-    options.cls = 'error';
-    options.icon = 'alert';
+    options.cls = 'alert alert-danger';
+    options.icon = 'exclamation-sign';
     options.timeout = false;
     notif.send(options, callback);
   };

@@ -90,13 +90,13 @@ module.exports = (function () {
 
   tag.views.icon = function () {
     return m('i', {
-      class: 'block tooltip icon-info-circled tag',
+      class: 'mp-tooltip glyphicon glyphicon-info-sign tag',
       'data-msg': conf.LANG.TAG.HELP
     });
   };
 
   tag.views.input = function (c) {
-    return m('input.block', {
+    return m('input.form-control', {
       id: c.name + '-input',
       name: c.name,
       type: 'text',
@@ -119,12 +119,12 @@ module.exports = (function () {
   };
 
   tag.views.tagslist = function (c) {
-    return m('ul.block', ld.map(c.current, function (tag) {
+    return m('ul.list-inline help-block', ld.map(c.current, function (tag) {
       return m('li', [
-        m('span', tag),
+        m('span.label.label-default', tag),
         m('i', {
           role: 'button',
-          class: 'icon-cancel',
+          class: 'small glyphicon glyphicon-remove text-danger',
           onclick: function (e) {
             var value = e.target.parentElement.textContent;
             ld.pull(c.current, value);
@@ -136,18 +136,24 @@ module.exports = (function () {
   };
 
   tag.view = function (c) {
-    return m('div.block-group.tag', [
-      m('label.block', { for: c.name }, c.label),
-      tag.views.input(c),
+    return m('div.form-group', [
+      m('label.col-sm-4', { for: c.name }, c.label),
       tag.views.icon(),
-      m('button.block.ok', {
-        type: 'button',
-        onclick: function () {
-          c.add(document.getElementById(c.name + '-input'));
-        },
-      }, conf.LANG.USER.OK),
-      tag.views.datalist(c),
-      tag.views.tagslist(c)
+      m('.col-sm-7', [
+        m('.input-group.input-group-sm', [
+          tag.views.input(c),
+          m('span.input-group-btn',
+            m('button.btn.btn-default', {
+              type: 'button',
+              onclick: function () {
+                c.add(document.getElementById(c.name + '-input'));
+              },
+            }, conf.LANG.USER.OK)
+          )
+        ]),
+        tag.views.datalist(c),
+        tag.views.tagslist(c)
+      ])
     ]);
   };
 

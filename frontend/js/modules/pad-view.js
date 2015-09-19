@@ -152,8 +152,8 @@ module.exports = (function () {
     var a = (auth.isAuthenticated() ? '&auth_token=' + auth.token() : '');
     var link = '/p/' + c.pad._id + '?' + p + a;
     return [
-      m('p.external', [
-        m('a', {
+      m('p.text-right', [
+        m('a.btn.btn-default.new-window', {
           href: link,
           target: '_blank',
           title: conf.LANG.GROUP.PAD.OPEN_TAB,
@@ -162,8 +162,7 @@ module.exports = (function () {
             return true;
           }
         }, [
-          m('i.icon-popup'),
-          m('span', conf.LANG.GROUP.PAD.OPEN_TAB)
+          m('i.glyphicon.glyphicon-new-window')
         ])
         ]),
       (function () {
@@ -186,70 +185,80 @@ module.exports = (function () {
     if (showPass) { return view.passForm(c); }
     var route = '/mypads/group/' + c.gid;
     var GROUP = conf.LANG.GROUP;
-    return m('section', { class: 'block-group group' }, [
-      m('h2.block', [
-        m('span', conf.LANG.GROUP.PAD.PAD + ' ' + c.pad.name),
-        (function () {
-          if (c.group && c.group.name) {
-            return m('span.subtitle', [
-              '(',
-              conf.LANG.GROUP.PAD.FROM_GROUP,
-              m('a', {
-                href: route + '/view',
-                config: m.route,
-                title: conf.LANG.GROUP.VIEW
-              }, c.group.name ),
-              ')'
-            ]);
-          }
-        })()
-      ]),
-      m('p.actions', [
-        (function () {
-          if (!c.isGuest) {
-            var isBookmarked = ld.includes(c.bookmarks, c.pad._id);
-            return m('button', {
-              title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK),
-              onclick: function () { padMark(c.pad._id); }
-            }, [
-              m('i',
-                { class: 'icon-star' + (isBookmarked ? '' : '-empty') }),
-              m('span', (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK))
-            ]);
-          }
-        })(),
+    return m('section', { class: 'group' }, [
+      m('.btn-group.pull-right', [
         (function () {
           var isGroupSharable = (c.group && c.group.visibility &&
             c.group.visibility !== 'restricted');
           var isPadSharable = (c.pad.visibility &&
             c.pad.visibility !== 'restricted');
           if (isGroupSharable || isPadSharable) {
-              return m('button', {
+              return m('button.btn.btn-default', {
                 title: conf.LANG.GROUP.SHARE,
                 onclick: padShare.bind(c, c.group._id, c.pad._id)
-              }, [ m('i.icon-link'), m('span', conf.LANG.GROUP.SHARE) ]);
+              },
+              [ m('i.glyphicon glyphicon-link'),
+                m('span', ' '+conf.LANG.GROUP.SHARE)
+              ]);
           }
         })(),
         (function () {
           if (c.isAdmin) {
-            return m('a', {
+            return m('a.btn.btn-default', {
               href: route + '/pad/edit/' + c.pad._id,
               config: m.route,
               title: conf.LANG.MENU.CONFIG
-            }, [ m('i.icon-tools'), m('span', conf.LANG.MENU.CONFIG) ]);
+            },
+            [ m('i.glyphicon glyphicon-wrench'),
+              m('span', ' '+conf.LANG.MENU.CONFIG)
+            ]);
             }
         })(),
         (function () {
           if (c.isAdmin) {
-            return m('a', {
+            return m('a.btn.btn-danger', {
               href: route + '/pad/remove/' + c.pad._id,
               config: m.route,
               title: conf.LANG.GROUP.REMOVE
-            }, [ m('i.icon-trash'), m('span', conf.LANG.GROUP.REMOVE) ]);
+            },
+            [ m('i.glyphicon glyphicon-trash'),
+              m('span', ' '+conf.LANG.GROUP.REMOVE)
+            ]);
           }
         })()
       ]),
-      m('section.block.pad', view.pad(c))
+      m('h2', [
+        (function () {
+          if (!c.isGuest) {
+            var isBookmarked = ld.includes(c.bookmarks, c.pad._id);
+            return m('button.btn.btn-link.btn-lg', {
+              title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK),
+              onclick: function () { padMark(c.pad._id); }
+            }, [
+              m('i',
+                { class: 'glyphicon glyphicon-star' +
+                  (isBookmarked ? '' : '-empty'),
+                  title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK) })
+            ]);
+          }
+        })(),
+        m('span', conf.LANG.GROUP.PAD.PAD + ' ' + c.pad.name),
+        (function () {
+          if (c.group && c.group.name) {
+            return [ m('br'), m('span.h3', [
+              ' (',
+              conf.LANG.GROUP.PAD.FROM_GROUP+' ',
+              m('a', {
+                href: route + '/view',
+                config: m.route,
+                title: conf.LANG.GROUP.VIEW
+              }, c.group.name ),
+              ')'
+            ])];
+          }
+        })()
+      ]),
+      m('section.pad', view.pad(c))
     ]);
   };
 
@@ -262,12 +271,12 @@ module.exports = (function () {
   view.aside = function () {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(conf.LANG.GROUP.PAD.VIEW_HELP))
+      m('article.well', m.trust(conf.LANG.GROUP.PAD.VIEW_HELP))
     ]);
   };
 
   pad.view = function (c) {
-    return layout.view(view.main(c), view.aside()); 
+    return layout.view(view.main(c), view.aside());
   };
 
   return pad;

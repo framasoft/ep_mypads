@@ -121,13 +121,13 @@ module.exports = (function () {
 
   /**
   * ### group field
-  * 
+  *
   * A selection fields of groups where user is the admin.
   * Composed with a label, input and icon
   */
 
   view.groups = function (c) {
-    var label = m('label.block', { for: 'group' },
+    var label = m('label.col-sm-4', { for: 'group' },
       conf.LANG.GROUP.MYGROUPS);
     var select = (function () {
       var options = ld.map(c.selectedGroups, function (g) {
@@ -135,19 +135,18 @@ module.exports = (function () {
       });
       if (options.length > 0) {
         options.splice(0, 0, m('option'));
-        return m('select', {
+        return m('select.form-control', {
           name: 'group',
-          class: 'block',
           required: true,
           value: c.data.newGroup(),
           onchange: m.withAttr('value', c.data.newGroup)
         }, options);
       } else {
-        return m('div.block', conf.LANG.GROUP.INFO.PAD_MOVE_NOGROUP);
+        return m('div', conf.LANG.GROUP.INFO.PAD_MOVE_NOGROUP);
       }
     })();
     var icon = m('i', {
-      class: 'block tooltip icon-info-circled',
+      class: 'mp-tooltip glyphicon glyphicon-info-sign',
       'data-msg': conf.LANG.GROUP.INFO.PAD_MOVE
     });
     return { label: label, icon: icon, select: select };
@@ -161,15 +160,19 @@ module.exports = (function () {
 
   view.form = function (c) {
     var vg = view.groups(c);
-    var elements = [ vg.label, vg.select, vg.icon ];
+    var elements = [ m('.form-group', [
+        vg.label, vg.icon,
+        m('.col-sm-7', vg.select)
+      ])
+    ];
     if (c.selectedGroups.length > 0) {
-      elements.push(m('input.block.send', {
+      elements.push(m('input.btn.btn-success.pull-right', {
         form: 'padmove-form',
         type: 'submit',
         value: conf.LANG.ACTIONS.SAVE
       }));
     }
-    return m('form.block', {
+    return m('form.form-horizontal', {
       id: 'padmove-form',
       onsubmit: c.movePads
     }, elements);
@@ -183,8 +186,8 @@ module.exports = (function () {
 
   view.main = function (c) {
     var route = '/mypads/group/' + c.group._id;
-    return m('section', { class: 'block-group padmove user group-form' }, [
-      m('h2.block', [
+    return m('section', { class: 'padmove user group-form' }, [
+      m('h2', [
         m('span', conf.LANG.GROUP.PAD.MOVE_TITLE),
         m('a', {
           href: route + '/view',
@@ -199,7 +202,7 @@ module.exports = (function () {
   view.aside = function () {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(conf.LANG.GROUP.PAD.MOVE_HELP))
+      m('article.well', m.trust(conf.LANG.GROUP.PAD.MOVE_HELP))
     ]);
   };
 

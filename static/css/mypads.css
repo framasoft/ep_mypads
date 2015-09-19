@@ -1,12 +1,7 @@
 /* External Dependencies */
-@import url('vendor/pocketgrid.css');
-@import url('vendor/normalize.css');
+@import url('vendor/bootstrap.min.css');
 /* Internal Dependencies */
 @import url('layout.css');
 /* Widgets */
 @import url('widgets/notification.css');
 @import url('widgets/tooltip.css');
-/* Modules */
-@import url('modules/menu-main.css');
-@import url('modules/user.css');
-@import url('modules/group.css');

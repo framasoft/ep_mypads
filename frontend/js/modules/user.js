@@ -58,8 +58,8 @@ module.exports = (function () {
 
   user.view.icon.optional = function () {
     return m('i', {
-      class: 'block tooltip icon-info-circled',
-      'data-msg': conf.LANG.USER.INFO.OPTIONAL 
+      class: 'mp-tooltip glyphicon glyphicon-info-sign',
+      'data-msg': conf.LANG.USER.INFO.OPTIONAL
     });
   };
   user.view.icon.firstname = user.view.icon.optional;
@@ -90,9 +90,11 @@ module.exports = (function () {
       passwordConfirm: conf.LANG.USER.INFO.PASSWORD_CHECK,
       passwordCurrent: conf.LANG.USER.INFO.PASSWORD_CURRENT
     };
-    var icls = c.valid[name]() ? ['icon-info-circled'] : ['icon-alert'];
-    icls.push('tooltip');
-    icls.push('block');
+    var icls = ['glyphicon glyphicon-exclamation-sign'];
+    if (c.valid[name]()) {
+      icls = ['glyphicon glyphicon-info-sign'];
+    }
+    icls.push('mp-tooltip');
     return m('i', {
       class: icls.join(' '),
       'data-msg': infos[name]
@@ -161,9 +163,8 @@ module.exports = (function () {
     var passMin = conf.SERVER.passwordMin;
     var passMax = conf.SERVER.passwordMax;
     return {
-      label: m('label.block', { for: name }, label),
-      input: m('input', {
-        class: 'block',
+      label: m('label.col-sm-4', { for: name }, label),
+      input: m('input.form-control', {
         type: 'password',
         name: name,
         placeholder: conf.LANG.USER.UNDEF,
@@ -240,22 +241,21 @@ module.exports = (function () {
   */
 
   user.view.field.lang = function (c) {
-    var label = m('label.block', { for: 'lang' }, conf.LANG.USER.LANG);
+    var label = m('label.col-sm-4', { for: 'lang' }, conf.LANG.USER.LANG);
     var icon = m('i', {
-      class: 'block tooltip icon-info-circled',
+      class: 'mp-tooltip glyphicon glyphicon-info-sign',
       'data-msg': conf.LANG.USER.INFO.LANG
     });
-    var select = m('select', {
-      name: 'lang',
-      class: 'block',
-      required: true,
-      value: c.data.lang(),
-      onchange: m.withAttr('value', c.data.lang)
-      }, ld.reduce(conf.SERVER.languages, function (memo, v, k) {
-        memo.push(m('option', { value: k }, v));
-        return memo;
-      }, [])
-    );
+    var select = m('select.form-control', {
+        name: 'lang',
+        required: true,
+        value: c.data.lang(),
+        onchange: m.withAttr('value', c.data.lang)
+        }, ld.reduce(conf.SERVER.languages, function (memo, v, k) {
+          memo.push(m('option', { value: k }, v));
+          return memo;
+        }, [])
+      );
     return { label: label, icon: icon, select: select };
   };
 
@@ -265,19 +265,18 @@ module.exports = (function () {
 
   user.view.field.useLoginAndColorInPads = function (c) {
     return {
-      label: m('label.block', { for: 'useLoginAndColorInPads' },
-        conf.LANG.USER.USELOGINANDCOLORINPADS),
+      label: m('label', [
+        m('input', {
+          type: 'checkbox',
+          checked: c.data.useLoginAndColorInPads(),
+          onchange: m.withAttr('checked', c.data.useLoginAndColorInPads)
+        }),
+        conf.LANG.USER.USELOGINANDCOLORINPADS
+      ]),
       icon: m('i',{
-        class: 'block tooltip icon-info-circled',
+        class: 'mp-tooltip glyphicon glyphicon-info-sign',
         'data-msg': conf.LANG.USER.INFO.USELOGINANDCOLORINPADS
       }),
-      input: m('input', {
-        type: 'checkbox',
-        name: 'useLoginAndColorInPads',
-        class: 'block',
-        checked: c.data.useLoginAndColorInPads(),
-        onchange: m.withAttr('checked', c.data.useLoginAndColorInPads)
-      })
     };
   };
 
@@ -352,13 +351,13 @@ module.exports = (function () {
     common: function () {
       return m('section.user-aside', [
         m('h2', conf.SERVER.title),
-        m('article', m.trust(conf.LANG.GLOBAL.DESCRIPTION))
+        m('article.well', m.trust(conf.LANG.GLOBAL.DESCRIPTION))
       ]);
     },
     profile: function () {
       return m('section.user-aside', [
         m('h2', conf.LANG.ACTIONS.HELP),
-        m('article', m.trust(conf.LANG.USER.HELP.PROFILE)) ]);
+        m('article.well', m.trust(conf.LANG.USER.HELP.PROFILE)) ]);
     }
   };
 

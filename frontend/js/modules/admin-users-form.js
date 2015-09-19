@@ -122,16 +122,16 @@ module.exports = (function () {
 
   view.main = function (c) {
     var elements = [
-      m('h2.block', conf.LANG.ADMIN.FORM_USER_EDIT + ' ' + c.user().login),
+      m('h2', conf.LANG.ADMIN.FORM_USER_EDIT + ' ' + c.user().login),
       subscribe.views.form(c)
     ];
-    return m('section', { class: 'block-group user' }, elements);
+    return m('section', { class: 'user' }, elements);
   };
 
   view.aside = function () {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(conf.LANG.ADMIN.HELP_USER_EDIT))
+      m('article.well', m.trust(conf.LANG.ADMIN.HELP_USER_EDIT))
     ]);
   };
 

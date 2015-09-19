@@ -51,66 +51,66 @@ module.exports = (function () {
       auth: [
         {
           route: '/mypads',
-          icon: 'doc-text',
+          icon: 'duplicate',
           txt: conf.LANG.MENU.PAD
         },
         {
           route: '/mybookmarks',
-          icon: 'bookmarks',
+          icon: 'star',
           txt: conf.LANG.MENU.BOOKMARK
         },
         {
           route: '/myuserlists',
-          icon: 'users',
+          icon: 'user',
           txt: conf.LANG.MENU.USERLIST
         },
         {
           route: '/myprofile',
-          icon: 'user',
+          icon: 'home',
           txt: conf.LANG.MENU.PROFILE
         },
         {
           route: '/logout',
-          icon: 'logout',
+          icon: 'off',
           txt: conf.LANG.MENU.LOGOUT
         }
       ],
       admin: [
         {
           route: '/admin',
-          icon: 'tools',
+          icon: 'wrench',
           txt: conf.LANG.MENU.CONFIG
         },
         {
           route: '/admin/users',
-          icon: 'users',
+          icon: 'user',
           txt: conf.LANG.MENU.USERS
         },
         {
           route: '/admin/logout',
-          icon: 'logout',
+          icon: 'off',
           txt: conf.LANG.MENU.LOGOUT
         }
       ],
       unauth: [
         {
           route: '/login',
-          icon: 'login',
+          icon: 'lock',
           txt: conf.LANG.USER.LOGIN
         },
         {
           route: '/subscribe',
-          icon: 'thumbs-up',
+          icon: 'user',
           txt: conf.LANG.USER.SUBSCRIBE
         }
       ]
     };
     var activeRoute = function (r) {
       var isActive = (m.route().slice(0, r.route.length) === r.route);
-      return m('li', { class: (isActive ? 'is-active' : '') }, [
+      return m('li', { class: (isActive ? 'active' : '') }, [
         m('a', { href: r.route, config: m.route }, [
-          m('i', { class: 'icon-' + r.icon, title: r.txt }),
-          m('span', r.txt)
+          m('i', { class: 'glyphicon glyphicon-' + r.icon, title: r.txt }),
+          m('span', ' '+r.txt)
         ])
       ]);
     };
@@ -134,30 +134,31 @@ module.exports = (function () {
 
   layout.view = function (main, aside) {
     return [
-      m('header.block', [
-        m('div.block-group', [
-          m('h1.block', conf.SERVER.title),
-          m('ul.block.lang', ld.reduce(conf.SERVER.languages,
-            function (memo, val, key) {
-              var cls = (key === conf.USERLANG) ? 'active': '';
-              memo.push(m('li', {
-                class: cls,
-                onclick: conf.updateLang.bind(null, key)
-              }, val));
-              return memo;
-            }, [])
-          ),
-          m('nav.block', { class: 'menu-main' }, [
-            m('ul', views.menuMain())
+      m('header', [
+        m('ul.lang.container', ld.reduce(conf.SERVER.languages,
+          function (memo, val, key) {
+            var cls = (key === conf.USERLANG) ? 'active': '';
+            memo.push(m('li', {
+              class: cls,
+              onclick: conf.updateLang.bind(null, key)
+            }, val));
+            return memo;
+          }, [])
+        ),
+        m('div.container.ombre', [
+          m('h1', conf.SERVER.title),
+          m('hr.trait', {role: 'presentation'}),
+          m('nav', { class: 'menu-main' }, [
+            m('ul.nav.nav-tabs', views.menuMain())
           ])
         ])
       ]),
-      m('main.block', [
-        m('section.block', main || ''),
-        m('aside.block', aside || '')
+      m('main.container.ombre', [
+        m('section.col-md-9', main || ''),
+        m('aside.col-md-3', aside || '')
       ]),
       m('section', { class: 'notification' }, notif.view(notif.controller())),
-      m('footer.block', m('p', [
+      m('footer.container.ombre', m('p', [
         m('span', m.trust(conf.LANG.GLOBAL.FOOTER + ' | ')),
         m('a', { href: '/admin', config: m.route }, conf.LANG.MENU.ADMIN)
       ]))

@@ -115,7 +115,7 @@ module.exports = (function () {
     if (ld.size(c.bookmarks[type]) === 0) {
       return m('p', noneMsg);
     } else {
-      return m('ul.mark', ld.map(c.bookmarks[type], function (item) {
+      return m('ul.list-unstyled', ld.map(c.bookmarks[type], function (item) {
         var route;
         if (type === 'groups') {
           route = '/mypads/group/' + item._id + '/view';
@@ -123,11 +123,11 @@ module.exports = (function () {
           route = '/mypads/group/' + item.group + '/pad/view/' + item._id;
         }
         return m('li', [
-          m('a', { href: route, config: m.route }, item.name),
-          m('button', {
+          m('button.btn.btn-link.btn-lg', {
             title: conf.LANG.GROUP.UNMARK,
             onclick: ld.partial(c.unmark, item._id, type)
-          }, [ m('i.icon-star') ])
+          }, [ m('i.glyphicon glyphicon-star') ]),
+          m('a', { href: route, config: m.route }, item.name)
         ]);
       }));
     }
@@ -139,20 +139,24 @@ module.exports = (function () {
   view.aside = function () {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(conf.LANG.BOOKMARK.HELP))
+      m('article.well', m.trust(conf.LANG.BOOKMARK.HELP))
     ]);
   };
 
   view.main = function (c) {
-    return m('section', { class: 'block-group group' }, [
-      m('h2.block', conf.LANG.BOOKMARK.TITLE),
-      m('section.block pads', [
-        m('h3.title', conf.LANG.GROUP.GROUPS),
-        view.groups(c)
+    return m('section', [
+      m('h2', conf.LANG.BOOKMARK.TITLE),
+      m('section.panel.panel-primary', [
+        m('.panel-heading',
+          m('h3.panel-title', conf.LANG.GROUP.GROUPS)
+        ),
+        m('.panel-body', view.groups(c))
       ]),
-      m('section.block users', [
-        m('h3.title', conf.LANG.GROUP.PAD.PADS),
-        view.pads(c)
+      m('section.panel.panel-info', [
+        m('.panel-heading',
+          m('h3.panel-title', conf.LANG.GROUP.PAD.PADS)
+        ),
+        m('.panel-body', view.pads(c))
       ])
     ]);
   };

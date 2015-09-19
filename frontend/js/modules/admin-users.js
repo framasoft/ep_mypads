@@ -119,15 +119,15 @@ module.exports = (function () {
           href: route + '/' + u.login + '/edit',
           config: m.route,
           title: conf.LANG.GROUP.EDIT
-        }, [ m('i.icon-pencil') ]),
+        }, [ m('i.glyphicon glyphicon-pencil') ]),
         m('a', {
           href: route + '/' + u.login + '/remove',
           config: m.route,
           title: conf.LANG.GROUP.REMOVE,
-        }, [ m('i.icon-trash') ])
+        }, [ m('i.glyphicon glyphicon-trash') ])
       ];
       var name = u.login;
-      if (u.firstname) { 
+      if (u.firstname) {
         name = [name, '(', u.firstname, u.lastname, ')'].join(' ');
       }
       return m('ul.admin-users', [

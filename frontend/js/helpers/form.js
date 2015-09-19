@@ -45,9 +45,11 @@ module.exports = (function () {
   */
 
   form.icon = function (c, name, info, err) {
-    var icls = c.valid[name]() ? ['icon-info-circled'] : ['icon-alert'];
-    icls.push('tooltip');
-    icls.push('block');
+    var icls = ['glyphicon glyphicon-exclamation-sign'];
+    if ( c.valid[name]() ) {
+      icls = ['glyphicon glyphicon-info-sign'];
+    }
+    icls.push('mp-tooltip');
     var msg = c.valid[name]() ? info : err;
     return m('i', {
       class: icls.join(' '),
@@ -68,13 +70,13 @@ module.exports = (function () {
 
   form.field = function (c, name, label, icon) {
     return {
-      label: m('label.block', { for: name }, label),
-      input: m('input', {
-        class: 'block',
-        name: name,
-        value: c.data[name]() || '',
-        oninput: form.handleField.bind(null, c)
-      }),
+      label: m('label.col-sm-4', { for: name }, label),
+      input:
+        m('input.form-control', {
+          name: name,
+          value: c.data[name]() || '',
+          oninput: form.handleField.bind(null, c)
+        }),
       icon: icon
     };
   };

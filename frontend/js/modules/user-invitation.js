@@ -163,79 +163,94 @@ module.exports = (function () {
   var view = {};
 
   view.userlistField = function (c) {
-    return m('div.block-group', [
-      m('label.block', { for: 'userlists' }, conf.LANG.MENU.USERLIST),
-      ('i', {
-        class: 'block tooltip icon-info-circled',
-        'data-msg': conf.LANG.USERLIST.INFO.USER_INVITE
-      }),
-      m('select', {
-        class: 'block',
-        name: 'userlists',
-        onchange: m.withAttr('value', c.userlistAdd)
-      }, (ld.map(ld.pairs(auth.userInfo().userlists), function (ul) {
-        return m('option', { value: ul[0] }, ul[1].name);
-      })).concat(m('option', {
-        selected: true,
-        disabled: true,
-        hidden: true,
-        value: ''
-      })))
+    return m('div', [
+      m('.form-group', [
+        m('label.col-sm-4', { for: 'userlists' }, conf.LANG.MENU.USERLIST),
+        m('i', {
+          class: 'mp-tooltip glyphicon glyphicon-info-sign',
+          'data-msg': conf.LANG.USERLIST.INFO.USER_INVITE
+        }),
+        m('.col-sm-7',
+          m('select.form-control', {
+            name: 'userlists',
+            onchange: m.withAttr('value', c.userlistAdd)
+          }, (ld.map(ld.pairs(auth.userInfo().userlists), function (ul) {
+            return m('option', { value: ul[0] }, ul[1].name);
+          })).concat(m('option', {
+            selected: true,
+            disabled: true,
+            hidden: true,
+            value: ''
+          })))
+        )
+      ])
     ]);
   };
 
   view.userField = function (c) {
     var tagInput = tag.views.input(c);
     tagInput.attrs.config = form.focusOnInit;
-    return m('div.block-group.tag', [
-      m('label.block', { for: c.name }, c.label),
-      tagInput,
-      m('i', {
-        class: 'block tooltip icon-info-circled tag',
-        'data-msg': conf.LANG.GROUP.INVITE_USER.INPUT_HELP }),
-      m('button.block.ok', {
-        type: 'button',
-        onclick: function () {
-          c.add(document.getElementById(c.name + '-input'));
-        },
-      }, conf.LANG.USER.OK),
-      tag.views.datalist(c),
-      m('label.block', conf.LANG.GLOBAL.OR),
-      m('textarea.block', {
-        name: 'usersArea',
-        placeholder: conf.LANG.USERLIST.FIELD.USERSAREA_PLACEHOLDER,
-      }),
-      m('i', {
-        class: 'block tooltip icon-info-circled tag',
-        'data-msg': conf.LANG.USERLIST.FIELD.USERSAREA_HELP }),
-      m('button.block.ok', {
-        type: 'button',
-        onclick: function () {
-          c.addMultiple(document.querySelector('textarea[name=usersArea]'));
-        },
-      }, conf.LANG.USER.OK),
+    return m('div.tag', [
+      m('.form-group', [
+        m('label.col-sm-4', { for: c.name }, c.label),
+        m('i', {
+          class: 'mp-tooltip glyphicon glyphicon-info-sign tag',
+          'data-msg': conf.LANG.GROUP.INVITE_USER.INPUT_HELP }),
+        m('.col-sm-7', [
+          m('.input-group', [
+            tagInput,
+            m('span.input-group-btn',
+              m('button.btn.btn-default', {
+              type: 'button',
+              onclick: function () {
+                c.add(document.getElementById(c.name + '-input'));
+              },
+            }, conf.LANG.USER.OK)
+            )
+          ]),
+          tag.views.datalist(c)
+        ])
+      ]),
+      m('.form-group', [
+        m('label.col-sm-4', conf.LANG.GLOBAL.OR),
+        m('i', {
+          class: 'mp-tooltip glyphicon glyphicon-info-sign tag',
+          'data-msg': conf.LANG.USERLIST.FIELD.USERSAREA_HELP }),
+        m('.col-sm-7', [
+          m('textarea.form-control', {
+            name: 'usersArea',
+            placeholder: conf.LANG.USERLIST.FIELD.USERSAREA_PLACEHOLDER,
+          }),
+          m('button.btn.btn-default.pull-right', {
+            type: 'button',
+            onclick: function () {
+              c.addMultiple(document.querySelector('textarea[name=usersArea]'));
+            },
+          }, conf.LANG.USER.OK)
+        ])
+      ])
     ]);
   };
 
   view.form = function (c) {
     var GROUP = conf.LANG.GROUP;
-    return m('form.block', {
+    return m('form.form-horizontal', {
       id: 'group-form',
       onsubmit: c.submit
     }, [
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', (GROUP.INVITE_USERLIST)),
         m('div', view.userlistField(c))
       ]),
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', (c.isInvite ? GROUP.INVITE_USER.IU : GROUP.ADMIN_SHARE.AS)),
         m('div', view.userField(c.tag))
       ]),
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', conf.LANG.GROUP.INVITE_USER.USERS_SELECTED),
         m('div', tag.views.tagslist(c.tag))
       ]),
-      m('input.block.send', {
+      m('input.btn.btn-success.pull-right', {
         form: 'group-form',
         type: 'submit',
         value: conf.LANG.ACTIONS.SAVE
@@ -244,8 +259,8 @@ module.exports = (function () {
   };
 
   view.main = function (c) {
-    return m('section', { class: 'block-group user group-form' }, [
-      m('h2.block', conf.LANG.GROUP.GROUP + ' ' + c.group.name),
+    return m('section', { class: 'user group-form' }, [
+      m('h2', conf.LANG.GROUP.GROUP + ' ' + c.group.name),
       view.form(c)
     ]);
   };
@@ -254,7 +269,7 @@ module.exports = (function () {
     var GROUP = conf.LANG.GROUP;
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', [
+      m('article.well', [
         m('h3', (c.isInvite ? GROUP.INVITE_USER.IU : GROUP.ADMIN_SHARE.AS)),
         m('section', m.trust(conf.LANG.GROUP.INVITE_USER.HELP))
       ])
@@ -262,7 +277,7 @@ module.exports = (function () {
   };
 
   invite.view = function (c) {
-    return layout.view(view.main(c), view.aside(c)); 
+    return layout.view(view.main(c), view.aside(c));
   };
 
   return invite;

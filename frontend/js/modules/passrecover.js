@@ -56,7 +56,7 @@ module.exports = (function () {
     };
     var fields = (c.token ? ['password', 'passwordConfirm'] : ['email']);
     form.initFields(c, fields);
-    
+
     var errFn = function (err) {
       notif.error({ body: ld.result(conf.LANG, err.error) });
     };
@@ -95,12 +95,17 @@ module.exports = (function () {
 
   view.form = function (c) {
     var email = user.view.field.email(c);
-    return m('form.block', {
+    return m('form.form-horizontal', {
       id: 'passrec-form',
       onsubmit: c.submit
       }, [
-        m('fieldset.block-group', [ email.label, email.input, email.icon ]),
-        m('input.block.send', {
+        m('fieldset', [
+          m('.form-group', [
+            email.label, email.icon,
+            m('.col-sm-7', email.input)
+          ])
+        ]),
+        m('input.btn.btn-success.pull-right', {
           form: 'passrec-form',
           type: 'submit',
           value: conf.LANG.USER.OK
@@ -112,13 +117,21 @@ module.exports = (function () {
   view.formChange = function (c) {
     var pass = user.view.field.password(c);
     var passC = user.view.field.passwordConfirm(c);
-    return m('form.block', {
+    return m('form.form-horizontal', {
       id: 'passchange-form',
       onsubmit: c.changePass
       }, [
-        m('fieldset.block-group', [ pass.label, pass.input, pass.icon,
-          passC.label, passC.input, passC.icon ]),
-        m('input.block.send', {
+        m('fieldset', [
+          m('.form-group', [
+            pass.label, pass.icon,
+            m('.col-sm-7', pass.input)
+          ]),
+          m('.form-group', [
+            passC.label, passC.icon,
+            m('.col-sm-7', passC.input)
+          ])
+        ]),
+        m('input.btn.btn-success.pull-right', {
           form: 'passchange-form',
           type: 'submit',
           value: conf.LANG.USER.OK
@@ -128,8 +141,8 @@ module.exports = (function () {
   };
 
   view.main = function (c) {
-    return m('section', { class: 'block-group user' }, [
-      m('h2.block', conf.LANG.USER.PASSRECOVER),
+    return m('section', { class: 'user' }, [
+      m('h2', conf.LANG.USER.PASSRECOVER),
       (c.token ? view.formChange(c) : view.form(c))
     ]);
   };

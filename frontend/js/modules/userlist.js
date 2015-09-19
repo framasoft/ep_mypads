@@ -68,27 +68,28 @@ module.exports = (function () {
   view.userlist = function (c, ul, key) {
     var ulistRoute = '/myuserlists/' + key;
     var actions = [
-      m('a', {
+      m('a.btn.btn-default.btn-xs', {
         href: ulistRoute + '/edit',
         config: m.route,
         title: conf.LANG.GROUP.EDIT
-      }, [ m('i.icon-pencil') ]),
-      m('a', {
+      }, [ m('i.glyphicon.glyphicon-pencil') ]),
+      m('a.btn.btn-default.btn-xs', {
         href: ulistRoute + '/remove',
         config: m.route,
         title: conf.LANG.GROUP.REMOVE
-      }, [ m('i.icon-trash') ])
+      }, [ m('i.glyphicon.glyphicon-trash.text-danger') ])
     ];
-    return m('li.block', [
-      m('header.group.block-group', [
-        m('h4.block', ul.name),
-        m('section.block', actions)
-      ]),
-      m('dl.block-group.group', [
-        m('dt.block', conf.LANG.USERLIST.FIELD.USERS),
-        m('dd.block', ld.size(ul.uids))
-      ])
-    ]);
+    return m('tr', [
+        m('th',
+          m('a', {
+            href: ulistRoute + '/edit',
+            config: m.route,
+            title: conf.LANG.GROUP.EDIT
+          }, ul.name)
+        ),
+        m('td', ld.size(ul.uids)),
+        m('td.text-right', actions)
+      ]);
   };
 
   view.main = function (c) {
@@ -96,27 +97,35 @@ module.exports = (function () {
       memo.push(view.userlist(c, ul, key));
       return memo;
     }, []);
-    return m('section', { class: 'block-group group' }, [
-      m('h2.block', [
+    return m('section', [
+      m('h2', [
         m('span', conf.LANG.MENU.USERLIST),
-        m('a', {
+        m('a.btn.btn-warning.pull-right', {
           href: '/myuserlists/add',
           config: m.route
         }, [
-          m('i.icon-plus-squared'),
           m('span', conf.LANG.USERLIST.ADD)
         ]),
       ]),
-      m('section.block-group.group', [
-        m('ul.group', ulists)
-      ])
+      m('section.panel.panel-default',
+        m('table.table.table-stripped', [
+          m('thead',
+            m('tr', [
+              m('th', {scope: 'col'}),  // Name
+              m('th', {scope: 'col'}, conf.LANG.USERLIST.FIELD.USERS),
+              m('th', {scope: 'col'})   // Actions
+            ])
+          ),
+          m('tbody', ulists)
+        ])
+      )
     ]);
   };
 
   view.aside = function () {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(conf.LANG.USERLIST.HELP))
+      m('article.well', m.trust(conf.LANG.USERLIST.HELP))
     ]);
   };
 

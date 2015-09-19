@@ -82,7 +82,7 @@ module.exports = (function () {
         c.data.passwordMin = propInt(c.data.passwordMin());
         c.data.passwordMax = propInt(c.data.passwordMax());
         c.data.passwordMin.toJSON = function () {
-          return c.data.passwordMin(); 
+          return c.data.passwordMin();
         };
         c.data.passwordMax.toJSON = function () {
           return c.data.passwordMax();
@@ -187,13 +187,19 @@ module.exports = (function () {
     delete password.input.attrs.pattern;
     delete password.input.attrs.minlength;
     delete password.input.attrs.maxlength;
-    return m('form.block', {
+    return m('form.form-horizontal.col-sm-8.col-sm-offset-2.well', {
       id: 'login-form', onsubmit: c.login }, [
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', conf.LANG.ADMIN.ETHERPAD_ACCOUNT),
-        login.label, login.input, login.icon,
-        password.label, password.input, password.icon,
-        m('input.block.send', {
+        m('.form-group', [
+          login.label, login.icon,
+          m('.col-sm-7', login.input)
+        ]),
+        m('.form-group', [
+          password.label, password.icon,
+          m('.col-sm-7', password.input)
+        ]),
+        m('input.btn.btn-success.pull-right', {
           form: 'login-form',
           type: 'submit',
           value: conf.LANG.USER.LOGIN
@@ -246,15 +252,14 @@ module.exports = (function () {
         return f;
       })(),
       defaultLanguage: (function () {
-        var label = m('label.block', { for: 'defaultLanguage' },
+        var label = m('label', { for: 'defaultLanguage' },
           conf.LANG.ADMIN.FIELD.LANGUAGE_DEFAULT);
         var icon = m('i', {
-          class: 'block tooltip icon-info-circled',
+          class: 'mp-tooltip glyphicon glyphicon-info-sign',
           'data-msg': conf.LANG.ADMIN.INFO.LANGUAGE_DEFAULT
         });
         var select = m('select', {
           name: 'defaultLanguage',
-          class: 'block',
           required: true,
           value: c.data.defaultLanguage(),
           onchange: m.withAttr('value', c.data.defaultLanguage)
@@ -343,11 +348,11 @@ module.exports = (function () {
         return f;
       })()
     };
-    return m('form.block', {
+    return m('form', {
       id: 'settings-form',
       onsubmit: c.submit
     }, [
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', conf.LANG.ADMIN.SETTINGS_GENERAL),
         m('div', [ f.title.label, f.title.input, f.title.icon,
           f.rootUrl.label, f.rootUrl.input, f.rootUrl.icon,
@@ -356,13 +361,13 @@ module.exports = (function () {
           f.allowEtherPads.input, f.allowEtherPads.icon
         ])
       ]),
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', conf.LANG.ADMIN.SETTINGS_PASSWORD),
         m('div', [ f.passwordMin.label, f.passwordMin.input, f.passwordMin.icon,
           f.passwordMax.label, f.passwordMax.input, f.passwordMax.icon
         ])
       ]),
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', conf.LANG.ADMIN.SETTINGS_MAIL),
         m('div', [ f.checkMails.label, f.checkMails.input, f.checkMails.icon,
           f.tokenDuration.label, f.tokenDuration.input, f.tokenDuration.icon,
@@ -374,7 +379,7 @@ module.exports = (function () {
           f.SMTPPass.label, f.SMTPPass.input, f.SMTPPass.icon,
           f.SMTPEmailFrom.label, f.SMTPEmailFrom.input, f.SMTPEmailFrom.icon ])
       ]),
-      m('input.block.send', {
+      m('input.btn.btn-success', {
         form: 'settings-form',
         type: 'submit',
         value: conf.LANG.ADMIN.FIELD.APPLY
@@ -386,12 +391,12 @@ module.exports = (function () {
     var elements = (function () {
       if (auth.isAdmin()) {
         return [
-          m('h2.block', conf.LANG.ADMIN.FORM_SETTINGS),
+          m('h2', conf.LANG.ADMIN.FORM_SETTINGS),
           view.settings(c)
         ];
       } else {
         return [
-          m('h2.block', conf.LANG.ADMIN.FORM_LOGIN),
+          m('h2', conf.LANG.ADMIN.FORM_LOGIN),
           view.form(c)
         ];
       }
@@ -403,7 +408,7 @@ module.exports = (function () {
     var helpKey = (auth.isAdmin() ? 'HELP_SETTINGS' : 'HELP_LOGIN');
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(conf.LANG.ADMIN[helpKey]))
+      m('article.well', m.trust(conf.LANG.ADMIN[helpKey]))
     ]);
   };
 

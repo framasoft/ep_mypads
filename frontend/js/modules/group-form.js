@@ -134,7 +134,7 @@ module.exports = (function () {
 
   view.icon.common = function (msg) {
     return m('i', {
-      class: 'block tooltip icon-info-circled',
+      class: 'mp-tooltip glyphicon glyphicon-info-sign',
       'data-msg': msg
     });
   };
@@ -183,11 +183,10 @@ module.exports = (function () {
   };
 
   view.field.description = function (c) {
-    var label = m('label.block', { for: 'description' },
+    var label = m('label.col-sm-4', { for: 'description' },
       conf.LANG.GROUP.FIELD.DESCRIPTION);
-    var textarea = m('textarea', {
+    var textarea = m('textarea.form-control', {
       name: 'description',
-      class: 'block',
       value: (c.data.description() || ''),
       onchange: m.withAttr('value', c.data.description)
     }, c.data.description());
@@ -196,11 +195,10 @@ module.exports = (function () {
 
   view.field.visibility = function (c, restricted) {
     restricted = ld.isUndefined(restricted) ? true : restricted;
-    var label = m('label.block', { for: 'visibility' },
+    var label = m('label.col-sm-4', { for: 'visibility' },
       conf.LANG.GROUP.FIELD.VISIBILITY);
-    var select = m('select', {
+    var select = m('select.form-control', {
       name: 'visibility',
-      class: 'block',
       required: true,
       value: c.data.visibility(),
       onchange: m.withAttr('value', c.data.visibility)
@@ -220,9 +218,9 @@ module.exports = (function () {
   };
 
   view.field.password = function (c) {
-    var label = m('label.block', { for: 'password' },
+    var label = m('label.col-sm-4', { for: 'password' },
       conf.LANG.USER.PASSWORD);
-    var input = m('input.block', {
+    var input = m('input.form-control', {
       name: 'password',
       type: 'password',
       placeholder: conf.LANG.USER.UNDEF,
@@ -234,15 +232,16 @@ module.exports = (function () {
   };
 
   view.field.readonly = function (c) {
-    var label = m('label.block', { for: 'readonly' },
-      conf.LANG.GROUP.FIELD.READONLY);
-    var input = m('input.block', {
-      name: 'readonly',
-      type: 'checkbox',
-      checked: c.data.readonly(),
-      onchange: m.withAttr('checked', c.data.readonly)
-    });
-    return { label: label, icon: view.icon.readonly(), input: input };
+    var label = m('label', [
+        m('input', {
+          name: 'readonly',
+          type: 'checkbox',
+          checked: c.data.readonly(),
+          onchange: m.withAttr('checked', c.data.readonly)
+        }),
+        conf.LANG.GROUP.FIELD.READONLY
+      ]);
+    return { label: label, icon: view.icon.readonly()};
   };
 
   view.field.tag = function (c) { return tag.view(c.tag); };
@@ -258,24 +257,47 @@ module.exports = (function () {
       memo[f] = view.field[f](c);
       return memo;
     }, {});
-    var fields = [ _f.name.label, _f.name.input, _f.name.icon,
-      _f.description.label, _f.description.textarea, _f.description.icon,
-      _f.visibility.label, _f.visibility.select, _f.visibility.icon
+    var fields = [
+      m('.form-group', [
+        _f.name.label, _f.name.icon,
+        m('.col-sm-7', _f.name.input)
+      ]),
+      m('.form-group', [
+        _f.description.label, _f.description.icon,
+        m('.col-sm-7', _f.description.textarea)
+      ]),
+      m('.form-group', [
+        _f.visibility.label, _f.visibility.icon,
+        m('.col-sm-7', _f.visibility.select)
+      ]),
     ];
     if (c.data.visibility() === 'private') {
-      fields.push(_f.password.label, _f.password.input, _f.password.icon);
+      fields.push(
+        m('.form-group', [
+          _f.password.label, _f.password.icon,
+          m('.col-sm-7', _f.password.input)
+        ])
+      );
     }
-    fields.push(_f.readonly.label, _f.readonly.input, _f.readonly.icon);
+    fields.push(
+      m('.form-group',
+        m('.col-sm-7 .col-sm-offset-4',
+          m('.checkbox', [
+            _f.readonly.label, _f.readonly.icon
+          ])
+        )
+      )
+    );
     fields.push(view.field.tag(c));
-    return m('form.block', {
+    return m('form.form-horizontal', {
       id: 'group-form',
       onsubmit: c.submit
     }, [
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', conf.LANG.GROUP.GROUP),
         m('div', fields)
       ]),
-      m('input.block.send', {
+      m('input.btn.btn-success.pull-right', {
         form: 'group-form',
         type: 'submit',
         value: conf.LANG.ACTIONS.SAVE
@@ -290,8 +312,8 @@ module.exports = (function () {
   */
 
   view.main = function (c) {
-    return m('section', { class: 'block-group user group-form' }, [
-      m('h2.block',
+    return m('section', { class: 'user group-form' }, [
+      m('h2',
         c.addView() ? conf.LANG.GROUP.ADD : conf.LANG.GROUP.EDIT_GROUP),
       view.form(c)
     ]);
@@ -300,7 +322,7 @@ module.exports = (function () {
   view.aside = function () {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(conf.LANG.GROUP.ADD_HELP))
+      m('article.well', m.trust(conf.LANG.GROUP.ADD_HELP))
     ]);
   };
 

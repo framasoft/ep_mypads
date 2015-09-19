@@ -254,9 +254,11 @@ module.exports = (function () {
   */
 
   form.icon = function (c, name, info, err) {
-    var icls = c.valid[name]() ? ['icon-info-circled'] : ['icon-alert'];
-    icls.push('tooltip');
-    icls.push('block');
+    var icls = ['glyphicon glyphicon-exclamation-sign'];
+    if ( c.valid[name]() ) {
+      icls = ['glyphicon glyphicon-info-sign'];
+    }
+    icls.push('mp-tooltip');
     var msg = c.valid[name]() ? info : err;
     return m('i', {
       class: icls.join(' '),
@@ -277,13 +279,13 @@ module.exports = (function () {
 
   form.field = function (c, name, label, icon) {
     return {
-      label: m('label.block', { for: name }, label),
-      input: m('input', {
-        class: 'block',
-        name: name,
-        value: c.data[name]() || '',
-        oninput: form.handleField.bind(null, c)
-      }),
+      label: m('label.col-sm-4', { for: name }, label),
+      input:
+        m('input.form-control', {
+          name: name,
+          value: c.data[name]() || '',
+          oninput: form.handleField.bind(null, c)
+        }),
       icon: icon
     };
   };
@@ -782,16 +784,16 @@ module.exports = (function () {
 
   view.main = function (c) {
     var elements = [
-      m('h2.block', conf.LANG.ADMIN.FORM_USER_EDIT + ' ' + c.user().login),
+      m('h2', conf.LANG.ADMIN.FORM_USER_EDIT + ' ' + c.user().login),
       subscribe.views.form(c)
     ];
-    return m('section', { class: 'block-group user' }, elements);
+    return m('section', { class: 'user' }, elements);
   };
 
   view.aside = function () {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(conf.LANG.ADMIN.HELP_USER_EDIT))
+      m('article.well', m.trust(conf.LANG.ADMIN.HELP_USER_EDIT))
     ]);
   };
 
@@ -997,15 +999,15 @@ module.exports = (function () {
           href: route + '/' + u.login + '/edit',
           config: m.route,
           title: conf.LANG.GROUP.EDIT
-        }, [ m('i.icon-pencil') ]),
+        }, [ m('i.glyphicon glyphicon-pencil') ]),
         m('a', {
           href: route + '/' + u.login + '/remove',
           config: m.route,
           title: conf.LANG.GROUP.REMOVE,
-        }, [ m('i.icon-trash') ])
+        }, [ m('i.glyphicon glyphicon-trash') ])
       ];
       var name = u.login;
-      if (u.firstname) { 
+      if (u.firstname) {
         name = [name, '(', u.firstname, u.lastname, ')'].join(' ');
       }
       return m('ul.admin-users', [
@@ -1123,7 +1125,7 @@ module.exports = (function () {
         c.data.passwordMin = propInt(c.data.passwordMin());
         c.data.passwordMax = propInt(c.data.passwordMax());
         c.data.passwordMin.toJSON = function () {
-          return c.data.passwordMin(); 
+          return c.data.passwordMin();
         };
         c.data.passwordMax.toJSON = function () {
           return c.data.passwordMax();
@@ -1228,13 +1230,19 @@ module.exports = (function () {
     delete password.input.attrs.pattern;
     delete password.input.attrs.minlength;
     delete password.input.attrs.maxlength;
-    return m('form.block', {
+    return m('form.form-horizontal.col-sm-8.col-sm-offset-2.well', {
       id: 'login-form', onsubmit: c.login }, [
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', conf.LANG.ADMIN.ETHERPAD_ACCOUNT),
-        login.label, login.input, login.icon,
-        password.label, password.input, password.icon,
-        m('input.block.send', {
+        m('.form-group', [
+          login.label, login.icon,
+          m('.col-sm-7', login.input)
+        ]),
+        m('.form-group', [
+          password.label, password.icon,
+          m('.col-sm-7', password.input)
+        ]),
+        m('input.btn.btn-success.pull-right', {
           form: 'login-form',
           type: 'submit',
           value: conf.LANG.USER.LOGIN
@@ -1287,15 +1295,14 @@ module.exports = (function () {
         return f;
       })(),
       defaultLanguage: (function () {
-        var label = m('label.block', { for: 'defaultLanguage' },
+        var label = m('label', { for: 'defaultLanguage' },
           conf.LANG.ADMIN.FIELD.LANGUAGE_DEFAULT);
         var icon = m('i', {
-          class: 'block tooltip icon-info-circled',
+          class: 'mp-tooltip glyphicon glyphicon-info-sign',
           'data-msg': conf.LANG.ADMIN.INFO.LANGUAGE_DEFAULT
         });
         var select = m('select', {
           name: 'defaultLanguage',
-          class: 'block',
           required: true,
           value: c.data.defaultLanguage(),
           onchange: m.withAttr('value', c.data.defaultLanguage)
@@ -1384,11 +1391,11 @@ module.exports = (function () {
         return f;
       })()
     };
-    return m('form.block', {
+    return m('form', {
       id: 'settings-form',
       onsubmit: c.submit
     }, [
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', conf.LANG.ADMIN.SETTINGS_GENERAL),
         m('div', [ f.title.label, f.title.input, f.title.icon,
           f.rootUrl.label, f.rootUrl.input, f.rootUrl.icon,
@@ -1397,13 +1404,13 @@ module.exports = (function () {
           f.allowEtherPads.input, f.allowEtherPads.icon
         ])
       ]),
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', conf.LANG.ADMIN.SETTINGS_PASSWORD),
         m('div', [ f.passwordMin.label, f.passwordMin.input, f.passwordMin.icon,
           f.passwordMax.label, f.passwordMax.input, f.passwordMax.icon
         ])
       ]),
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', conf.LANG.ADMIN.SETTINGS_MAIL),
         m('div', [ f.checkMails.label, f.checkMails.input, f.checkMails.icon,
           f.tokenDuration.label, f.tokenDuration.input, f.tokenDuration.icon,
@@ -1415,7 +1422,7 @@ module.exports = (function () {
           f.SMTPPass.label, f.SMTPPass.input, f.SMTPPass.icon,
           f.SMTPEmailFrom.label, f.SMTPEmailFrom.input, f.SMTPEmailFrom.icon ])
       ]),
-      m('input.block.send', {
+      m('input.btn.btn-success', {
         form: 'settings-form',
         type: 'submit',
         value: conf.LANG.ADMIN.FIELD.APPLY
@@ -1427,12 +1434,12 @@ module.exports = (function () {
     var elements = (function () {
       if (auth.isAdmin()) {
         return [
-          m('h2.block', conf.LANG.ADMIN.FORM_SETTINGS),
+          m('h2', conf.LANG.ADMIN.FORM_SETTINGS),
           view.settings(c)
         ];
       } else {
         return [
-          m('h2.block', conf.LANG.ADMIN.FORM_LOGIN),
+          m('h2', conf.LANG.ADMIN.FORM_LOGIN),
           view.form(c)
         ];
       }
@@ -1444,7 +1451,7 @@ module.exports = (function () {
     var helpKey = (auth.isAdmin() ? 'HELP_SETTINGS' : 'HELP_LOGIN');
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(conf.LANG.ADMIN[helpKey]))
+      m('article.well', m.trust(conf.LANG.ADMIN[helpKey]))
     ]);
   };
 
@@ -1573,7 +1580,7 @@ module.exports = (function () {
     if (ld.size(c.bookmarks[type]) === 0) {
       return m('p', noneMsg);
     } else {
-      return m('ul.mark', ld.map(c.bookmarks[type], function (item) {
+      return m('ul.list-unstyled', ld.map(c.bookmarks[type], function (item) {
         var route;
         if (type === 'groups') {
           route = '/mypads/group/' + item._id + '/view';
@@ -1581,11 +1588,11 @@ module.exports = (function () {
           route = '/mypads/group/' + item.group + '/pad/view/' + item._id;
         }
         return m('li', [
-          m('a', { href: route, config: m.route }, item.name),
-          m('button', {
+          m('button.btn.btn-link.btn-lg', {
             title: conf.LANG.GROUP.UNMARK,
             onclick: ld.partial(c.unmark, item._id, type)
-          }, [ m('i.icon-star') ])
+          }, [ m('i.glyphicon glyphicon-star') ]),
+          m('a', { href: route, config: m.route }, item.name)
         ]);
       }));
     }
@@ -1597,20 +1604,24 @@ module.exports = (function () {
   view.aside = function () {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(conf.LANG.BOOKMARK.HELP))
+      m('article.well', m.trust(conf.LANG.BOOKMARK.HELP))
     ]);
   };
 
   view.main = function (c) {
-    return m('section', { class: 'block-group group' }, [
-      m('h2.block', conf.LANG.BOOKMARK.TITLE),
-      m('section.block pads', [
-        m('h3.title', conf.LANG.GROUP.GROUPS),
-        view.groups(c)
+    return m('section', [
+      m('h2', conf.LANG.BOOKMARK.TITLE),
+      m('section.panel.panel-primary', [
+        m('.panel-heading',
+          m('h3.panel-title', conf.LANG.GROUP.GROUPS)
+        ),
+        m('.panel-body', view.groups(c))
       ]),
-      m('section.block users', [
-        m('h3.title', conf.LANG.GROUP.PAD.PADS),
-        view.pads(c)
+      m('section.panel.panel-info', [
+        m('.panel-heading',
+          m('h3.panel-title', conf.LANG.GROUP.PAD.PADS)
+        ),
+        m('.panel-body', view.pads(c))
       ])
     ]);
   };
@@ -1760,7 +1771,7 @@ module.exports = (function () {
 
   view.icon.common = function (msg) {
     return m('i', {
-      class: 'block tooltip icon-info-circled',
+      class: 'mp-tooltip glyphicon glyphicon-info-sign',
       'data-msg': msg
     });
   };
@@ -1809,11 +1820,10 @@ module.exports = (function () {
   };
 
   view.field.description = function (c) {
-    var label = m('label.block', { for: 'description' },
+    var label = m('label.col-sm-4', { for: 'description' },
       conf.LANG.GROUP.FIELD.DESCRIPTION);
-    var textarea = m('textarea', {
+    var textarea = m('textarea.form-control', {
       name: 'description',
-      class: 'block',
       value: (c.data.description() || ''),
       onchange: m.withAttr('value', c.data.description)
     }, c.data.description());
@@ -1822,11 +1832,10 @@ module.exports = (function () {
 
   view.field.visibility = function (c, restricted) {
     restricted = ld.isUndefined(restricted) ? true : restricted;
-    var label = m('label.block', { for: 'visibility' },
+    var label = m('label.col-sm-4', { for: 'visibility' },
       conf.LANG.GROUP.FIELD.VISIBILITY);
-    var select = m('select', {
+    var select = m('select.form-control', {
       name: 'visibility',
-      class: 'block',
       required: true,
       value: c.data.visibility(),
       onchange: m.withAttr('value', c.data.visibility)
@@ -1846,9 +1855,9 @@ module.exports = (function () {
   };
 
   view.field.password = function (c) {
-    var label = m('label.block', { for: 'password' },
+    var label = m('label.col-sm-4', { for: 'password' },
       conf.LANG.USER.PASSWORD);
-    var input = m('input.block', {
+    var input = m('input.form-control', {
       name: 'password',
       type: 'password',
       placeholder: conf.LANG.USER.UNDEF,
@@ -1860,15 +1869,16 @@ module.exports = (function () {
   };
 
   view.field.readonly = function (c) {
-    var label = m('label.block', { for: 'readonly' },
-      conf.LANG.GROUP.FIELD.READONLY);
-    var input = m('input.block', {
-      name: 'readonly',
-      type: 'checkbox',
-      checked: c.data.readonly(),
-      onchange: m.withAttr('checked', c.data.readonly)
-    });
-    return { label: label, icon: view.icon.readonly(), input: input };
+    var label = m('label', [
+        m('input', {
+          name: 'readonly',
+          type: 'checkbox',
+          checked: c.data.readonly(),
+          onchange: m.withAttr('checked', c.data.readonly)
+        }),
+        conf.LANG.GROUP.FIELD.READONLY
+      ]);
+    return { label: label, icon: view.icon.readonly()};
   };
 
   view.field.tag = function (c) { return tag.view(c.tag); };
@@ -1884,24 +1894,47 @@ module.exports = (function () {
       memo[f] = view.field[f](c);
       return memo;
     }, {});
-    var fields = [ _f.name.label, _f.name.input, _f.name.icon,
-      _f.description.label, _f.description.textarea, _f.description.icon,
-      _f.visibility.label, _f.visibility.select, _f.visibility.icon
+    var fields = [
+      m('.form-group', [
+        _f.name.label, _f.name.icon,
+        m('.col-sm-7', _f.name.input)
+      ]),
+      m('.form-group', [
+        _f.description.label, _f.description.icon,
+        m('.col-sm-7', _f.description.textarea)
+      ]),
+      m('.form-group', [
+        _f.visibility.label, _f.visibility.icon,
+        m('.col-sm-7', _f.visibility.select)
+      ]),
     ];
     if (c.data.visibility() === 'private') {
-      fields.push(_f.password.label, _f.password.input, _f.password.icon);
+      fields.push(
+        m('.form-group', [
+          _f.password.label, _f.password.icon,
+          m('.col-sm-7', _f.password.input)
+        ])
+      );
     }
-    fields.push(_f.readonly.label, _f.readonly.input, _f.readonly.icon);
+    fields.push(
+      m('.form-group',
+        m('.col-sm-7 .col-sm-offset-4',
+          m('.checkbox', [
+            _f.readonly.label, _f.readonly.icon
+          ])
+        )
+      )
+    );
     fields.push(view.field.tag(c));
-    return m('form.block', {
+    return m('form.form-horizontal', {
       id: 'group-form',
       onsubmit: c.submit
     }, [
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', conf.LANG.GROUP.GROUP),
         m('div', fields)
       ]),
-      m('input.block.send', {
+      m('input.btn.btn-success.pull-right', {
         form: 'group-form',
         type: 'submit',
         value: conf.LANG.ACTIONS.SAVE
@@ -1916,8 +1949,8 @@ module.exports = (function () {
   */
 
   view.main = function (c) {
-    return m('section', { class: 'block-group user group-form' }, [
-      m('h2.block',
+    return m('section', { class: 'user group-form' }, [
+      m('h2',
         c.addView() ? conf.LANG.GROUP.ADD : conf.LANG.GROUP.EDIT_GROUP),
       view.form(c)
     ]);
@@ -1926,7 +1959,7 @@ module.exports = (function () {
   view.aside = function () {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(conf.LANG.GROUP.ADD_HELP))
+      m('article.well', m.trust(conf.LANG.GROUP.ADD_HELP))
     ]);
   };
 
@@ -2170,7 +2203,7 @@ module.exports = (function () {
         if (err) { return c.sendPass(false); }
         var data = c.isGuest ? model.tmp() : model;
         c.group = data.groups()[key];
-        c.pads = ld.sortBy(ld.compact(ld.map(c.group.pads, 
+        c.pads = ld.sortBy(ld.compact(ld.map(c.group.pads,
           function (x) { return data.pads()[x]; })), 'ctime');
         c.sendPass(true);
       });
@@ -2192,21 +2225,41 @@ module.exports = (function () {
   */
 
   view.properties = function (c) {
-    return m('section', [
-      m('dl.block-group.group', [
-        m('dt.block', conf.LANG.GROUP.PAD.PADS),
-        m('dd.block', ld.size(c.group.pads)),
-        m('dt.block', conf.LANG.GROUP.PAD.ADMINS),
-        m('dd.block', ld.size(c.group.admins)),
-        m('dt.block', conf.LANG.GROUP.PAD.USERS),
-        m('dd.block', ld.size(c.group.users)),
-        m('dt.block', conf.LANG.GROUP.PAD.VISIBILITY),
-        m('dd.block', conf.LANG.GROUP.FIELD[c.group.visibility.toUpperCase()]),
-        m('dt.block', conf.LANG.GROUP.FIELD.READONLY),
-        m('dd.block', conf.LANG.GLOBAL[c.group.readonly ? 'YES' : 'NO']),
-        m('dt.block', conf.LANG.GROUP.TAGS.TITLE),
-        m('dd.block', c.group.tags.join(', '))
-      ])
+    return m('table.table.table-stripped.table-bordered', [
+      m('thead',
+        m('tr', [
+          m('th', {scope: 'col'}, conf.LANG.GROUP.PAD.PADS),
+          m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.VISIBILITY},
+            m('i.glyphicon.glyphicon-eye-open',
+              m('span.sr-only', conf.LANG.GROUP.PAD.VISIBILITY)
+            )
+          ),
+          m('th', {scope: 'col'}, conf.LANG.GROUP.FIELD.READONLY),
+          m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.ADMINS},
+            m('i.glyphicon.glyphicon-knight',
+              m('span.sr-only', conf.LANG.GROUP.PAD.ADMINS)
+            )
+          ),
+          m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.USERS},
+            m('i.glyphicon.glyphicon-user',
+              m('span.sr-only', conf.LANG.GROUP.PAD.USERS)
+            )
+          ),
+          m('th', {scope: 'col'}, conf.LANG.GROUP.TAGS.TITLE),
+        ])
+      ),
+      m('tbody',
+        m('tr.text-center', [
+          m('td', ld.size(c.group.pads)),
+          m('td', conf.LANG.GROUP.FIELD[c.group.visibility.toUpperCase()]),
+          m('td', conf.LANG.GLOBAL[c.group.readonly ? 'YES' : 'NO']),
+          m('td', ld.size(c.group.admins)),
+          m('td', ld.size(c.group.users)),
+          m('td', m('ul.list-inline', ld.map(c.group.tags, function (t) {
+                    return m('li.label.label-default', t);
+          })))
+        ])
+      )
     ]);
   };
 
@@ -2219,82 +2272,67 @@ module.exports = (function () {
   view.pads = function (c) {
     var route = '/mypads/group/' + c.group._id;
     var GROUP = conf.LANG.GROUP;
-    var addView = m('p', [
-      m('a.add', { href: route + '/pad/add', config: m.route }, [
-        m('i.icon-plus-squared'),
-        conf.LANG.GROUP.PAD.ADD
+    var addView = m('p.col-sm-6.text-center', [
+      m('a.btn.btn-default', { href: route + '/pad/add', config: m.route }, [
+        m('i.glyphicon.glyphicon-plus.text-success'),
+        ' '+conf.LANG.GROUP.PAD.ADD
       ])
     ]);
-    var moveView = m('p', [
-      m('a.move', { href: route + '/pad/move', config: m.route }, [
-        m('i.icon-forward'),
-        conf.LANG.GROUP.PAD.MOVE
+    var moveView = m('p.text-center', [
+      m('a.btn.btn-default', { href: route + '/pad/move', config: m.route }, [
+        m('i.glyphicon.glyphicon-transfer'),
+        ' '+conf.LANG.GROUP.PAD.MOVE
       ])
     ]);
   var sortIcon = (function () {
     if (c.sortField()) {
-      return (c.sortAsc() ? 'up-dir' : 'down-dir');
+      return (c.sortAsc() ? 'top' : 'bottom');
     } else {
       return 'arrow-combo';
     }
   })();
-  var sortView = m('p.sort', [
-    m('i.icon-' + sortIcon),
-    m('span', conf.LANG.GROUP.PAD.SORT_BY),
-    m('button', {
+  var sortView = m('p.col-sm-6.text-right.small', [
+    m('span', ' '+conf.LANG.GROUP.PAD.SORT_BY),
+    m('button.btn.btn-default.btn-xs', {
       type: 'button',
       onclick: ld.partial(c.sortBy, 'ctime')
-    }, conf.LANG.GROUP.PAD.SORT_BY_CREATION),
-    m('button', {
+    }, [conf.LANG.GROUP.PAD.SORT_BY_CREATION+' ',
+      m('i.small.glyphicon glyphicon-triangle-' + sortIcon)]
+    ),
+    m('button.btn.btn-default.btn-xs', {
       type: 'button',
       onclick: ld.partial(c.sortBy, 'name')
-    }, conf.LANG.GROUP.PAD.SORT_BY_NAME)
+    }, [ conf.LANG.GROUP.PAD.SORT_BY_NAME+' ',
+      m('i.small.glyphicon glyphicon-triangle-' + sortIcon)])
   ]);
     var padView = (function () {
       if (ld.size(c.group.pads) === 0) {
         return m('p', conf.LANG.GROUP.PAD.NONE);
       } else {
-        return m('ul', ld.map(c.pads, function (p) {
+        return m('ul.list-group.col-sm-12', ld.map(c.pads, function (p) {
           var actions = [
-            (function () {
-              if (!c.isGuest) {
-                var isBookmarked = ld.includes(c.bookmarks, p._id);
-                return m('button', {
-                  title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK),
-                  onclick: function () { padMark(p._id); }
-                }, [
-                  m('i',
-                    { class: 'icon-star' + (isBookmarked ? '' : '-empty') })
-                ]);
-              }
-            })(),
             (function () {
               if ((c.group.visibility !== 'restricted') ||
                 (p.visibility && p.visibility !== 'restricted')) {
-                return m('button', {
+                return m('button.btn.btn-default.btn-xs', {
                   title: conf.LANG.GROUP.SHARE,
                   onclick: padShare.bind(c, c.group._id, p._id)
-                }, [ m('i.icon-link') ]);
+                }, [ m('i.glyphicon.glyphicon-link') ]);
               }
-            })(),
-            m('a', {
-              href: route + '/pad/view/' + p._id,
-              config: m.route,
-              title: conf.LANG.GROUP.EDIT
-            }, [ m('i.icon-pencil') ])
+            })()
           ];
           if (c.isAdmin) {
             actions.push(
-              m('a', {
+              m('a.btn.btn-default.btn-xs', {
                 href: route + '/pad/edit/' + p._id,
                 config: m.route,
                 title: conf.LANG.MENU.CONFIG
-              }, [ m('i.icon-tools') ]),
-              m('a', {
+              }, [ m('i.glyphicon.glyphicon-wrench') ]),
+              m('a.btn.btn-default.btn-xs', {
                 href: route + '/pad/remove/' + p._id,
                 config: m.route,
                 title: conf.LANG.GROUP.REMOVE
-              }, [ m('i.icon-trash') ])
+              }, [ m('i.glyphicon.glyphicon-trash.text-danger') ])
             );
           }
           var padName = p.name;
@@ -2302,23 +2340,37 @@ module.exports = (function () {
             var visib = conf.LANG.GROUP.FIELD[p.visibility.toUpperCase()];
             padName += ' (' + visib + ')';
           }
-          return m('li.block-group', [
-            m('span.block.name', [
+          return m('li.list-group-item', [
+            (function () {
+              if (!c.isGuest) {
+                var isBookmarked = ld.includes(c.bookmarks, p._id);
+                return m('button.btn.btn-link.btn-lg', {
+                  title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK),
+                  onclick: function () { padMark(p._id); }
+                }, [
+                  m('i',
+                    { class: 'glyphicon glyphicon-star' +
+                      (isBookmarked ? '' : '-empty') })
+                ]);
+              }
+            })(),
+            m('span.name', [
               m('a', {
                 href: route + '/pad/view/' + p._id,
                 config: m.route,
                 title: conf.LANG.GROUP.VIEW
               }, padName)
               ]),
-            m('span.block.actions', actions)
+            m('span.pull-right', actions)
           ]);
         }));
       }
     })();
     var padBlocks = [];
-    if (c.isAdmin) { padBlocks.push(addView, moveView); }
+    if (c.isAdmin) { padBlocks.push(addView);}
     padBlocks.push(sortView, padView);
-    return m('section.pad', padBlocks);
+    if (c.isAdmin) { padBlocks.push(moveView);}
+    return m('section.panel-body', padBlocks);
   };
 
   /**
@@ -2346,27 +2398,44 @@ module.exports = (function () {
       if (ld.size(users) === 0) {
         return m('p', conf.LANG.GROUP.PAD.USERS_NONE);
       } else {
-        return m('ul', ld.map(users, function (u) {
-          return m('li', userView(u));
+        return m('ul.list-group', ld.map(users, function (u) {
+          return m('li.list-group-item', userView(u));
         }));
       }
     };
     var route = '/mypads/group/' + c.group._id;
-    var sectionElements = [ m('h4.block', conf.LANG.GROUP.PAD.ADMINS) ];
+    var sectionListAdmins = [ m('h4', conf.LANG.GROUP.PAD.ADMINS) ];
     if (c.isAdmin) {
-      sectionElements.push(
-        m('a.add', { href: route + '/user/share', config: m.route },
-          [ m('i.icon-plus-squared'), conf.LANG.GROUP.SHARE_ADMIN ]));
+      sectionListAdmins.push(
+        m('p.text-center',
+          m('a.btn.btn-default',
+            { href: route + '/user/share', config: m.route },
+            [ m('i.glyphicon.glyphicon-plus.text-success'),
+                ' '+conf.LANG.GROUP.SHARE_ADMIN
+            ]
+          )
+        )
+      );
     }
-    sectionElements.push(list(c.admins));
-    sectionElements.push(m('h4.block', conf.LANG.GROUP.PAD.USERS));
+    sectionListAdmins.push(list(c.admins));
+
+    var sectionListUsers = [ m('h4', conf.LANG.GROUP.PAD.USERS) ];
     if (c.isAdmin && (c.group.visibility === 'restricted')) {
-        sectionElements.push(
-          m('a.add', { href: route + '/user/invite', config: m.route },
-            [ m('i.icon-plus-squared'), conf.LANG.GROUP.INVITE_USER.IU ]));
+      sectionListUsers.push(
+        m('p.text-center',
+          m('a.btn.btn-default',
+            { href: route + '/user/invite', config: m.route },
+            [ m('i.glyphicon.glyphicon-plus.text-success'),
+                ' '+conf.LANG.GROUP.INVITE_USER.IU ]
+          )
+        )
+      );
     }
-    sectionElements.push(list(c.users));
-    return m('section', sectionElements);
+    sectionListUsers.push(list(c.users));
+    return m('section.panel-body', [
+      m('.col-sm-6',sectionListAdmins),
+      m('.col-sm-6',sectionListUsers)
+    ]);
   };
 
   view.passForm = function (c) {
@@ -2374,15 +2443,15 @@ module.exports = (function () {
       id: 'password-form',
       onsubmit: c.submitPass
     }, [
-      m('label.block', { for: 'mypadspassword' }, conf.LANG.USER.PASSWORD),
-      m('input.block', {
+      m('label', { for: 'mypadspassword' }, conf.LANG.USER.PASSWORD),
+      m('input', {
         type: 'password',
         required: true,
         placeholder: conf.LANG.USER.UNDEF,
         value: c.privatePassword(),
         oninput: m.withAttr('value', c.privatePassword)
       }),
-      m('input.ok.block', {
+      m('input.ok', {
         form: 'password-form',
         type: 'submit',
         value: conf.LANG.USER.OK
@@ -2398,53 +2467,76 @@ module.exports = (function () {
 
   view.main = function (c) {
     var h2Elements = [ m('span', conf.LANG.GROUP.GROUP + ' ' + c.group.name) ];
+    var shareBtn = '';
     if (c.group.visibility !== 'restricted') {
-      h2Elements.push(m('button', {
+      shareBtn = m('button.btn.btn-default', {
         title: conf.LANG.GROUP.SHARE,
         onclick: padShare.bind(c, c.group._id, null)
-      }, [ m('i.icon-link'), m('span', conf.LANG.GROUP.SHARE) ]));
+      },
+      [ m('i.glyphicon.glyphicon-link'),
+        m('span', ' '+conf.LANG.GROUP.SHARE)
+      ]);
     }
     if (c.isAdmin) {
       h2Elements.push(
-        m('a', {
-          href: '/mypads/group/' + c.group._id + '/edit',
-          config: m.route,
-          title: conf.LANG.MENU.CONFIG
-        }, [ m('i.icon-tools'), m('span', conf.LANG.MENU.CONFIG) ]),
-        m('a', {
-          href: '/mypads/group/' + c.group._id + '/remove',
-          config: m.route,
-          title: conf.LANG.GROUP.REMOVE
-        }, [ m('i.icon-trash'), m('span', conf.LANG.GROUP.REMOVE) ])
+        m('.btn-group.pull-right', {role:'group'}, [
+          shareBtn,
+          m('a.btn.btn-default', {
+            href: '/mypads/group/' + c.group._id + '/edit',
+            config: m.route,
+            title: conf.LANG.MENU.CONFIG
+          },
+          [ m('i.glyphicon.glyphicon-wrench'),
+            m('span', ' '+conf.LANG.MENU.CONFIG)
+          ]),
+          m('a.btn.btn-danger', {
+            href: '/mypads/group/' + c.group._id + '/remove',
+            config: m.route,
+            title: conf.LANG.GROUP.REMOVE
+          },
+          [ m('i.glyphicon.glyphicon-trash'),
+            m('span', ' '+conf.LANG.GROUP.REMOVE)
+          ])
+        ])
       );
+    } else {
+      h2Elements.push(shareBtn);
     }
     var canQuit = (c.isAdmin && c.admins.length > 1) || (!c.isAdmin);
     if (!c.isGuest && canQuit) {
       h2Elements.push(m('button.cancel', { onclick: c.quit },
-          [ m('i.icon-cancel'), conf.LANG.GROUP.QUIT_GROUP ]));
+          [ m('i.glyphicon glyphicon-remove'), conf.LANG.GROUP.QUIT_GROUP ]));
     }
     var showPass = (!c.isAdmin && (c.group.visibility === 'private') &&
       !c.sendPass());
     if (showPass) {
-      return m('section', { class: 'block-group group' }, [
-        m('h2.block', h2Elements),
+      return m('section', [
+        m('h2', h2Elements),
         view.passForm(c)
       ]);
     } else {
-      return m('section', { class: 'block-group group' }, [
-        m('h2.block', h2Elements),
-        m('section.block.description', [ m('pre', c.group.description) ]),
-        m('section.block.props', [
-          m('h3.title', conf.LANG.GROUP.PROPERTIES),
+      return m('section', [
+        m('h2', h2Elements),
+        m('section.description', [  ]),
+        m('section.panel.panel-primary.props', [
+          m('.panel-heading',
+            m('h3.panel-title', conf.LANG.GROUP.PROPERTIES)
+          ),
+          m('.panel-body', c.group.description),
           view.properties(c)
         ]),
-        m('section.block.pads', [
-          m('h3.title', conf.LANG.GROUP.PAD.PADS),
+        m('section.panel.panel-info.pads', [
+          m('.panel-heading',
+            m('h3.panel-title', conf.LANG.GROUP.PAD.PADS)
+          ),
           view.pads(c)
         ]),
-        m('section.block.users', [
-          m('h3.title',
-            conf.LANG.GROUP.PAD.ADMINS + ' & ' + conf.LANG.GROUP.PAD.USERS),
+        m('section.panel.panel-warning.users', [
+          m('.panel-heading',
+            m('h3.panel-title',
+              conf.LANG.GROUP.PAD.ADMINS + ' & ' + conf.LANG.GROUP.PAD.USERS
+            )
+          ),
           view.users(c)
         ])
       ]);
@@ -2460,12 +2552,12 @@ module.exports = (function () {
   view.aside = function () {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(conf.LANG.GROUP.VIEW_HELP))
+      m('article.well', m.trust(conf.LANG.GROUP.VIEW_HELP))
     ]);
   };
 
   group.view = function (c) {
-    return layout.view(view.main(c), view.aside(c)); 
+    return layout.view(view.main(c), view.aside(c));
   };
 
   return group;
@@ -2596,7 +2688,7 @@ module.exports = (function () {
     */
 
     c.filterToggle = function (field) {
-      var action = function (g) { return ld.includes(g[field], u()._id); }; 
+      var action = function (g) { return ld.includes(g[field], u()._id); };
       filterFn(field, !c.filters[field], action);
     };
 
@@ -2725,51 +2817,56 @@ module.exports = (function () {
 
   view.sort = function (c) {
     var btn = function (field, txt) {
-      return m('button', {
-        class: (c.sortField() === field) ? 'active': '',
+      return m('button.btn.btn-default.btn-xs', {
+        class: (c.sortField() === field) ? ' btn-info': '',
         onclick: ld.partial(c.sortBy, field)
       }, [
-        m('span', txt),
-        m('i.icon-' +  (c.sortAsc() ? 'up-dir' : 'down-dir'))
+        m('span', txt+' '),
+        m('i.small.glyphicon glyphicon-triangle-' +
+          (c.sortAsc() ? 'top' : 'bottom'))
       ]);
     };
-    return m('section.sort.block-group', [
-      m('h3.block', [
+    return m('section.sort', [
+      m('h3', [
         m('span', conf.LANG.GROUP.SORT.TITLE),
-        m('i.tooltip.icon-info-circled',
+        m('i.mp-tooltip.glyphicon glyphicon-info-sign',
           { 'data-msg': conf.LANG.GROUP.SORT.HELP })
       ]),
-      m('ul.block-group', [
-        m('li.block', [ btn('ctime', conf.LANG.GROUP.PAD.SORT_BY_CREATION) ]),
-        m('li.block', [ btn('name', conf.LANG.GROUP.PAD.SORT_BY_NAME) ]),
+      m('ul.list-inline', [
+        m('li', [ btn('ctime', conf.LANG.GROUP.PAD.SORT_BY_CREATION) ]),
+        m('li', [ btn('name', conf.LANG.GROUP.PAD.SORT_BY_NAME) ]),
       ])
     ]);
   };
 
   view.search = function (c) {
-    return m('section.search.block-group', [
-      m('h3.block', [
+    return m('section.search', [
+      m('h3', [
         m('span', conf.LANG.GROUP.SEARCH.TITLE),
-        m('i.tooltip.icon-info-circled',
+        m('i.mp-tooltip.glyphicon glyphicon-info-sign',
           { 'data-msg': conf.LANG.GROUP.SEARCH.HELP })
       ]),
-      m('input.block', {
-        type: 'search',
-        placeholder: conf.LANG.GROUP.SEARCH.TYPE,
-        minlength: 3,
-        pattern: '.{3,}',
-        value: c.search(),
-        oninput: m.withAttr('value', c.search),
-        onkeydown: function (e) {
-          if (e.keyCode === 13) { // ENTER
-            e.preventDefault();
-            c.filterSearch();
+      m('.input-group', [
+        m('input.form-control', {
+          type: 'search',
+          placeholder: conf.LANG.GROUP.SEARCH.TYPE,
+          minlength: 3,
+          pattern: '.{3,}',
+          value: c.search(),
+          oninput: m.withAttr('value', c.search),
+          onkeydown: function (e) {
+            if (e.keyCode === 13) { // ENTER
+              e.preventDefault();
+              c.filterSearch();
+            }
           }
-        }
-      }),
-      m('button.block',
-        { type: 'button', onclick: c.filterSearch },
-        conf.LANG.USER.OK)
+        }),
+        m('span.input-group-btn',
+          m('button.btn.btn-default',
+            { type: 'button', onclick: c.filterSearch },
+            conf.LANG.USER.OK)
+        ),
+      ])
     ]);
   };
 
@@ -2777,33 +2874,33 @@ module.exports = (function () {
     return m('section.filter', [
       m('h3', [
         m('span', conf.LANG.GROUP.FILTERS.TITLE),
-        m('i.tooltip.icon-info-circled',
+        m('i.mp-tooltip.glyphicon glyphicon-info-sign',
           { 'data-msg': conf.LANG.GROUP.FILTERS.HELP })
       ]),
-      m('ul', [
+      m('ul.list-unstyled', [
         m('li', [
-          m('button',
+          m('button.btn.btn-default.btn-xs.btn-block',
             {
-              class: 'admin' + (c.filters.admins ? ' active' : ''),
-              onclick: ld.partial(c.filterToggle, 'admins') 
+              class: 'admin' + (c.filters.admins ? ' btn-info' : ''),
+              onclick: ld.partial(c.filterToggle, 'admins')
             },
             conf.LANG.GROUP.FILTERS.ADMIN)
         ]),
         m('li', [
-          m('button',
+          m('button.btn.btn-default.btn-xs.btn-block',
             {
-              class: 'user' + (c.filters.users ? ' active' : ''),
-              onclick: ld.partial(c.filterToggle, 'users') 
+              class: 'user' + (c.filters.users ? ' btn-info' : ''),
+              onclick: ld.partial(c.filterToggle, 'users')
             },
           conf.LANG.GROUP.FILTERS.USER)
         ]),
         m('li', [
           (function () {
             return ld.map(['restricted', 'private', 'public'], function (f) {
-              return m('button',
+              return m('button.btn.btn-default.btn-xs.btn-block',
                 {
-                  class: 'user' + ((c.filterVisibVal === f) ? ' active' : ''),
-                  onclick: ld.partial(c.filterVisibility, f) 
+                  class: 'user' + ((c.filterVisibVal === f) ? ' btn-info' : ''),
+                  onclick: ld.partial(c.filterVisibility, f)
                 }, conf.LANG.GROUP.FIELD.VISIBILITY + ' : ' +
                   conf.LANG.GROUP.FIELD[f.toUpperCase()]);
             });
@@ -2817,14 +2914,14 @@ module.exports = (function () {
     return m('section.tag', [
       m('h3', [
         m('span', conf.LANG.GROUP.TAGS.TITLE),
-        m('i.tooltip.icon-info-circled',
+        m('i.mp-tooltip.glyphicon glyphicon-info-sign',
           { 'data-msg': conf.LANG.GROUP.TAGS.HELP })
       ]),
-      m('ul', ld.map(model.tags(), function (t) {
+      m('ul.list-inline', ld.map(model.tags(), function (t) {
         return m('li', [
-          m('button',
+          m('button.btn.btn-default.btn-xs',
             {
-              class: (c.filters[t] ? 'active': ''),
+              class: (c.filters[t] ? 'btn-info': ''),
               onclick: ld.partial(c.filterTag, t)
             },
             t)
@@ -2835,7 +2932,7 @@ module.exports = (function () {
 
   view.aside = function (c) {
     return m('section.group-aside', [
-      view.sort(c), view.search(c), view.filters(c), view.tags(c)
+      view.search(c), view.sort(c), view.filters(c), view.tags(c)
     ]);
   };
 
@@ -2845,103 +2942,97 @@ module.exports = (function () {
     var GROUP = conf.LANG.GROUP;
     var isAdmin = ld.includes(g.admins, u()._id);
     var actions = [
-      m('a', {
-        onclick: group.mark.bind(c, g._id, c.computeGroups),
-        href: '/mypads',
-        config: m.route,
-        title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK)
-      }, [
-        m('i',
-          { class: 'icon-star' + (isBookmarked ? '' : '-empty') })
-        ]),
       (function () {
         if (g.visibility !== 'restricted') {
-          return m('button', {
+          return m('button.btn.btn-default.btn-xs', {
             type: 'button',
             onclick: padShare.bind(c, g._id, null),
             title: conf.LANG.GROUP.SHARE
-          }, [ m('i.icon-link') ]);
+          }, [ m('i.glyphicon.glyphicon-link') ]);
         }
-      })(),
-      m('a', {
-        href: padRoute + '/view',
-        config: m.route,
-        title: conf.LANG.GROUP.VIEW_MANAGE
-      }, [ m('i.icon-book-open') ])
+      })()
     ];
     if (isAdmin) {
-      actions.push(m('a', {
+      actions.push(m('a.btn.btn-default.btn-xs', {
         href: padRoute + '/edit',
         config: m.route,
         title: conf.LANG.MENU.CONFIG
-      }, [ m('i.icon-tools') ]),
-      m('a', {
+      }, [ m('i.glyphicon glyphicon-wrench') ]),
+      m('a.btn.btn-default.btn-xs', {
         href: padRoute + '/remove',
         config: m.route,
         title: conf.LANG.GROUP.REMOVE
-      }, [ m('i.icon-trash') ]));
+      }, [ m('i.glyphicon.glyphicon-trash.text-danger') ]));
     }
-    return m('li.block', [
-      m('header.group.block-group', [
-        m('h4.block', [ m('a', {
+    return m('tr', [
+      m('th', [
+        m('p.pull-right', actions),
+        m('a.btn.btn-link.btn-lg', {
+          onclick: group.mark.bind(c, g._id, c.computeGroups),
+          href: '/mypads',
+          config: m.route,
+          title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK)
+        }, [
+          m('i',
+            { class: 'glyphicon glyphicon-star' +
+              (isBookmarked ? '' : '-empty') })
+        ]),
+        m('a', {
           href: '/mypads/group/' + g._id + '/view',
           config: m.route,
           title: conf.LANG.GROUP.VIEW_MANAGE
-        }, g.name) ]),
-        m('section.block', actions)
+        }, g.name)
       ]),
-      m('dl.block-group.group', [
-        m('dt.block', conf.LANG.GROUP.PAD.PADS),
-        m('dd.block', [
-          ld.size(g.pads), (function () {
-            var icons = [];
-            if (isAdmin) {
-              icons.push(m('a',
-                { href: padRoute + '/pad/add', config: m.route }, [
-                m('i.icon-plus-squared', { title: conf.LANG.GROUP.PAD.ADD }) ]
-              ));
-            }
-            icons.push(m('a', { href: padRoute + '/view', config: m.route }, [
-              m('i.icon-book-open', { title: conf.LANG.GROUP.VIEW_MANAGE }) ]));
-            return icons;
-          })()
-        ]),
-        m('dt.block', conf.LANG.GROUP.PAD.VISIBILITY),
-        m('dd.block', conf.LANG.GROUP.FIELD[g.visibility.toUpperCase()]),
-        m('dt.block', conf.LANG.GROUP.PAD.ADMINS),
-        m('dd.block', [ ld.size(g.admins), (function () {
-          if (isAdmin) {
-            return m('a', { href: padRoute + '/user/share', config: m.route }, [
-              m('i.icon-plus-squared',
-                { title: conf.LANG.GROUP.SHARE_ADMIN }) ]);
-          }
+      m('td', [
+        ld.size(g.pads), (function () {
+        var icons = [];
+        if (isAdmin) {
+          icons.push(m('a.btn.btn-default.btn-xs.pull-right',
+            { href: padRoute + '/pad/add', config: m.route },
+            [ m('i.glyphicon.glyphicon-plus.text-success',
+                { title: conf.LANG.GROUP.PAD.ADD })
+            ])
+          );
+        }
+          return icons;
         })()
-        ]),
+      ]),
+      m('td', conf.LANG.GROUP.FIELD[g.visibility.toUpperCase()]),
+      m('td', [ ld.size(g.admins), (function () {
+        if (isAdmin) {
+          return m('a.btn.btn-default.btn-xs.pull-right',
+            { href: padRoute + '/user/share', config: m.route },
+            [ m('i.glyphicon.glyphicon-plus.text-success',
+              { title: conf.LANG.GROUP.SHARE_ADMIN })
+            ]);
+        }
+      })()
+      ]),
+      m('td', [
         (function () {
           if (g.visibility === 'restricted') {
-            return m('div', [
-              m('dt.block', conf.LANG.GROUP.PAD.USERS),
-              m('dd.block', [ ld.size(g.users), (function () {
+            return [
+              ld.size(g.users),
+              (function () {
                 if (isAdmin) {
                   return m(
-                    'a',
+                    'a.btn.btn-default.btn-xs.pull-right',
                     { href: padRoute + '/user/invite', config: m.route },
                     [
-                      m('i.icon-plus-squared',
+                      m('i.glyphicon.glyphicon-plus.text-success',
                         { title: conf.LANG.GROUP.INVITE_USER.IU })
                     ]
                   );
                 }
               })()
-              ])
-            ]);
+            ];
           }
         })()
       ]),
-      m('footer.group.block-group', [
-        m('ul.block', ld.map(g.tags, function (t) {
-          return m('li', {
-            class: (c.filters[t] ? 'active' : ''),
+      m('td', [
+        m('ul.list-inline', ld.map(g.tags, function (t) {
+          return m('li.label.label-default', {
+            class: (c.filters[t] ? 'label-info' : ''),
             onclick: ld.partial(c.filterTag, t)
           }, t);
         }))
@@ -2950,36 +3041,88 @@ module.exports = (function () {
   };
 
   view._groups = function (c, type) {
-    return m('ul.group', ld.map(c.groups[type], ld.partial(view.group, c)));
+    return ld.map(c.groups[type], ld.partial(view.group, c));
   };
   view.groups = ld.partialRight(view._groups, 'normal');
   view.bookmarked = ld.partialRight(view._groups, 'bookmarked');
   view.archived = ld.partialRight(view._groups, 'archived');
 
   view.main = function (c) {
-    return m('section', { class: 'block-group group' }, [
-      m('h2.block', [
+    return m('section', [
+      m('h2', [
         m('span', conf.LANG.GROUP.MYGROUPS),
-        m('i.tooltip.icon-info-circled', { 'data-msg': conf.LANG.GROUP.HELP }),
-        m('a', {
+        m('i.mp-tooltip.glyphicon glyphicon-info-sign',
+          { 'data-msg': conf.LANG.GROUP.HELP }),
+        m('a.btn.btn-primary.pull-right', {
           href: '/mypads/group/add',
           config: m.route
         }, [
-          m('i.icon-plus-squared'),
           m('span', conf.LANG.GROUP.ADD)
         ])
       ]),
-      m('section.block', [
-        m('h3.title.bookmark', conf.LANG.GROUP.BOOKMARKED),
-        view.bookmarked(c)
+      m('section.panel.panel-primary', [
+        m('.panel-heading',
+          m('h3.panel-title', conf.LANG.GROUP.GROUPS)
+        ),
+        m('table.table.table-stripped.table-bordered', [
+          m('thead',
+            m('tr', [
+              m('th', {scope: 'col'}, conf.LANG.GROUP.GROUPS),
+              m('th', {scope: 'col'}, conf.LANG.GROUP.PAD.PADS),
+              m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.VISIBILITY},
+                m('i.glyphicon.glyphicon-eye-open',
+                  m('span.sr-only', conf.LANG.GROUP.PAD.VISIBILITY)
+                )
+              ),
+              m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.ADMINS},
+                m('i.glyphicon.glyphicon-knight',
+                  m('span.sr-only', conf.LANG.GROUP.PAD.ADMINS)
+                )
+              ),
+              m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.USERS},
+                m('i.glyphicon.glyphicon-user',
+                  m('span.sr-only', conf.LANG.GROUP.PAD.USERS)
+                )
+              ),
+              m('th', {scope: 'col'}, conf.LANG.GROUP.TAGS.TITLE),
+            ])
+          ),
+          m('tbody', [
+            view.bookmarked(c),
+            view.groups(c)
+
+          ])
+        ])
       ]),
-      m('section.block', [
-        m('h3.title.group', conf.LANG.GROUP.GROUPS),
-        view.groups(c)
-      ]),
-      m('section.block', [
-        m('h3.title.archive', conf.LANG.GROUP.ARCHIVED),
-        view.archived(c)
+      m('section.panel.panel-default', [
+        m('.panel-heading',
+          m('h3.panel-title', conf.LANG.GROUP.ARCHIVED)
+        ),
+        m('table.table.table-stripped.table-bordered', [
+          m('thead',
+            m('tr', [
+              m('th', {scope: 'col'}, conf.LANG.GROUP.GROUPS),
+              m('th', {scope: 'col'}, conf.LANG.GROUP.PAD.PADS),
+              m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.VISIBILITY},
+                m('i.glyphicon.glyphicon-eye-open',
+                  m('span.sr-only', conf.LANG.GROUP.PAD.VISIBILITY)
+                )
+              ),
+              m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.ADMINS},
+                m('i.glyphicon.glyphicon-knight',
+                  m('span.sr-only', conf.LANG.GROUP.PAD.ADMINS)
+                )
+              ),
+              m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.USERS},
+                m('i.glyphicon.glyphicon-user',
+                  m('span.sr-only', conf.LANG.GROUP.PAD.USERS)
+                )
+              ),
+              m('th', {scope: 'col'}, conf.LANG.GROUP.TAGS.TITLE),
+            ])
+          ),
+          view.archived(c)
+        ])
       ])
     ]);
   };
@@ -3098,66 +3241,66 @@ module.exports = (function () {
       auth: [
         {
           route: '/mypads',
-          icon: 'doc-text',
+          icon: 'duplicate',
           txt: conf.LANG.MENU.PAD
         },
         {
           route: '/mybookmarks',
-          icon: 'bookmarks',
+          icon: 'star',
           txt: conf.LANG.MENU.BOOKMARK
         },
         {
           route: '/myuserlists',
-          icon: 'users',
+          icon: 'user',
           txt: conf.LANG.MENU.USERLIST
         },
         {
           route: '/myprofile',
-          icon: 'user',
+          icon: 'home',
           txt: conf.LANG.MENU.PROFILE
         },
         {
           route: '/logout',
-          icon: 'logout',
+          icon: 'off',
           txt: conf.LANG.MENU.LOGOUT
         }
       ],
       admin: [
         {
           route: '/admin',
-          icon: 'tools',
+          icon: 'wrench',
           txt: conf.LANG.MENU.CONFIG
         },
         {
           route: '/admin/users',
-          icon: 'users',
+          icon: 'user',
           txt: conf.LANG.MENU.USERS
         },
         {
           route: '/admin/logout',
-          icon: 'logout',
+          icon: 'off',
           txt: conf.LANG.MENU.LOGOUT
         }
       ],
       unauth: [
         {
           route: '/login',
-          icon: 'login',
+          icon: 'lock',
           txt: conf.LANG.USER.LOGIN
         },
         {
           route: '/subscribe',
-          icon: 'thumbs-up',
+          icon: 'user',
           txt: conf.LANG.USER.SUBSCRIBE
         }
       ]
     };
     var activeRoute = function (r) {
       var isActive = (m.route().slice(0, r.route.length) === r.route);
-      return m('li', { class: (isActive ? 'is-active' : '') }, [
+      return m('li', { class: (isActive ? 'active' : '') }, [
         m('a', { href: r.route, config: m.route }, [
-          m('i', { class: 'icon-' + r.icon, title: r.txt }),
-          m('span', r.txt)
+          m('i', { class: 'glyphicon glyphicon-' + r.icon, title: r.txt }),
+          m('span', ' '+r.txt)
         ])
       ]);
     };
@@ -3181,30 +3324,31 @@ module.exports = (function () {
 
   layout.view = function (main, aside) {
     return [
-      m('header.block', [
-        m('div.block-group', [
-          m('h1.block', conf.SERVER.title),
-          m('ul.block.lang', ld.reduce(conf.SERVER.languages,
-            function (memo, val, key) {
-              var cls = (key === conf.USERLANG) ? 'active': '';
-              memo.push(m('li', {
-                class: cls,
-                onclick: conf.updateLang.bind(null, key)
-              }, val));
-              return memo;
-            }, [])
-          ),
-          m('nav.block', { class: 'menu-main' }, [
-            m('ul', views.menuMain())
+      m('header', [
+        m('ul.lang.container', ld.reduce(conf.SERVER.languages,
+          function (memo, val, key) {
+            var cls = (key === conf.USERLANG) ? 'active': '';
+            memo.push(m('li', {
+              class: cls,
+              onclick: conf.updateLang.bind(null, key)
+            }, val));
+            return memo;
+          }, [])
+        ),
+        m('div.container.ombre', [
+          m('h1', conf.SERVER.title),
+          m('hr.trait', {role: 'presentation'}),
+          m('nav', { class: 'menu-main' }, [
+            m('ul.nav.nav-tabs', views.menuMain())
           ])
         ])
       ]),
-      m('main.block', [
-        m('section.block', main || ''),
-        m('aside.block', aside || '')
+      m('main.container.ombre', [
+        m('section.col-md-9', main || ''),
+        m('aside.col-md-3', aside || '')
       ]),
       m('section', { class: 'notification' }, notif.view(notif.controller())),
-      m('footer.block', m('p', [
+      m('footer.container.ombre', m('p', [
         m('span', m.trust(conf.LANG.GLOBAL.FOOTER + ' | ')),
         m('a', { href: '/admin', config: m.route }, conf.LANG.MENU.ADMIN)
       ]))
@@ -3312,19 +3456,27 @@ module.exports = (function () {
     var login = user.view.field.login(c);
     login.input.attrs.config = form.focusOnInit;
     var password = user.view.field.password(c);
-    return m('form.block', {
+    return m('form.form-horizontal.col-sm-8.col-sm-offset-2.well', {
       id: 'login-form', onsubmit: c.submit }, [
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', conf.LANG.USER.MYPADS_ACCOUNT),
-        login.label, login.input, login.icon,
-        password.label, password.input, password.icon,
-        m('p.block.passlost', [
-          m('a', {
-            href: '/passrecover',
-            config: m.route
-          }, conf.LANG.USER.PASSWORD_LOST)
+        m('.form-group', [
+          login.label, login.icon,
+          m('.col-sm-7', login.input)
         ]),
-        m('input.block.send', {
+        m('.form-group', [
+          password.label, password.icon,
+          m('.col-sm-7', [
+            password.input,
+            m('p.help-block', [
+              m('a', {
+                href: '/passrecover',
+                config: m.route
+              }, conf.LANG.USER.PASSWORD_LOST)
+            ])
+          ])
+        ]),
+        m('input.btn.btn-success.pull-right', {
           form: 'login-form',
           type: 'submit',
           value: conf.LANG.USER.LOGIN
@@ -3334,10 +3486,12 @@ module.exports = (function () {
   };
 
   view.main = function (c) {
-    return m('section', { class: 'block-group user' }, [
-      m('h2.block', [
+    return m('section', { class: 'user' }, [
+      m('h2', [
         m('span', conf.LANG.USER.FORM),
-        m('a', { href: '/subscribe', config: m.route }, conf.LANG.USER.ORSUB)
+        m('a.small',
+          { href: '/subscribe', config: m.route },
+          conf.LANG.USER.ORSUB)
       ]),
       view.form(c)
     ]);
@@ -3555,18 +3709,19 @@ module.exports = (function () {
   view.groupParams = function (c) {
     var G = conf.LANG.GROUP;
     var icon = m('i', {
-      class: 'block tooltip icon-info-circled',
+      class: 'mp-tooltip glyphicon glyphicon-info-sign',
       'data-msg': G.INFO.GROUP_PARAMS
     });
     return {
-      label: m('label.block', { for: 'groupParams' }, G.FIELD.GROUP_PARAMS),
-      input: m('input', {
-        class: 'block',
-        name: 'groupParams',
-        type: 'checkbox',
-        checked: c.groupParams(),
-        onchange: m.withAttr('checked', c.groupParams)
-      }),
+      label: m('label', [
+        m('input', {
+          name: 'groupParams',
+          type: 'checkbox',
+          checked: c.groupParams(),
+          onchange: m.withAttr('checked', c.groupParams)
+        }),
+        G.FIELD.GROUP_PARAMS
+      ]),
       icon: icon
     };
   };
@@ -3586,26 +3741,55 @@ module.exports = (function () {
     var readonly = group.views.field.readonly(c);
     var groupParams = view.groupParams(c);
 
-    var fields = [ name.label, name.input, name.icon,
-      groupParams.label, groupParams.input, groupParams.icon ];
+    var fields = [
+      m('.form-group', [
+        name.label, name.icon,
+        m('.col-sm-7', name.input)
+      ]),
+      m('.form-group', [
+        m('.col-sm-7.col-sm-offset-4', [
+          m('.checkbox', [
+            groupParams.label, groupParams.icon
+          ])
+        ])
+      ])
+    ];
 
     if (!c.groupParams()) {
-      fields.push(visibility.label, visibility.select, visibility.icon);
+      fields.push(
+        m('.form-group', [
+          visibility.label, visibility.icon,
+          m('.col-sm-7', visibility.select)
+        ])
+      );
       if (c.data.visibility() === 'private') {
-        fields.push(password.label, password.input, password.icon);
+        fields.push(
+          m('.form-group', [
+            password.label, password.icon,
+            m('.col-sm-7', password.input)
+          ])
+        );
       }
-      fields.push(readonly.label, readonly.input, readonly.icon);
+      fields.push(
+        m('.form-group', [
+          m('.col-sm-7.col-sm-offset-4', [
+            m('.checkbox', [
+              readonly.label, readonly.icon
+            ])
+          ])
+        ])
+      );
     }
 
-    return m('form.block', {
+    return m('form.form-horizontal', {
       id: 'pad-form',
       onsubmit: c.submit
     }, [
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', conf.LANG.GROUP.PAD.PAD),
         m('div', fields)
       ]),
-      m('input.block.send', {
+      m('input.btn.btn-success.pull-right', {
         form: 'pad-form',
         type: 'submit',
         value: conf.LANG.ACTIONS.SAVE
@@ -3621,8 +3805,8 @@ module.exports = (function () {
   */
 
   view.main = function (c) {
-    return m('section', { class: 'block-group user group-form' }, [
-      m('h2.block',
+    return m('section', { class: 'user group-form' }, [
+      m('h2',
         c.addView() ? conf.LANG.GROUP.PAD.ADD : conf.LANG.GROUP.PAD.EDIT),
       view.form(c)
     ]);
@@ -3631,7 +3815,7 @@ module.exports = (function () {
   view.aside = function () {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(conf.LANG.GROUP.ADD_HELP))
+      m('article.well', m.trust(conf.LANG.GROUP.ADD_HELP))
     ]);
   };
 
@@ -3832,13 +4016,13 @@ module.exports = (function () {
 
   /**
   * ### group field
-  * 
+  *
   * A selection fields of groups where user is the admin.
   * Composed with a label, input and icon
   */
 
   view.groups = function (c) {
-    var label = m('label.block', { for: 'group' },
+    var label = m('label.col-sm-4', { for: 'group' },
       conf.LANG.GROUP.MYGROUPS);
     var select = (function () {
       var options = ld.map(c.selectedGroups, function (g) {
@@ -3846,19 +4030,18 @@ module.exports = (function () {
       });
       if (options.length > 0) {
         options.splice(0, 0, m('option'));
-        return m('select', {
+        return m('select.form-control', {
           name: 'group',
-          class: 'block',
           required: true,
           value: c.data.newGroup(),
           onchange: m.withAttr('value', c.data.newGroup)
         }, options);
       } else {
-        return m('div.block', conf.LANG.GROUP.INFO.PAD_MOVE_NOGROUP);
+        return m('div', conf.LANG.GROUP.INFO.PAD_MOVE_NOGROUP);
       }
     })();
     var icon = m('i', {
-      class: 'block tooltip icon-info-circled',
+      class: 'mp-tooltip glyphicon glyphicon-info-sign',
       'data-msg': conf.LANG.GROUP.INFO.PAD_MOVE
     });
     return { label: label, icon: icon, select: select };
@@ -3872,15 +4055,19 @@ module.exports = (function () {
 
   view.form = function (c) {
     var vg = view.groups(c);
-    var elements = [ vg.label, vg.select, vg.icon ];
+    var elements = [ m('.form-group', [
+        vg.label, vg.icon,
+        m('.col-sm-7', vg.select)
+      ])
+    ];
     if (c.selectedGroups.length > 0) {
-      elements.push(m('input.block.send', {
+      elements.push(m('input.btn.btn-success.pull-right', {
         form: 'padmove-form',
         type: 'submit',
         value: conf.LANG.ACTIONS.SAVE
       }));
     }
-    return m('form.block', {
+    return m('form.form-horizontal', {
       id: 'padmove-form',
       onsubmit: c.movePads
     }, elements);
@@ -3894,8 +4081,8 @@ module.exports = (function () {
 
   view.main = function (c) {
     var route = '/mypads/group/' + c.group._id;
-    return m('section', { class: 'block-group padmove user group-form' }, [
-      m('h2.block', [
+    return m('section', { class: 'padmove user group-form' }, [
+      m('h2', [
         m('span', conf.LANG.GROUP.PAD.MOVE_TITLE),
         m('a', {
           href: route + '/view',
@@ -3910,7 +4097,7 @@ module.exports = (function () {
   view.aside = function () {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(conf.LANG.GROUP.PAD.MOVE_HELP))
+      m('article.well', m.trust(conf.LANG.GROUP.PAD.MOVE_HELP))
     ]);
   };
 
@@ -4202,8 +4389,8 @@ module.exports = (function () {
     var a = (auth.isAuthenticated() ? '&auth_token=' + auth.token() : '');
     var link = '/p/' + c.pad._id + '?' + p + a;
     return [
-      m('p.external', [
-        m('a', {
+      m('p.text-right', [
+        m('a.btn.btn-default.new-window', {
           href: link,
           target: '_blank',
           title: conf.LANG.GROUP.PAD.OPEN_TAB,
@@ -4212,8 +4399,7 @@ module.exports = (function () {
             return true;
           }
         }, [
-          m('i.icon-popup'),
-          m('span', conf.LANG.GROUP.PAD.OPEN_TAB)
+          m('i.glyphicon.glyphicon-new-window')
         ])
         ]),
       (function () {
@@ -4236,70 +4422,80 @@ module.exports = (function () {
     if (showPass) { return view.passForm(c); }
     var route = '/mypads/group/' + c.gid;
     var GROUP = conf.LANG.GROUP;
-    return m('section', { class: 'block-group group' }, [
-      m('h2.block', [
-        m('span', conf.LANG.GROUP.PAD.PAD + ' ' + c.pad.name),
-        (function () {
-          if (c.group && c.group.name) {
-            return m('span.subtitle', [
-              '(',
-              conf.LANG.GROUP.PAD.FROM_GROUP,
-              m('a', {
-                href: route + '/view',
-                config: m.route,
-                title: conf.LANG.GROUP.VIEW
-              }, c.group.name ),
-              ')'
-            ]);
-          }
-        })()
-      ]),
-      m('p.actions', [
-        (function () {
-          if (!c.isGuest) {
-            var isBookmarked = ld.includes(c.bookmarks, c.pad._id);
-            return m('button', {
-              title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK),
-              onclick: function () { padMark(c.pad._id); }
-            }, [
-              m('i',
-                { class: 'icon-star' + (isBookmarked ? '' : '-empty') }),
-              m('span', (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK))
-            ]);
-          }
-        })(),
+    return m('section', { class: 'group' }, [
+      m('.btn-group.pull-right', [
         (function () {
           var isGroupSharable = (c.group && c.group.visibility &&
             c.group.visibility !== 'restricted');
           var isPadSharable = (c.pad.visibility &&
             c.pad.visibility !== 'restricted');
           if (isGroupSharable || isPadSharable) {
-              return m('button', {
+              return m('button.btn.btn-default', {
                 title: conf.LANG.GROUP.SHARE,
                 onclick: padShare.bind(c, c.group._id, c.pad._id)
-              }, [ m('i.icon-link'), m('span', conf.LANG.GROUP.SHARE) ]);
+              },
+              [ m('i.glyphicon glyphicon-link'),
+                m('span', ' '+conf.LANG.GROUP.SHARE)
+              ]);
           }
         })(),
         (function () {
           if (c.isAdmin) {
-            return m('a', {
+            return m('a.btn.btn-default', {
               href: route + '/pad/edit/' + c.pad._id,
               config: m.route,
               title: conf.LANG.MENU.CONFIG
-            }, [ m('i.icon-tools'), m('span', conf.LANG.MENU.CONFIG) ]);
+            },
+            [ m('i.glyphicon glyphicon-wrench'),
+              m('span', ' '+conf.LANG.MENU.CONFIG)
+            ]);
             }
         })(),
         (function () {
           if (c.isAdmin) {
-            return m('a', {
+            return m('a.btn.btn-danger', {
               href: route + '/pad/remove/' + c.pad._id,
               config: m.route,
               title: conf.LANG.GROUP.REMOVE
-            }, [ m('i.icon-trash'), m('span', conf.LANG.GROUP.REMOVE) ]);
+            },
+            [ m('i.glyphicon glyphicon-trash'),
+              m('span', ' '+conf.LANG.GROUP.REMOVE)
+            ]);
           }
         })()
       ]),
-      m('section.block.pad', view.pad(c))
+      m('h2', [
+        (function () {
+          if (!c.isGuest) {
+            var isBookmarked = ld.includes(c.bookmarks, c.pad._id);
+            return m('button.btn.btn-link.btn-lg', {
+              title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK),
+              onclick: function () { padMark(c.pad._id); }
+            }, [
+              m('i',
+                { class: 'glyphicon glyphicon-star' +
+                  (isBookmarked ? '' : '-empty'),
+                  title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK) })
+            ]);
+          }
+        })(),
+        m('span', conf.LANG.GROUP.PAD.PAD + ' ' + c.pad.name),
+        (function () {
+          if (c.group && c.group.name) {
+            return [ m('br'), m('span.h3', [
+              ' (',
+              conf.LANG.GROUP.PAD.FROM_GROUP+' ',
+              m('a', {
+                href: route + '/view',
+                config: m.route,
+                title: conf.LANG.GROUP.VIEW
+              }, c.group.name ),
+              ')'
+            ])];
+          }
+        })()
+      ]),
+      m('section.pad', view.pad(c))
     ]);
   };
 
@@ -4312,12 +4508,12 @@ module.exports = (function () {
   view.aside = function () {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(conf.LANG.GROUP.PAD.VIEW_HELP))
+      m('article.well', m.trust(conf.LANG.GROUP.PAD.VIEW_HELP))
     ]);
   };
 
   pad.view = function (c) {
-    return layout.view(view.main(c), view.aside()); 
+    return layout.view(view.main(c), view.aside());
   };
 
   return pad;
@@ -4383,7 +4579,7 @@ module.exports = (function () {
     };
     var fields = (c.token ? ['password', 'passwordConfirm'] : ['email']);
     form.initFields(c, fields);
-    
+
     var errFn = function (err) {
       notif.error({ body: ld.result(conf.LANG, err.error) });
     };
@@ -4422,12 +4618,17 @@ module.exports = (function () {
 
   view.form = function (c) {
     var email = user.view.field.email(c);
-    return m('form.block', {
+    return m('form.form-horizontal', {
       id: 'passrec-form',
       onsubmit: c.submit
       }, [
-        m('fieldset.block-group', [ email.label, email.input, email.icon ]),
-        m('input.block.send', {
+        m('fieldset', [
+          m('.form-group', [
+            email.label, email.icon,
+            m('.col-sm-7', email.input)
+          ])
+        ]),
+        m('input.btn.btn-success.pull-right', {
           form: 'passrec-form',
           type: 'submit',
           value: conf.LANG.USER.OK
@@ -4439,13 +4640,21 @@ module.exports = (function () {
   view.formChange = function (c) {
     var pass = user.view.field.password(c);
     var passC = user.view.field.passwordConfirm(c);
-    return m('form.block', {
+    return m('form.form-horizontal', {
       id: 'passchange-form',
       onsubmit: c.changePass
       }, [
-        m('fieldset.block-group', [ pass.label, pass.input, pass.icon,
-          passC.label, passC.input, passC.icon ]),
-        m('input.block.send', {
+        m('fieldset', [
+          m('.form-group', [
+            pass.label, pass.icon,
+            m('.col-sm-7', pass.input)
+          ]),
+          m('.form-group', [
+            passC.label, passC.icon,
+            m('.col-sm-7', passC.input)
+          ])
+        ]),
+        m('input.btn.btn-success.pull-right', {
           form: 'passchange-form',
           type: 'submit',
           value: conf.LANG.USER.OK
@@ -4455,8 +4664,8 @@ module.exports = (function () {
   };
 
   view.main = function (c) {
-    return m('section', { class: 'block-group user' }, [
-      m('h2.block', conf.LANG.USER.PASSRECOVER),
+    return m('section', { class: 'user' }, [
+      m('h2', conf.LANG.USER.PASSRECOVER),
       (c.token ? view.formChange(c) : view.form(c))
     ]);
   };
@@ -4703,6 +4912,25 @@ module.exports = (function () {
   subscribe.views = view;
 
   /**
+  * ### removeAccount
+  *
+  * `removeAccount` is the view intended to allow user to erase completely its
+  * account.
+  */
+
+  view.removeAccount = function (c) {
+    return [
+      m('button.btn.btn-danger', {
+        onclick: c.removeAccount
+      }, conf.LANG.USER.REMOVE_ACCOUNT),
+      m('i', {
+        class: 'glyphicon glyphicon-info-sign mp-tooltip mp-tooltip-left',
+        'data-msg': conf.LANG.USER.INFO.REMOVE_ACCOUNT
+      })
+    ];
+  };
+
+  /**
   * ### form view
   *
   * Classic view with all fields and changes according to the view.
@@ -4718,68 +4946,94 @@ module.exports = (function () {
       delete fields.passwordConfirm.input.attrs.required;
     }
     var requiredFields = [
-        fields.password.label, fields.password.input, fields.password.icon,
-        fields.passwordConfirm.label, fields.passwordConfirm.input,
-        fields.passwordConfirm.icon,
-        fields.email.label, fields.email.input, fields.email.icon,
-        fields.lang.label, fields.lang.select, fields.lang.icon
+      m('.form-group', [
+        fields.email.label, fields.email.icon,
+        m('.col-sm-7', fields.email.input)
+      ]),
+      m('.form-group', [
+        fields.password.label, fields.password.icon,
+          m('.col-sm-7', fields.password.input)
+      ]),
+      m('.form-group', [
+        fields.passwordConfirm.label, fields.passwordConfirm.icon,
+        m('.col-sm-7', fields.passwordConfirm.input)
+      ]),
+      m('.form-group', [
+        fields.lang.label, fields.lang.icon,
+        m('.col-sm-7', fields.lang.select)
+      ])
     ];
     if (c.profileView()) {
       var passC = user.view.field.passwordCurrent(c);
       passC.input.attrs.config = form.focusOnInit;
-      requiredFields.splice(0, 0, passC.label, passC.input, passC.icon);
-      requiredFields.push(fields.useLoginAndColorInPads.label,
-        fields.useLoginAndColorInPads.input,
-        fields.useLoginAndColorInPads.icon);
+      requiredFields.splice(1, 0,
+        m('.form-group', [
+          passC.label, passC.icon,
+          m('.col-sm-7', passC.input)
+        ]
+      ));
+      requiredFields.push(
+        m('.form-group', [
+          m('.col-sm-7.col-sm-offset-4', [
+            m('.checkbox', [
+              fields.useLoginAndColorInPads.label,
+              fields.useLoginAndColorInPads.icon
+            ])
+          ])
+        ])
+      );
     } else if (!c.adminView()) {
       var log = fields.login;
       log.input.attrs.config = form.focusOnInit;
-      requiredFields.splice(0, 0, log.label, log.input, log.icon);
+      requiredFields.splice(0, 0,
+        m('.form-group', [
+          log.label, log.icon,
+          m('.col-sm-7', [log.input])
+        ])
+      );
     }
     var USER = conf.LANG.USER;
     var profOrAdm = (c.profileView() || c.adminView());
-    return m('form.block', {
+    return m('form.form-horizontal', {
       id: 'subscribe-form',
       onsubmit: profOrAdm ? c.submit.profileSave : c.submit.subscribe
       }, [
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', conf.LANG.USER.MANDATORY_FIELDS),
         m('div', requiredFields)
       ]),
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend.opt', conf.LANG.USER.OPTIONAL_FIELDS),
-        fields.firstname.label, fields.firstname.input, fields.firstname.icon,
-        fields.lastname.label, fields.lastname.input, fields.lastname.icon,
-        fields.organization.label, fields.organization.input,
-        fields.organization.icon,
-        fields.color.label, fields.color.input, fields.color.icon
+          m('.form-group', [
+            fields.firstname.label, fields.firstname.icon,
+            m('.col-sm-7', fields.firstname.input)
+          ]),
+          m('.form-group', [
+            fields.lastname.label, fields.lastname.icon,
+            m('.col-sm-7', fields.lastname.input)
+          ]),
+          m('.form-group', [
+            fields.organization.label, fields.organization.icon,
+            m('.col-sm-7', fields.organization.input)
+          ]),
+          m('.form-group', [
+            fields.color.label, fields.color.icon,
+            m('.col-sm-7', fields.color.input)
+          ])
       ]),
-      m('input.block.send', {
-        form: 'subscribe-form',
-        type: 'submit',
-        value: profOrAdm ? conf.LANG.ACTIONS.SAVE : USER.REGISTER
-      })
+      m('.form-group', [
+        m('.col-sm-12', [
+          m('input.btn.btn-success pull-right', {
+            form: 'subscribe-form',
+            type: 'submit',
+            value: profOrAdm ? conf.LANG.ACTIONS.SAVE : USER.REGISTER
+          }),
+          c.profileView() ? view.removeAccount(c) : ''
+        ])
+      ])
     ]);
   };
 
-  /**
-  * ### removeAccount
-  *
-  * `removeAccount` is the view intended to allow user to erase completely its
-  * account.
-  */
-
-  view.removeAccount = function (c) {
-    return m('section.remove-account.block-group', [
-      m('button.block', {
-        onclick: c.removeAccount
-      }, conf.LANG.USER.REMOVE_ACCOUNT),
-      m('i', {
-        class: 'icon-info-circled tooltip block',
-        'data-msg': conf.LANG.USER.INFO.REMOVE_ACCOUNT
-      })
-    ]);
-  };
 
   /**
   * ### main and global view
@@ -4790,13 +5044,12 @@ module.exports = (function () {
   view.main = function (c) {
     var elements = [view.form(c)];
     if (c.profileView()) {
-      elements.splice(0, 0, m('h2.block',
+      elements.splice(0, 0, m('h2',
         conf.LANG.USER.PROFILE + ' : ' + auth.userInfo().login));
-      elements.push(view.removeAccount(c));
     } else {
-      elements.splice(0, 0, m('h2.block', conf.LANG.USER.SUBSCRIBE));
+      elements.splice(0, 0, m('h2', conf.LANG.USER.SUBSCRIBE));
     }
-    return m('section', { class: 'block-group user' }, elements);
+    return m('section', { class: 'user' }, elements);
   };
 
   subscribe.view = function (c) {
@@ -4975,79 +5228,94 @@ module.exports = (function () {
   var view = {};
 
   view.userlistField = function (c) {
-    return m('div.block-group', [
-      m('label.block', { for: 'userlists' }, conf.LANG.MENU.USERLIST),
-      ('i', {
-        class: 'block tooltip icon-info-circled',
-        'data-msg': conf.LANG.USERLIST.INFO.USER_INVITE
-      }),
-      m('select', {
-        class: 'block',
-        name: 'userlists',
-        onchange: m.withAttr('value', c.userlistAdd)
-      }, (ld.map(ld.pairs(auth.userInfo().userlists), function (ul) {
-        return m('option', { value: ul[0] }, ul[1].name);
-      })).concat(m('option', {
-        selected: true,
-        disabled: true,
-        hidden: true,
-        value: ''
-      })))
+    return m('div', [
+      m('.form-group', [
+        m('label.col-sm-4', { for: 'userlists' }, conf.LANG.MENU.USERLIST),
+        m('i', {
+          class: 'mp-tooltip glyphicon glyphicon-info-sign',
+          'data-msg': conf.LANG.USERLIST.INFO.USER_INVITE
+        }),
+        m('.col-sm-7',
+          m('select.form-control', {
+            name: 'userlists',
+            onchange: m.withAttr('value', c.userlistAdd)
+          }, (ld.map(ld.pairs(auth.userInfo().userlists), function (ul) {
+            return m('option', { value: ul[0] }, ul[1].name);
+          })).concat(m('option', {
+            selected: true,
+            disabled: true,
+            hidden: true,
+            value: ''
+          })))
+        )
+      ])
     ]);
   };
 
   view.userField = function (c) {
     var tagInput = tag.views.input(c);
     tagInput.attrs.config = form.focusOnInit;
-    return m('div.block-group.tag', [
-      m('label.block', { for: c.name }, c.label),
-      tagInput,
-      m('i', {
-        class: 'block tooltip icon-info-circled tag',
-        'data-msg': conf.LANG.GROUP.INVITE_USER.INPUT_HELP }),
-      m('button.block.ok', {
-        type: 'button',
-        onclick: function () {
-          c.add(document.getElementById(c.name + '-input'));
-        },
-      }, conf.LANG.USER.OK),
-      tag.views.datalist(c),
-      m('label.block', conf.LANG.GLOBAL.OR),
-      m('textarea.block', {
-        name: 'usersArea',
-        placeholder: conf.LANG.USERLIST.FIELD.USERSAREA_PLACEHOLDER,
-      }),
-      m('i', {
-        class: 'block tooltip icon-info-circled tag',
-        'data-msg': conf.LANG.USERLIST.FIELD.USERSAREA_HELP }),
-      m('button.block.ok', {
-        type: 'button',
-        onclick: function () {
-          c.addMultiple(document.querySelector('textarea[name=usersArea]'));
-        },
-      }, conf.LANG.USER.OK),
+    return m('div.tag', [
+      m('.form-group', [
+        m('label.col-sm-4', { for: c.name }, c.label),
+        m('i', {
+          class: 'mp-tooltip glyphicon glyphicon-info-sign tag',
+          'data-msg': conf.LANG.GROUP.INVITE_USER.INPUT_HELP }),
+        m('.col-sm-7', [
+          m('.input-group', [
+            tagInput,
+            m('span.input-group-btn',
+              m('button.btn.btn-default', {
+              type: 'button',
+              onclick: function () {
+                c.add(document.getElementById(c.name + '-input'));
+              },
+            }, conf.LANG.USER.OK)
+            )
+          ]),
+          tag.views.datalist(c)
+        ])
+      ]),
+      m('.form-group', [
+        m('label.col-sm-4', conf.LANG.GLOBAL.OR),
+        m('i', {
+          class: 'mp-tooltip glyphicon glyphicon-info-sign tag',
+          'data-msg': conf.LANG.USERLIST.FIELD.USERSAREA_HELP }),
+        m('.col-sm-7', [
+          m('textarea.form-control', {
+            name: 'usersArea',
+            placeholder: conf.LANG.USERLIST.FIELD.USERSAREA_PLACEHOLDER,
+          }),
+          m('button.btn.btn-default.pull-right', {
+            type: 'button',
+            onclick: function () {
+              c.addMultiple(document.querySelector('textarea[name=usersArea]'));
+            },
+          }, conf.LANG.USER.OK)
+        ])
+      ])
     ]);
   };
 
   view.form = function (c) {
     var GROUP = conf.LANG.GROUP;
-    return m('form.block', {
+    return m('form.form-horizontal', {
       id: 'group-form',
       onsubmit: c.submit
     }, [
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', (GROUP.INVITE_USERLIST)),
         m('div', view.userlistField(c))
       ]),
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', (c.isInvite ? GROUP.INVITE_USER.IU : GROUP.ADMIN_SHARE.AS)),
         m('div', view.userField(c.tag))
       ]),
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', conf.LANG.GROUP.INVITE_USER.USERS_SELECTED),
         m('div', tag.views.tagslist(c.tag))
       ]),
-      m('input.block.send', {
+      m('input.btn.btn-success.pull-right', {
         form: 'group-form',
         type: 'submit',
         value: conf.LANG.ACTIONS.SAVE
@@ -5056,8 +5324,8 @@ module.exports = (function () {
   };
 
   view.main = function (c) {
-    return m('section', { class: 'block-group user group-form' }, [
-      m('h2.block', conf.LANG.GROUP.GROUP + ' ' + c.group.name),
+    return m('section', { class: 'user group-form' }, [
+      m('h2', conf.LANG.GROUP.GROUP + ' ' + c.group.name),
       view.form(c)
     ]);
   };
@@ -5066,7 +5334,7 @@ module.exports = (function () {
     var GROUP = conf.LANG.GROUP;
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', [
+      m('article.well', [
         m('h3', (c.isInvite ? GROUP.INVITE_USER.IU : GROUP.ADMIN_SHARE.AS)),
         m('section', m.trust(conf.LANG.GROUP.INVITE_USER.HELP))
       ])
@@ -5074,7 +5342,7 @@ module.exports = (function () {
   };
 
   invite.view = function (c) {
-    return layout.view(view.main(c), view.aside(c)); 
+    return layout.view(view.main(c), view.aside(c));
   };
 
   return invite;
@@ -5141,8 +5409,8 @@ module.exports = (function () {
 
   user.view.icon.optional = function () {
     return m('i', {
-      class: 'block tooltip icon-info-circled',
-      'data-msg': conf.LANG.USER.INFO.OPTIONAL 
+      class: 'mp-tooltip glyphicon glyphicon-info-sign',
+      'data-msg': conf.LANG.USER.INFO.OPTIONAL
     });
   };
   user.view.icon.firstname = user.view.icon.optional;
@@ -5173,9 +5441,11 @@ module.exports = (function () {
       passwordConfirm: conf.LANG.USER.INFO.PASSWORD_CHECK,
       passwordCurrent: conf.LANG.USER.INFO.PASSWORD_CURRENT
     };
-    var icls = c.valid[name]() ? ['icon-info-circled'] : ['icon-alert'];
-    icls.push('tooltip');
-    icls.push('block');
+    var icls = ['glyphicon glyphicon-exclamation-sign'];
+    if (c.valid[name]()) {
+      icls = ['glyphicon glyphicon-info-sign'];
+    }
+    icls.push('mp-tooltip');
     return m('i', {
       class: icls.join(' '),
       'data-msg': infos[name]
@@ -5244,9 +5514,8 @@ module.exports = (function () {
     var passMin = conf.SERVER.passwordMin;
     var passMax = conf.SERVER.passwordMax;
     return {
-      label: m('label.block', { for: name }, label),
-      input: m('input', {
-        class: 'block',
+      label: m('label.col-sm-4', { for: name }, label),
+      input: m('input.form-control', {
         type: 'password',
         name: name,
         placeholder: conf.LANG.USER.UNDEF,
@@ -5323,22 +5592,21 @@ module.exports = (function () {
   */
 
   user.view.field.lang = function (c) {
-    var label = m('label.block', { for: 'lang' }, conf.LANG.USER.LANG);
+    var label = m('label.col-sm-4', { for: 'lang' }, conf.LANG.USER.LANG);
     var icon = m('i', {
-      class: 'block tooltip icon-info-circled',
+      class: 'mp-tooltip glyphicon glyphicon-info-sign',
       'data-msg': conf.LANG.USER.INFO.LANG
     });
-    var select = m('select', {
-      name: 'lang',
-      class: 'block',
-      required: true,
-      value: c.data.lang(),
-      onchange: m.withAttr('value', c.data.lang)
-      }, ld.reduce(conf.SERVER.languages, function (memo, v, k) {
-        memo.push(m('option', { value: k }, v));
-        return memo;
-      }, [])
-    );
+    var select = m('select.form-control', {
+        name: 'lang',
+        required: true,
+        value: c.data.lang(),
+        onchange: m.withAttr('value', c.data.lang)
+        }, ld.reduce(conf.SERVER.languages, function (memo, v, k) {
+          memo.push(m('option', { value: k }, v));
+          return memo;
+        }, [])
+      );
     return { label: label, icon: icon, select: select };
   };
 
@@ -5348,19 +5616,18 @@ module.exports = (function () {
 
   user.view.field.useLoginAndColorInPads = function (c) {
     return {
-      label: m('label.block', { for: 'useLoginAndColorInPads' },
-        conf.LANG.USER.USELOGINANDCOLORINPADS),
+      label: m('label', [
+        m('input', {
+          type: 'checkbox',
+          checked: c.data.useLoginAndColorInPads(),
+          onchange: m.withAttr('checked', c.data.useLoginAndColorInPads)
+        }),
+        conf.LANG.USER.USELOGINANDCOLORINPADS
+      ]),
       icon: m('i',{
-        class: 'block tooltip icon-info-circled',
+        class: 'mp-tooltip glyphicon glyphicon-info-sign',
         'data-msg': conf.LANG.USER.INFO.USELOGINANDCOLORINPADS
       }),
-      input: m('input', {
-        type: 'checkbox',
-        name: 'useLoginAndColorInPads',
-        class: 'block',
-        checked: c.data.useLoginAndColorInPads(),
-        onchange: m.withAttr('checked', c.data.useLoginAndColorInPads)
-      })
     };
   };
 
@@ -5435,13 +5702,13 @@ module.exports = (function () {
     common: function () {
       return m('section.user-aside', [
         m('h2', conf.SERVER.title),
-        m('article', m.trust(conf.LANG.GLOBAL.DESCRIPTION))
+        m('article.well', m.trust(conf.LANG.GLOBAL.DESCRIPTION))
       ]);
     },
     profile: function () {
       return m('section.user-aside', [
         m('h2', conf.LANG.ACTIONS.HELP),
-        m('article', m.trust(conf.LANG.USER.HELP.PROFILE)) ]);
+        m('article.well', m.trust(conf.LANG.USER.HELP.PROFILE)) ]);
     }
   };
 
@@ -5626,33 +5893,45 @@ module.exports = (function () {
   };
 
   view.field.users = function (c) {
-    return m('div.block-group.tag', [
-      m('label.block', { for: c.name }, c.label),
-      tag.views.input(c),
-      m('i', {
-        class: 'block tooltip icon-info-circled tag',
-        'data-msg': conf.LANG.USERLIST.FIELD.USERS_HELP }),
-      m('button.block.ok', {
-        type: 'button',
-        onclick: function () {
-          c.add(document.getElementById(c.name + '-input'));
-        },
-      }, conf.LANG.USER.OK),
-      tag.views.datalist(c),
-      m('label.block', conf.LANG.GLOBAL.OR),
-      m('textarea.block', {
-        name: 'usersArea',
-        placeholder: conf.LANG.USERLIST.FIELD.USERSAREA_PLACEHOLDER,
-      }),
-      m('i', {
-        class: 'block tooltip icon-info-circled tag',
-        'data-msg': conf.LANG.USERLIST.FIELD.USERSAREA_HELP }),
-      m('button.block.ok', {
-        type: 'button',
-        onclick: function () {
-          c.addMultiple(document.querySelector('textarea[name=usersArea]'));
-        },
-      }, conf.LANG.USER.OK),
+    return m('div.tag', [
+      m('.form-group', [
+        m('label.col-sm-4', { for: c.name }, c.label),
+        m('i', {
+          class: 'mp-tooltip glyphicon glyphicon-info-sign tag',
+          'data-msg': conf.LANG.USERLIST.FIELD.USERS_HELP }),
+        m('.col-sm-7', [
+          m('.input-group', [
+            tag.views.input(c),
+            m('span.input-group-btn',
+              m('button.btn.btn-default', {
+                type: 'button',
+                onclick: function () {
+                  c.add(document.getElementById(c.name + '-input'));
+                },
+              }, conf.LANG.USER.OK)
+            )
+          ]),
+          tag.views.datalist(c)
+        ])
+      ]),
+      m('.form-group', [
+        m('label.col-sm-4', conf.LANG.GLOBAL.OR),
+        m('i', {
+          class: 'mp-tooltip glyphicon glyphicon-info-sign tag',
+          'data-msg': conf.LANG.USERLIST.FIELD.USERSAREA_HELP }),
+        m('.col-sm-7', [
+          m('textarea.form-control', {
+            name: 'usersArea',
+            placeholder: conf.LANG.USERLIST.FIELD.USERSAREA_PLACEHOLDER,
+          }),
+          m('button.btn.btn-default.pull-right', {
+            type: 'button',
+            onclick: function () {
+              c.addMultiple(document.querySelector('textarea[name=usersArea]'));
+            },
+          }, conf.LANG.USER.OK)
+        ])
+      ]),
     ]);
   };
 
@@ -5662,24 +5941,29 @@ module.exports = (function () {
 
   view.form = function (c) {
     var name = view.field.name(c);
-    var fields = [name.label, name.input, name.icon];
-    return m('form.block', {
+    var fields = [
+      m('.form-group', [
+        name.label, name.icon,
+        m('.col-sm-7', name.input)
+      ])
+    ];
+    return m('form.form-horizontal', {
       id: 'ulist-form',
       onsubmit: c.submit
     }, [
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', conf.LANG.USERLIST.USERLIST),
         m('div', fields)
       ]),
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', conf.LANG.USERLIST.FIELD.USERS),
         m('div', view.field.users(c.tag))
       ]),
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', conf.LANG.GROUP.INVITE_USER.USERS_SELECTED),
         m('div', tag.views.tagslist(c.tag))
       ]),
-      m('input.block.send', {
+      m('input.btn.btn-success.pull-right', {
         form: 'ulist-form',
         type: 'submit',
         value: conf.LANG.ACTIONS.SAVE
@@ -5692,8 +5976,8 @@ module.exports = (function () {
   */
 
   view.main = function (c) {
-    return m('section', { class: 'block-group user group-form' }, [
-      m('h2.block',
+    return m('section', [
+      m('h2',
         c.addView() ? conf.LANG.USERLIST.ADD : conf.LANG.USERLIST.EDIT),
       view.form(c)
     ]);
@@ -5702,12 +5986,12 @@ module.exports = (function () {
   view.aside = function () {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(conf.LANG.USERLIST.FORM_HELP))
+      m('article.well', m.trust(conf.LANG.USERLIST.FORM_HELP))
     ]);
   };
 
   ulistform.view = function (c) {
-    return layout.view(view.main(c), view.aside(c)); 
+    return layout.view(view.main(c), view.aside(c));
   };
 
   return ulistform;
@@ -5859,27 +6143,28 @@ module.exports = (function () {
   view.userlist = function (c, ul, key) {
     var ulistRoute = '/myuserlists/' + key;
     var actions = [
-      m('a', {
+      m('a.btn.btn-default.btn-xs', {
         href: ulistRoute + '/edit',
         config: m.route,
         title: conf.LANG.GROUP.EDIT
-      }, [ m('i.icon-pencil') ]),
-      m('a', {
+      }, [ m('i.glyphicon.glyphicon-pencil') ]),
+      m('a.btn.btn-default.btn-xs', {
         href: ulistRoute + '/remove',
         config: m.route,
         title: conf.LANG.GROUP.REMOVE
-      }, [ m('i.icon-trash') ])
+      }, [ m('i.glyphicon.glyphicon-trash.text-danger') ])
     ];
-    return m('li.block', [
-      m('header.group.block-group', [
-        m('h4.block', ul.name),
-        m('section.block', actions)
-      ]),
-      m('dl.block-group.group', [
-        m('dt.block', conf.LANG.USERLIST.FIELD.USERS),
-        m('dd.block', ld.size(ul.uids))
-      ])
-    ]);
+    return m('tr', [
+        m('th',
+          m('a', {
+            href: ulistRoute + '/edit',
+            config: m.route,
+            title: conf.LANG.GROUP.EDIT
+          }, ul.name)
+        ),
+        m('td', ld.size(ul.uids)),
+        m('td.text-right', actions)
+      ]);
   };
 
   view.main = function (c) {
@@ -5887,27 +6172,35 @@ module.exports = (function () {
       memo.push(view.userlist(c, ul, key));
       return memo;
     }, []);
-    return m('section', { class: 'block-group group' }, [
-      m('h2.block', [
+    return m('section', [
+      m('h2', [
         m('span', conf.LANG.MENU.USERLIST),
-        m('a', {
+        m('a.btn.btn-warning.pull-right', {
           href: '/myuserlists/add',
           config: m.route
         }, [
-          m('i.icon-plus-squared'),
           m('span', conf.LANG.USERLIST.ADD)
         ]),
       ]),
-      m('section.block-group.group', [
-        m('ul.group', ulists)
-      ])
+      m('section.panel.panel-default',
+        m('table.table.table-stripped', [
+          m('thead',
+            m('tr', [
+              m('th', {scope: 'col'}),  // Name
+              m('th', {scope: 'col'}, conf.LANG.USERLIST.FIELD.USERS),
+              m('th', {scope: 'col'})   // Actions
+            ])
+          ),
+          m('tbody', ulists)
+        ])
+      )
     ]);
   };
 
   view.aside = function () {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(conf.LANG.USERLIST.HELP))
+      m('article.well', m.trust(conf.LANG.USERLIST.HELP))
     ]);
   };
 
@@ -6115,19 +6408,19 @@ module.exports = (function () {
       var n = notif.model.items[id];
       ctrl.delayClose(id, n.timeout);
       var closeFn = ctrl.close.bind(ctrl, id, n.timeout);
-      return m('div.block-group', {
+      return m('div', {
         class: n.cls ? n.cls : '',
         onclick: (n.click ? n.click : closeFn)
       }, [
-        m('header', { class: 'block' }, [
-          (n.icon ? m('i', { class: 'icon-' + n.icon }) : ''),
-          m('span', n.title)
+        m('header', [
+          (n.icon ? m('i', { class: 'glyphicon glyphicon-' + n.icon }) : ''),
+          m('span', ' '+n.title)
         ]),
         m('i', {
-          class: 'block close icon-cancel-circled',
+          class: 'close glyphicon glyphicon-remove-circle',
           onclick: closeFn
         }),
-        m('p', { class: 'block' }, m.trust(n.body))
+        m('p', m.trust(n.body))
       ]);
     }));
   };
@@ -6149,30 +6442,30 @@ module.exports = (function () {
 
   notif.success = function (options, callback) {
     options.title = options.title || conf.LANG.NOTIFICATION.SUCCESS;
-    options.cls = 'success';
-    options.icon = 'check';
+    options.cls = 'alert alert-success';
+    options.icon = 'ok';
     notif.send(options, callback);
   };
 
   notif.info = function (options, callback) {
     options.title = options.title || conf.LANG.NOTIFICATION.INFO;
-    options.cls = 'info';
-    options.icon = 'info-circled';
+    options.cls = 'alert alert-info';
+    options.icon = 'info-sign';
     notif.send(options, callback);
   };
 
   notif.warning = function (options, callback) {
     options.title = conf.LANG.NOTIFICATION.WARNING;
-    options.cls = 'warning';
-    options.icon = 'attention';
+    options.cls = 'alert alert-warning';
+    options.icon = 'warning-sign';
     options.timeout = 15;
     notif.send(options, callback);
   };
 
   notif.error = function (options, callback) {
     options.title = conf.LANG.NOTIFICATION.ERROR;
-    options.cls = 'error';
-    options.icon = 'alert';
+    options.cls = 'alert alert-danger';
+    options.icon = 'exclamation-sign';
     options.timeout = false;
     notif.send(options, callback);
   };
@@ -6280,13 +6573,13 @@ module.exports = (function () {
 
   tag.views.icon = function () {
     return m('i', {
-      class: 'block tooltip icon-info-circled tag',
+      class: 'mp-tooltip glyphicon glyphicon-info-sign tag',
       'data-msg': conf.LANG.TAG.HELP
     });
   };
 
   tag.views.input = function (c) {
-    return m('input.block', {
+    return m('input.form-control', {
       id: c.name + '-input',
       name: c.name,
       type: 'text',
@@ -6309,12 +6602,12 @@ module.exports = (function () {
   };
 
   tag.views.tagslist = function (c) {
-    return m('ul.block', ld.map(c.current, function (tag) {
+    return m('ul.list-inline help-block', ld.map(c.current, function (tag) {
       return m('li', [
-        m('span', tag),
+        m('span.label.label-default', tag),
         m('i', {
           role: 'button',
-          class: 'icon-cancel',
+          class: 'small glyphicon glyphicon-remove text-danger',
           onclick: function (e) {
             var value = e.target.parentElement.textContent;
             ld.pull(c.current, value);
@@ -6326,18 +6619,24 @@ module.exports = (function () {
   };
 
   tag.view = function (c) {
-    return m('div.block-group.tag', [
-      m('label.block', { for: c.name }, c.label),
-      tag.views.input(c),
+    return m('div.form-group', [
+      m('label.col-sm-4', { for: c.name }, c.label),
       tag.views.icon(),
-      m('button.block.ok', {
-        type: 'button',
-        onclick: function () {
-          c.add(document.getElementById(c.name + '-input'));
-        },
-      }, conf.LANG.USER.OK),
-      tag.views.datalist(c),
-      tag.views.tagslist(c)
+      m('.col-sm-7', [
+        m('.input-group.input-group-sm', [
+          tag.views.input(c),
+          m('span.input-group-btn',
+            m('button.btn.btn-default', {
+              type: 'button',
+              onclick: function () {
+                c.add(document.getElementById(c.name + '-input'));
+              },
+            }, conf.LANG.USER.OK)
+          )
+        ]),
+        tag.views.datalist(c),
+        tag.views.tagslist(c)
+      ])
     ]);
   };
 
@@ -6345,12 +6644,14 @@ module.exports = (function () {
 }).call(this);
 
 },{"../configuration.js":3,"lodash":42,"mithril":43}],37:[function(require,module,exports){
+(function (global){
 /*!
  * The buffer module from node.js, for the browser.
  *
  * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
  * @license  MIT
  */
+/* eslint-disable no-proto */
 
 var base64 = require('base64-js')
 var ieee754 = require('ieee754')
@@ -6361,7 +6662,6 @@ exports.SlowBuffer = SlowBuffer
 exports.INSPECT_MAX_BYTES = 50
 Buffer.poolSize = 8192 // not used by this implementation
 
-var kMaxLength = 0x3fffffff
 var rootParent = {}
 
 /**
@@ -6372,32 +6672,47 @@ var rootParent = {}
  * Browsers that support typed arrays are IE 10+, Firefox 4+, Chrome 7+, Safari 5.1+,
  * Opera 11.6+, iOS 4.2+.
  *
+ * Due to various browser bugs, sometimes the Object implementation will be used even
+ * when the browser supports typed arrays.
+ *
  * Note:
  *
- * - Implementation must support adding new properties to `Uint8Array` instances.
- *   Firefox 4-29 lacked support, fixed in Firefox 30+.
- *   See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438.
+ *   - Firefox 4-29 lacks support for adding new properties to `Uint8Array` instances,
+ *     See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438.
  *
- *  - Chrome 9-10 is missing the `TypedArray.prototype.subarray` function.
+ *   - Safari 5-7 lacks support for changing the `Object.prototype.constructor` property
+ *     on objects.
  *
- *  - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of
- *    incorrect length in some situations.
+ *   - Chrome 9-10 is missing the `TypedArray.prototype.subarray` function.
  *
- * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they will
- * get the Object implementation, which is slower but will work correctly.
+ *   - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of
+ *     incorrect length in some situations.
+
+ * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
+ * get the Object implementation, which is slower but behaves correctly.
  */
-Buffer.TYPED_ARRAY_SUPPORT = (function () {
-  try {
-    var buf = new ArrayBuffer(0)
-    var arr = new Uint8Array(buf)
-    arr.foo = function () { return 42 }
-    return arr.foo() === 42 && // typed array instances can be augmented
-        typeof arr.subarray === 'function' && // chrome 9-10 lack `subarray`
-        new Uint8Array(1).subarray(1, 1).byteLength === 0 // ie10 has broken `subarray`
-  } catch (e) {
-    return false
-  }
-})()
+Buffer.TYPED_ARRAY_SUPPORT = global.TYPED_ARRAY_SUPPORT !== undefined
+  ? global.TYPED_ARRAY_SUPPORT
+  : (function () {
+      function Bar () {}
+      try {
+        var arr = new Uint8Array(1)
+        arr.foo = function () { return 42 }
+        arr.constructor = Bar
+        return arr.foo() === 42 && // typed array instances can be augmented
+            arr.constructor === Bar && // constructor can be set
+            typeof arr.subarray === 'function' && // chrome 9-10 lack `subarray`
+            arr.subarray(1, 1).byteLength === 0 // ie10 has broken `subarray`
+      } catch (e) {
+        return false
+      }
+    })()
+
+function kMaxLength () {
+  return Buffer.TYPED_ARRAY_SUPPORT
+    ? 0x7fffffff
+    : 0x3fffffff
+}
 
 /**
  * Class: Buffer
@@ -6411,106 +6726,215 @@ Buffer.TYPED_ARRAY_SUPPORT = (function () {
  * By augmenting the instances, we can avoid modifying the `Uint8Array`
  * prototype.
  */
-function Buffer (subject, encoding, noZero) {
-  if (!(this instanceof Buffer))
-    return new Buffer(subject, encoding, noZero)
+function Buffer (arg) {
+  if (!(this instanceof Buffer)) {
+    // Avoid going through an ArgumentsAdaptorTrampoline in the common case.
+    if (arguments.length > 1) return new Buffer(arg, arguments[1])
+    return new Buffer(arg)
+  }
 
-  var type = typeof subject
+  this.length = 0
+  this.parent = undefined
 
-  // Find the length
-  var length
-  if (type === 'number') {
-    length = +subject
-  } else if (type === 'string') {
-    length = Buffer.byteLength(subject, encoding)
-  } else if (type === 'object' && subject !== null) { // assume object is array-like
-    if (subject.type === 'Buffer' && isArray(subject.data))
-      subject = subject.data
-    length = +subject.length
-  } else {
+  // Common case.
+  if (typeof arg === 'number') {
+    return fromNumber(this, arg)
+  }
+
+  // Slightly less common case.
+  if (typeof arg === 'string') {
+    return fromString(this, arg, arguments.length > 1 ? arguments[1] : 'utf8')
+  }
+
+  // Unusual.
+  return fromObject(this, arg)
+}
+
+function fromNumber (that, length) {
+  that = allocate(that, length < 0 ? 0 : checked(length) | 0)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) {
+    for (var i = 0; i < length; i++) {
+      that[i] = 0
+    }
+  }
+  return that
+}
+
+function fromString (that, string, encoding) {
+  if (typeof encoding !== 'string' || encoding === '') encoding = 'utf8'
+
+  // Assumption: byteLength() return value is always < kMaxLength.
+  var length = byteLength(string, encoding) | 0
+  that = allocate(that, length)
+
+  that.write(string, encoding)
+  return that
+}
+
+function fromObject (that, object) {
+  if (Buffer.isBuffer(object)) return fromBuffer(that, object)
+
+  if (isArray(object)) return fromArray(that, object)
+
+  if (object == null) {
     throw new TypeError('must start with number, buffer, array or string')
   }
 
-  if (length > kMaxLength)
-    throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
-      'size: 0x' + kMaxLength.toString(16) + ' bytes')
-
-  if (length < 0)
-    length = 0
-  else
-    length >>>= 0 // Coerce to uint32.
-
-  var self = this
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    // Preferred: Return an augmented `Uint8Array` instance for best performance
-    /*eslint-disable consistent-this */
-    self = Buffer._augment(new Uint8Array(length))
-    /*eslint-enable consistent-this */
-  } else {
-    // Fallback: Return THIS instance of Buffer (created by `new`)
-    self.length = length
-    self._isBuffer = true
-  }
-
-  var i
-  if (Buffer.TYPED_ARRAY_SUPPORT && typeof subject.byteLength === 'number') {
-    // Speed optimization -- use set if we're copying from a typed array
-    self._set(subject)
-  } else if (isArrayish(subject)) {
-    // Treat array-ish objects as a byte array
-    if (Buffer.isBuffer(subject)) {
-      for (i = 0; i < length; i++)
-        self[i] = subject.readUInt8(i)
-    } else {
-      for (i = 0; i < length; i++)
-        self[i] = ((subject[i] % 256) + 256) % 256
+  if (typeof ArrayBuffer !== 'undefined') {
+    if (object.buffer instanceof ArrayBuffer) {
+      return fromTypedArray(that, object)
     }
-  } else if (type === 'string') {
-    self.write(subject, 0, encoding)
-  } else if (type === 'number' && !Buffer.TYPED_ARRAY_SUPPORT && !noZero) {
-    for (i = 0; i < length; i++) {
-      self[i] = 0
+    if (object instanceof ArrayBuffer) {
+      return fromArrayBuffer(that, object)
     }
   }
 
-  if (length > 0 && length <= Buffer.poolSize)
-    self.parent = rootParent
+  if (object.length) return fromArrayLike(that, object)
 
-  return self
+  return fromJsonObject(that, object)
 }
 
-function SlowBuffer (subject, encoding, noZero) {
-  if (!(this instanceof SlowBuffer))
-    return new SlowBuffer(subject, encoding, noZero)
+function fromBuffer (that, buffer) {
+  var length = checked(buffer.length) | 0
+  that = allocate(that, length)
+  buffer.copy(that, 0, 0, length)
+  return that
+}
 
-  var buf = new Buffer(subject, encoding, noZero)
+function fromArray (that, array) {
+  var length = checked(array.length) | 0
+  that = allocate(that, length)
+  for (var i = 0; i < length; i += 1) {
+    that[i] = array[i] & 255
+  }
+  return that
+}
+
+// Duplicate of fromArray() to keep fromArray() monomorphic.
+function fromTypedArray (that, array) {
+  var length = checked(array.length) | 0
+  that = allocate(that, length)
+  // Truncating the elements is probably not what people expect from typed
+  // arrays with BYTES_PER_ELEMENT > 1 but it's compatible with the behavior
+  // of the old Buffer constructor.
+  for (var i = 0; i < length; i += 1) {
+    that[i] = array[i] & 255
+  }
+  return that
+}
+
+function fromArrayBuffer (that, array) {
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    // Return an augmented `Uint8Array` instance, for best performance
+    array.byteLength
+    that = Buffer._augment(new Uint8Array(array))
+  } else {
+    // Fallback: Return an object instance of the Buffer class
+    that = fromTypedArray(that, new Uint8Array(array))
+  }
+  return that
+}
+
+function fromArrayLike (that, array) {
+  var length = checked(array.length) | 0
+  that = allocate(that, length)
+  for (var i = 0; i < length; i += 1) {
+    that[i] = array[i] & 255
+  }
+  return that
+}
+
+// Deserialize { type: 'Buffer', data: [1,2,3,...] } into a Buffer object.
+// Returns a zero-length buffer for inputs that don't conform to the spec.
+function fromJsonObject (that, object) {
+  var array
+  var length = 0
+
+  if (object.type === 'Buffer' && isArray(object.data)) {
+    array = object.data
+    length = checked(array.length) | 0
+  }
+  that = allocate(that, length)
+
+  for (var i = 0; i < length; i += 1) {
+    that[i] = array[i] & 255
+  }
+  return that
+}
+
+if (Buffer.TYPED_ARRAY_SUPPORT) {
+  Buffer.prototype.__proto__ = Uint8Array.prototype
+  Buffer.__proto__ = Uint8Array
+}
+
+function allocate (that, length) {
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    // Return an augmented `Uint8Array` instance, for best performance
+    that = Buffer._augment(new Uint8Array(length))
+    that.__proto__ = Buffer.prototype
+  } else {
+    // Fallback: Return an object instance of the Buffer class
+    that.length = length
+    that._isBuffer = true
+  }
+
+  var fromPool = length !== 0 && length <= Buffer.poolSize >>> 1
+  if (fromPool) that.parent = rootParent
+
+  return that
+}
+
+function checked (length) {
+  // Note: cannot use `length < kMaxLength` here because that fails when
+  // length is NaN (which is otherwise coerced to zero.)
+  if (length >= kMaxLength()) {
+    throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
+                         'size: 0x' + kMaxLength().toString(16) + ' bytes')
+  }
+  return length | 0
+}
+
+function SlowBuffer (subject, encoding) {
+  if (!(this instanceof SlowBuffer)) return new SlowBuffer(subject, encoding)
+
+  var buf = new Buffer(subject, encoding)
   delete buf.parent
   return buf
 }
 
-Buffer.isBuffer = function (b) {
+Buffer.isBuffer = function isBuffer (b) {
   return !!(b != null && b._isBuffer)
 }
 
-Buffer.compare = function (a, b) {
-  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b))
+Buffer.compare = function compare (a, b) {
+  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) {
     throw new TypeError('Arguments must be Buffers')
+  }
 
   if (a === b) return 0
 
   var x = a.length
   var y = b.length
-  for (var i = 0, len = Math.min(x, y); i < len && a[i] === b[i]; i++) {}
+
+  var i = 0
+  var len = Math.min(x, y)
+  while (i < len) {
+    if (a[i] !== b[i]) break
+
+    ++i
+  }
+
   if (i !== len) {
     x = a[i]
     y = b[i]
   }
+
   if (x < y) return -1
   if (y < x) return 1
   return 0
 }
 
-Buffer.isEncoding = function (encoding) {
+Buffer.isEncoding = function isEncoding (encoding) {
   switch (String(encoding).toLowerCase()) {
     case 'hex':
     case 'utf8':
@@ -6529,24 +6953,22 @@ Buffer.isEncoding = function (encoding) {
   }
 }
 
-Buffer.concat = function (list, totalLength) {
-  if (!isArray(list)) throw new TypeError('Usage: Buffer.concat(list[, length])')
+Buffer.concat = function concat (list, length) {
+  if (!isArray(list)) throw new TypeError('list argument must be an Array of Buffers.')
 
   if (list.length === 0) {
     return new Buffer(0)
-  } else if (list.length === 1) {
-    return list[0]
   }
 
   var i
-  if (totalLength === undefined) {
-    totalLength = 0
+  if (length === undefined) {
+    length = 0
     for (i = 0; i < list.length; i++) {
-      totalLength += list[i].length
+      length += list[i].length
     }
   }
 
-  var buf = new Buffer(totalLength)
+  var buf = new Buffer(length)
   var pos = 0
   for (i = 0; i < list.length; i++) {
     var item = list[i]
@@ -6556,47 +6978,52 @@ Buffer.concat = function (list, totalLength) {
   return buf
 }
 
-Buffer.byteLength = function (str, encoding) {
-  var ret
-  str = str + ''
-  switch (encoding || 'utf8') {
-    case 'ascii':
-    case 'binary':
-    case 'raw':
-      ret = str.length
-      break
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
-      ret = str.length * 2
-      break
-    case 'hex':
-      ret = str.length >>> 1
-      break
-    case 'utf8':
-    case 'utf-8':
-      ret = utf8ToBytes(str).length
-      break
-    case 'base64':
-      ret = base64ToBytes(str).length
-      break
-    default:
-      ret = str.length
+function byteLength (string, encoding) {
+  if (typeof string !== 'string') string = '' + string
+
+  var len = string.length
+  if (len === 0) return 0
+
+  // Use a for loop to avoid recursion
+  var loweredCase = false
+  for (;;) {
+    switch (encoding) {
+      case 'ascii':
+      case 'binary':
+      // Deprecated
+      case 'raw':
+      case 'raws':
+        return len
+      case 'utf8':
+      case 'utf-8':
+        return utf8ToBytes(string).length
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return len * 2
+      case 'hex':
+        return len >>> 1
+      case 'base64':
+        return base64ToBytes(string).length
+      default:
+        if (loweredCase) return utf8ToBytes(string).length // assume utf8
+        encoding = ('' + encoding).toLowerCase()
+        loweredCase = true
+    }
   }
-  return ret
 }
+Buffer.byteLength = byteLength
 
 // pre-set for values that may exist in the future
 Buffer.prototype.length = undefined
 Buffer.prototype.parent = undefined
 
-// toString(encoding, start=0, end=buffer.length)
-Buffer.prototype.toString = function (encoding, start, end) {
+function slowToString (encoding, start, end) {
   var loweredCase = false
 
-  start = start >>> 0
-  end = end === undefined || end === Infinity ? this.length : end >>> 0
+  start = start | 0
+  end = end === undefined || end === Infinity ? this.length : end | 0
 
   if (!encoding) encoding = 'utf8'
   if (start < 0) start = 0
@@ -6628,45 +7055,91 @@ Buffer.prototype.toString = function (encoding, start, end) {
         return utf16leSlice(this, start, end)
 
       default:
-        if (loweredCase)
-          throw new TypeError('Unknown encoding: ' + encoding)
+        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
         encoding = (encoding + '').toLowerCase()
         loweredCase = true
     }
   }
 }
 
-Buffer.prototype.equals = function (b) {
+Buffer.prototype.toString = function toString () {
+  var length = this.length | 0
+  if (length === 0) return ''
+  if (arguments.length === 0) return utf8Slice(this, 0, length)
+  return slowToString.apply(this, arguments)
+}
+
+Buffer.prototype.equals = function equals (b) {
   if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
   if (this === b) return true
   return Buffer.compare(this, b) === 0
 }
 
-Buffer.prototype.inspect = function () {
+Buffer.prototype.inspect = function inspect () {
   var str = ''
   var max = exports.INSPECT_MAX_BYTES
   if (this.length > 0) {
     str = this.toString('hex', 0, max).match(/.{2}/g).join(' ')
-    if (this.length > max)
-      str += ' ... '
+    if (this.length > max) str += ' ... '
   }
   return '<Buffer ' + str + '>'
 }
 
-Buffer.prototype.compare = function (b) {
+Buffer.prototype.compare = function compare (b) {
   if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
   if (this === b) return 0
   return Buffer.compare(this, b)
 }
 
-// `get` will be removed in Node 0.13+
-Buffer.prototype.get = function (offset) {
+Buffer.prototype.indexOf = function indexOf (val, byteOffset) {
+  if (byteOffset > 0x7fffffff) byteOffset = 0x7fffffff
+  else if (byteOffset < -0x80000000) byteOffset = -0x80000000
+  byteOffset >>= 0
+
+  if (this.length === 0) return -1
+  if (byteOffset >= this.length) return -1
+
+  // Negative offsets start from the end of the buffer
+  if (byteOffset < 0) byteOffset = Math.max(this.length + byteOffset, 0)
+
+  if (typeof val === 'string') {
+    if (val.length === 0) return -1 // special case: looking for empty string always fails
+    return String.prototype.indexOf.call(this, val, byteOffset)
+  }
+  if (Buffer.isBuffer(val)) {
+    return arrayIndexOf(this, val, byteOffset)
+  }
+  if (typeof val === 'number') {
+    if (Buffer.TYPED_ARRAY_SUPPORT && Uint8Array.prototype.indexOf === 'function') {
+      return Uint8Array.prototype.indexOf.call(this, val, byteOffset)
+    }
+    return arrayIndexOf(this, [ val ], byteOffset)
+  }
+
+  function arrayIndexOf (arr, val, byteOffset) {
+    var foundIndex = -1
+    for (var i = 0; byteOffset + i < arr.length; i++) {
+      if (arr[byteOffset + i] === val[foundIndex === -1 ? 0 : i - foundIndex]) {
+        if (foundIndex === -1) foundIndex = i
+        if (i - foundIndex + 1 === val.length) return byteOffset + foundIndex
+      } else {
+        foundIndex = -1
+      }
+    }
+    return -1
+  }
+
+  throw new TypeError('val must be string, number or Buffer')
+}
+
+// `get` is deprecated
+Buffer.prototype.get = function get (offset) {
   console.log('.get() is deprecated. Access using array indexes instead.')
   return this.readUInt8(offset)
 }
 
-// `set` will be removed in Node 0.13+
-Buffer.prototype.set = function (v, offset) {
+// `set` is deprecated
+Buffer.prototype.set = function set (v, offset) {
   console.log('.set() is deprecated. Access using array indexes instead.')
   return this.writeUInt8(v, offset)
 }
@@ -6691,21 +7164,19 @@ function hexWrite (buf, string, offset, length) {
     length = strLen / 2
   }
   for (var i = 0; i < length; i++) {
-    var byte = parseInt(string.substr(i * 2, 2), 16)
-    if (isNaN(byte)) throw new Error('Invalid hex string')
-    buf[offset + i] = byte
+    var parsed = parseInt(string.substr(i * 2, 2), 16)
+    if (isNaN(parsed)) throw new Error('Invalid hex string')
+    buf[offset + i] = parsed
   }
   return i
 }
 
 function utf8Write (buf, string, offset, length) {
-  var charsWritten = blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length)
-  return charsWritten
+  return blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length)
 }
 
 function asciiWrite (buf, string, offset, length) {
-  var charsWritten = blitBuffer(asciiToBytes(string), buf, offset, length)
-  return charsWritten
+  return blitBuffer(asciiToBytes(string), buf, offset, length)
 }
 
 function binaryWrite (buf, string, offset, length) {
@@ -6713,77 +7184,86 @@ function binaryWrite (buf, string, offset, length) {
 }
 
 function base64Write (buf, string, offset, length) {
-  var charsWritten = blitBuffer(base64ToBytes(string), buf, offset, length)
-  return charsWritten
+  return blitBuffer(base64ToBytes(string), buf, offset, length)
 }
 
-function utf16leWrite (buf, string, offset, length) {
-  var charsWritten = blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length)
-  return charsWritten
+function ucs2Write (buf, string, offset, length) {
+  return blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length)
 }
 
-Buffer.prototype.write = function (string, offset, length, encoding) {
-  // Support both (string, offset, length, encoding)
-  // and the legacy (string, encoding, offset, length)
-  if (isFinite(offset)) {
-    if (!isFinite(length)) {
+Buffer.prototype.write = function write (string, offset, length, encoding) {
+  // Buffer#write(string)
+  if (offset === undefined) {
+    encoding = 'utf8'
+    length = this.length
+    offset = 0
+  // Buffer#write(string, encoding)
+  } else if (length === undefined && typeof offset === 'string') {
+    encoding = offset
+    length = this.length
+    offset = 0
+  // Buffer#write(string, offset[, length][, encoding])
+  } else if (isFinite(offset)) {
+    offset = offset | 0
+    if (isFinite(length)) {
+      length = length | 0
+      if (encoding === undefined) encoding = 'utf8'
+    } else {
       encoding = length
       length = undefined
     }
-  } else {  // legacy
+  // legacy write(string, encoding, offset, length) - remove in v0.13
+  } else {
     var swap = encoding
     encoding = offset
-    offset = length
+    offset = length | 0
     length = swap
   }
 
-  offset = Number(offset) || 0
-
-  if (length < 0 || offset < 0 || offset > this.length)
-    throw new RangeError('attempt to write outside buffer bounds')
-
   var remaining = this.length - offset
-  if (!length) {
-    length = remaining
-  } else {
-    length = Number(length)
-    if (length > remaining) {
-      length = remaining
+  if (length === undefined || length > remaining) length = remaining
+
+  if ((string.length > 0 && (length < 0 || offset < 0)) || offset > this.length) {
+    throw new RangeError('attempt to write outside buffer bounds')
+  }
+
+  if (!encoding) encoding = 'utf8'
+
+  var loweredCase = false
+  for (;;) {
+    switch (encoding) {
+      case 'hex':
+        return hexWrite(this, string, offset, length)
+
+      case 'utf8':
+      case 'utf-8':
+        return utf8Write(this, string, offset, length)
+
+      case 'ascii':
+        return asciiWrite(this, string, offset, length)
+
+      case 'binary':
+        return binaryWrite(this, string, offset, length)
+
+      case 'base64':
+        // Warning: maxLength not taken into account in base64Write
+        return base64Write(this, string, offset, length)
+
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return ucs2Write(this, string, offset, length)
+
+      default:
+        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
+        encoding = ('' + encoding).toLowerCase()
+        loweredCase = true
     }
   }
-  encoding = String(encoding || 'utf8').toLowerCase()
-
-  var ret
-  switch (encoding) {
-    case 'hex':
-      ret = hexWrite(this, string, offset, length)
-      break
-    case 'utf8':
-    case 'utf-8':
-      ret = utf8Write(this, string, offset, length)
-      break
-    case 'ascii':
-      ret = asciiWrite(this, string, offset, length)
-      break
-    case 'binary':
-      ret = binaryWrite(this, string, offset, length)
-      break
-    case 'base64':
-      ret = base64Write(this, string, offset, length)
-      break
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
-      ret = utf16leWrite(this, string, offset, length)
-      break
-    default:
-      throw new TypeError('Unknown encoding: ' + encoding)
-  }
-  return ret
 }
 
-Buffer.prototype.toJSON = function () {
+Buffer.prototype.toJSON = function toJSON () {
   return {
     type: 'Buffer',
     data: Array.prototype.slice.call(this._arr || this, 0)
@@ -6799,20 +7279,99 @@ function base64Slice (buf, start, end) {
 }
 
 function utf8Slice (buf, start, end) {
-  var res = ''
-  var tmp = ''
   end = Math.min(buf.length, end)
+  var res = []
 
-  for (var i = start; i < end; i++) {
-    if (buf[i] <= 0x7F) {
-      res += decodeUtf8Char(tmp) + String.fromCharCode(buf[i])
-      tmp = ''
-    } else {
-      tmp += '%' + buf[i].toString(16)
+  var i = start
+  while (i < end) {
+    var firstByte = buf[i]
+    var codePoint = null
+    var bytesPerSequence = (firstByte > 0xEF) ? 4
+      : (firstByte > 0xDF) ? 3
+      : (firstByte > 0xBF) ? 2
+      : 1
+
+    if (i + bytesPerSequence <= end) {
+      var secondByte, thirdByte, fourthByte, tempCodePoint
+
+      switch (bytesPerSequence) {
+        case 1:
+          if (firstByte < 0x80) {
+            codePoint = firstByte
+          }
+          break
+        case 2:
+          secondByte = buf[i + 1]
+          if ((secondByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0x1F) << 0x6 | (secondByte & 0x3F)
+            if (tempCodePoint > 0x7F) {
+              codePoint = tempCodePoint
+            }
+          }
+          break
+        case 3:
+          secondByte = buf[i + 1]
+          thirdByte = buf[i + 2]
+          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0xF) << 0xC | (secondByte & 0x3F) << 0x6 | (thirdByte & 0x3F)
+            if (tempCodePoint > 0x7FF && (tempCodePoint < 0xD800 || tempCodePoint > 0xDFFF)) {
+              codePoint = tempCodePoint
+            }
+          }
+          break
+        case 4:
+          secondByte = buf[i + 1]
+          thirdByte = buf[i + 2]
+          fourthByte = buf[i + 3]
+          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80 && (fourthByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0xF) << 0x12 | (secondByte & 0x3F) << 0xC | (thirdByte & 0x3F) << 0x6 | (fourthByte & 0x3F)
+            if (tempCodePoint > 0xFFFF && tempCodePoint < 0x110000) {
+              codePoint = tempCodePoint
+            }
+          }
+      }
     }
+
+    if (codePoint === null) {
+      // we did not generate a valid codePoint so insert a
+      // replacement char (U+FFFD) and advance only 1 byte
+      codePoint = 0xFFFD
+      bytesPerSequence = 1
+    } else if (codePoint > 0xFFFF) {
+      // encode to utf16 (surrogate pair dance)
+      codePoint -= 0x10000
+      res.push(codePoint >>> 10 & 0x3FF | 0xD800)
+      codePoint = 0xDC00 | codePoint & 0x3FF
+    }
+
+    res.push(codePoint)
+    i += bytesPerSequence
   }
 
-  return res + decodeUtf8Char(tmp)
+  return decodeCodePointsArray(res)
+}
+
+// Based on http://stackoverflow.com/a/22747272/680742, the browser with
+// the lowest limit is Chrome, with 0x10000 args.
+// We go 1 magnitude less, for safety
+var MAX_ARGUMENTS_LENGTH = 0x1000
+
+function decodeCodePointsArray (codePoints) {
+  var len = codePoints.length
+  if (len <= MAX_ARGUMENTS_LENGTH) {
+    return String.fromCharCode.apply(String, codePoints) // avoid extra slice()
+  }
+
+  // Decode in chunks to avoid "call stack size exceeded".
+  var res = ''
+  var i = 0
+  while (i < len) {
+    res += String.fromCharCode.apply(
+      String,
+      codePoints.slice(i, i += MAX_ARGUMENTS_LENGTH)
+    )
+  }
+  return res
 }
 
 function asciiSlice (buf, start, end) {
@@ -6857,43 +7416,39 @@ function utf16leSlice (buf, start, end) {
   return res
 }
 
-Buffer.prototype.slice = function (start, end) {
+Buffer.prototype.slice = function slice (start, end) {
   var len = this.length
   start = ~~start
   end = end === undefined ? len : ~~end
 
   if (start < 0) {
     start += len
-    if (start < 0)
-      start = 0
+    if (start < 0) start = 0
   } else if (start > len) {
     start = len
   }
 
   if (end < 0) {
     end += len
-    if (end < 0)
-      end = 0
+    if (end < 0) end = 0
   } else if (end > len) {
     end = len
   }
 
-  if (end < start)
-    end = start
+  if (end < start) end = start
 
   var newBuf
   if (Buffer.TYPED_ARRAY_SUPPORT) {
     newBuf = Buffer._augment(this.subarray(start, end))
   } else {
     var sliceLen = end - start
-    newBuf = new Buffer(sliceLen, undefined, true)
+    newBuf = new Buffer(sliceLen, undefined)
     for (var i = 0; i < sliceLen; i++) {
       newBuf[i] = this[i + start]
     }
   }
 
-  if (newBuf.length)
-    newBuf.parent = this.parent || this
+  if (newBuf.length) newBuf.parent = this.parent || this
 
   return newBuf
 }
@@ -6902,62 +7457,58 @@ Buffer.prototype.slice = function (start, end) {
  * Need to make sure that buffer isn't trying to write out of bounds.
  */
 function checkOffset (offset, ext, length) {
-  if ((offset % 1) !== 0 || offset < 0)
-    throw new RangeError('offset is not uint')
-  if (offset + ext > length)
-    throw new RangeError('Trying to access beyond buffer length')
+  if ((offset % 1) !== 0 || offset < 0) throw new RangeError('offset is not uint')
+  if (offset + ext > length) throw new RangeError('Trying to access beyond buffer length')
 }
 
-Buffer.prototype.readUIntLE = function (offset, byteLength, noAssert) {
-  offset = offset >>> 0
-  byteLength = byteLength >>> 0
-  if (!noAssert)
-    checkOffset(offset, byteLength, this.length)
+Buffer.prototype.readUIntLE = function readUIntLE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
 
   var val = this[offset]
   var mul = 1
   var i = 0
-  while (++i < byteLength && (mul *= 0x100))
+  while (++i < byteLength && (mul *= 0x100)) {
     val += this[offset + i] * mul
+  }
 
   return val
 }
 
-Buffer.prototype.readUIntBE = function (offset, byteLength, noAssert) {
-  offset = offset >>> 0
-  byteLength = byteLength >>> 0
-  if (!noAssert)
+Buffer.prototype.readUIntBE = function readUIntBE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) {
     checkOffset(offset, byteLength, this.length)
+  }
 
   var val = this[offset + --byteLength]
   var mul = 1
-  while (byteLength > 0 && (mul *= 0x100))
+  while (byteLength > 0 && (mul *= 0x100)) {
     val += this[offset + --byteLength] * mul
+  }
 
   return val
 }
 
-Buffer.prototype.readUInt8 = function (offset, noAssert) {
-  if (!noAssert)
-    checkOffset(offset, 1, this.length)
+Buffer.prototype.readUInt8 = function readUInt8 (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 1, this.length)
   return this[offset]
 }
 
-Buffer.prototype.readUInt16LE = function (offset, noAssert) {
-  if (!noAssert)
-    checkOffset(offset, 2, this.length)
+Buffer.prototype.readUInt16LE = function readUInt16LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
   return this[offset] | (this[offset + 1] << 8)
 }
 
-Buffer.prototype.readUInt16BE = function (offset, noAssert) {
-  if (!noAssert)
-    checkOffset(offset, 2, this.length)
+Buffer.prototype.readUInt16BE = function readUInt16BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
   return (this[offset] << 8) | this[offset + 1]
 }
 
-Buffer.prototype.readUInt32LE = function (offset, noAssert) {
-  if (!noAssert)
-    checkOffset(offset, 4, this.length)
+Buffer.prototype.readUInt32LE = function readUInt32LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
 
   return ((this[offset]) |
       (this[offset + 1] << 8) |
@@ -6965,117 +7516,104 @@ Buffer.prototype.readUInt32LE = function (offset, noAssert) {
       (this[offset + 3] * 0x1000000)
 }
 
-Buffer.prototype.readUInt32BE = function (offset, noAssert) {
-  if (!noAssert)
-    checkOffset(offset, 4, this.length)
+Buffer.prototype.readUInt32BE = function readUInt32BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
 
   return (this[offset] * 0x1000000) +
-      ((this[offset + 1] << 16) |
-      (this[offset + 2] << 8) |
-      this[offset + 3])
+    ((this[offset + 1] << 16) |
+    (this[offset + 2] << 8) |
+    this[offset + 3])
 }
 
-Buffer.prototype.readIntLE = function (offset, byteLength, noAssert) {
-  offset = offset >>> 0
-  byteLength = byteLength >>> 0
-  if (!noAssert)
-    checkOffset(offset, byteLength, this.length)
+Buffer.prototype.readIntLE = function readIntLE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
 
   var val = this[offset]
   var mul = 1
   var i = 0
-  while (++i < byteLength && (mul *= 0x100))
+  while (++i < byteLength && (mul *= 0x100)) {
     val += this[offset + i] * mul
+  }
   mul *= 0x80
 
-  if (val >= mul)
-    val -= Math.pow(2, 8 * byteLength)
+  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
 
   return val
 }
 
-Buffer.prototype.readIntBE = function (offset, byteLength, noAssert) {
-  offset = offset >>> 0
-  byteLength = byteLength >>> 0
-  if (!noAssert)
-    checkOffset(offset, byteLength, this.length)
+Buffer.prototype.readIntBE = function readIntBE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
 
   var i = byteLength
   var mul = 1
   var val = this[offset + --i]
-  while (i > 0 && (mul *= 0x100))
+  while (i > 0 && (mul *= 0x100)) {
     val += this[offset + --i] * mul
+  }
   mul *= 0x80
 
-  if (val >= mul)
-    val -= Math.pow(2, 8 * byteLength)
+  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
 
   return val
 }
 
-Buffer.prototype.readInt8 = function (offset, noAssert) {
-  if (!noAssert)
-    checkOffset(offset, 1, this.length)
-  if (!(this[offset] & 0x80))
-    return (this[offset])
+Buffer.prototype.readInt8 = function readInt8 (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 1, this.length)
+  if (!(this[offset] & 0x80)) return (this[offset])
   return ((0xff - this[offset] + 1) * -1)
 }
 
-Buffer.prototype.readInt16LE = function (offset, noAssert) {
-  if (!noAssert)
-    checkOffset(offset, 2, this.length)
+Buffer.prototype.readInt16LE = function readInt16LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
   var val = this[offset] | (this[offset + 1] << 8)
   return (val & 0x8000) ? val | 0xFFFF0000 : val
 }
 
-Buffer.prototype.readInt16BE = function (offset, noAssert) {
-  if (!noAssert)
-    checkOffset(offset, 2, this.length)
+Buffer.prototype.readInt16BE = function readInt16BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
   var val = this[offset + 1] | (this[offset] << 8)
   return (val & 0x8000) ? val | 0xFFFF0000 : val
 }
 
-Buffer.prototype.readInt32LE = function (offset, noAssert) {
-  if (!noAssert)
-    checkOffset(offset, 4, this.length)
+Buffer.prototype.readInt32LE = function readInt32LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
 
   return (this[offset]) |
-      (this[offset + 1] << 8) |
-      (this[offset + 2] << 16) |
-      (this[offset + 3] << 24)
+    (this[offset + 1] << 8) |
+    (this[offset + 2] << 16) |
+    (this[offset + 3] << 24)
 }
 
-Buffer.prototype.readInt32BE = function (offset, noAssert) {
-  if (!noAssert)
-    checkOffset(offset, 4, this.length)
+Buffer.prototype.readInt32BE = function readInt32BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
 
   return (this[offset] << 24) |
-      (this[offset + 1] << 16) |
-      (this[offset + 2] << 8) |
-      (this[offset + 3])
+    (this[offset + 1] << 16) |
+    (this[offset + 2] << 8) |
+    (this[offset + 3])
 }
 
-Buffer.prototype.readFloatLE = function (offset, noAssert) {
-  if (!noAssert)
-    checkOffset(offset, 4, this.length)
+Buffer.prototype.readFloatLE = function readFloatLE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
   return ieee754.read(this, offset, true, 23, 4)
 }
 
-Buffer.prototype.readFloatBE = function (offset, noAssert) {
-  if (!noAssert)
-    checkOffset(offset, 4, this.length)
+Buffer.prototype.readFloatBE = function readFloatBE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
   return ieee754.read(this, offset, false, 23, 4)
 }
 
-Buffer.prototype.readDoubleLE = function (offset, noAssert) {
-  if (!noAssert)
-    checkOffset(offset, 8, this.length)
+Buffer.prototype.readDoubleLE = function readDoubleLE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 8, this.length)
   return ieee754.read(this, offset, true, 52, 8)
 }
 
-Buffer.prototype.readDoubleBE = function (offset, noAssert) {
-  if (!noAssert)
-    checkOffset(offset, 8, this.length)
+Buffer.prototype.readDoubleBE = function readDoubleBE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 8, this.length)
   return ieee754.read(this, offset, false, 52, 8)
 }
 
@@ -7085,43 +7623,42 @@ function checkInt (buf, value, offset, ext, max, min) {
   if (offset + ext > buf.length) throw new RangeError('index out of range')
 }
 
-Buffer.prototype.writeUIntLE = function (value, offset, byteLength, noAssert) {
+Buffer.prototype.writeUIntLE = function writeUIntLE (value, offset, byteLength, noAssert) {
   value = +value
-  offset = offset >>> 0
-  byteLength = byteLength >>> 0
-  if (!noAssert)
-    checkInt(this, value, offset, byteLength, Math.pow(2, 8 * byteLength), 0)
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkInt(this, value, offset, byteLength, Math.pow(2, 8 * byteLength), 0)
 
   var mul = 1
   var i = 0
   this[offset] = value & 0xFF
-  while (++i < byteLength && (mul *= 0x100))
-    this[offset + i] = (value / mul) >>> 0 & 0xFF
+  while (++i < byteLength && (mul *= 0x100)) {
+    this[offset + i] = (value / mul) & 0xFF
+  }
 
   return offset + byteLength
 }
 
-Buffer.prototype.writeUIntBE = function (value, offset, byteLength, noAssert) {
+Buffer.prototype.writeUIntBE = function writeUIntBE (value, offset, byteLength, noAssert) {
   value = +value
-  offset = offset >>> 0
-  byteLength = byteLength >>> 0
-  if (!noAssert)
-    checkInt(this, value, offset, byteLength, Math.pow(2, 8 * byteLength), 0)
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkInt(this, value, offset, byteLength, Math.pow(2, 8 * byteLength), 0)
 
   var i = byteLength - 1
   var mul = 1
   this[offset + i] = value & 0xFF
-  while (--i >= 0 && (mul *= 0x100))
-    this[offset + i] = (value / mul) >>> 0 & 0xFF
+  while (--i >= 0 && (mul *= 0x100)) {
+    this[offset + i] = (value / mul) & 0xFF
+  }
 
   return offset + byteLength
 }
 
-Buffer.prototype.writeUInt8 = function (value, offset, noAssert) {
+Buffer.prototype.writeUInt8 = function writeUInt8 (value, offset, noAssert) {
   value = +value
-  offset = offset >>> 0
-  if (!noAssert)
-    checkInt(this, value, offset, 1, 0xff, 0)
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 1, 0xff, 0)
   if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
   this[offset] = value
   return offset + 1
@@ -7135,27 +7672,29 @@ function objectWriteUInt16 (buf, value, offset, littleEndian) {
   }
 }
 
-Buffer.prototype.writeUInt16LE = function (value, offset, noAssert) {
+Buffer.prototype.writeUInt16LE = function writeUInt16LE (value, offset, noAssert) {
   value = +value
-  offset = offset >>> 0
-  if (!noAssert)
-    checkInt(this, value, offset, 2, 0xffff, 0)
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
   if (Buffer.TYPED_ARRAY_SUPPORT) {
     this[offset] = value
     this[offset + 1] = (value >>> 8)
-  } else objectWriteUInt16(this, value, offset, true)
+  } else {
+    objectWriteUInt16(this, value, offset, true)
+  }
   return offset + 2
 }
 
-Buffer.prototype.writeUInt16BE = function (value, offset, noAssert) {
+Buffer.prototype.writeUInt16BE = function writeUInt16BE (value, offset, noAssert) {
   value = +value
-  offset = offset >>> 0
-  if (!noAssert)
-    checkInt(this, value, offset, 2, 0xffff, 0)
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
   if (Buffer.TYPED_ARRAY_SUPPORT) {
     this[offset] = (value >>> 8)
     this[offset + 1] = value
-  } else objectWriteUInt16(this, value, offset, false)
+  } else {
+    objectWriteUInt16(this, value, offset, false)
+  }
   return offset + 2
 }
 
@@ -7166,139 +7705,140 @@ function objectWriteUInt32 (buf, value, offset, littleEndian) {
   }
 }
 
-Buffer.prototype.writeUInt32LE = function (value, offset, noAssert) {
+Buffer.prototype.writeUInt32LE = function writeUInt32LE (value, offset, noAssert) {
   value = +value
-  offset = offset >>> 0
-  if (!noAssert)
-    checkInt(this, value, offset, 4, 0xffffffff, 0)
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
   if (Buffer.TYPED_ARRAY_SUPPORT) {
     this[offset + 3] = (value >>> 24)
     this[offset + 2] = (value >>> 16)
     this[offset + 1] = (value >>> 8)
     this[offset] = value
-  } else objectWriteUInt32(this, value, offset, true)
+  } else {
+    objectWriteUInt32(this, value, offset, true)
+  }
   return offset + 4
 }
 
-Buffer.prototype.writeUInt32BE = function (value, offset, noAssert) {
+Buffer.prototype.writeUInt32BE = function writeUInt32BE (value, offset, noAssert) {
   value = +value
-  offset = offset >>> 0
-  if (!noAssert)
-    checkInt(this, value, offset, 4, 0xffffffff, 0)
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
   if (Buffer.TYPED_ARRAY_SUPPORT) {
     this[offset] = (value >>> 24)
     this[offset + 1] = (value >>> 16)
     this[offset + 2] = (value >>> 8)
     this[offset + 3] = value
-  } else objectWriteUInt32(this, value, offset, false)
+  } else {
+    objectWriteUInt32(this, value, offset, false)
+  }
   return offset + 4
 }
 
-Buffer.prototype.writeIntLE = function (value, offset, byteLength, noAssert) {
+Buffer.prototype.writeIntLE = function writeIntLE (value, offset, byteLength, noAssert) {
   value = +value
-  offset = offset >>> 0
+  offset = offset | 0
   if (!noAssert) {
-    checkInt(this,
-             value,
-             offset,
-             byteLength,
-             Math.pow(2, 8 * byteLength - 1) - 1,
-             -Math.pow(2, 8 * byteLength - 1))
+    var limit = Math.pow(2, 8 * byteLength - 1)
+
+    checkInt(this, value, offset, byteLength, limit - 1, -limit)
   }
 
   var i = 0
   var mul = 1
   var sub = value < 0 ? 1 : 0
   this[offset] = value & 0xFF
-  while (++i < byteLength && (mul *= 0x100))
+  while (++i < byteLength && (mul *= 0x100)) {
     this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
+  }
 
   return offset + byteLength
 }
 
-Buffer.prototype.writeIntBE = function (value, offset, byteLength, noAssert) {
+Buffer.prototype.writeIntBE = function writeIntBE (value, offset, byteLength, noAssert) {
   value = +value
-  offset = offset >>> 0
+  offset = offset | 0
   if (!noAssert) {
-    checkInt(this,
-             value,
-             offset,
-             byteLength,
-             Math.pow(2, 8 * byteLength - 1) - 1,
-             -Math.pow(2, 8 * byteLength - 1))
+    var limit = Math.pow(2, 8 * byteLength - 1)
+
+    checkInt(this, value, offset, byteLength, limit - 1, -limit)
   }
 
   var i = byteLength - 1
   var mul = 1
   var sub = value < 0 ? 1 : 0
   this[offset + i] = value & 0xFF
-  while (--i >= 0 && (mul *= 0x100))
+  while (--i >= 0 && (mul *= 0x100)) {
     this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
+  }
 
   return offset + byteLength
 }
 
-Buffer.prototype.writeInt8 = function (value, offset, noAssert) {
+Buffer.prototype.writeInt8 = function writeInt8 (value, offset, noAssert) {
   value = +value
-  offset = offset >>> 0
-  if (!noAssert)
-    checkInt(this, value, offset, 1, 0x7f, -0x80)
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 1, 0x7f, -0x80)
   if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
   if (value < 0) value = 0xff + value + 1
   this[offset] = value
   return offset + 1
 }
 
-Buffer.prototype.writeInt16LE = function (value, offset, noAssert) {
+Buffer.prototype.writeInt16LE = function writeInt16LE (value, offset, noAssert) {
   value = +value
-  offset = offset >>> 0
-  if (!noAssert)
-    checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
   if (Buffer.TYPED_ARRAY_SUPPORT) {
     this[offset] = value
     this[offset + 1] = (value >>> 8)
-  } else objectWriteUInt16(this, value, offset, true)
+  } else {
+    objectWriteUInt16(this, value, offset, true)
+  }
   return offset + 2
 }
 
-Buffer.prototype.writeInt16BE = function (value, offset, noAssert) {
+Buffer.prototype.writeInt16BE = function writeInt16BE (value, offset, noAssert) {
   value = +value
-  offset = offset >>> 0
-  if (!noAssert)
-    checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
   if (Buffer.TYPED_ARRAY_SUPPORT) {
     this[offset] = (value >>> 8)
     this[offset + 1] = value
-  } else objectWriteUInt16(this, value, offset, false)
+  } else {
+    objectWriteUInt16(this, value, offset, false)
+  }
   return offset + 2
 }
 
-Buffer.prototype.writeInt32LE = function (value, offset, noAssert) {
+Buffer.prototype.writeInt32LE = function writeInt32LE (value, offset, noAssert) {
   value = +value
-  offset = offset >>> 0
-  if (!noAssert)
-    checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
   if (Buffer.TYPED_ARRAY_SUPPORT) {
     this[offset] = value
     this[offset + 1] = (value >>> 8)
     this[offset + 2] = (value >>> 16)
     this[offset + 3] = (value >>> 24)
-  } else objectWriteUInt32(this, value, offset, true)
+  } else {
+    objectWriteUInt32(this, value, offset, true)
+  }
   return offset + 4
 }
 
-Buffer.prototype.writeInt32BE = function (value, offset, noAssert) {
+Buffer.prototype.writeInt32BE = function writeInt32BE (value, offset, noAssert) {
   value = +value
-  offset = offset >>> 0
-  if (!noAssert)
-    checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
   if (value < 0) value = 0xffffffff + value + 1
   if (Buffer.TYPED_ARRAY_SUPPORT) {
     this[offset] = (value >>> 24)
     this[offset + 1] = (value >>> 16)
     this[offset + 2] = (value >>> 8)
     this[offset + 3] = value
-  } else objectWriteUInt32(this, value, offset, false)
+  } else {
+    objectWriteUInt32(this, value, offset, false)
+  }
   return offset + 4
 }
 
@@ -7309,76 +7849,84 @@ function checkIEEE754 (buf, value, offset, ext, max, min) {
 }
 
 function writeFloat (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert)
+  if (!noAssert) {
     checkIEEE754(buf, value, offset, 4, 3.4028234663852886e+38, -3.4028234663852886e+38)
+  }
   ieee754.write(buf, value, offset, littleEndian, 23, 4)
   return offset + 4
 }
 
-Buffer.prototype.writeFloatLE = function (value, offset, noAssert) {
+Buffer.prototype.writeFloatLE = function writeFloatLE (value, offset, noAssert) {
   return writeFloat(this, value, offset, true, noAssert)
 }
 
-Buffer.prototype.writeFloatBE = function (value, offset, noAssert) {
+Buffer.prototype.writeFloatBE = function writeFloatBE (value, offset, noAssert) {
   return writeFloat(this, value, offset, false, noAssert)
 }
 
 function writeDouble (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert)
+  if (!noAssert) {
     checkIEEE754(buf, value, offset, 8, 1.7976931348623157E+308, -1.7976931348623157E+308)
+  }
   ieee754.write(buf, value, offset, littleEndian, 52, 8)
   return offset + 8
 }
 
-Buffer.prototype.writeDoubleLE = function (value, offset, noAssert) {
+Buffer.prototype.writeDoubleLE = function writeDoubleLE (value, offset, noAssert) {
   return writeDouble(this, value, offset, true, noAssert)
 }
 
-Buffer.prototype.writeDoubleBE = function (value, offset, noAssert) {
+Buffer.prototype.writeDoubleBE = function writeDoubleBE (value, offset, noAssert) {
   return writeDouble(this, value, offset, false, noAssert)
 }
 
 // copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
-Buffer.prototype.copy = function (target, target_start, start, end) {
-  var self = this // source
-
+Buffer.prototype.copy = function copy (target, targetStart, start, end) {
   if (!start) start = 0
   if (!end && end !== 0) end = this.length
-  if (target_start >= target.length) target_start = target.length
-  if (!target_start) target_start = 0
+  if (targetStart >= target.length) targetStart = target.length
+  if (!targetStart) targetStart = 0
   if (end > 0 && end < start) end = start
 
   // Copy 0 bytes; we're done
   if (end === start) return 0
-  if (target.length === 0 || self.length === 0) return 0
+  if (target.length === 0 || this.length === 0) return 0
 
   // Fatal error conditions
-  if (target_start < 0)
+  if (targetStart < 0) {
     throw new RangeError('targetStart out of bounds')
-  if (start < 0 || start >= self.length) throw new RangeError('sourceStart out of bounds')
+  }
+  if (start < 0 || start >= this.length) throw new RangeError('sourceStart out of bounds')
   if (end < 0) throw new RangeError('sourceEnd out of bounds')
 
   // Are we oob?
-  if (end > this.length)
-    end = this.length
-  if (target.length - target_start < end - start)
-    end = target.length - target_start + start
+  if (end > this.length) end = this.length
+  if (target.length - targetStart < end - start) {
+    end = target.length - targetStart + start
+  }
 
   var len = end - start
+  var i
 
-  if (len < 1000 || !Buffer.TYPED_ARRAY_SUPPORT) {
-    for (var i = 0; i < len; i++) {
-      target[i + target_start] = this[i + start]
+  if (this === target && start < targetStart && targetStart < end) {
+    // descending copy from end
+    for (i = len - 1; i >= 0; i--) {
+      target[i + targetStart] = this[i + start]
+    }
+  } else if (len < 1000 || !Buffer.TYPED_ARRAY_SUPPORT) {
+    // ascending copy from start
+    for (i = 0; i < len; i++) {
+      target[i + targetStart] = this[i + start]
     }
   } else {
-    target._set(this.subarray(start, start + len), target_start)
+    target._set(this.subarray(start, start + len), targetStart)
   }
 
   return len
 }
 
 // fill(value, start=0, end=buffer.length)
-Buffer.prototype.fill = function (value, start, end) {
+Buffer.prototype.fill = function fill (value, start, end) {
   if (!value) value = 0
   if (!start) start = 0
   if (!end) end = this.length
@@ -7412,7 +7960,7 @@ Buffer.prototype.fill = function (value, start, end) {
  * Creates a new `ArrayBuffer` with the *copied* memory of the buffer instance.
  * Added in Node 0.12. Only available in browsers that support ArrayBuffer.
  */
-Buffer.prototype.toArrayBuffer = function () {
+Buffer.prototype.toArrayBuffer = function toArrayBuffer () {
   if (typeof Uint8Array !== 'undefined') {
     if (Buffer.TYPED_ARRAY_SUPPORT) {
       return (new Buffer(this)).buffer
@@ -7436,15 +7984,14 @@ var BP = Buffer.prototype
 /**
  * Augment a Uint8Array *instance* (not the Uint8Array class!) with Buffer methods
  */
-Buffer._augment = function (arr) {
+Buffer._augment = function _augment (arr) {
   arr.constructor = Buffer
   arr._isBuffer = true
 
-  // save reference to original Uint8Array get/set methods before overwriting
-  arr._get = arr.get
+  // save reference to original Uint8Array set method before overwriting
   arr._set = arr.set
 
-  // deprecated, will be removed in node 0.13+
+  // deprecated
   arr.get = BP.get
   arr.set = BP.set
 
@@ -7454,6 +8001,7 @@ Buffer._augment = function (arr) {
   arr.toJSON = BP.toJSON
   arr.equals = BP.equals
   arr.compare = BP.compare
+  arr.indexOf = BP.indexOf
   arr.copy = BP.copy
   arr.slice = BP.slice
   arr.readUIntLE = BP.readUIntLE
@@ -7499,7 +8047,7 @@ Buffer._augment = function (arr) {
   return arr
 }
 
-var INVALID_BASE64_RE = /[^+\/0-9A-z\-]/g
+var INVALID_BASE64_RE = /[^+\/0-9A-Za-z-_]/g
 
 function base64clean (str) {
   // Node strips out invalid characters like \n and \t from the string, base64-js does not
@@ -7518,12 +8066,6 @@ function stringtrim (str) {
   return str.replace(/^\s+|\s+$/g, '')
 }
 
-function isArrayish (subject) {
-  return isArray(subject) || Buffer.isBuffer(subject) ||
-      subject && typeof subject === 'object' &&
-      typeof subject.length === 'number'
-}
-
 function toHex (n) {
   if (n < 16) return '0' + n.toString(16)
   return n.toString(16)
@@ -7535,28 +8077,15 @@ function utf8ToBytes (string, units) {
   var length = string.length
   var leadSurrogate = null
   var bytes = []
-  var i = 0
 
-  for (; i < length; i++) {
+  for (var i = 0; i < length; i++) {
     codePoint = string.charCodeAt(i)
 
     // is surrogate component
     if (codePoint > 0xD7FF && codePoint < 0xE000) {
       // last char was a lead
-      if (leadSurrogate) {
-        // 2 leads in a row
-        if (codePoint < 0xDC00) {
-          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
-          leadSurrogate = codePoint
-          continue
-        } else {
-          // valid surrogate pair
-          codePoint = leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00 | 0x10000
-          leadSurrogate = null
-        }
-      } else {
+      if (!leadSurrogate) {
         // no lead yet
-
         if (codePoint > 0xDBFF) {
           // unexpected trail
           if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
@@ -7565,17 +8094,29 @@ function utf8ToBytes (string, units) {
           // unpaired lead
           if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
           continue
-        } else {
-          // valid lead
-          leadSurrogate = codePoint
-          continue
         }
+
+        // valid lead
+        leadSurrogate = codePoint
+
+        continue
       }
+
+      // 2 leads in a row
+      if (codePoint < 0xDC00) {
+        if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+        leadSurrogate = codePoint
+        continue
+      }
+
+      // valid surrogate pair
+      codePoint = leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00 | 0x10000
     } else if (leadSurrogate) {
       // valid bmp char, but last char was a lead
       if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
-      leadSurrogate = null
     }
+
+    leadSurrogate = null
 
     // encode utf8
     if (codePoint < 0x80) {
@@ -7594,7 +8135,7 @@ function utf8ToBytes (string, units) {
         codePoint >> 0x6 & 0x3F | 0x80,
         codePoint & 0x3F | 0x80
       )
-    } else if (codePoint < 0x200000) {
+    } else if (codePoint < 0x110000) {
       if ((units -= 4) < 0) break
       bytes.push(
         codePoint >> 0x12 | 0xF0,
@@ -7641,21 +8182,13 @@ function base64ToBytes (str) {
 
 function blitBuffer (src, dst, offset, length) {
   for (var i = 0; i < length; i++) {
-    if ((i + offset >= dst.length) || (i >= src.length))
-      break
+    if ((i + offset >= dst.length) || (i >= src.length)) break
     dst[i + offset] = src[i]
   }
   return i
 }
 
-function decodeUtf8Char (str) {
-  try {
-    return decodeURIComponent(str)
-  } catch (err) {
-    return String.fromCharCode(0xFFFD) // UTF 8 invalid char
-  }
-}
-
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"base64-js":38,"ieee754":39,"is-array":40}],38:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
@@ -7783,90 +8316,90 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
 },{}],39:[function(require,module,exports){
-exports.read = function(buffer, offset, isLE, mLen, nBytes) {
-  var e, m,
-      eLen = nBytes * 8 - mLen - 1,
-      eMax = (1 << eLen) - 1,
-      eBias = eMax >> 1,
-      nBits = -7,
-      i = isLE ? (nBytes - 1) : 0,
-      d = isLE ? -1 : 1,
-      s = buffer[offset + i];
+exports.read = function (buffer, offset, isLE, mLen, nBytes) {
+  var e, m
+  var eLen = nBytes * 8 - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var nBits = -7
+  var i = isLE ? (nBytes - 1) : 0
+  var d = isLE ? -1 : 1
+  var s = buffer[offset + i]
 
-  i += d;
+  i += d
 
-  e = s & ((1 << (-nBits)) - 1);
-  s >>= (-nBits);
-  nBits += eLen;
-  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8);
+  e = s & ((1 << (-nBits)) - 1)
+  s >>= (-nBits)
+  nBits += eLen
+  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
 
-  m = e & ((1 << (-nBits)) - 1);
-  e >>= (-nBits);
-  nBits += mLen;
-  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8);
+  m = e & ((1 << (-nBits)) - 1)
+  e >>= (-nBits)
+  nBits += mLen
+  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
 
   if (e === 0) {
-    e = 1 - eBias;
+    e = 1 - eBias
   } else if (e === eMax) {
-    return m ? NaN : ((s ? -1 : 1) * Infinity);
+    return m ? NaN : ((s ? -1 : 1) * Infinity)
   } else {
-    m = m + Math.pow(2, mLen);
-    e = e - eBias;
+    m = m + Math.pow(2, mLen)
+    e = e - eBias
   }
-  return (s ? -1 : 1) * m * Math.pow(2, e - mLen);
-};
+  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
+}
 
-exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
-  var e, m, c,
-      eLen = nBytes * 8 - mLen - 1,
-      eMax = (1 << eLen) - 1,
-      eBias = eMax >> 1,
-      rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0),
-      i = isLE ? 0 : (nBytes - 1),
-      d = isLE ? 1 : -1,
-      s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0;
+exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
+  var e, m, c
+  var eLen = nBytes * 8 - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
+  var i = isLE ? 0 : (nBytes - 1)
+  var d = isLE ? 1 : -1
+  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
 
-  value = Math.abs(value);
+  value = Math.abs(value)
 
   if (isNaN(value) || value === Infinity) {
-    m = isNaN(value) ? 1 : 0;
-    e = eMax;
+    m = isNaN(value) ? 1 : 0
+    e = eMax
   } else {
-    e = Math.floor(Math.log(value) / Math.LN2);
+    e = Math.floor(Math.log(value) / Math.LN2)
     if (value * (c = Math.pow(2, -e)) < 1) {
-      e--;
-      c *= 2;
+      e--
+      c *= 2
     }
     if (e + eBias >= 1) {
-      value += rt / c;
+      value += rt / c
     } else {
-      value += rt * Math.pow(2, 1 - eBias);
+      value += rt * Math.pow(2, 1 - eBias)
     }
     if (value * c >= 2) {
-      e++;
-      c /= 2;
+      e++
+      c /= 2
     }
 
     if (e + eBias >= eMax) {
-      m = 0;
-      e = eMax;
+      m = 0
+      e = eMax
     } else if (e + eBias >= 1) {
-      m = (value * c - 1) * Math.pow(2, mLen);
-      e = e + eBias;
+      m = (value * c - 1) * Math.pow(2, mLen)
+      e = e + eBias
     } else {
-      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
-      e = 0;
+      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
+      e = 0
     }
   }
 
-  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8);
+  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
 
-  e = (e << mLen) | m;
-  eLen += mLen;
-  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8);
+  e = (e << mLen) | m
+  eLen += mLen
+  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
 
-  buffer[offset + i - d] |= s * 128;
-};
+  buffer[offset + i - d] |= s * 128
+}
 
 },{}],40:[function(require,module,exports){
 

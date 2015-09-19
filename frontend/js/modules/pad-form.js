@@ -134,18 +134,19 @@ module.exports = (function () {
   view.groupParams = function (c) {
     var G = conf.LANG.GROUP;
     var icon = m('i', {
-      class: 'block tooltip icon-info-circled',
+      class: 'mp-tooltip glyphicon glyphicon-info-sign',
       'data-msg': G.INFO.GROUP_PARAMS
     });
     return {
-      label: m('label.block', { for: 'groupParams' }, G.FIELD.GROUP_PARAMS),
-      input: m('input', {
-        class: 'block',
-        name: 'groupParams',
-        type: 'checkbox',
-        checked: c.groupParams(),
-        onchange: m.withAttr('checked', c.groupParams)
-      }),
+      label: m('label', [
+        m('input', {
+          name: 'groupParams',
+          type: 'checkbox',
+          checked: c.groupParams(),
+          onchange: m.withAttr('checked', c.groupParams)
+        }),
+        G.FIELD.GROUP_PARAMS
+      ]),
       icon: icon
     };
   };
@@ -165,26 +166,55 @@ module.exports = (function () {
     var readonly = group.views.field.readonly(c);
     var groupParams = view.groupParams(c);
 
-    var fields = [ name.label, name.input, name.icon,
-      groupParams.label, groupParams.input, groupParams.icon ];
+    var fields = [
+      m('.form-group', [
+        name.label, name.icon,
+        m('.col-sm-7', name.input)
+      ]),
+      m('.form-group', [
+        m('.col-sm-7.col-sm-offset-4', [
+          m('.checkbox', [
+            groupParams.label, groupParams.icon
+          ])
+        ])
+      ])
+    ];
 
     if (!c.groupParams()) {
-      fields.push(visibility.label, visibility.select, visibility.icon);
+      fields.push(
+        m('.form-group', [
+          visibility.label, visibility.icon,
+          m('.col-sm-7', visibility.select)
+        ])
+      );
       if (c.data.visibility() === 'private') {
-        fields.push(password.label, password.input, password.icon);
+        fields.push(
+          m('.form-group', [
+            password.label, password.icon,
+            m('.col-sm-7', password.input)
+          ])
+        );
       }
-      fields.push(readonly.label, readonly.input, readonly.icon);
+      fields.push(
+        m('.form-group', [
+          m('.col-sm-7.col-sm-offset-4', [
+            m('.checkbox', [
+              readonly.label, readonly.icon
+            ])
+          ])
+        ])
+      );
     }
 
-    return m('form.block', {
+    return m('form.form-horizontal', {
       id: 'pad-form',
       onsubmit: c.submit
     }, [
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', conf.LANG.GROUP.PAD.PAD),
         m('div', fields)
       ]),
-      m('input.block.send', {
+      m('input.btn.btn-success.pull-right', {
         form: 'pad-form',
         type: 'submit',
         value: conf.LANG.ACTIONS.SAVE
@@ -200,8 +230,8 @@ module.exports = (function () {
   */
 
   view.main = function (c) {
-    return m('section', { class: 'block-group user group-form' }, [
-      m('h2.block',
+    return m('section', { class: 'user group-form' }, [
+      m('h2',
         c.addView() ? conf.LANG.GROUP.PAD.ADD : conf.LANG.GROUP.PAD.EDIT),
       view.form(c)
     ]);
@@ -210,7 +240,7 @@ module.exports = (function () {
   view.aside = function () {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(conf.LANG.GROUP.ADD_HELP))
+      m('article.well', m.trust(conf.LANG.GROUP.ADD_HELP))
     ]);
   };
 

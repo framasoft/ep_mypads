@@ -174,33 +174,45 @@ module.exports = (function () {
   };
 
   view.field.users = function (c) {
-    return m('div.block-group.tag', [
-      m('label.block', { for: c.name }, c.label),
-      tag.views.input(c),
-      m('i', {
-        class: 'block tooltip icon-info-circled tag',
-        'data-msg': conf.LANG.USERLIST.FIELD.USERS_HELP }),
-      m('button.block.ok', {
-        type: 'button',
-        onclick: function () {
-          c.add(document.getElementById(c.name + '-input'));
-        },
-      }, conf.LANG.USER.OK),
-      tag.views.datalist(c),
-      m('label.block', conf.LANG.GLOBAL.OR),
-      m('textarea.block', {
-        name: 'usersArea',
-        placeholder: conf.LANG.USERLIST.FIELD.USERSAREA_PLACEHOLDER,
-      }),
-      m('i', {
-        class: 'block tooltip icon-info-circled tag',
-        'data-msg': conf.LANG.USERLIST.FIELD.USERSAREA_HELP }),
-      m('button.block.ok', {
-        type: 'button',
-        onclick: function () {
-          c.addMultiple(document.querySelector('textarea[name=usersArea]'));
-        },
-      }, conf.LANG.USER.OK),
+    return m('div.tag', [
+      m('.form-group', [
+        m('label.col-sm-4', { for: c.name }, c.label),
+        m('i', {
+          class: 'mp-tooltip glyphicon glyphicon-info-sign tag',
+          'data-msg': conf.LANG.USERLIST.FIELD.USERS_HELP }),
+        m('.col-sm-7', [
+          m('.input-group', [
+            tag.views.input(c),
+            m('span.input-group-btn',
+              m('button.btn.btn-default', {
+                type: 'button',
+                onclick: function () {
+                  c.add(document.getElementById(c.name + '-input'));
+                },
+              }, conf.LANG.USER.OK)
+            )
+          ]),
+          tag.views.datalist(c)
+        ])
+      ]),
+      m('.form-group', [
+        m('label.col-sm-4', conf.LANG.GLOBAL.OR),
+        m('i', {
+          class: 'mp-tooltip glyphicon glyphicon-info-sign tag',
+          'data-msg': conf.LANG.USERLIST.FIELD.USERSAREA_HELP }),
+        m('.col-sm-7', [
+          m('textarea.form-control', {
+            name: 'usersArea',
+            placeholder: conf.LANG.USERLIST.FIELD.USERSAREA_PLACEHOLDER,
+          }),
+          m('button.btn.btn-default.pull-right', {
+            type: 'button',
+            onclick: function () {
+              c.addMultiple(document.querySelector('textarea[name=usersArea]'));
+            },
+          }, conf.LANG.USER.OK)
+        ])
+      ]),
     ]);
   };
 
@@ -210,24 +222,29 @@ module.exports = (function () {
 
   view.form = function (c) {
     var name = view.field.name(c);
-    var fields = [name.label, name.input, name.icon];
-    return m('form.block', {
+    var fields = [
+      m('.form-group', [
+        name.label, name.icon,
+        m('.col-sm-7', name.input)
+      ])
+    ];
+    return m('form.form-horizontal', {
       id: 'ulist-form',
       onsubmit: c.submit
     }, [
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', conf.LANG.USERLIST.USERLIST),
         m('div', fields)
       ]),
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', conf.LANG.USERLIST.FIELD.USERS),
         m('div', view.field.users(c.tag))
       ]),
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', conf.LANG.GROUP.INVITE_USER.USERS_SELECTED),
         m('div', tag.views.tagslist(c.tag))
       ]),
-      m('input.block.send', {
+      m('input.btn.btn-success.pull-right', {
         form: 'ulist-form',
         type: 'submit',
         value: conf.LANG.ACTIONS.SAVE
@@ -240,8 +257,8 @@ module.exports = (function () {
   */
 
   view.main = function (c) {
-    return m('section', { class: 'block-group user group-form' }, [
-      m('h2.block',
+    return m('section', [
+      m('h2',
         c.addView() ? conf.LANG.USERLIST.ADD : conf.LANG.USERLIST.EDIT),
       view.form(c)
     ]);
@@ -250,12 +267,12 @@ module.exports = (function () {
   view.aside = function () {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article', m.trust(conf.LANG.USERLIST.FORM_HELP))
+      m('article.well', m.trust(conf.LANG.USERLIST.FORM_HELP))
     ]);
   };
 
   ulistform.view = function (c) {
-    return layout.view(view.main(c), view.aside(c)); 
+    return layout.view(view.main(c), view.aside(c));
   };
 
   return ulistform;

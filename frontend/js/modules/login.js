@@ -94,19 +94,27 @@ module.exports = (function () {
     var login = user.view.field.login(c);
     login.input.attrs.config = form.focusOnInit;
     var password = user.view.field.password(c);
-    return m('form.block', {
+    return m('form.form-horizontal.col-sm-8.col-sm-offset-2.well', {
       id: 'login-form', onsubmit: c.submit }, [
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', conf.LANG.USER.MYPADS_ACCOUNT),
-        login.label, login.input, login.icon,
-        password.label, password.input, password.icon,
-        m('p.block.passlost', [
-          m('a', {
-            href: '/passrecover',
-            config: m.route
-          }, conf.LANG.USER.PASSWORD_LOST)
+        m('.form-group', [
+          login.label, login.icon,
+          m('.col-sm-7', login.input)
         ]),
-        m('input.block.send', {
+        m('.form-group', [
+          password.label, password.icon,
+          m('.col-sm-7', [
+            password.input,
+            m('p.help-block', [
+              m('a', {
+                href: '/passrecover',
+                config: m.route
+              }, conf.LANG.USER.PASSWORD_LOST)
+            ])
+          ])
+        ]),
+        m('input.btn.btn-success.pull-right', {
           form: 'login-form',
           type: 'submit',
           value: conf.LANG.USER.LOGIN
@@ -116,10 +124,12 @@ module.exports = (function () {
   };
 
   view.main = function (c) {
-    return m('section', { class: 'block-group user' }, [
-      m('h2.block', [
+    return m('section', { class: 'user' }, [
+      m('h2', [
         m('span', conf.LANG.USER.FORM),
-        m('a', { href: '/subscribe', config: m.route }, conf.LANG.USER.ORSUB)
+        m('a.small',
+          { href: '/subscribe', config: m.route },
+          conf.LANG.USER.ORSUB)
       ]),
       view.form(c)
     ]);

@@ -230,6 +230,25 @@ module.exports = (function () {
   subscribe.views = view;
 
   /**
+  * ### removeAccount
+  *
+  * `removeAccount` is the view intended to allow user to erase completely its
+  * account.
+  */
+
+  view.removeAccount = function (c) {
+    return [
+      m('button.btn.btn-danger', {
+        onclick: c.removeAccount
+      }, conf.LANG.USER.REMOVE_ACCOUNT),
+      m('i', {
+        class: 'glyphicon glyphicon-info-sign mp-tooltip mp-tooltip-left',
+        'data-msg': conf.LANG.USER.INFO.REMOVE_ACCOUNT
+      })
+    ];
+  };
+
+  /**
   * ### form view
   *
   * Classic view with all fields and changes according to the view.
@@ -245,68 +264,94 @@ module.exports = (function () {
       delete fields.passwordConfirm.input.attrs.required;
     }
     var requiredFields = [
-        fields.password.label, fields.password.input, fields.password.icon,
-        fields.passwordConfirm.label, fields.passwordConfirm.input,
-        fields.passwordConfirm.icon,
-        fields.email.label, fields.email.input, fields.email.icon,
-        fields.lang.label, fields.lang.select, fields.lang.icon
+      m('.form-group', [
+        fields.email.label, fields.email.icon,
+        m('.col-sm-7', fields.email.input)
+      ]),
+      m('.form-group', [
+        fields.password.label, fields.password.icon,
+          m('.col-sm-7', fields.password.input)
+      ]),
+      m('.form-group', [
+        fields.passwordConfirm.label, fields.passwordConfirm.icon,
+        m('.col-sm-7', fields.passwordConfirm.input)
+      ]),
+      m('.form-group', [
+        fields.lang.label, fields.lang.icon,
+        m('.col-sm-7', fields.lang.select)
+      ])
     ];
     if (c.profileView()) {
       var passC = user.view.field.passwordCurrent(c);
       passC.input.attrs.config = form.focusOnInit;
-      requiredFields.splice(0, 0, passC.label, passC.input, passC.icon);
-      requiredFields.push(fields.useLoginAndColorInPads.label,
-        fields.useLoginAndColorInPads.input,
-        fields.useLoginAndColorInPads.icon);
+      requiredFields.splice(1, 0,
+        m('.form-group', [
+          passC.label, passC.icon,
+          m('.col-sm-7', passC.input)
+        ]
+      ));
+      requiredFields.push(
+        m('.form-group', [
+          m('.col-sm-7.col-sm-offset-4', [
+            m('.checkbox', [
+              fields.useLoginAndColorInPads.label,
+              fields.useLoginAndColorInPads.icon
+            ])
+          ])
+        ])
+      );
     } else if (!c.adminView()) {
       var log = fields.login;
       log.input.attrs.config = form.focusOnInit;
-      requiredFields.splice(0, 0, log.label, log.input, log.icon);
+      requiredFields.splice(0, 0,
+        m('.form-group', [
+          log.label, log.icon,
+          m('.col-sm-7', [log.input])
+        ])
+      );
     }
     var USER = conf.LANG.USER;
     var profOrAdm = (c.profileView() || c.adminView());
-    return m('form.block', {
+    return m('form.form-horizontal', {
       id: 'subscribe-form',
       onsubmit: profOrAdm ? c.submit.profileSave : c.submit.subscribe
       }, [
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend', conf.LANG.USER.MANDATORY_FIELDS),
         m('div', requiredFields)
       ]),
-      m('fieldset.block-group', [
+      m('fieldset', [
         m('legend.opt', conf.LANG.USER.OPTIONAL_FIELDS),
-        fields.firstname.label, fields.firstname.input, fields.firstname.icon,
-        fields.lastname.label, fields.lastname.input, fields.lastname.icon,
-        fields.organization.label, fields.organization.input,
-        fields.organization.icon,
-        fields.color.label, fields.color.input, fields.color.icon
+          m('.form-group', [
+            fields.firstname.label, fields.firstname.icon,
+            m('.col-sm-7', fields.firstname.input)
+          ]),
+          m('.form-group', [
+            fields.lastname.label, fields.lastname.icon,
+            m('.col-sm-7', fields.lastname.input)
+          ]),
+          m('.form-group', [
+            fields.organization.label, fields.organization.icon,
+            m('.col-sm-7', fields.organization.input)
+          ]),
+          m('.form-group', [
+            fields.color.label, fields.color.icon,
+            m('.col-sm-7', fields.color.input)
+          ])
       ]),
-      m('input.block.send', {
-        form: 'subscribe-form',
-        type: 'submit',
-        value: profOrAdm ? conf.LANG.ACTIONS.SAVE : USER.REGISTER
-      })
+      m('.form-group', [
+        m('.col-sm-12', [
+          m('input.btn.btn-success pull-right', {
+            form: 'subscribe-form',
+            type: 'submit',
+            value: profOrAdm ? conf.LANG.ACTIONS.SAVE : USER.REGISTER
+          }),
+          c.profileView() ? view.removeAccount(c) : ''
+        ])
+      ])
     ]);
   };
 
-  /**
-  * ### removeAccount
-  *
-  * `removeAccount` is the view intended to allow user to erase completely its
-  * account.
-  */
-
-  view.removeAccount = function (c) {
-    return m('section.remove-account.block-group', [
-      m('button.block', {
-        onclick: c.removeAccount
-      }, conf.LANG.USER.REMOVE_ACCOUNT),
-      m('i', {
-        class: 'icon-info-circled tooltip block',
-        'data-msg': conf.LANG.USER.INFO.REMOVE_ACCOUNT
-      })
-    ]);
-  };
 
   /**
   * ### main and global view
@@ -317,13 +362,12 @@ module.exports = (function () {
   view.main = function (c) {
     var elements = [view.form(c)];
     if (c.profileView()) {
-      elements.splice(0, 0, m('h2.block',
+      elements.splice(0, 0, m('h2',
         conf.LANG.USER.PROFILE + ' : ' + auth.userInfo().login));
-      elements.push(view.removeAccount(c));
     } else {
-      elements.splice(0, 0, m('h2.block', conf.LANG.USER.SUBSCRIBE));
+      elements.splice(0, 0, m('h2', conf.LANG.USER.SUBSCRIBE));
     }
-    return m('section', { class: 'block-group user' }, elements);
+    return m('section', { class: 'user' }, elements);
   };
 
   subscribe.view = function (c) {

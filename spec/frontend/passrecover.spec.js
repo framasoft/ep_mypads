@@ -40,7 +40,7 @@ module.exports = (function () {
       beforeAll(function (done) {
         qfirst('ul.lang li:first-child').click();
         // Go to password recovery
-        qfirst('p.passlost a').click();
+        qfirst('a[href$=passrecover]').click();
         window.setTimeout(function () {
           $el = {
             form: qfirst('form#passrec-form'),
@@ -69,7 +69,7 @@ module.exports = (function () {
             fill($el.email, 'inexistent@example.org');
             $el.submit.click();
             window.setTimeout(function () {
-              var $err = qfirst('body > section.notification div.error p');
+              var $err = qfirst('section.notification div.alert-danger p');
               expect($err.innerHTML).toMatch('User not found');
               $err.click();
               window.setTimeout(done, 100);
@@ -82,7 +82,7 @@ module.exports = (function () {
             fill($el.email, 'parker@lewis.me');
             $el.submit.click();
             window.setTimeout(function () {
-              var $err = qfirst('body > section.notification div.error p');
+              var $err = qfirst('section.notification div.alert-danger p');
               expect($err.innerHTML).toMatch('Root Url setting has not');
               $err.click();
               window.setTimeout(done, 100);
@@ -111,7 +111,7 @@ module.exports = (function () {
             fill($el.passwordConfirm, 'aGoodSizePassword');
             $el.submit.click();
             window.setTimeout(function () {
-              var $err = qfirst('body > section.notification div.error p');
+              var $err = qfirst('section.notification div.alert-danger p');
               expect($err.innerHTML).toMatch('Used token contains incorrect');
               $err.click();
               window.setTimeout(done, 100);

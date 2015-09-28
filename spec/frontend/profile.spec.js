@@ -57,7 +57,7 @@ module.exports = (function () {
                 ld.assign($el, {
                     passwordCurrent: first('input[name=passwordCurrent]'),
                     useLoginAndColorInPads: uLCP,
-                    removeAccount: first('section.remove-account button')
+                    removeAccount: first('button.btn-danger')
                 });
                 app.document.querySelector('body > section p').click();
                 window.setTimeout(done, 100);

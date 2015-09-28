@@ -96,7 +96,7 @@ module.exports = (function () {
           $el.submit.click();
           window.setTimeout(function () {
             expect(app.location.search).toBe(hash);
-            var $ialert = first('.icon-alert');
+            var $ialert = first('.glyphicon-exclamation-sign');
             expect($ialert.getAttribute('data-msg'))
               .toMatch('For verification');
             var $warning = app.document.querySelectorAll('body > section p');
@@ -174,9 +174,9 @@ module.exports = (function () {
           window.setTimeout(function () {
             expect(first('main h2').textContent).toMatch('Mes groupes');
             first('header ul li').click(); // to english
-            first('.icon-logout').parentNode.click();
+            first('.glyphicon-off').parentNode.click();
             window.setTimeout(function () {
-              expect(first('.icon-login')).toBeTruthy();
+              expect(first('.glyphicon-lock')).toBeTruthy();
               first('body > section p').click();
               done();
             }, 200);

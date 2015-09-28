@@ -104,7 +104,7 @@ module.exports = (function () {
           $el.submit.click();
           window.setTimeout(function () {
             var $err = first('body > section.notification div div');
-            expect($err.className).toMatch('error');
+            expect($err.className).toMatch('alert-danger');
             $err.click();
             done();
           }, 200);
@@ -122,7 +122,7 @@ module.exports = (function () {
           $success.click();
           window.setTimeout(function () {
             expect(app.location.search).toBe('?/mypads');
-            first('.icon-logout').parentNode.click();
+            first('.glyphicon-off').parentNode.click();
             window.setTimeout(function () {
               first('body > section > div p').click();
               window.setTimeout(done, 100);
@@ -141,9 +141,9 @@ module.exports = (function () {
         $el.submit.click();
         window.setTimeout(function () {
           first('body > section p').click();
-          first('.icon-logout').parentNode.click();
+          first('.glyphicon-off').parentNode.click();
           window.setTimeout(function () {
-            expect(first('.icon-login')).toBeTruthy();
+            expect(first('.glyphicon-lock')).toBeTruthy();
             expect(app.document.title).toBe('MyPads');
             first('body > section p').click();
             done();

@@ -5616,6 +5616,7 @@ module.exports = (function () {
       label: m('label', [
         m('input', {
           type: 'checkbox',
+          name: 'useLoginAndColorInPads',
           checked: c.data.useLoginAndColorInPads(),
           onchange: m.withAttr('checked', c.data.useLoginAndColorInPads)
         }),

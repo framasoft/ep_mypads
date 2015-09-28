@@ -45,14 +45,11 @@ module.exports = (function () {
   */
 
   form.icon = function (c, name, info, err) {
-    var icls = ['glyphicon glyphicon-exclamation-sign'];
-    if ( c.valid[name]() ) {
-      icls = ['glyphicon glyphicon-info-sign'];
-    }
-    icls.push('mp-tooltip');
+    var icls = 'glyphicon mp-tooltip glyphicon-';
+    icls += (c.valid[name]() ? 'info-sign' : 'exclamation-sign');
     var msg = c.valid[name]() ? info : err;
     return m('i', {
-      class: icls.join(' '),
+      class: icls,
       'data-msg': msg
     });
   };

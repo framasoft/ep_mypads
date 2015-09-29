@@ -32,18 +32,18 @@
   var profile = require('./profile.spec.js');
   var passRecover = require('./passrecover.spec.js');
   var bookmark = require('./bookmark.spec.js');
-  var groupList = require('./group.spec.js');
-  var groupForm = require('./group-form.spec.js');
-  var groupRemove = require('./group-remove.spec.js');
-  var groupView = require('./group-view.spec.js');
-  var padForm = require('./pad-form.spec.js');
-  var userInvite = require('./user-invitation.spec.js');
-  var padView = require('./pad-view.spec.js');
-  var padMove = require('./pad-move.spec.js');
-  var userlist = require('./userlist.spec.js');
-  var tagWidget = require('./tag-widget.spec.js');
-  var admin = require('./admin.spec.js');
-  var adminUsers = require('./admin-users.spec.js');
+  //var groupList = require('./group.spec.js');
+  //var groupForm = require('./group-form.spec.js');
+  //var groupRemove = require('./group-remove.spec.js');
+  //var groupView = require('./group-view.spec.js');
+  //var padForm = require('./pad-form.spec.js');
+  //var userInvite = require('./user-invitation.spec.js');
+  //var padView = require('./pad-view.spec.js');
+  //var padMove = require('./pad-move.spec.js');
+  //var userlist = require('./userlist.spec.js');
+  //var tagWidget = require('./tag-widget.spec.js');
+  //var admin = require('./admin.spec.js');
+  //var adminUsers = require('./admin-users.spec.js');
 
   describe('MyPads testing', function () {
     var app = frames[0];
@@ -55,7 +55,7 @@
     subscribe.run(app);
     profile.run(app);
     passRecover.run(app);
-    //bookmark.run(app);
+    bookmark.run(app);
     //groupList.run(app);
     //groupForm.run(app);
     //groupRemove.run(app);

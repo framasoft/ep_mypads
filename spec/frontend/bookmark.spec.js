@@ -51,11 +51,11 @@ module.exports = (function () {
           window.setTimeout(function () {
             qfirst('body > section > div p').click();
             window.setTimeout(function () {
-              qfirst('header.group a[title$=mark]').click();
+              qfirst('table tr th a[title$=mark]').click();
               window.setTimeout(function () {
                 qfirst('body > section > div p').click();
                 window.setTimeout(function () {
-                  qall('header.group a[href$=view]')[2].click();
+                  qall('table tr th a[href$=view]')[1].click();
                   window.setTimeout(function () {
                     qfirst('section.pads button[title$=mark]').click();
                     window.setTimeout(function () {
@@ -64,8 +64,8 @@ module.exports = (function () {
                         qfirst('a[href$=mybookmarks]').click();
                         window.setTimeout(function () {
                           $el = {
-                            groups: qall('section.pads ul.mark li'),
-                            pads: qall('section.users ul.mark li')
+                            groups: qall('.panel-primary div.panel-body ul li'),
+                            pads: qall('.panel-info div.panel-body ul li')
                           };
                           done();
                         }, 100);
@@ -82,7 +82,7 @@ module.exports = (function () {
       afterAll(function (done) {
         qfirst('body > section p').click();
         window.setTimeout(function () {
-          qfirst('.icon-logout').parentNode.click();
+          qfirst('.glyphicon-off').parentNode.click();
           window.setTimeout(function () {
             qfirst('body > section p').click();
             done();
@@ -102,8 +102,8 @@ module.exports = (function () {
         $el.pads[0].querySelector('button').click();
         window.setTimeout(function () {
           qfirst('body > section > div p').click();
-          var groups = qfirst('section.pads p');
-          var pads = qfirst('section.users p');
+          var groups = qfirst('.panel-primary p');
+          var pads = qfirst('.panel-info p');
           expect(groups.textContent).toMatch('No group');
           expect(pads.textContent).toMatch('No pad');
           done();

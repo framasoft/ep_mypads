@@ -20,6 +20,7 @@
 *  specific language governing permissions and limitations
 *  under the License.
 *
+* TODO: migrate to Bootstrap (much work here)
 */
 
 module.exports = (function () {
@@ -48,19 +49,20 @@ module.exports = (function () {
             'lovesKubiak');
           app.document.querySelector('input[type=submit]').click();
           window.setTimeout(function () {
-            var groups = app.document.querySelectorAll('ul.group');
+            var gSel = 'section.panel-primary table tbody tr';
+            var groups = app.document.querySelectorAll(gSel);
+            var gSelArchived = 'section.panel-default table tbody tr';
+            var archived = app.document.querySelectorAll(gSelArchived);
             $el = {
-              bookmarked: groups[0],
-              common: groups[1],
-              archived: groups[2],
+              groups: groups,
+              archived: archived,
               searchInput: first('input[type=search]'),
               filter: first('section.filter ul'),
               tagsAside: first('section.tag > ul')
             };
-            $el.searchOk = $el.searchInput.parentNode.children[2];
+            $el.searchOk = $el.searchInput.parentNode.children[1].firstChild;
             groupsCount = function () {
-              return $el.bookmarked.children.length +
-                $el.common.children.length + $el.archived.children.length; 
+              return $el.groups.length + $el.archived.length;
             };
             first('body > section > div p').click();
             window.setTimeout(done, 100);
@@ -73,7 +75,7 @@ module.exports = (function () {
         window.setTimeout(function () {
           first('body > section p').click();
           window.setTimeout(function () {
-            first('.icon-logout').parentNode.click();
+            first('.glyphicon-off').parentNode.click();
             window.setTimeout(function () {
               first('body > section p').click();
               done();

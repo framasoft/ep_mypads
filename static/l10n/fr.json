@@ -52,11 +52,11 @@
         "UNAUTHORIZED": "Vous n'êtes pas autorisé à accéder à cet enregistrement"
       },
       "GROUP": {
-        "INEXISTENT": "Le groupe n'existe pas",
+        "INEXISTENT": "Le dossier n'existe pas",
         "CASCADE_REMOVAL_PROBLEM": "Quelque chose s'est mal déroulé avec la suppression en cascade des pads",
         "ITEMS_NOT_FOUND": "Des utilisateurs, administrateurs ou pads n'ont pas été trouvés",
-        "NOT_USER": "Vous n'êtes pas utilisateur de ce groupe",
-        "RESIGN_UNIQUE_ADMIN": "Vous ne pouvez pas désinscrire cet utilisateur du groupe s'il est l'unique administrateur"
+        "NOT_USER": "Vous n'êtes pas utilisateur de ce dossier",
+        "RESIGN_UNIQUE_ADMIN": "Vous ne pouvez pas désinscrire cet utilisateur du dossier s'il est l'unique administrateur"
       },
       "USER": {
         "ALREADY_EXISTS": "L'utilisateur existe déjà, merci de choisir un autre identifiant",
@@ -67,7 +67,7 @@
       },
       "PAD": {
         "INEXISTENT": "Le pad n'existe pas",
-        "ITEMS_NOT_FOUND": "Le groupe rattaché à ce pad ou au moins l'un de ses utilisateurs n'a pas été trouvé"
+        "ITEMS_NOT_FOUND": "Le dossier rattaché à ce pad ou au moins l'un de ses utilisateurs n'a pas été trouvé"
       },
       "TOKEN": {
         "INCORRECT": "Le token employé contient des données incorrectes pour cette requête.",
@@ -77,7 +77,7 @@
   },
   "GLOBAL": {
     "LANG": "Français",
-    "DESCRIPTION": "MyPads est un plugin <a href='http://etherpad.org/'>Etherpad</a> qui a été financé en 2014 par <a href='http://fr.ulule.com/etherpad-framapad/supporters/'>413 contributeurs</a> sur Ulule et porté par l'association <a href='http://framasoft.org'>Framasoft</a>. Il prend en charge<ul><li>des utilisateurs et leur authentification;</li><li>des groupes de pads par utilisateur, illimités et partageables;</li><li>les pads qui leur sont attachés, donne la possibilité d'inviter des utilisateurs connus à les utiliser, les rendre privés sous contrainte de mot de passe ou les fixer en accès public.</li></ul>",
+    "DESCRIPTION": "MyPads est un plugin <a href='http://etherpad.org/'>Etherpad</a> qui a été financé en 2014 par <a href='http://fr.ulule.com/etherpad-framapad/supporters/'>413 contributeurs</a> sur Ulule et porté par l'association <a href='http://framasoft.org'>Framasoft</a>. Il prend en charge<ul><li>des utilisateurs et leur authentification;</li><li>des dossiers de pads par utilisateur, illimités et partageables;</li><li>les pads qui leur sont attachés, donne la possibilité d'inviter des utilisateurs connus à les utiliser, les rendre privés sous contrainte de mot de passe ou les fixer en accès public.</li></ul>",
     "FOOTER": "Propulsé par <a href='https://git.framasoft.org/framasoft/ep_mypads'>MyPads</a><br>Publié sous la licence Apache 2.0",
     "AND": "et",
     "OR": "ou",
@@ -91,7 +91,7 @@
     "CANCEL": "Annuler"
   },
   "MENU": {
-    "PAD": "Mes Groupes & Pads",
+    "PAD": "Mes Dossiers & Pads",
     "BOOKMARK": "Mes Favoris",
     "USERLIST": "Mes listes utilisateurs",
     "PROFILE": "Mon Profil",
@@ -155,8 +155,8 @@
       "PASSWORD_CHECK": "Pour confirmer : doit être le même que le mot de passe",
       "PASSWORD_CURRENT": "Mesure de sécurité : nécessaire pour tout changement sur le profil",
       "OPTIONAL": "Champ facultatif",
-      "REMOVE_ACCOUNT": "Supprimer définitivement votre compte et tous les groupes et pads dont vous êtes l'unique administrateur",
-      "REMOVE_ACCOUNT_SURE": "Vous êtes sur le point de supprimer définitivement votre compte ainsi que tous les groupes et pads dont vous êtes l'unique administrateur. Si vous êtes réellement sûr de ce que vous faisez, merci de saisir votre mot de passe et de cliquer sur OK",
+      "REMOVE_ACCOUNT": "Supprimer définitivement votre compte et tous les dossiers et pads dont vous êtes l'unique administrateur",
+      "REMOVE_ACCOUNT_SURE": "Vous êtes sur le point de supprimer définitivement votre compte ainsi que tous les dossiers et pads dont vous êtes l'unique administrateur. Si vous êtes réellement sûr de ce que vous faisez, merci de saisir votre mot de passe et de cliquer sur OK",
       "REMOVE_ACCOUNT_SUCCESS": "Compte supprimé avec succès",
       "PASSRECOVER_SUCCESS": "Vous devriez avoir reçu un message sur l'adresse mail que vous avez saisie lors de votre inscription. Ce message contient une adresse Web qui n'est valide que temporairement. Merci de suivre cette adresse afin de modifier votre mot de passe.",
       "CHANGEPASS_SUCCESS": "Votre mot de passe a été mis à jour avec succès.",
@@ -182,20 +182,20 @@
     }
   },
   "GROUP": {
-    "MYGROUPS": "Mes groupes",
-    "HELP": "Les groupes peuvent contenir des pads. Vous trouverez ici vos groupes, c'est à dire ceux que vous avez créés et ceux auxquels vous avez été explicitement invités",
-    "GROUP": "Groupe",
-    "GROUPS": "Groupes",
-    "NONE": "Aucun groupe",
+    "MYGROUPS": "Mes dossiers",
+    "HELP": "Les dossiers peuvent contenir des pads. Vous trouverez ici vos dossiers, c'est à dire ceux que vous avez créés et ceux auxquels vous avez été explicitement invités",
+    "GROUP": "Dossier",
+    "GROUPS": "Dossiers",
+    "NONE": "Aucun dossier",
     "BOOKMARKED": "Favoris",
     "ARCHIVED": "Archivés",
-    "ADD": "Créer un nouveau groupe",
+    "ADD": "Créer un nouveau dossier",
     "ADD_HELP": "<h3>Accès</h3><p>Vous avez le choix entre trois niveaux de visibilité. Cela impactera tous les pads liés :<ul><li><em>restreint</em>, le choix par défaut : l'accès aux pads sera limité à une liste d'utilisateurs invités que vous aurez choisis ;</li><li><em>privé</em> : dans ce mode vous aurez à saisir un mot de passe qui sera vérifié pour autoriser l'accès ;</li><li><em>public</em> : dans ce mode, tous les pads sont publics, les utilisateurs n'ont alors besoin que de l'adresse URL pour y accéder.</li></ul></p><h3>Lecture seule</h3><p>Si vous activez la <em>lecture seule</em>, tous les pads attachés conserveront leur dernier état connu et ne pourront être édités. Notez que la visibilité fonctionnera toujours.</p><h3>Labels</h3><p>Vous pouvez associer des labels à cet élément en cliquant sur le champ correspondant et en les sélectionnant un par un.</p><p>Pour créer un nouveau label, saisissez-le et appuyez sur la touche ENTRÉE ou cliquez sur le bouton 'Ok'. Une fois le label ajouté, il sera automatiquement sélectionné sur ce formulaire.</p><p>Vous pouvez supprimer un label en cliquant sur la croix située à sa droite.</p>",
     "EDIT": "Modifier",
-    "EDIT_GROUP": "Modifier un groupe",
+    "EDIT_GROUP": "Modifier un dossier",
     "VIEW": "Voir",
-    "VIEW_MANAGE": "Voir et gérer le groupe et ses pads",
-    "VIEW_HELP": "<p>Les détails d'un groupe vous montrent :<ul><li>les options définies lorsque le groupe a été créé ou mis à jour;</li><li>la liste des pads créés pour ce groupe;</li><li>et la liste des administrateurs et utilisateurs de ce groupe.</li></ul></p><p>À partir de là, vous pouvez : <ul><li>créer de nouveaux pads, les modifier, les supprimer ou les mettre en favoris;</li><li>partager l'administration de votre groupe avec d'autres utilisateurs;</li><li>inviter d'autres utilisateurs à voir et participer aux pads de ce groupe.</li></ul></p>",
+    "VIEW_MANAGE": "Voir et gérer le dossier et ses pads",
+    "VIEW_HELP": "<p>Les détails d'un dossier vous montrent :<ul><li>les options définies lorsque le dossier a été créé ou mis à jour;</li><li>la liste des pads créés pour ce dossier;</li><li>et la liste des administrateurs et utilisateurs de ce dossier.</li></ul></p><p>À partir de là, vous pouvez : <ul><li>créer de nouveaux pads, les modifier, les supprimer ou les mettre en favoris;</li><li>partager l'administration de votre dossier avec d'autres utilisateurs;</li><li>inviter d'autres utilisateurs à voir et participer aux pads de ce dossier.</li></ul></p>",
     "SHARE": "Partager",
     "SHARE_LINK": "Merci de partager cette adresse avec vos invités",
     "SHARE_PASSWORD": "Merci de saisir le mot de passe afin de pouvoir partager le pad",
@@ -204,10 +204,10 @@
     "UNMARK": "Supprimer des favoris",
     "MARK_SUCCESS": "Favori créé avec succès",
     "SHARE_ADMIN": "Partager l'administration",
-    "QUIT_GROUP": "Quitter le groupe",
+    "QUIT_GROUP": "Quitter le dossier",
     "INVITE_USER": {
       "IU": "Inviter des utilisateurs",
-      "HELP": "<h4>Liste d'utilisateurs</h4><p>Vous pouvez sélectionner une ou plusieurs listes. En en choisissant une, ses membres seront tous invités.</p><h4>Inviter des utilisateurs</h4><p>Ce champ accepte un email ou identifiant à la fois. Quand vous pressez ENTRÉE ou cliquez sur OK, l'élément saisi est ajouté à la liste des utilisateurs invités. Une liste d'utilisateurs connus vous aide à saisir.</p><h4>Utilisateurs</h4><p>Cette liste contient tous les utilisateurs sélectionnés. Vous pouvez les supprimer en cliquant sur le signe derrière chaque élément.</p><h4>Note</h4><p>Merci de noter que, pour le moment, seuls les utilisateurs enregistrés pourront être ajoutés à votre groupe. Cela signifie que les utilisateurs externes à Mypads ne recevront pas de mail pour les inviter à créer un compte.</p>",
+      "HELP": "<h4>Liste d'utilisateurs</h4><p>Vous pouvez sélectionner une ou plusieurs listes. En en choisissant une, ses membres seront tous invités.</p><h4>Inviter des utilisateurs</h4><p>Ce champ accepte un email ou identifiant à la fois. Quand vous pressez ENTRÉE ou cliquez sur OK, l'élément saisi est ajouté à la liste des utilisateurs invités. Une liste d'utilisateurs connus vous aide à saisir.</p><h4>Utilisateurs</h4><p>Cette liste contient tous les utilisateurs sélectionnés. Vous pouvez les supprimer en cliquant sur le signe derrière chaque élément.</p><h4>Note</h4><p>Merci de noter que, pour le moment, seuls les utilisateurs enregistrés pourront être ajoutés à votre dossier. Cela signifie que les utilisateurs externes à Mypads ne recevront pas de mail pour les inviter à créer un compte.</p>",
       "USERS_SELECTION": "Sélection d'utilisateurs",
       "USERS_SELECTED": "Utilisateurs sélectionnés",
       "PLACEHOLDER": "Mail ou identifiant",
@@ -219,11 +219,11 @@
     "ADMIN_SHARE": {
       "AS": "Partage d'administration",
       "SUCCESS": "La partage d'administration s'est achevé avec succès pour ",
-      "FAILURE": "Vous ne pouvez pas partager l'administration de ce groupe avec des utilisateurs qui ne possèdent pas de compte sur cette instance : "
+      "FAILURE": "Vous ne pouvez pas partager l'administration de ce dossier avec des utilisateurs qui ne possèdent pas de compte sur cette instance : "
     },
     "SORT": {
       "TITLE": "Ranger par",
-      "HELP": "Par défaut, les groupes sont ordonnés par la date de création, les plus anciens en premier. Vous pouvez opter pour d'autres tris ici. Cliquer à nouveau inverse l'ordre de tri."
+      "HELP": "Par défaut, les dossiers sont ordonnés par la date de création, les plus anciens en premier. Vous pouvez opter pour d'autres tris ici. Cliquer à nouveau inverse l'ordre de tri."
     },
     "SEARCH": {
       "TITLE": "Recherche",
@@ -239,12 +239,12 @@
       "RESTRICTED": "Restreint",
       "PUBLIC": "Public",
       "READONLY": "Lecture seule",
-      "GROUP_PARAMS": "Paramètres du groupe ?"
+      "GROUP_PARAMS": "Paramètres du dossier ?"
     },
     "FILTERS": {
       "TITLE": "Filtres",
-      "ADMIN": "Groupes dont je suis l'administrateur",
-      "USER": "Groupes auxquels j'ai été invité",
+      "ADMIN": "Dossiers dont je suis l'administrateur",
+      "USER": "Dossiers auxquels j'ai été invité",
       "HELP": "Vous pouvez sélectionner un ou plusieurs filtres, cliquez à nouveau pour les désactiver"
     },
     "TAGS": {
@@ -269,36 +269,36 @@
       "SORT_BY_CREATION": "date de création",
       "SORT_BY_NAME": "nom",
       "SORT_BY_UPDATE": "dernière mise à jour",
-      "MOVE": "Déplacer tous les pads vers un autre groupe",
-      "MOVE_TITLE": "Migration des pads du groupe ",
-      "MOVE_HELP": "<p>Merci de sélectionner le groupe souhaité pour votre migration. Seuls les groupes dont vous êtes administrateur apparaissent.</p><p>Une fois choisi, cliquez sur le bouton d'envoi et attendez un moment</p>",
-      "FROM_GROUP": "groupe :",
-      "VIEW_HELP": "<p>Vous voici sur l'interface principale du pad affiché.</p><p>Si le groupe ou le pad est privé, vous aurez besoin de saisir le mot de passe pour y avoir accès.</p><p>Si vous voulez revenir au groupe, vous pouvez cliquer sur le nom de celui-ci.</p>",
+      "MOVE": "Déplacer tous les pads vers un autre dossier",
+      "MOVE_TITLE": "Migration des pads du dossier ",
+      "MOVE_HELP": "<p>Merci de sélectionner le dossier souhaité pour votre migration. Seuls les dossiers dont vous êtes administrateur apparaissent.</p><p>Une fois choisi, cliquez sur le bouton d'envoi et attendez un moment</p>",
+      "FROM_GROUP": "dossier :",
+      "VIEW_HELP": "<p>Vous voici sur l'interface principale du pad affiché.</p><p>Si le dossier ou le pad est privé, vous aurez besoin de saisir le mot de passe pour y avoir accès.</p><p>Si vous voulez revenir au dossier, vous pouvez cliquer sur le nom de celui-ci.</p>",
       "OPEN_TAB": "Ouvrir dans un nouvel onglet"
     },
     "INFO": {
       "NAME": "Nom",
-      "DESCRIPTION": "Un texte facultatif pour décrire votre groupe",
+      "DESCRIPTION": "Un texte facultatif pour décrire votre dossier",
       "VISIBILITY": "Requis, restreint par défaut aux utilisateurs ou administrateurs invités",
       "READONLY": "Si sélectionné les pads liés seront en lecture seule",
       "PASSWORD": "Requis pour le mode privé",
-      "GROUP_PARAMS": "Par défaut, les pads héritent des paramètres du groupe dont ils font partie. Vous pouvez cependant leur fixer des règles spécifiques",
-      "ADD_SUCCESS": "Le groupe a été ajouté avec succès",
-      "EDIT_SUCCESS": "Le groupe a été mis à jour avec succès",
-      "REMOVE_SUCCESS": "Le groupe a été supprimé avec succès",
-      "REMOVE_SURE": "Voulez-vous vraiment supprimer ce groupe ?",
-      "RESIGN": "Voulez-vous vraiment quitter ce groupe ?",
-      "RESIGN_SUCCESS": "Groupe quitté avec succès",
+      "GROUP_PARAMS": "Par défaut, les pads héritent des paramètres du dossier dont ils font partie. Vous pouvez cependant leur fixer des règles spécifiques",
+      "ADD_SUCCESS": "Le dossier a été ajouté avec succès",
+      "EDIT_SUCCESS": "Le dossier a été mis à jour avec succès",
+      "REMOVE_SUCCESS": "Le dossier a été supprimé avec succès",
+      "REMOVE_SURE": "Voulez-vous vraiment supprimer ce dossier ?",
+      "RESIGN": "Voulez-vous vraiment quitter ce dossier ?",
+      "RESIGN_SUCCESS": "Dossier quitté avec succès",
       "PAD_REMOVE_SUCCESS": "Le pad a été supprimé avec succès",
       "PAD_REMOVE_SURE": "Voulez-vous vraiment supprimer ce pad ?",
       "PAD_ADD_SUCCESS": "Le pad a été créé avec succès",
       "PAD_EDIT_SUCCESS": "Le pad a été mis à jour avec succès",
-      "PAD_MOVE": "Choisissez le groupe souhaité pour votre migration",
-      "PAD_MOVE_NOGROUP": "Désolé mais aucun autre groupe n'est disponible. Vous devriez en créer un d'abord.",
+      "PAD_MOVE": "Choisissez le dossier souhaité pour votre migration",
+      "PAD_MOVE_NOGROUP": "Désolé mais aucun autre dossier n'est disponible. Vous devriez en créer un d'abord.",
       "PAD_MOVE_SUCCESS": "Tous les pads ont été déplacés avec succès"
     },
     "ERR": {
-      "NAME": "Le nom du groupe est nécessaire"
+      "NAME": "Le nom du dossier est nécessaire"
     }
   },
   "BOOKMARK": {
@@ -387,7 +387,7 @@
       "USERS_SEARCH_LOGIN": "Merci de saisir un identifiant de manière à effectuer une recherche dans la base de données",
       "USER_FOUND": "Utilisateur trouvé. Voyez les options dans le formulaire",
       "USER_NONE": "Pas d'utilisateur pour cet identifiant",
-      "USER_REMOVE_SURE": "Vous êtes sur le point de supprimer définitivement ce compte utilisateur et tous les groupes et pads pour lesquels cet utilisateur est seul administrateur. Si vous êtes sûr de ce que vous faites, vous pouvez cliquer sur le bouton OK."
+      "USER_REMOVE_SURE": "Vous êtes sur le point de supprimer définitivement ce compte utilisateur et tous les dossiers et pads pour lesquels cet utilisateur est seul administrateur. Si vous êtes sûr de ce que vous faites, vous pouvez cliquer sur le bouton OK."
     },
     "ERR": {
       "TITLE": "Le titre est obligatoire",

@@ -19,7 +19,7 @@
         "INVITE_BOOL": "Invite must be a boolean",
         "GID_STR": "gid must be a string",
         "LOGINS_ARR": "logins must be an array",
-        "TYPE_PADSORGROUPS": "Type must be either pads or groups",
+        "TYPE_PADSORGROUPS": "Type must be either pads or folders",
         "USERLIST_CRUD": "crud must be add, set or del",
         "USERLIST_ID": "In set and del modes, ulistid is mandatory",
         "USERLIST_NAME": "In add mode, name of the userlist is mandatory",
@@ -52,10 +52,10 @@
         "UNAUTHORIZED": "You are not allowed to access to this record"
       },
       "GROUP": {
-        "INEXISTENT": "Group does not exist",
+        "INEXISTENT": "Folder does not exist",
         "CASCADE_REMOVAL_PROBLEM": "Something goes wrong with cascade pads removal",
         "ITEMS_NOT_FOUND": "Some users, admins or pads have not been found",
-        "NOT_USER": "You are not an user of this group",
+        "NOT_USER": "You are not an user of this folder",
         "RESIGN_UNIQUE_ADMIN": "You can't resign the unique administrator"
       },
       "USER": {
@@ -67,7 +67,7 @@
       },
       "PAD": {
         "INEXISTENT": "Pad does not exist",
-        "ITEMS_NOT_FOUND": "Pad group or at least one of the users are not found"
+        "ITEMS_NOT_FOUND": "Pad folder or at least one of the users are not found"
       },
       "TOKEN": {
         "INCORRECT": "Used token contains incorrect data for this request.",
@@ -77,7 +77,7 @@
   },
   "GLOBAL": {
     "LANG": "English",
-    "DESCRIPTION": "MyPads is an <a href='http://etherpad.org/'>Etherpad</a> plugin which have been founded in 2014 on Ulule by <a href='http://ulule.com/etherpad-framapad/supporters/'>413 backers</a> and organized by the non-profit organization <a href='http://framasoft.org'>Framasoft</a>. It handles :<ul><li>users and their authentication; </li><li>groups of pads per user, unlimited, sharable;</li><li>attached pads, with choice between invite known users to use them, making them private with password or letting them public.</li></ul>",
+    "DESCRIPTION": "MyPads is an <a href='http://etherpad.org/'>Etherpad</a> plugin which have been founded in 2014 on Ulule by <a href='http://ulule.com/etherpad-framapad/supporters/'>413 backers</a> and organized by the non-profit organization <a href='http://framasoft.org'>Framasoft</a>. It handles :<ul><li>users and their authentication; </li><li>folders of pads per user, unlimited, sharable;</li><li>attached pads, with choice between invite known users to use them, making them private with password or letting them public.</li></ul>",
     "FOOTER": "Powered by <a href='https://git.framasoft.org/framasoft/ep_mypads'>MyPads</a><br>Published under Apache License 2.0",
     "AND": "and",
     "OR": "or",
@@ -91,7 +91,7 @@
     "CANCEL": "Cancel"
   },
   "MENU": {
-    "PAD": "My Groups & Pads",
+    "PAD": "My Folders & Pads",
     "BOOKMARK": "My Bookmarks",
     "USERLIST": "My Userlists",
     "PROFILE": "My Profile",
@@ -155,8 +155,8 @@
       "PASSWORD_CHECK": "For verification : must be the same as password",
       "PASSWORD_CURRENT": "Security check : required for all profile changes",
       "OPTIONAL": "Optional field",
-      "REMOVE_ACCOUNT": "Remove definitively your account and all the groups and pads on which you are the unique administrator",
-      "REMOVE_ACCOUNT_SURE": "You are on the verge of removing definitively your account and all the groups and pads on which you are the unique administrator. If you are really sure about what you are doing, please enter your current password and click OK",
+      "REMOVE_ACCOUNT": "Remove definitively your account and all the folders and pads on which you are the unique administrator",
+      "REMOVE_ACCOUNT_SURE": "You are on the verge of removing definitively your account and all the folders and pads on which you are the unique administrator. If you are really sure about what you are doing, please enter your current password and click OK",
       "REMOVE_ACCOUNT_SUCCESS": "Account removed with success",
       "PASSRECOVER_SUCCESS": "You should have received an email to the address you have used when you subscribe. This email contains a Web address that is temporary valid. Please follow this url to change your password.",
       "CHANGEPASS_SUCCESS": "Your password has been successfully updated.",
@@ -182,20 +182,20 @@
     }
   },
   "GROUP": {
-    "MYGROUPS": "My Groups",
-    "HELP": "Groups can contain pads. Here are your groups : those you have created, those you have been explicitly invited",
-    "GROUP": "Group",
-    "GROUPS": "Groups",
-    "NONE": "No group",
-    "BOOKMARKED": "Bookmarked groups",
-    "ARCHIVED": "Archived groups",
-    "ADD": "Add a new group",
+    "MYGROUPS": "My Folders",
+    "HELP": "Folders can contain pads. Here are your folders : those you have created, those you have been explicitly invited",
+    "GROUP": "Folder",
+    "GROUPS": "Folders",
+    "NONE": "No folder",
+    "BOOKMARKED": "Bookmarked folders",
+    "ARCHIVED": "Archived folders",
+    "ADD": "Add a new folder",
     "ADD_HELP": "<h3>Visibility</h3><p>You have the choice between three levels of visibility. It will impact all linked pads:<ul><li><em>restricted</em>, default choice: access of the pads are limited to a list of invited users you have chosen;</li><li><em>private</em>: in this mode, you have to enter a password and access to the pads will be checked against this password;</li><li><em>public</em>: in this mode, all pads are public, users just need to have the URL address.</li></ul></p><h3>Readonly</h3><p>If you check <em>readonly</em>, all attached pads will stay in their state, and can not be edited. Note that visibility still works in readonly mode.</p><h3>Tags</h3><p>You can attach tags to this element by clicking on the corresponding input field and selecting them one by one.</p><p>To create a new tag, fill it and type ENTER key or click on the 'Ok' button. Once the tag has been added, it will automatically been selected on this form.</p><p>You can remove a tag by clicking on the cross located on the right of it.</p>",
     "EDIT": "Edit",
-    "EDIT_GROUP": "Edit a group",
+    "EDIT_GROUP": "Edit a folder",
     "VIEW": "View",
-    "VIEW_MANAGE": "View and manage group and its pads",
-    "VIEW_HELP": "<p>The details of the group show you :<ul><li>options defined when group has been created or updated;</li><li>list of pads created for this group;</li><li>and list of admins and users of the group.</li></ul></p><p>From there, you can : <ul><li>create new pads, edit them, remove or mark them;</li><li>share administration of your group with other users;</li><li>invite other users to view and edit pads of the group.</li></ul></p>",
+    "VIEW_MANAGE": "View and manage folder and its pads",
+    "VIEW_HELP": "<p>The details of the folder show you :<ul><li>options defined when folder has been created or updated;</li><li>list of pads created for this folder;</li><li>and list of admins and users of the folder.</li></ul></p><p>From there, you can : <ul><li>create new pads, edit them, remove or mark them;</li><li>share administration of your folder with other users;</li><li>invite other users to view and edit pads of the folder.</li></ul></p>",
     "SHARE": "Share",
     "SHARE_LINK": "Please share this URL to your guests",
     "SHARE_PASSWORD": "Please enter the password to be able to share",
@@ -204,10 +204,10 @@
     "UNMARK": "Unmark",
     "MARK_SUCCESS": "Marking successfully",
     "SHARE_ADMIN": "Share administration",
-    "QUIT_GROUP": "Quit the group",
+    "QUIT_GROUP": "Quit the folder",
     "INVITE_USER": {
       "IU": "Invite users",
-      "HELP": "<h4>Userlists</h4><p>You can select one or more userlists. Each click will add all members of the selected userlist to invited users.</p><h4>Invite users</h4><p>This field accepts one email or login at a time. When ENTER is typed, or OK is clicked, the filled data is added to the list of invited users. A list of known users helps you to fill the input.</p><h4>Users</h4><p>This list contains all selected users. You can remove one by clicking the sign after each item.</p><h4>Note</h4><p>Please note that, for instance, registered users will be automatically added to your group. In short term, external users will receive a mail for creating an account.</p>",
+      "HELP": "<h4>Userlists</h4><p>You can select one or more userlists. Each click will add all members of the selected userlist to invited users.</p><h4>Invite users</h4><p>This field accepts one email or login at a time. When ENTER is typed, or OK is clicked, the filled data is added to the list of invited users. A list of known users helps you to fill the input.</p><h4>Users</h4><p>This list contains all selected users. You can remove one by clicking the sign after each item.</p><h4>Note</h4><p>Please note that, for instance, registered users will be automatically added to your folder. In short term, external users will receive a mail for creating an account.</p>",
       "USERS_SELECTION": "Users selection",
       "USERS_SELECTED": "Selected users",
       "PLACEHOLDER": "Email or login",
@@ -223,7 +223,7 @@
     },
     "SORT": {
       "TITLE": "Sort by",
-      "HELP": "By default, groups are ordered by creation date, older first. You can choose to use another orders. Click again to reverse order."
+      "HELP": "By default, folders are ordered by creation date, older first. You can choose to use another orders. Click again to reverse order."
     },
     "SEARCH": {
       "TITLE": "Search",
@@ -239,12 +239,12 @@
       "RESTRICTED": "Restricted",
       "PUBLIC": "Public",
       "READONLY": "Readonly",
-      "GROUP_PARAMS": "Group parameters ?"
+      "GROUP_PARAMS": "Folder parameters ?"
     },
     "FILTERS": {
       "TITLE": "Filters",
-      "ADMIN": "Groups I am admin",
-      "USER": "Groups I have been invited",
+      "ADMIN": "Folders I am admin",
+      "USER": "Folders I have been invited",
       "HELP": "You can select one or several filters, click again on it to deactivate"
     },
     "TAGS": {
@@ -269,36 +269,36 @@
       "SORT_BY_CREATION": "creation date",
       "SORT_BY_NAME": "name",
       "SORT_BY_UPDATE": "last update",
-      "MOVE": "Move all pads to another group",
-      "MOVE_TITLE": "Pads migration of the group ",
-      "MOVE_HELP": "<p>Please select the wanted group for your migration. Only groups on which you are admin are listed.</p><p>Once chosen, click on the submit button and wait for a moment.</p>",
-      "FROM_GROUP": "group :",
-      "VIEW_HELP": "<p>Here is the main interface of the current pad.</p><p>If the group or the pad is private, you need to enter the password to be able to access to it.</p><p>If you want to go back to the group, you can click on the group name.</p>",
+      "MOVE": "Move all pads to another folder",
+      "MOVE_TITLE": "Pads migration of the folder ",
+      "MOVE_HELP": "<p>Please select the wanted folder for your migration. Only folders on which you are admin are listed.</p><p>Once chosen, click on the submit button and wait for a moment.</p>",
+      "FROM_GROUP": "folder :",
+      "VIEW_HELP": "<p>Here is the main interface of the current pad.</p><p>If the folder or the pad is private, you need to enter the password to be able to access to it.</p><p>If you want to go back to the folder, you can click on the folder name.</p>",
       "OPEN_TAB": "Open in a new tab"
     },
     "INFO": {
       "NAME": "Name",
-      "DESCRIPTION": "An optional long text to describe your group",
+      "DESCRIPTION": "An optional long text to describe your folder",
       "VISIBILITY": "Required, restricted by default to invited users or admins",
       "READONLY": "If checked, linked pads will be in readonly mode",
       "PASSWORD": "Required in private mode",
-      "GROUP_PARAMS": "By default, pad inherits from parameters of the group they belong to. You can overwrite them if you want",
-      "ADD_SUCCESS": "Group has been successfully created",
-      "EDIT_SUCCESS": "Group has been successfully updated",
-      "REMOVE_SUCCESS": "Group has been successfully removed",
-      "REMOVE_SURE": "Are you sure you want to remove this group ?",
-      "RESIGN": "Are you sure you want to resign from this group ?",
-      "RESIGN_SUCCESS": "You have left the group successfully",
+      "GROUP_PARAMS": "By default, pad inherits from parameters of the folder they belong to. You can overwrite them if you want",
+      "ADD_SUCCESS": "Folder has been successfully created",
+      "EDIT_SUCCESS": "Folder has been successfully updated",
+      "REMOVE_SUCCESS": "Folder has been successfully removed",
+      "REMOVE_SURE": "Are you sure you want to remove this folder ?",
+      "RESIGN": "Are you sure you want to resign from this folder ?",
+      "RESIGN_SUCCESS": "You have left the folder successfully",
       "PAD_REMOVE_SUCCESS": "Pad has been successfully removed",
       "PAD_REMOVE_SURE": "Are you sure you want to remove this pad ?",
       "PAD_ADD_SUCCESS": "Pad has been successfully created",
       "PAD_EDIT_SUCCESS": "Pad has been successfully updated",
-      "PAD_MOVE": "Select the wanted group for your migration",
-      "PAD_MOVE_NOGROUP": "Sorry but no other group is available. You should create one before.",
+      "PAD_MOVE": "Select the wanted folder for your migration",
+      "PAD_MOVE_NOGROUP": "Sorry but no other folder is available. You should create one before.",
       "PAD_MOVE_SUCCESS": "All pads have been successfully moved"
     },
     "ERR": {
-      "NAME": "The name of the group is required"
+      "NAME": "The name of the folder is required"
     }
   },
   "BOOKMARK": {
@@ -387,7 +387,7 @@
       "USERS_SEARCH_LOGIN": "Please enter a login to search around database users",
       "USER_FOUND": "User found, please see options inside the form",
       "USER_NONE": "No user for this login",
-      "USER_REMOVE_SURE": "You are on the verge of removing definitively this account and all the groups and pads on which the user is the unique administrator. If you are really sure about what you are doing, please click on the OK button."
+      "USER_REMOVE_SURE": "You are on the verge of removing definitively this account and all the folders and pads on which the user is the unique administrator. If you are really sure about what you are doing, please click on the OK button."
     },
     "ERR": {
       "TITLE": "Title is mandatory",

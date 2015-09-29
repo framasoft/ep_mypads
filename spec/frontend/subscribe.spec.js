@@ -172,7 +172,7 @@ module.exports = (function () {
           expect($success.textContent).toMatch('Successful subscription');
           $success.click();
           window.setTimeout(function () {
-            expect(first('main h2').textContent).toMatch('Mes groupes');
+            expect(first('main h2').textContent).toMatch('Mes dossiers');
             first('header ul li').click(); // to english
             first('.glyphicon-off').parentNode.click();
             window.setTimeout(function () {

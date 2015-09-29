@@ -104,7 +104,7 @@ module.exports = (function () {
           qfirst('body > section > div p').click();
           var groups = qfirst('.panel-primary p');
           var pads = qfirst('.panel-info p');
-          expect(groups.textContent).toMatch('No group');
+          expect(groups.textContent).toMatch('No folder');
           expect(pads.textContent).toMatch('No pad');
           done();
         }, 200);

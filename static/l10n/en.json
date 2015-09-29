@@ -206,7 +206,7 @@
     "SHARE_ADMIN": "Share administration",
     "QUIT_GROUP": "Quit the folder",
     "INVITE_USER": {
-      "IU": "Invite users",
+      "IU": "Invite and manage users",
       "HELP": "<h4>Userlists</h4><p>You can select one or more userlists. Each click will add all members of the selected userlist to invited users.</p><h4>Invite users</h4><p>This field accepts one email or login at a time. When ENTER is typed, or OK is clicked, the filled data is added to the list of invited users. A list of known users helps you to fill the input.</p><h4>Users</h4><p>This list contains all selected users. You can remove one by clicking the sign after each item.</p><h4>Note</h4><p>Please note that, for instance, registered users will be automatically added to your folder. In short term, external users will receive a mail for creating an account.</p>",
       "USERS_SELECTION": "Users selection",
       "USERS_SELECTED": "Selected users",

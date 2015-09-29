@@ -60,6 +60,14 @@ module.exports = (function () {
 
     c.submit = function (e) {
       e.preventDefault();
+      if (!c.data.login()) {
+        var $login = document.querySelector('input[name=login]');
+        c.data.login($login.value);
+      }
+      if (!c.data.password()) {
+        var $pass = document.querySelector('input[name=password]');
+        c.data.password($pass.value);
+      }
       m.request({
         method: 'POST',
         url: conf.URLS.LOGIN,

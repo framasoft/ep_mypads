@@ -22103,7 +22103,7 @@ module.exports={
       "MOVE_TITLE": "Pads migration of the folder ",
       "MOVE_HELP": "<p>Please select the wanted folder for your migration. Only folders on which you are admin are listed.</p><p>Once chosen, click on the submit button and wait for a moment.</p>",
       "FROM_GROUP": "folder :",
-      "VIEW_HELP": "<p>Here is the main interface of the current pad.</p><p>If the folder or the pad is private, you need to enter the password to be able to access to it.</p><p>If you want to go back to the folder, you can click on the folder name.</p>",
+      "VIEW_HELP": "<p>Here is the main interface of the current pad.</p><p>If the folder or the pad is private, you need to enter the password to be able to access to it.</p><p>If you want to show the folder and if you are the permission to, you can click on the folder name.</p>",
       "OPEN_TAB": "Open in a new tab"
     },
     "INFO": {

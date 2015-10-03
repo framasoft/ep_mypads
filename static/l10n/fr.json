@@ -273,7 +273,7 @@
       "MOVE_TITLE": "Migration des pads du dossier ",
       "MOVE_HELP": "<p>Merci de sélectionner le dossier souhaité pour votre migration. Seuls les dossiers dont vous êtes administrateur apparaissent.</p><p>Une fois choisi, cliquez sur le bouton d'envoi et attendez un moment</p>",
       "FROM_GROUP": "dossier :",
-      "VIEW_HELP": "<p>Vous voici sur l'interface principale du pad affiché.</p><p>Si le dossier ou le pad est privé, vous aurez besoin de saisir le mot de passe pour y avoir accès.</p><p>Si vous voulez revenir au dossier, vous pouvez cliquer sur le nom de celui-ci.</p>",
+      "VIEW_HELP": "<p>Vous voici sur l'interface principale du pad affiché.</p><p>Si le dossier ou le pad est privé, vous aurez besoin de saisir le mot de passe pour y avoir accès.</p><p>Si vous voulez visualiser le dossier et que vous y avez accès, vous pouvez cliquer sur le nom de celui-ci.</p>",
       "OPEN_TAB": "Ouvrir dans un nouvel onglet"
     },
     "INFO": {

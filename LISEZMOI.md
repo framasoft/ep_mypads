@@ -4,10 +4,9 @@ Ce dépôt git héberge le code source du plugin MyPads pour Etherpad.
 
 ## Description
 
-MyPads est en phase de développement actif.
-Ne l'utilisez pas en production avant que la version 1.0 soit publiée.
+MyPads est considéré comme stable.
 
-MyPads proposera la gestion :
+MyPads propose la gestion :
 
 * des utilisateurs et leur authentification;
 * de groupes de pads, illimités par utilisateur, partageables;
@@ -15,7 +14,12 @@ MyPads proposera la gestion :
 
 ## Installation
 
-Pour le moment, MyPads n'est pas proposé publiquement sur NPM. Vous pouvez cependant l'installer manuellement. Pour cela :
+MyPads est publié sur NPM. Vous pouvez de fait l'installer directement depuis l'interface d'administration d'etherpad.
+ATTENTION: si vous désinstallez MyPads, toutes les données associées seront définitivement *supprimées*.
+
+### Installation manuelle
+
+Vous pouvez installer MyPads depuis les sources. Pour cela :
 
 * cloner ce dépôt git où bon vous semble;
 * rendez-vous dans le répertoire de votre instance Etherpad;

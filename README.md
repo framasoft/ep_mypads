@@ -4,10 +4,9 @@ MyPads
 
 ## Description
 
-MyPads is in active development.
-Please do not use it outside test instances before version 1.0 is published.
+MyPads is considered as stable.
 
-MyPads will handle :
+MyPads manages :
 
 * users and their authentication;
 * groups of pads per user, unlimited, sharable;
@@ -15,7 +14,12 @@ MyPads will handle :
 
 ## Installation
 
-At the moment, MyPads is not publicly available on NPM. That said, you can install it manually. In order to do that :
+At the moment, MyPads is publicly available on NPM. So you can install it from etherpad administration.
+WARNING: if you uninstall MyPads, all its data will be definitely *removed*.
+
+### Manual install
+
+You can install MyPads from source. In order to do that :
 
 * clone this git repository where you want to;
 * go into the directory of your Etherpad instance;

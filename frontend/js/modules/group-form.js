@@ -51,6 +51,7 @@ module.exports = (function () {
 
   gf.controller = function () {
     if (!auth.isAuthenticated()) {
+      conf.unauthUrl(true);
       return m.route('/login');
     }
     var c = {};

@@ -76,6 +76,22 @@ module.exports = (function () {
   };
 
   /**
+  * ## unauthUrl
+  *
+  * `unauthUrl` is a function that wraps an internal value, a string, `url`,
+  * which is empty by default. If argument `set` is fixed to *true*, internal
+  * `url` becomes current window location. It always return `url` value.
+  */
+
+  config.unauthUrl = (function () {
+    var url = '';
+    return function (set) {
+      if (set) { url = window.location.toString(); }
+      return url;
+    };
+  })();
+
+  /**
   * ## init
   *
   * `init` is an asynchronous function that calls for the public configuration

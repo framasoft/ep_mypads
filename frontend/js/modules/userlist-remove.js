@@ -44,7 +44,10 @@ module.exports = (function () {
   */
 
   remove.controller = function () {
-    if (!auth.isAuthenticated()) { return m.route('/login'); }
+    if (!auth.isAuthenticated()) {
+      conf.unauthUrl(true);
+      return m.route('/login');
+    }
     var key = m.route.param('key');
     if (window.confirm(conf.LANG.USERLIST.INFO.REMOVE_SURE)) {
       m.request({

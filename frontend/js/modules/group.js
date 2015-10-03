@@ -82,6 +82,7 @@ module.exports = (function () {
 
   group.controller = function () {
     if (!auth.isAuthenticated()) {
+      conf.unauthUrl(true);
       return m.route('/login');
     }
     document.title = conf.LANG.GROUP.MYGROUPS + ' - ' + conf.SERVER.title;

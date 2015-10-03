@@ -82,7 +82,12 @@ module.exports = (function () {
         document.title = ' - ' + conf.LANG.USER.AUTH.WELCOME + ' ' +
           resp.user.login + conf.SERVER.title;
         notif.success({ body: conf.LANG.USER.AUTH.SUCCESS });
-        m.route('/');
+        var unauthUrl = conf.unauthUrl();
+        if (!ld.isEmpty(unauthUrl)) {
+          window.location = unauthUrl;
+        } else {
+          m.route('/');
+        }
       }, function (err) {
         notif.error({ body: ld.result(conf.LANG, err.error) });
       });

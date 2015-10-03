@@ -50,6 +50,7 @@ module.exports = (function () {
 
   bookmark.controller = function () {
     if (!auth.isAuthenticated()) {
+      conf.unauthUrl(true);
       return m.route('/login');
     }
     document.title = conf.LANG.BOOKMARK.TITLE + ' - ' + conf.SERVER.title;

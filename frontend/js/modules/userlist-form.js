@@ -50,7 +50,10 @@ module.exports = (function () {
 
   ulistform.controller = function () {
 
-    if (!auth.isAuthenticated()) { return m.route('/login'); }
+    if (!auth.isAuthenticated()) {
+      conf.unauthUrl(true);
+      return m.route('/login');
+    }
 
     var c = {};
     c.addView = m.prop(m.route() === '/myuserlists/add');

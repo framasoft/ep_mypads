@@ -56,6 +56,7 @@ module.exports = (function () {
       conf.LANG.USER.SUBSCRIBE);
     document.title += ' - ' + conf.SERVER.title;
     if (c.profileView() && !auth.isAuthenticated()) {
+      conf.unauthUrl(true);
       return m.route('/login');
     }
     c.fields = ['login', 'password', 'passwordConfirm', 'email', 'firstname',

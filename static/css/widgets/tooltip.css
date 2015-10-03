@@ -40,3 +40,12 @@
 .mp-tooltip-left:hover:after,.mp-tooltip-left:focus:after {
   left:0;right:auto;
 }
+
+/* Mobile and down */
+
+@media (max-width: 40em) {
+  .mp-tooltip:hover:after,.mp-tooltip:focus:after {
+    left: 0;
+    right: auto;
+  }
+}

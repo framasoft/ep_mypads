@@ -97,7 +97,8 @@ module.exports = (function () {
     '/admin/users/:login/remove': adminUserRemove
   };
 
-  route.init = function () { m.route(document.body, '/', route.model.routes); };
+  var myPadsBox = document.getElementById('mypads');
+  route.init = function () { m.route(myPadsBox, '/', route.model.routes); };
 
   return route;
 }).call(this);

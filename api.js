@@ -96,9 +96,11 @@ module.exports = (function () {
     * `index.html` is a simple lodash template
     */
     var idxTpl = ld.template(rFS(__dirname + '/templates/index.html', rFSOpts));
-    app.get('/mypads/index.html', function (req, res) {
+    var idxHandle = function (req, res) {
       return res.send(idxTpl({ HTMLExtraHead: conf.get('HTMLExtraHead') }));
-    });
+    };
+    app.get('/mypads/index.html', idxHandle);
+    app.get('/mypads/', idxHandle);
 
     callback(null);
   };

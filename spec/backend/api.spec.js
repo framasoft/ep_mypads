@@ -73,6 +73,23 @@
       specCommon.reInitDatabase(done);
     });
 
+    describe('index.html template', function () {
+      beforeAll(function () {
+        conf.cache.HTMLExtraHead = '<style>/* custom HTML for head */</style>';
+      });
+      afterAll(function () { conf.cache.HTMLExtraHead = ''; });
+
+      it('should include custom HTML for head', function (done) {
+        rq.get('http://127.0.0.1:8042/mypads/index.html',
+          function (err, resp, body) {
+            expect(resp.statusCode).toBe(200);
+            expect(body).toMatch('custom HTML for head');
+            done();
+          }
+        );
+      });
+    });
+
     describe('authentification API', function () {
       var authRoute = route + 'auth';
 

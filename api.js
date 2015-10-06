@@ -77,7 +77,7 @@ module.exports = (function () {
       // Only allow functional testing in testing mode
       app.use('/mypads/functest', express.static(__dirname + '/spec/frontend'));
     }
-    var rFSOpts = { encofing: 'utf8' };
+    var rFSOpts = { encoding: 'utf8' };
     api.l10n = {
       mail: {
         en: JSON.parse(rFS(__dirname + '/templates/mail_en.json', rFSOpts)),
@@ -91,6 +91,15 @@ module.exports = (function () {
     groupAPI(app);
     padAPI(app);
     perm.init(app);
+
+    /**
+    * `index.html` is a simple lodash template
+    */
+    var idxTpl = ld.template(rFS(__dirname + '/templates/index.html', rFSOpts));
+    app.get('/mypads/index.html', function (req, res) {
+      return res.send(idxTpl({ HTMLExtraHead: conf.get('HTMLExtraHead') }));
+    });
+
     callback(null);
   };
 

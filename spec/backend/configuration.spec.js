@@ -142,6 +142,7 @@
           expect(settings.passwordMin).toBeDefined();
           expect(settings.passwordMax).toBeDefined();
           expect(settings.languages).toBeDefined();
+          expect(settings.HTMLExtraHead).toBeDefined();
           done();
         });
       });

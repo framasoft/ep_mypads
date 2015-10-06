@@ -349,6 +349,7 @@
     "FIELD": {
       "TITLE": "Titre",
       "ROOTURL": "Adresse Web",
+      "HTMLEXTRA_HEAD": "HTML pour <head>",
       "PASSWORD_MIN": "Taille minimum",
       "PASSWORD_MAX": "Taille maximum",
       "LANGUAGE_DEFAULT": "Langue par défaut",
@@ -369,6 +370,7 @@
       "LOGIN": "L'identifiant administrateur donné dans le fichier settings.json d'Etherpad",
       "TITLE": "Titre principal affiché sur votre instance MyPads",
       "ROOTURL": "La racine de l'adresse Web utilisée pour accéder à Etherpad",
+      "HTMLEXTRA_HEAD": "Code HTML personnalisé qui sera ajouté à la balise <head>",
       "PASSWORD_MIN": "Nombre minimum de caractères pour les mots de passe",
       "PASSWORD_MAX": "Nombre maximum de caractères pour les mots de passe",
       "LANGUAGE_DEFAULT": "Langue par défaut pour les utilisateurs sans compte",

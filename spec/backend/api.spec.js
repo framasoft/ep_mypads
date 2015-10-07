@@ -163,7 +163,7 @@
         it('should not auth if params are inexistent', function (done) {
           rq.post(authRoute + '/login', {}, function (err, resp, body) {
             expect(resp.statusCode).toBe(400);
-            expect(body.error).toMatch('PASSWORD_STR');
+            expect(body.error).toMatch('LOGIN_STR');
             done();
           });
         });

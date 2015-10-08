@@ -205,8 +205,8 @@ module.exports = (function () {
       }
       checkFn(login, pass, function (err, u) {
         if (err) { return callback(err, u); }
-        auth[ns][login] = u;
-        auth[ns][login].key = cuid();
+        auth[ns][u.login] = u;
+        auth[ns][u.login].key = cuid();
         return callback(null, u);
       });
     } else {

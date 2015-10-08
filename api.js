@@ -303,9 +303,6 @@ module.exports = (function () {
     */
 
     app.post(authRoute + '/login', function (req, res) {
-      if (ld.isEmpty(req.body.login) || ld.isEmail(req.body.login)) {
-        return res.status(400).send({ error: 'BACKEND.ERROR.TYPE.LOGIN_STR' });
-      }
       auth.fn.JWTFn(req, req.body, false, function (err, u, info) {
         if (err) { return res.status(400).send({ error: err.message }); }
         if (!u) { return res.status(400).send({ error: info.message }); }

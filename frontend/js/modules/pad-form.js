@@ -64,9 +64,9 @@ module.exports = (function () {
       document.title += ' - ' + conf.SERVER.title;
       c.fields = ['name', 'visibility', 'password', 'readonly'];
       form.initFields(c, c.fields);
+      c.group = model.groups()[gkey];
       if (!c.addView()) {
         c.pad = model.pads()[key];
-        c.group = model.groups()[gkey];
         ld.map(ld.keys(c.pad), function (f) {
             c.data[f] = m.prop(c.pad[f]);
         });
@@ -163,7 +163,8 @@ module.exports = (function () {
   view.form = function (c) {
     var name = group.views.field.name(c);
     ld.assign(name.input.attrs, { config: form.focusOnInit });
-    var visibility = group.views.field.visibility(c, false);
+    var isGroupRestricted = (c.group.visibility === 'restricted');
+    var visibility = group.views.field.visibility(c, isGroupRestricted);
     ld.assign(visibility.label.attrs, { style: 'clear: left;' });
     var password = group.views.field.password(c);
     var readonly = group.views.field.readonly(c);

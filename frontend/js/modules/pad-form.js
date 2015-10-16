@@ -198,15 +198,17 @@ module.exports = (function () {
           ])
         );
       }
-      fields.push(
-        m('.form-group', [
-          m('.col-sm-7.col-sm-offset-4', [
-            m('.checkbox', [
-              readonly.label, readonly.icon
+      if (!c.addView()) {
+        fields.push(
+          m('.form-group', [
+            m('.col-sm-7.col-sm-offset-4', [
+              m('.checkbox', [
+                readonly.label, readonly.icon
+              ])
             ])
           ])
-        ])
-      );
+        );
+      }
     }
 
     return m('form.form-horizontal', {

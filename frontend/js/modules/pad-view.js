@@ -195,7 +195,7 @@ module.exports = (function () {
           if (isGroupSharable || isPadSharable) {
               return m('button.btn.btn-default', {
                 title: conf.LANG.GROUP.SHARE,
-                onclick: padShare.bind(c, c.group._id, c.pad._id)
+                onclick: padShare.bind(c, c.gid, c.pad._id)
               },
               [ m('i.glyphicon glyphicon-link'),
                 m('span', ' '+conf.LANG.GROUP.SHARE)

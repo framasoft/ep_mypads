@@ -280,15 +280,17 @@ module.exports = (function () {
         ])
       );
     }
-    fields.push(
-      m('.form-group',
-        m('.col-sm-7 .col-sm-offset-4',
-          m('.checkbox', [
-            _f.readonly.label, _f.readonly.icon
-          ])
+    if (!c.addView()) {
+      fields.push(
+        m('.form-group',
+          m('.col-sm-7 .col-sm-offset-4',
+            m('.checkbox', [
+              _f.readonly.label, _f.readonly.icon
+            ])
+          )
         )
-      )
-    );
+      );
+    }
     fields.push(view.field.tag(c));
     return m('form.form-horizontal', {
       id: 'group-form',

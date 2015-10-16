@@ -102,6 +102,12 @@
                     visibility: 'public',
                     readonly: true
                   };
+                  pads.memoriesPrivate = {
+                    name: 'Private meeting',
+                    group: groups.memories._id,
+                    visibility: 'private',
+                    password: 'm3et1nG'
+                  };
                   pads.annie = {
                     name: 'Falling in love',
                     group: groups.annie._id
@@ -120,13 +126,16 @@
                         if (!err) { pads.memories = p; }
                         pad.set(pads.memoriesPublic, function (err, p) {
                           if (!err) { pads.memoriesPublic = p; }
-                          pad.set(pads.annie, function (err, p) {
-                            if (!err) { pads.annie = p; }
-                            pad.set(pads.annieOwnPass, function (err, p) {
-                              if (!err) { pads.annieOwnPass = p; }
-                              auth.tokens.parker = users.parker;
-                              auth.tokens.jerry = users.jerry;
-                              done();
+                          pad.set(pads.memoriesPrivate, function (err, p) {
+                            if (!err) { pads.memoriesPrivate = p; }
+                            pad.set(pads.annie, function (err, p) {
+                              if (!err) { pads.annie = p; }
+                              pad.set(pads.annieOwnPass, function (err, p) {
+                                if (!err) { pads.annieOwnPass = p; }
+                                auth.tokens.parker = users.parker;
+                                auth.tokens.jerry = users.jerry;
+                                done();
+                              });
                             });
                           });
                         });
@@ -328,6 +337,20 @@
             expect(res.msg).toMatch('Testing only');
             done();
           }, 100);
+        }
+      );
+
+      it('should allow access to private pad in restricted group with password',
+        function (done) {
+          delete res.route;
+          req.query.auth_token = getJwt('jerry');
+          req.params.pid = pads.memoriesPrivate._id;
+          req.query.mypadspassword = encode('m3et1nG');
+
+          perm.check(req, res, function () {
+            expect(res.route).toBeUndefined();
+            done();
+          });
         }
       );
 

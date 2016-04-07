@@ -63,7 +63,7 @@ module.exports = (function () {
         form.initFields(c, ['title', 'rootUrl', 'allowEtherPads',
           'passwordMin', 'passwordMax', 'defaultLanguage', 'checkMails',
           'tokenDuration', 'SMTPHost', 'SMTPPort', 'SMTPSSL', 'SMTPTLS',
-          'SMTPUser', 'SMTPPass', 'SMTPEmailFrom']);
+          'SMTPUser', 'SMTPPass', 'SMTPEmailFrom', 'HTMLExtraHead']);
         c.currentConf = resp.value;
         ld.forIn(resp.value, function (v, k) {
           c.data[k] = m.prop(v);
@@ -229,6 +229,20 @@ module.exports = (function () {
         ld.assign(f.input.attrs, { type: 'url' });
         return f;
       })(),
+      HTMLExtraHead: (function () {
+        var label = m('label', { for: 'HTMLExtraHead' },
+          conf.LANG.ADMIN.FIELD.HTMLEXTRA_HEAD);
+        var icon = m('i', {
+          class: 'mp-tooltip glyphicon glyphicon-info-sign',
+          'data-msg': conf.LANG.ADMIN.INFO.HTMLEXTRA_HEAD
+        });
+        var textarea = m('textarea', {
+          name: 'HTMLExtraHead',
+          value: c.data.HTMLExtraHead(),
+          onchange: m.withAttr('value', c.data.HTMLExtraHead)
+        }, c.data.HTMLExtraHead());
+        return { label: label, icon: icon, textarea: textarea };
+      })(),
       passwordMin: (function () {
         var icon = form.icon(c, 'passwordMin', A.INFO.PASSWORD_MIN,
           A.ERR.PASSWORD_MIN);
@@ -358,7 +372,9 @@ module.exports = (function () {
           f.rootUrl.label, f.rootUrl.input, f.rootUrl.icon,
           f.defaultLanguage.label, f.defaultLanguage.select,
           f.defaultLanguage.icon, f.allowEtherPads.label,
-          f.allowEtherPads.input, f.allowEtherPads.icon
+          f.allowEtherPads.input, f.allowEtherPads.icon,
+          f.HTMLExtraHead.label, f.HTMLExtraHead.icon,
+          f.HTMLExtraHead.textarea
         ])
       ]),
       m('fieldset', [

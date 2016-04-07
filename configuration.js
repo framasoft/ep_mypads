@@ -56,6 +56,7 @@ module.exports = (function() {
       passwordMax: 30,
       languages: { en: 'English', fr: 'Français' },
       defaultLanguage: 'en',
+      HTMLExtraHead: '',
       checkMails: false,
       SMTPPort: undefined,
       SMTPHost: undefined,
@@ -223,7 +224,8 @@ module.exports = (function() {
 
     public: function () {
       var all = configuration.all();
-      return ld.pick(all, 'title', 'passwordMin', 'passwordMax', 'languages');
+      return ld.pick(all, 'title', 'passwordMin', 'passwordMax', 'languages',
+        'HTMLExtraHead');
     }
   };
 

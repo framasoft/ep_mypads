@@ -139,7 +139,7 @@ module.exports = (function() {
     key = PREFIX + key;
     storage.db.get(key, function (err, obj) {
       if (err) { return callback(err); }
-      if (ld.isUndefined(obj)) {
+      if (ld.isUndefined(obj) || ld.isNull(obj)) {
         return callback(new Error('BACKEND.ERROR.CONFIGURATION.KEY_NOT_FOUND'));
       }
       if (!del) {

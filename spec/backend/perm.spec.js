@@ -154,7 +154,7 @@
 
     describe('local function check', function () {
       var next = function () { return true; };
-      var req = { params: {}, query: {} };
+      var req = { params: {}, query: {}, headers: { referer: false } };
       var res = {
         status: function (code) { this.code = code; return this; },
         send: function (msg) { this.msg = msg; return this; },
@@ -358,7 +358,7 @@
 
     describe('local function readonly', function () {
       var next = function () { return true; };
-      var req = { params: {}, query: {} };
+      var req = { params: {}, query: {}, headers: { referer: false } };
       var res = {
         status: function (code) { this.code = code; return this; },
         send: function (msg) { this.msg = msg; return this; }
@@ -409,7 +409,7 @@
     });
 
     describe('local function set name and color', function () {
-      var req = { params: {}, query: {} };
+      var req = { params: {}, query: {}, headers: { referer: false } };
       var res = {};
 
       beforeEach(function () {

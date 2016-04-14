@@ -27,6 +27,7 @@
 */
 
 // External dependencies
+var url = require('url');
 var getPad;
 var getPadHTML;
 try {
@@ -90,6 +91,13 @@ module.exports = (function () {
     var checkPass = function (el) {
       var rq = params.req.query;
       var password = (rq ? rq.mypadspassword : false );
+      if (!password) {
+        var ref = params.req.headers.referer;
+        if (ref) {
+          var rgxres = /&mypadspassword=(.+)&?/.exec(ref);
+          if (rgxres) { password = rgxres[1]; }
+        }
+      }
       if (!password) { return params.refuse(); }
       auth.fn.isPasswordValid(el, decode(password), function (err, valid) {
         if (err) { return params.unexpected(err); }
@@ -97,6 +105,13 @@ module.exports = (function () {
       });
     };
     var token = (params.req.query ? params.req.query.auth_token : false);
+    if (!token) {
+      var ref = params.req.headers.referer;
+      if (ref) {
+        var rgxres = /&auth_token=(.+)&?/.exec(ref);
+        if (rgxres) { token = rgxres[1]; }
+      }
+    }
     var u = auth.fn.getUser(token);
     var uid = u && u._id || false;
     // Key not found, not a MyPads pad so depends on allowEtherPads
@@ -160,6 +175,7 @@ module.exports = (function () {
   */
 
   perm.check = function (req, res, next) {
+    var pid = req.params.pid || req.params[0];
     var unexpected = function (err) {
       return res.status(401).send({
         error: 'BACKEND.ERROR.PERMISSION.UNEXPECTED',
@@ -167,7 +183,7 @@ module.exports = (function () {
       });
     };
     var refuse = function () {
-      var mypadsRoute = '/mypads/index.html?/mypads/group/' + 
+      var mypadsRoute = '/mypads/index.html?/mypads/group/' +
         params.pg.group._id + '/pad/view/' + params.pg.pad._id;
       return res.redirect(mypadsRoute);
     };
@@ -177,9 +193,10 @@ module.exports = (function () {
       next: next,
       callback: perm.fn.readonly,
       unexpected: unexpected,
-      refuse: refuse
+      refuse: refuse,
+      pid: pid
     };
-    perm.fn.getPadAndGroup(req.params.pid, function (err, pg) {
+    perm.fn.getPadAndGroup(pid, function (err, pg) {
       if (err) { return unexpected(err); }
       params.pg = pg;
       perm.fn.check(params);
@@ -200,6 +217,13 @@ module.exports = (function () {
 
   perm.setNameAndColor = function (req, res, next) {
     var token = (req.query ? req.query.auth_token : false);
+    if (!token) {
+      var ref = req.headers.referer;
+      if (ref) {
+        var rgxres = /&auth_token=(.+)&?/.exec(ref);
+        if (rgxres) { token = rgxres[0]; }
+      }
+    }
     var u = auth.fn.getUser(token);
     if (u && u.useLoginAndColorInPads) {
       var opts = { userName: u.login };
@@ -227,7 +251,9 @@ module.exports = (function () {
   */
 
   perm.init = function (app) {
-    app.all('/p/:pid', perm.check);
+    //app.all('/p/([A-Za-z0-9_-]+)', perm.check);
+    var rgx = new RegExp('/p/([A-Za-z0-9_-]+)[A-Za-z0-9_/]*');
+    app.all(rgx, perm.check)
     app.all('/p/:pid', perm.setNameAndColor);
     app.get('/', function (req, res, next) {
       if (conf.get('allowEtherPads')) {

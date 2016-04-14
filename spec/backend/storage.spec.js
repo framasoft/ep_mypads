@@ -41,7 +41,9 @@
         beforeAll(function (done) {
           var db = storage.db;
           db.set('key1', 'value1', function () {
-            db.set('key2', 'value2', function () { done(); });
+            db.set('key2', 'value2', function () {
+              db.set('convictedKey', 'tmp', function () { done(); });
+            });
           });
         });
 
@@ -53,6 +55,20 @@
             });
           }
         );
+
+        it('should return an undefined value for removed keys',
+           function (done) {
+             storage.db.remove('convictedKey', function () {
+               storage.fn.getKeys(
+                 ['key1', 'convictedKey'],
+                 function (err, res) {
+                   expect(res.convictedKey).toBeUndefined();
+                   done();
+                 }
+               );
+             });
+           }
+          );
 
         it('should return the result for one key or more', function (done) {
           storage.fn.getKeys(['key1'], function (err, results) {

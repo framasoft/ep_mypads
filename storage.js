@@ -94,7 +94,7 @@ module.exports = (function () {
     var getDel = function (k) {
       storage.db[action](k, function (err, res) {
         if (err) { return callback(err); }
-        if (!del) { results[k] = res; }
+        if (!del && !ld.isNull(res)) { results[k] = res; }
         done();
       });
     };

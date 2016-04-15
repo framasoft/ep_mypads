@@ -152,6 +152,28 @@
 
     afterAll(specCommon.reInitDatabase);
 
+    describe('local function getVarFromReferer', function () {
+      var req = { headers: { referer: undefined } };
+
+      it('should return false if no referer', function () {
+        expect(perm.fn.getVarFromReferer('fake', req)).toBeFalsy();
+      });
+
+      it('should return false if the variable is not found', function () {
+        req.headers.referer = 'http://localhost:8042/p/apad-xxxx?somevar=123';
+        expect(perm.fn.getVarFromReferer('fake', req)).toBeFalsy();
+      });
+
+      it('should return the variable otherwise', function () {
+        req.headers.referer = 'http://localhost:8042/p/apad-xxxx?somevar=123';
+        expect(perm.fn.getVarFromReferer('somevar', req)).toBe('123');
+        req.headers.referer += '&var2=42';
+        expect(perm.fn.getVarFromReferer('somevar', req)).toBe('123');
+        expect(perm.fn.getVarFromReferer('var2', req)).toBe('42');
+      });
+
+    });
+
     describe('local function check', function () {
       var next = function () { return true; };
       var req = { params: {}, query: {}, headers: { referer: false } };

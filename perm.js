@@ -61,6 +61,22 @@ module.exports = (function () {
   perm.fn = {};
 
   /**
+  * ### getVarFromReferer
+  *
+  * `getVarFromReferer` synchronous function for getting an URL passed variable
+  * from referer. Usefull for cases like timeslider or exports.
+  *
+  */
+
+ perm.fn.getVarFromReferer = function (varName, req) {
+   var ref = req.headers.referer;
+   if (!ref) { return false; }
+   var rg = new RegExp(varName + '=([^&]+)');
+   var rgxres = rg.exec(ref);
+   return (rgxres ? rgxres[1] : false);
+ };
+
+  /**
   * ### getPadAndGroup
   *
   * `getPadAndGroup` asynchronous function returns to callback the *pad* and
@@ -92,11 +108,7 @@ module.exports = (function () {
       var rq = params.req.query;
       var password = (rq ? rq.mypadspassword : false );
       if (!password) {
-        var ref = params.req.headers.referer;
-        if (ref) {
-          var rgxres = /&mypadspassword=(.+)&?/.exec(ref);
-          if (rgxres) { password = rgxres[1]; }
-        }
+        password = perm.fn.getVarFromReferer('mypadspassword', params.req);
       }
       if (!password) { return params.refuse(); }
       auth.fn.isPasswordValid(el, decode(password), function (err, valid) {
@@ -217,13 +229,7 @@ module.exports = (function () {
 
   perm.setNameAndColor = function (req, res, next) {
     var token = (req.query ? req.query.auth_token : false);
-    if (!token) {
-      var ref = req.headers.referer;
-      if (ref) {
-        var rgxres = /&auth_token=(.+)&?/.exec(ref);
-        if (rgxres) { token = rgxres[0]; }
-      }
-    }
+    if (!token) { token = perm.fn.getVarFromReferer('auth_token', req); }
     var u = auth.fn.getUser(token);
     if (u && u.useLoginAndColorInPads) {
       var opts = { userName: u.login };

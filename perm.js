@@ -27,7 +27,6 @@
 */
 
 // External dependencies
-var url = require('url');
 var getPad;
 var getPadHTML;
 try {
@@ -187,6 +186,7 @@ module.exports = (function () {
   */
 
   perm.check = function (req, res, next) {
+    var params;
     var pid = req.params.pid || req.params[0];
     var unexpected = function (err) {
       return res.status(401).send({
@@ -199,7 +199,7 @@ module.exports = (function () {
         params.pg.group._id + '/pad/view/' + params.pg.pad._id;
       return res.redirect(mypadsRoute);
     };
-    var params = {
+    params = {
       req: req,
       res: res,
       next: next,
@@ -259,7 +259,7 @@ module.exports = (function () {
   perm.init = function (app) {
     //app.all('/p/([A-Za-z0-9_-]+)', perm.check);
     var rgx = new RegExp('/p/([A-Za-z0-9_-]+)[A-Za-z0-9_/]*');
-    app.all(rgx, perm.check)
+    app.all(rgx, perm.check);
     app.all('/p/:pid', perm.setNameAndColor);
     app.get('/', function (req, res, next) {
       if (conf.get('allowEtherPads')) {

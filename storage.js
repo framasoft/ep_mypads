@@ -89,6 +89,7 @@ module.exports = (function () {
   */
 
   storage.fn.getDelKeys = function (del, keys, callback) {
+    var done;
     var results = del ? true : {};
     var action = del ? 'remove' : 'get';
     var getDel = function (k) {
@@ -98,7 +99,7 @@ module.exports = (function () {
         done();
       });
     };
-    var done = function () {
+    done = function () {
       if (keys.length) {
         getDel(keys.pop());
       } else {
@@ -135,9 +136,10 @@ module.exports = (function () {
   */
 
   storage.fn.setKeys = function (kv, callback) {
+    var done;
     var pairs = ld.pairs(kv);
     var set = function (k, v) { storage.db.set(k, v, done); };
-    var done = function (err) {
+    done = function (err) {
       if (err) { return callback(err); }
       if (pairs.length) {
         var pair = pairs.pop();

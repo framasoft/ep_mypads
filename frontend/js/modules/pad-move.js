@@ -88,6 +88,7 @@ module.exports = (function () {
         }
         return memo;
       }, []);
+      var done;
       var updatePad = function (p) {
         m.request({
           method: 'PUT',
@@ -97,7 +98,7 @@ module.exports = (function () {
           notif.error({ body: ld.result(conf.LANG, err.error) });
         });
       };
-      var done = function (resp) {
+      done = function (resp) {
         if (resp) {
           ld.pull(model.groups()[gid].pads, resp.key);
           model.groups()[c.data.newGroup()].pads.push(resp.key);

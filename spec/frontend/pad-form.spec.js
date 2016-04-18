@@ -33,6 +33,8 @@ module.exports = (function () {
   form.run = function (app) {
     // Shared variables
     var $el;
+    var qfirst = function (sel) { return app.document.querySelector(sel); };
+    var qall = function (sel) { return app.document.querySelectorAll(sel); };
     var populate = function () {
       return {
         form: qfirst('form#pad-form'),
@@ -41,8 +43,6 @@ module.exports = (function () {
         groupParams: qfirst('input[name=groupParams]')
       };
     };
-    var qfirst = function (sel) { return app.document.querySelector(sel); };
-    var qall = function (sel) { return app.document.querySelectorAll(sel); };
 
     describe('pad form module testing', function () {
 

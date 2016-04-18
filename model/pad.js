@@ -142,6 +142,12 @@ module.exports = (function () {
   */
 
   pad.fn.indexGroups = function (del, pad, callback) {
+    var _set = function (g) {
+      storage.db.set(GPREFIX + g._id, g, function (err) {
+        if (err) { return callback(err); }
+        callback(null);
+      });
+    };
     var removeFromBookmarks = function (g) {
       var uids = ld.union(g.admins, g.users);
       var ukeys = ld.map(uids, function (u) { return UPREFIX + u; });
@@ -158,12 +164,6 @@ module.exports = (function () {
           if (err) { return callback(err); }
           _set(g);
         });
-      });
-    };
-    var _set = function (g) {
-      storage.db.set(GPREFIX + g._id, g, function (err) {
-        if (err) { return callback(err); }
-        callback(null);
       });
     };
     storage.db.get(GPREFIX + pad.group, function (err, g) {

@@ -28,10 +28,14 @@ module.exports = (function () {
   var common = require('./common.js');
   var fill = common.helper.fill;
 
+
   var view = {};
 
 
   view.run = function (app) {
+    // Shared variables
+    var qfirst = function (sel) { return app.document.querySelector(sel); };
+    var qall = function (sel) { return app.document.querySelectorAll(sel); };
 
     var login = function (done) {
       // Login and go to group view page
@@ -57,10 +61,6 @@ module.exports = (function () {
         done();
       }, 100);
     };
-
-    // Shared variables
-    var qfirst = function (sel) { return app.document.querySelector(sel); };
-    var qall = function (sel) { return app.document.querySelectorAll(sel); };
 
     describe('pad view module testing', function () {
 

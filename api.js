@@ -57,6 +57,11 @@ module.exports = (function () {
 
   var api = {};
   api.initialRoute = '/mypads/api/';
+  var authAPI;
+  var configurationAPI;
+  var userAPI;
+  var groupAPI;
+  var padAPI;
 
   /**
   * `init` is the first function that takes an Express app as argument.
@@ -270,7 +275,7 @@ module.exports = (function () {
   * ## Authentication API
   */
 
-  var authAPI = function (app) {
+  authAPI = function (app) {
     var authRoute = api.initialRoute + 'auth';
 
     /**
@@ -376,7 +381,7 @@ module.exports = (function () {
   * ## Configuration API
   */
 
-  var configurationAPI = function (app) {
+  configurationAPI = function (app) {
     var confRoute = api.initialRoute + 'configuration';
 
     /**
@@ -411,7 +416,7 @@ module.exports = (function () {
       if (ld.isUndefined(value)) {
         return res.status(404).send({
           error: 'BACKEND.ERROR.CONFIGURATION.KEY_NOT_FOUND',
-          key: req.params.key 
+          key: req.params.key
         });
       }
       res.send({ key: req.params.key, value: value });
@@ -455,7 +460,7 @@ module.exports = (function () {
   * Most methods need `fn.ensureAdminOrSelf`
   */
 
-  var userAPI = function (app) {
+  userAPI = function (app) {
     var userRoute = api.initialRoute + 'user';
     var userlistRoute = api.initialRoute + 'userlist';
 
@@ -708,7 +713,7 @@ module.exports = (function () {
     /**
     * POST method : special password recovery with mail sending.
     * Need to have the email address into the body
-    * 
+    *
     * Sample URL:
     * http://etherpad.ndd/mypads/api/passrecover
     */
@@ -751,7 +756,7 @@ module.exports = (function () {
     /**
     * PUT method : password recovery with token and new password
     * Need to have the login into the body
-    * 
+    *
     * Sample URL:
     * http://etherpad.ndd/mypads/api/passrecover
     */
@@ -788,7 +793,7 @@ module.exports = (function () {
 
     /**
     * POST method : account confirmation with token on body
-    * 
+    *
     * Sample URL:
     * http://etherpad.ndd/mypads/api/accountconfirm
     */
@@ -822,7 +827,7 @@ module.exports = (function () {
   * All methods except creation need special permissions.
   */
 
-  var groupAPI = function (app) {
+  groupAPI = function (app) {
     var groupRoute = api.initialRoute + 'group';
 
     /**
@@ -1073,7 +1078,7 @@ module.exports = (function () {
   * All methods needs special permissions
   */
 
-  var padAPI = function (app) {
+  padAPI = function (app) {
     var padRoute = api.initialRoute + 'pad';
 
     /**

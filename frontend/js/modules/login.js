@@ -106,6 +106,7 @@ module.exports = (function () {
   view.form = function (c) {
     var login = user.view.field.login(c);
     login.input.attrs.config = form.focusOnInit;
+    login.input.attrs.maxlength = 40;
     var password = user.view.field.password(c);
     return m('form.form-horizontal.col-sm-8.col-sm-offset-2.well', {
       id: 'login-form', onsubmit: c.submit }, [

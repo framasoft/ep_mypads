@@ -45,7 +45,8 @@ module.exports = (function() {
   * - a `params` JS object
   * - a `callback` function
   * - a n optional `strFields` array, with fields of the `params` objects that
-  *   must be not empty strings
+  *   must be not empty strings with at most 100 characters (ueberdb limit for
+  *   SQL backends)
   */
 
   common.addSetInit = function (params, callback, strFields) {
@@ -65,6 +66,9 @@ module.exports = (function() {
       ld.forEach(strFields, function (s) {
         if (!isFS(params[s])) {
           throw new TypeError('BACKEND.ERROR.TYPE.PARAM_STR');
+        }
+        if (s.length > 100) {
+          throw new TypeError('BACKEND.ERROR.TYPE.STR_100');
         }
       });
     }

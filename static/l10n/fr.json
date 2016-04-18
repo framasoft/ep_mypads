@@ -4,6 +4,7 @@
       "TYPE": {
         "PARAMS_REQUIRED": "Des paramètres sont obligatoires",
         "PARAM_STR": "L'un des arguments devrait être une chaîne de caractères",
+        "STR_100": "La chaîne de caractères ne peut dépasser 100 caractères",
         "CALLBACK_FN": "Callback doit être une fonction",
         "KEY_STR": "Key doit être une chaîne de caractères",
         "VALUE_REQUIRED": "Value est obligatoire",

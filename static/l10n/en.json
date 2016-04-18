@@ -4,6 +4,7 @@
       "TYPE": {
         "PARAMS_REQUIRED": "Parameters are mandatory",
         "PARAM_STR": "Some parameter must be a string",
+        "STR_100": "String can't be more than 100 characters",
         "CALLBACK_FN": "Callback must be a function",
         "KEY_STR": "Key must be a string",
         "VALUE_REQUIRED": "Value is mandatory",

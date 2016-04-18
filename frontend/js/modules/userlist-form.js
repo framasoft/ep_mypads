@@ -171,6 +171,7 @@ module.exports = (function () {
       ld.assign(f.input.attrs, {
         placeholder: conf.LANG.USERLIST.INFO.NAME,
         required: true,
+        maxlength: 40,
         config: form.focusOnInit
       });
     return f;

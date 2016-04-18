@@ -304,6 +304,7 @@ module.exports = (function () {
     } else if (!c.adminView()) {
       var log = fields.login;
       log.input.attrs.config = form.focusOnInit;
+      log.input.attrs.maxlength = 40;
       requiredFields.splice(0, 0,
         m('.form-group', [
           log.label, log.icon,

@@ -1,0 +1,405 @@
+{
+  "BACKEND": {
+    "ERROR": {
+      "TYPE": {
+        "PARAMS_REQUIRED": "Parameters are mandatory",
+        "PARAM_STR": "Some parameter must be a string",
+        "STR_100": "String can't be more than 100 characters",
+        "CALLBACK_FN": "Callback must be a function",
+        "KEY_STR": "Key must be a string",
+        "VALUE_REQUIRED": "Value is mandatory",
+        "LOGIN_STR": "Login must be a string",
+        "LOGIN_REQUIRED": "Login is required",
+        "PASSWORD_STR": "Password must be a string",
+        "PASSWORD_MISSING": "Missing password",
+        "PASSWORD_SIZE": "Password size is too short or too long",
+        "MAIL": "Email is invalid",
+        "ID_STR": "_id, when defined, must be a string",
+        "USER_INVALID": "User is invalid",
+        "WITHEXTRA_BOOL": "withExtra must be a boolean",
+        "INVITE_BOOL": "Invite must be a boolean",
+        "GID_STR": "gid must be a string",
+        "LOGINS_ARR": "logins must be an array",
+        "TYPE_PADSORGROUPS": "Type must be either pads or folders",
+        "USERLIST_CRUD": "crud must be add, set or del",
+        "USERLIST_ID": "In set and del modes, ulistid is mandatory",
+        "USERLIST_NAME": "In add mode, name of the userlist is mandatory",
+        "USERLIST_SET_PARAMS": "In set mode, name or uids is madantory",
+        "SMTP_CONFIG": "Your SMTP server configuration is invalid",
+        "TO_MAIL": "to must be an email address",
+        "SUBJECT_STR": "subject must be a string",
+        "MSG_STR": "message must be a string"
+      },
+      "CONFIGURATION": {
+        "LANG_PROBLEM": "Lang update can not be done. Default lang will be used.",
+        "CANTGET": "Configuration loading has failed. Please contact your administrator.",
+        "KEY_NOT_FOUND": "The record has not been found",
+        "MAIL_NOT_CONFIGURED": "Mail settings have not been done on this server. Please contact its administrator.",
+        "ROOTURL_NOT_CONFIGURED": "Root Url setting has not been entered on this server. Please contact its administrator."
+      },
+      "AUTHENTICATION": {
+        "MUST_BE": "You must be authenticated",
+        "ACTIVATION_NEEDED": "Your account has not been confirmed",
+        "NOT_AUTH": "Not authenticated",
+        "PASSWORD_INCORRECT": "Password is not correct",
+        "TOKEN_INCORRECT": "Your security token is invalid",
+        "ADMIN": "Access denied : you must be an authenticated Etherpad instance admin.",
+        "DENIED": "Access denied",
+        "DENIED_RECORD": "You're not allowed to get this record",
+        "DENIED_RECORD_EDIT": "You're not allowed to edit this record"
+      },
+      "PERMISSION": {
+        "UNEXPECTED": "Sorry, an unexpected has error has occurred",
+        "UNAUTHORIZED": "You are not allowed to access to this record"
+      },
+      "GROUP": {
+        "INEXISTENT": "Folder does not exist",
+        "CASCADE_REMOVAL_PROBLEM": "Something goes wrong with cascade pads removal",
+        "ITEMS_NOT_FOUND": "Some users, admins or pads have not been found",
+        "NOT_USER": "You are not an user of this folder",
+        "RESIGN_UNIQUE_ADMIN": "You can't resign the unique administrator"
+      },
+      "USER": {
+        "ALREADY_EXISTS": "User already exists, please choose another login",
+        "EMAIL_ALREADY_EXISTS": "This user email has already been used, please choose another one",
+        "NOT_FOUND": "User not found",
+        "BOOKMARK_NOT_FOUND": "Bookmark not found",
+        "USERLIST_NOT_FOUND": "Userlist not found"
+      },
+      "PAD": {
+        "INEXISTENT": "Pad does not exist",
+        "ITEMS_NOT_FOUND": "Pad folder or at least one of the users are not found"
+      },
+      "TOKEN": {
+        "INCORRECT": "Used token contains incorrect data for this request.",
+        "EXPIRED": "Token has expired. Please make a new request."
+      }
+    }
+  },
+  "GLOBAL": {
+    "LANG": "English",
+    "DESCRIPTION": "MyPads is an <a href='http://etherpad.org/'>Etherpad</a> plugin which have been founded in 2014 on Ulule by <a href='http://ulule.com/etherpad-framapad/supporters/'>413 backers</a> and organized by the non-profit organization <a href='http://framasoft.org'>Framasoft</a>. It handles :<ul><li>users and their authentication; </li><li>folders of pads per user, unlimited, sharable;</li><li>attached pads, with choice between invite known users to use them, making them private with password or letting them public.</li></ul>",
+    "FOOTER": "Powered by <a href='https://git.framasoft.org/framasoft/ep_mypads'>MyPads</a><br>Published under Apache License 2.0",
+    "AND": "and",
+    "OR": "or",
+    "YES": "yes",
+    "NO": "no"
+  },
+  "ACTIONS": {
+    "ACTIONS": "Actions",
+    "HELP": "Help",
+    "SAVE": "Save",
+    "CANCEL": "Cancel"
+  },
+  "MENU": {
+    "PAD": "My Folders & Pads",
+    "BOOKMARK": "My Bookmarks",
+    "USERLIST": "My Userlists",
+    "PROFILE": "My Profile",
+    "ADMIN": "Administration",
+    "CONFIG": "Configuration",
+    "USERS": "Users",
+    "LOGOUT": "Logout"
+  },
+  "ADMIN": {
+    "GLOBAL_SETTINGS": "Global settings"
+  },
+  "NOTIFICATION": {
+    "SUCCESS": "Success",
+    "SUCCESS_GENERIC": "Action has been successfully achieved",
+    "INFO": "Info",
+    "ERROR": "Error",
+    "ERROR_UNEXPECTED": "An unexpected error has been raised. Please contact the administrator.",
+    "WARNING": "Warning"
+  },
+  "TAG": {
+    "TAGS": "Tags",
+    "PLACEHOLDER": "Enter your tag",
+    "HELP": "You can associate to this element as many tags as you wish"
+  },
+  "USER": {
+    "FORM": "Login",
+    "ORSUB": " (or subscribe)",
+    "MANDATORY_FIELDS": "Mandatory fields",
+    "OPTIONAL_FIELDS": "Optional fields",
+    "MYPADS_ACCOUNT": "MyPads account",
+    "SUBSCRIBE": "Subscribe",
+    "PROFILE": "Profile",
+    "PASSRECOVER": "Password recovery",
+    "USERNAME": "Username",
+    "LOGIN": "Login",
+    "PASSWORD": "Password",
+    "PASSWORD_LOST": "Lost your password?",
+    "PASSCHECK": "Password Confirmation",
+    "PASSCURRENT": "Current password",
+    "EMAIL": "Email",
+    "EMAIL_SAMPLE": "username@example.org",
+    "LANG": "Lang",
+    "USELOGINANDCOLORINPADS": "Use login and color in pads?",
+    "FIRSTNAME": "Firstname",
+    "LASTNAME": "Lastname",
+    "ORGANIZATION": "Organization",
+    "COLOR": "Customized color for pads",
+    "COLOR_SAMPLE": "#00cc00",
+    "UNDEF": "********",
+    "OK": "Ok",
+    "REGISTER": "Register",
+    "REMOVE_ACCOUNT": "Remove my account",
+    "INFO": {
+      "LOGIN": "The unique login you choose when you have subscribed",
+      "EMAIL": "The email is required for password recovery",
+      "COLOR": "The hexademical code for color you want to be used by default in pads",
+      "LANG": "Your default browser configuration, depending on available languages on MyPads",
+      "USELOGINANDCOLORINPADS": "Use login and chosen color in pads by default ?",
+      "PASSWORD_BEGIN": "Must be between ",
+      "PASSWORD_END": " characters",
+      "PASSWORD_CHECK": "For verification : must be the same as password",
+      "PASSWORD_CURRENT": "Security check : required for all profile changes",
+      "OPTIONAL": "Optional field",
+      "REMOVE_ACCOUNT": "Remove definitively your account and all the folders and pads on which you are the unique administrator",
+      "REMOVE_ACCOUNT_SURE": "You are on the verge of removing definitively your account and all the folders and pads on which you are the unique administrator. If you are really sure about what you are doing, please enter your current password and click OK",
+      "REMOVE_ACCOUNT_SUCCESS": "Account removed with success",
+      "PASSRECOVER_SUCCESS": "You should have received an email to the address you have used when you subscribe. This email contains a Web address that is temporary valid. Please follow this url to change your password.",
+      "CHANGEPASS_SUCCESS": "Your password has been successfully updated.",
+      "ACCOUNT_CONFIRMATION_SUCCESS": "Your account has been successfully confirmed. You can now login."
+    },
+    "ERR": {
+      "LOGIN": "Login is required",
+      "EMAIL": "The email is required and should be valid",
+      "COLOR": "The hexadecimal code must be like #000000",
+      "LOGOUT": "Log out error : you were not authenticated.",
+      "PASSWORD_MISMATCH": "The entered passwords do not match."
+    },
+    "AUTH": {
+      "SUCCESS": "Successful authentication ! Welcome.",
+      "SUCCESS_OUT": "You have been successfully disconnected.",
+      "SUBSCRIBE_SUCCESS": "Successful subscription ! Welcome.",
+      "SUBSCRIBE_CONFIRM_SUCCESS": "Successful subscription. An email has been sent to you in order to confirm your email address before you can login.",
+      "PROFILE_SUCCESS": "Profile successfully updated.",
+      "WELCOME": "Welcome"
+    },
+    "HELP": {
+      "PROFILE": "<p>Every change into your profile needs the current password field to be correctly filled. Please note that :</p><ul><li>you can change everything by updating the appropriate field;</li><li>leaving password and password confirmation empty won't affect your current password;</li><li>you can't change your login at the moment but it will be possible in the future;</li><li>if you want to change your password, please enter the new one into the password field and confirm it with the password confirmation.</li></ul>"
+    }
+  },
+  "GROUP": {
+    "MYGROUPS": "My Folders",
+    "HELP": "Folders can contain pads. Here are your folders : those you have created, those you have been explicitly invited",
+    "GROUP": "Folder",
+    "GROUPS": "Folders",
+    "NONE": "No folder",
+    "BOOKMARKED": "Bookmarked folders",
+    "ARCHIVED": "Archived folders",
+    "ADD": "Add a new folder",
+    "ADD_HELP": "<h3>Visibility</h3><p>You have the choice between three levels of visibility. It will impact all linked pads:<ul><li><em>restricted</em>, default choice: access of the pads are limited to a list of invited users you have chosen;</li><li><em>private</em>: in this mode, you have to enter a password and access to the pads will be checked against this password;</li><li><em>public</em>: in this mode, all pads are public, users just need to have the URL address.</li></ul></p><h3>Readonly</h3><p>If you check <em>readonly</em>, all attached pads will stay in their state, and can not be edited. Note that visibility still works in readonly mode.</p><h3>Tags</h3><p>You can attach tags to this element by clicking on the corresponding input field and selecting them one by one.</p><p>To create a new tag, fill it and type ENTER key or click on the 'Ok' button. Once the tag has been added, it will automatically been selected on this form.</p><p>You can remove a tag by clicking on the cross located on the right of it.</p>",
+    "EDIT": "Edit",
+    "EDIT_GROUP": "Edit a folder",
+    "VIEW": "View",
+    "VIEW_MANAGE": "View and manage folder and its pads",
+    "VIEW_HELP": "<p>The details of the folder show you :<ul><li>options defined when folder has been created or updated;</li><li>list of pads created for this folder;</li><li>and list of admins and users of the folder.</li></ul></p><p>From there, you can : <ul><li>create new pads, edit them, remove or mark them;</li><li>share administration of your folder with other users;</li><li>invite other users to view and edit pads of the folder.</li></ul></p>",
+    "SHARE": "Share",
+    "SHARE_LINK": "Please share this URL to your guests",
+    "SHARE_PASSWORD": "Please enter the password to be able to share",
+    "REMOVE": "Remove",
+    "BOOKMARK": "Bookmark",
+    "UNMARK": "Unmark",
+    "MARK_SUCCESS": "Marking successfully",
+    "SHARE_ADMIN": "Share administration",
+    "QUIT_GROUP": "Quit the folder",
+    "INVITE_USER": {
+      "IU": "Invite and manage users",
+      "HELP": "<h4>Userlists</h4><p>You can select one or more userlists. Each click will add all members of the selected userlist to invited users.</p><h4>Invite users</h4><p>This field accepts one email or login at a time. When ENTER is typed, or OK is clicked, the filled data is added to the list of invited users. A list of known users helps you to fill the input.</p><h4>Users</h4><p>This list contains all selected users. You can remove one by clicking the sign after each item.</p><h4>Note</h4><p>Please note that, for instance, registered users will be automatically added to your folder. In short term, external users will receive a mail for creating an account.</p>",
+      "USERS_SELECTION": "Users selection",
+      "USERS_SELECTED": "Selected users",
+      "PLACEHOLDER": "Email or login",
+      "INPUT_HELP": "You can invite as many users as you want",
+      "SUCCESS": "User invitation has been successfully achieved for ",
+      "FAILURE": "You can't invite users who have no account in this instance : "
+    },
+    "INVITE_USERLIST": "Invite a list of users",
+    "ADMIN_SHARE": {
+      "AS": "Administration sharing",
+      "SUCCESS": "Administration sharing has been successfully achieved for ",
+      "FAILURE": "You can't share administration with users who have no account in this instance : "
+    },
+    "SORT": {
+      "TITLE": "Sort by",
+      "HELP": "By default, folders are ordered by creation date, older first. You can choose to use another orders. Click again to reverse order."
+    },
+    "SEARCH": {
+      "TITLE": "Search",
+      "TYPE": "Type here",
+      "HELP": "Search on common fields with at least 2 characters"
+    },
+    "PROPERTIES": "Properties",
+    "FIELD": {
+      "NAME": "Name",
+      "DESCRIPTION": "Description",
+      "VISIBILITY": "Visibility",
+      "PRIVATE": "Private",
+      "RESTRICTED": "Restricted",
+      "PUBLIC": "Public",
+      "READONLY": "Readonly",
+      "GROUP_PARAMS": "Folder parameters ?"
+    },
+    "FILTERS": {
+      "TITLE": "Filters",
+      "ADMIN": "Folders I am admin",
+      "USER": "Folders I have been invited",
+      "HELP": "You can select one or several filters, click again on it to deactivate"
+    },
+    "TAGS": {
+      "TITLE": "Tags",
+      "HELP": "You can filter by one or more tags. Click again to deactivate if wanted"
+    },
+    "PAD": {
+      "TITLE": "Title",
+      "ADMINS": "Admins",
+      "USERS": "Users",
+      "USERS_NONE": "No user",
+      "PUBLIC_DENIED": "Public access: you are not allowed to see this data.",
+      "VISIBILITY": "Visibility",
+      "PAD": "Pad",
+      "PADS": "Pads",
+      "NONE": "No pad linked",
+      "ADD": "Create a new pad",
+      "ADD_PROMPT": "Enter the name of the new pad",
+      "EDIT": "Edit a pad",
+      "EDIT_PROMPT": "Enter the new name of the pad",
+      "SORT_BY": "Sort pads by",
+      "SORT_BY_CREATION": "creation date",
+      "SORT_BY_NAME": "name",
+      "SORT_BY_UPDATE": "last update",
+      "MOVE": "Move all pads to another folder",
+      "MOVE_TITLE": "Pads migration of the folder ",
+      "MOVE_HELP": "<p>Please select the wanted folder for your migration. Only folders on which you are admin are listed.</p><p>Once chosen, click on the submit button and wait for a moment.</p>",
+      "FROM_GROUP": "folder :",
+      "VIEW_HELP": "<p>Here is the main interface of the current pad.</p><p>If the folder or the pad is private, you need to enter the password to be able to access to it.</p><p>If you want to show the folder and if you have the permission to, you can click on the folder name.</p>",
+      "OPEN_TAB": "Open in a new tab"
+    },
+    "INFO": {
+      "NAME": "Name",
+      "DESCRIPTION": "An optional long text to describe your folder",
+      "VISIBILITY": "Required, restricted by default to invited users or admins",
+      "READONLY": "If checked, linked pads will be in readonly mode",
+      "PASSWORD": "Required in private mode",
+      "GROUP_PARAMS": "By default, pad inherits from parameters of the folder they belong to. You can overwrite them if you want",
+      "ADD_SUCCESS": "Folder has been successfully created",
+      "EDIT_SUCCESS": "Folder has been successfully updated",
+      "REMOVE_SUCCESS": "Folder has been successfully removed",
+      "REMOVE_SURE": "Are you sure you want to remove this folder ?",
+      "RESIGN": "Are you sure you want to resign from this folder ?",
+      "RESIGN_SUCCESS": "You have left the folder successfully",
+      "PAD_REMOVE_SUCCESS": "Pad has been successfully removed",
+      "PAD_REMOVE_SURE": "Are you sure you want to remove this pad ?",
+      "PAD_ADD_SUCCESS": "Pad has been successfully created",
+      "PAD_EDIT_SUCCESS": "Pad has been successfully updated",
+      "PAD_MOVE": "Select the wanted folder for your migration",
+      "PAD_MOVE_NOGROUP": "Sorry but no other folder is available. You should create one before.",
+      "PAD_MOVE_SUCCESS": "All pads have been successfully moved"
+    },
+    "ERR": {
+      "NAME": "The name of the folder is required"
+    }
+  },
+  "BOOKMARK": {
+    "TITLE": "My Bookmarks",
+    "HELP": "<p>Bookmark page offers you the ability to see all your bookmarked elements from MyPads. You can remove them from bookmarks if you want to.</p>"
+  },
+  "USERLIST": {
+    "USERLIST": "Userlist",
+    "ADD": "Create a new userlist",
+    "EDIT": "Edit userlist ",
+    "HELP": "<p>Here you can find all your userlists, ordered by creation date. Summary information are available with the name of each userlist and the number of users linked.</p><p>Through action icons, located on top right of each userlist, you can edit or remove lists. Details are available in the form view, via edit action.</p>",
+    "FORM_HELP": "<h3>Name</h3><p>You must give a name to the userlist, in order to be able to identify it.</p><h3>Users</h3><p>You can add as many users as you want. To do it, please enter the email or login and click on the 'OK' button. Note that already known users can be selected from the input.</p><p>To remove users, click on the cross located at the right of each user.</p>",
+    "FIELD": {
+      "NAME": "Name",
+      "USERS": "Users",
+      "USERS_HELP": "Add as many users as you want",
+      "USERSAREA_PLACEHOLDER": "One email or login per line",
+      "USERSAREA_HELP": "You can add as many emails or logins you want"
+    },
+    "INFO": {
+      "NAME": "Name of the userlist",
+      "ADD_SUCCESS": "Userlist has been successfully created",
+      "EDIT_SUCCESS": "Userlist has been successfully updated",
+      "REMOVE_SURE": "Are you sure you want to remove this userlist?",
+      "REMOVE_SUCCESS": "Userlist has been successfully removed",
+      "USER_INVITE": "By selecting a userlist, you will invite all its users at the same time",
+      "USER_SUCCESS": "User adding has been successfull for ",
+      "USER_FAILURE": "You can't add users who have no account in this instance : "
+    },
+    "ERR": {
+      "NAME": "The name of the userlist is required"
+    }
+  },
+  "ADMIN": {
+    "FORM_LOGIN": "Administration login",
+    "FORM_SETTINGS": "MyPads configuration",
+    "FORM_USERS_SEARCH": "Search user",
+    "FORM_USER_EDIT": "Profile user edition",
+    "SETTINGS_GENERAL": "General settings",
+    "SETTINGS_PASSWORD": "Password settings",
+    "SETTINGS_MAIL": "Mail settings",
+    "USERS_SEARCH_LOGIN": "Search by login",
+    "ETHERPAD_ACCOUNT": "Etherpad account",
+    "HELP_LOGIN": "<p>MyPads administration is tied to Etherpad administration. Please enter an authorized login and password, as fixed into Etherpad <em>settings.json</em> to be able to update MyPads settings.</p>",
+    "HELP_SETTINGS": "<h3>Settings</h3><p>Only Etherpad admins have access this page. You can edit the global settings here and apply them. Changes will be effective directly.</p><h3>Passwords</h3><p>Be careful about password sizes : if you have existing accounts and raise minimum size or decrease maximum size, some user passwords may become unseizable.</p><h3>Mail configuration</h3><p>MyPads can verify the mails of subscribed users by sending them an email which will be used by them to confirm their address. Moreover, MyPads need email sending for password recovery.</p><p>Be cautious with SMTP configuration: bad parameters can lead to an Etherpad crash.</p><p>Please note that, unlike other parameters, SMTP settings are only applied after Etherpad reboot.</p>",
+    "HELP_USERS": "<p>This admin reserved page helps you to find users by entering their login. Once found, you will be able to edit or remove user.</p><p>For simplicity and performance reasons, we don't offer here a full listing of subscribed users.</p>",
+    "HELP_USER_EDIT": "<p>Here you can update all data associated to an existing user.</p><p>Please note that by default, leaving password empty means keeping the current password. If you want to change it, you have to fill password field and its confirmation.</p>",
+    "FIELD": {
+      "TITLE": "Title",
+      "ROOTURL": "Root Web URL",
+      "HTMLEXTRA_HEAD": "Extra HTML for <head>",
+      "PASSWORD_MIN": "Minimum size",
+      "PASSWORD_MAX": "Maximum size",
+      "LANGUAGE_DEFAULT": "Default language",
+      "ALLOW_ETHERPADS": "Anonymous pads",
+      "CHECKMAILS": "Check user mails",
+      "TOKEN_DURATION": "Token validity",
+      "SMTP_HOST": "SMTP Host",
+      "SMTP_PORT": "SMTP Port",
+      "SMTP_SSL": "Encryption via SSL",
+      "SMTP_TLS": "Encryption via TLS",
+      "SMTP_USER": "User",
+      "SMTP_PASS": "Password",
+      "SMTP_EMAILFROM": "Email to send from",
+      "APPLY": "Apply",
+      "SEARCH": "Search"
+    },
+    "INFO": {
+      "LOGIN": "The etherpad settings.json fixed admin login",
+      "TITLE": "Global title displayed on your MyPads instance",
+      "ROOTURL": "The root Web address used to access to Etherpad",
+      "HTMLEXTRA_HEAD": "Custom HTML Code appended to tag <head>",
+      "PASSWORD_MIN": "Password minimum number of characters",
+      "PASSWORD_MAX": "Password maximum number of characters",
+      "LANGUAGE_DEFAULT": "Default language for guest MyPads users",
+      "ALLOW_ETHERPADS": "Allow classic anonymous pads from on the Etherpad instance, created from the root URL of the server",
+      "CHECKMAILS": "Check user mail given at subscription",
+      "TOKEN_DURATION": "The time, in minutes, generated tokens are valid until users confirm their subscription",
+      "SMTP_HOST": "Domain name where the SMTP Server belongs to",
+      "SMTP_PORT": "SMTP Port to use",
+      "SMTP_SSL": "Check it if you want to use an encrypted SSL connexion between MyPads and your SMTP Server",
+      "SMTP_TLS": "Check it if you want to use an encrypted TLS connexion between MyPads and your SMTP Server",
+      "SMTP_USER": "Optional: if authentication to the SMTP server is required, username",
+      "SMTP_PASS": "Optional: if authentication to the SMTP server is required, password",
+      "SMTP_EMAILFROM": "Email address to use to send emails from MyPads",
+      "SUCCESS": "Configuration has been updated successfully",
+      "NOCHANGE": "Configuration have not changed, so no update has been sent",
+      "USERS_SEARCH_LOGIN": "Please enter a login to search around database users",
+      "USER_FOUND": "User found, please see options inside the form",
+      "USER_NONE": "No user for this login",
+      "USER_REMOVE_SURE": "You are on the verge of removing definitively this account and all the folders and pads on which the user is the unique administrator. If you are really sure about what you are doing, please click on the OK button."
+    },
+    "ERR": {
+      "TITLE": "Title is mandatory",
+      "ROOTURL": "Must be a valid URL",
+      "PASSWORD_MIN": "Minimum password size is mandatory",
+      "PASSWORD_MAX": "Maximum password size is mandatory",
+      "PASSWORD_SIZE": "Min size can't be higher than max size. Please check your numbers.",
+      "LANGUAGE_DEFAULT": "A default language must be selected",
+      "SMTP_EMAILFROM": "Must be a valid email"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+before_script: 
+- npm i
+- npm run frontend:build
+- npm run functest:build
+
+script:
+- npm run test

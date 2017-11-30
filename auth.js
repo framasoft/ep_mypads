@@ -32,6 +32,7 @@
 // External dependencies
 var ld = require('lodash');
 var jwt = require('jsonwebtoken');
+var LdapAuth = require('ldapauth-fork');
 var settings;
 try {
   // Normal case : when installed as a plugin
@@ -135,17 +136,51 @@ module.exports = (function () {
   */
 
   auth.fn.checkMyPadsUser = function (login, pass, callback) {
-    user.get(login, function (err, u) {
-      if (err) { return callback(err); }
-      auth.fn.isPasswordValid(u, pass, function (err, isValid) {
-        if (err) { return callback(err); }
-        if (!isValid) {
-          var emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
+    if (settings.ep_mypads && settings.ep_mypads.ldap) {
+      var lauth = new LdapAuth(settings.ep_mypads.ldap);
+      lauth.authenticate(login, pass, function(err, ldapuser) {
+        if (err) {
+          var emsg = err;
+          if (err.lde_message === 'Invalid Credentials') {
+            emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
+          } else if (err.match(/no such user/)) {
+            emsg = 'BACKEND.ERROR.USER.NOT_FOUND';
+          } else {
+            console.error('LdapAuth error: ', err);
+          }
           return callback(new Error(emsg), false);
         }
-        return callback(null, u);
+        user.get(login, function(err, u) {
+          if (err) {
+            // We have to create the user in mypads database
+            user.set({
+                login: ldapuser[settings.ep_mypads.ldap.properties.login],
+                password: 'soooooo_useless',
+                firstname: ldapuser[settings.ep_mypads.ldap.properties.firstname],
+                lastname: ldapuser[settings.ep_mypads.ldap.properties.lastname],
+                email: ldapuser[settings.ep_mypads.ldap.properties.email]
+              }, function (err, u) {
+                if (err) { return callback(err); }
+                return callback(err, u);
+            });
+          }
+          return callback(null, u);
+        });
       });
-    });
+      lauth.close(function(err) { });
+    } else {
+      user.get(login, function (err, u) {
+        if (err) { return callback(err); }
+        auth.fn.isPasswordValid(u, pass, function (err, isValid) {
+          if (err) { return callback(err); }
+          if (!isValid) {
+            var emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
+            return callback(new Error(emsg), false);
+          }
+          return callback(null, u);
+        });
+      });
+    }
   };
 
   /**

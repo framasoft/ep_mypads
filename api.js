@@ -42,6 +42,15 @@ catch (e) {
   testMode = true;
   express = require('express');
 }
+var settings;
+try {
+  // Normal case : when installed as a plugin
+  settings = require('../ep_etherpad-lite/node/utils/Settings');
+}
+catch (e) {
+  // Testing case : we need to mock the express dependency
+  settings = {};
+}
 var bodyParser = require('body-parser');
 // Local dependencies
 var conf = require('./configuration.js');
@@ -397,6 +406,7 @@ module.exports = (function () {
       var isAdmin = fn.isAdmin(req);
       var action = isAdmin ? 'all' : 'public';
       var value = conf[action]();
+      value.useLdap = (settings.ep_mypads && settings.ep_mypads.ldap) ? true : false;
       var resp = { value: value };
       resp.auth = (isAdmin ? true : !!u);
       if (u) { resp.user = u; }

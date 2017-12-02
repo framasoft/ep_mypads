@@ -161,10 +161,11 @@ module.exports = (function () {
                 email: ldapuser[settings.ep_mypads.ldap.properties.email]
               }, function (err, u) {
                 if (err) { return callback(err); }
-                return callback(err, u);
+                return callback(null, u);
             });
+          } else {
+            return callback(null, u);
           }
-          return callback(null, u);
         });
       });
       lauth.close(function(err) { });

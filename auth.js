@@ -158,7 +158,8 @@ module.exports = (function () {
                 password: 'soooooo_useless',
                 firstname: ldapuser[settings.ep_mypads.ldap.properties.firstname],
                 lastname: ldapuser[settings.ep_mypads.ldap.properties.lastname],
-                email: ldapuser[settings.ep_mypads.ldap.properties.email]
+                email: ldapuser[settings.ep_mypads.ldap.properties.email],
+                lang: (settings.ep_mypads.ldap.defaultLang) ? settings.ep_mypads.ldap.defaultLang : 'en'
               }, function (err, u) {
                 if (err) { return callback(err); }
                 return callback(null, u);
@@ -300,10 +301,29 @@ module.exports = (function () {
     if (!ld.isString(password)) {
       return callback(new TypeError('BACKEND.ERROR.TYPE.PASSWORD_MISSING'));
     }
-    user.fn.hashPassword(u.password.salt, password, function (err, res) {
-      if (err) { return callback(err); }
-      callback(null, (res.hash === u.password.hash));
-    });
+    if (settings.ep_mypads && settings.ep_mypads.ldap) {
+      var lauth = new LdapAuth(settings.ep_mypads.ldap);
+      lauth.authenticate(u.login, password, function(err, ldapuser) {
+        if (err) {
+          var emsg = err;
+          if (err.lde_message === 'Invalid Credentials') {
+            emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
+          } else if (err.match(/no such user/)) {
+            emsg = 'BACKEND.ERROR.USER.NOT_FOUND';
+          } else {
+            console.error('LdapAuth error: ', err);
+          }
+          return callback(new Error(emsg));
+        }
+        return callback(null, true);
+      });
+      lauth.close(function(err) { });
+    } else {
+      user.fn.hashPassword(u.password.salt, password, function (err, res) {
+        if (err) { return callback(err); }
+        callback(null, (res.hash === u.password.hash));
+      });
+    }
   };
 
   /**

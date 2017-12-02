@@ -26,6 +26,8 @@ MyPads manages :
 At the moment, MyPads is publicly available on NPM. So you can install it from etherpad administration. You may need a reboot of your etherpad instance after the plugin install.
 WARNING: if you uninstall MyPads, all its data will be definitely *removed*.
 
+**NB** MyPads only works with NodeJS 4.
+
 ### Manual install
 
 You can install MyPads from source. In order to do that :
@@ -73,6 +75,8 @@ For that, add a `ep_mypads` section, containing a `ldap` section, in Etherpad's 
 
 Beside `properties` and `defaultLang`, all the settings in the `ldap` section are `ldapauth-fork` (the module used for the LDAP authentication) settings.
 You can add other settings to it, just go on <https://www.npmjs.com/package/ldapauth-fork#ldapauth-config-options> to see which.
+
+**NB** When using the LDAP authentication, registration of new accounts is disabled.
 
 ## Roadmap
 

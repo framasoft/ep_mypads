@@ -608,33 +608,38 @@ module.exports = (function () {
       var value = req.body;
       var stop;
       if (req.method === 'POST') {
-        key = req.body.login;
-        if (conf.get('checkMails')) {
-          var token = mail.genToken({ login: key, action: 'accountconfirm' });
-          var url = conf.get('rootUrl') +
-            '/mypads/index.html?/accountconfirm/' + token;
-          console.log(url);
-          var lang = (function () {
-            if (ld.includes(ld.keys(conf.cache.languages), req.body.lang)) {
-              return req.body.lang;
-            } else {
-              return conf.get('defaultLanguage');
-            }
-          })();
-          var subject = fn.mailMessage('ACCOUNT_CONFIRMATION_SUBJECT', {
-            title: conf.get('title') });
-          var message = fn.mailMessage('ACCOUNT_CONFIRMATION', {
-            login: key,
-            title: conf.get('title'),
-            url: url,
-            duration: conf.get('tokenDuration')
-          }, lang);
-          mail.send(req.body.email, subject, message, function (err) {
-            if (err) {
-              stop = true;
-              return res.status(501).send({ error: err });
-            }
-          }, lang);
+        if (settings.ep_mypads && settings.ep_mypads.ldap) {
+          stop = true;
+          res.status(400).send({ error: 'BACKEND.ERROR.AUTHENTICATION.NO_REGISTRATION' });
+        } else {
+          key = req.body.login;
+          if (conf.get('checkMails')) {
+            var token = mail.genToken({ login: key, action: 'accountconfirm' });
+            var url = conf.get('rootUrl') +
+              '/mypads/index.html?/accountconfirm/' + token;
+            console.log(url);
+            var lang = (function () {
+              if (ld.includes(ld.keys(conf.cache.languages), req.body.lang)) {
+                return req.body.lang;
+              } else {
+                return conf.get('defaultLanguage');
+              }
+            })();
+            var subject = fn.mailMessage('ACCOUNT_CONFIRMATION_SUBJECT', {
+              title: conf.get('title') });
+            var message = fn.mailMessage('ACCOUNT_CONFIRMATION', {
+              login: key,
+              title: conf.get('title'),
+              url: url,
+              duration: conf.get('tokenDuration')
+            }, lang);
+            mail.send(req.body.email, subject, message, function (err) {
+              if (err) {
+                stop = true;
+                return res.status(501).send({ error: err });
+              }
+            }, lang);
+          }
         }
       } else {
         key = req.params.key;

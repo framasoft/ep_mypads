@@ -59,7 +59,7 @@ module.exports = (function () {
       conf.unauthUrl(true);
       return m.route('/login');
     }
-    if (conf.SERVER.useLdap) {
+    if (conf.SERVER.useLdap && c.profileView()) {
       c.fields = ['organization', 'lang', 'color'];
     } else {
       c.fields = ['login', 'password', 'passwordConfirm', 'email', 'firstname',
@@ -277,7 +277,7 @@ module.exports = (function () {
       delete fields.passwordConfirm.input.attrs.required;
     }
     var requiredFields;
-    if (conf.SERVER.useLdap) {
+    if (conf.SERVER.useLdap && c.profileView()) {
       requiredFields = [
         m('.form-group', [
           fields.lang.label, fields.lang.icon,
@@ -337,7 +337,7 @@ module.exports = (function () {
     var USER = conf.LANG.USER;
     var profOrAdm = (c.profileView() || c.adminView());
     var optionalFields;
-    if (conf.SERVER.useLdap) {
+    if (conf.SERVER.useLdap && c.profileView()) {
       optionalFields = [
         m('legend.opt', conf.LANG.USER.OPTIONAL_FIELDS),
           m('.form-group', [

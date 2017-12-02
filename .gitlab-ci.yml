@@ -1,0 +1,40 @@
+# This folder is cached between builds
+# http://docs.gitlab.com/ce/ci/yaml/README.html#cache
+cache:
+  paths:
+  - node_modules/
+
+test_node_latest:
+  stage: test
+  image: node:latest
+  script:
+   - npm install
+   - npm run test
+
+test_node_4:
+  stage: test
+  image: node:4-stretch
+  script:
+   - npm install
+   - npm run test
+
+test_node_6:
+  stage: test
+  image: node:6-stretch
+  script:
+   - npm install
+   - npm run test
+
+test_node_8:
+  stage: test
+  image: node:8-stretch
+  script:
+   - npm install
+   - npm run test
+
+test_node_9:
+  stage: test
+  image: node:9-stretch
+  script:
+   - npm install
+   - npm run test

@@ -52,7 +52,7 @@
     "watchify": "^2.4.0"
   },
   "scripts": {
-    "frontend:build": "./node_modules/browserify/bin/cmd.js -t partialify -d -p [minifyify --map static/js/mypads.map.json --output static/js/mypads.map.json] -o static/js/mypads.js frontend.js",
+    "frontend:build": "./node_modules/browserify/bin/cmd.js -t partialify -d -p [minifyify --map mypads.map.json --output static/js/mypads.map.json] -o static/js/mypads.js frontend.js",
     "frontend:watch": "./node_modules/watchify/bin/cmd.js -t partialify -o static/js/mypads.js frontend.js",
     "functest:build": "./node_modules/browserify/bin/cmd.js -o spec/frontend/mypads.js spec/frontend/entry.js",
     "functest:watch": "./node_modules/watchify/bin/cmd.js -o spec/frontend/mypads.js spec/frontend/entry.js",

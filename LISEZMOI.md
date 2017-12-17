@@ -17,8 +17,6 @@ MyPads propose la gestion :
 MyPads est publié sur NPM. Vous pouvez de fait l'installer directement depuis l'interface d'administration d'etherpad. Vous pourriez avoir besoin de redémarrer votre instance une fois le plugin installé.
 ATTENTION: si vous désinstallez MyPads, toutes les données associées seront définitivement *supprimées*.
 
-**NB** MyPads ne fonctionne qu'avec NodeJS 4.
-
 ### Installation manuelle
 
 Vous pouvez installer MyPads depuis les sources. Pour cela :

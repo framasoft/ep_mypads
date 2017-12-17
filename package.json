@@ -24,12 +24,13 @@
     "body-parser": "~1.12.3",
     "cuid": "^1.2.4",
     "emailjs": "~0.3.16",
+    "jasmine": "^2.8.0",
     "js-base64": "~2.1.8",
     "jsonwebtoken": "~5.0.4",
     "ldapauth-fork": "^4.0.2",
     "lodash": "^3.1.0",
     "passport": "^0.2.1",
-    "passport-jwt": "~1.1.0",
+    "passport-jwt": "^3.0.1",
     "slugg": "~0.1.2"
   },
   "devDependencies": {
@@ -39,7 +40,7 @@
     "es6-shim": "~0.32.2",
     "express": "4.12.3",
     "express-session": "1.11.1",
-    "jasmine": "^2.2.0",
+    "jasmine": "^2.8.0",
     "jshint": "^2.6.0",
     "minifyify": "^7.1.0",
     "mithril": "^0.1.30",

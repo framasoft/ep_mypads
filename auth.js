@@ -32,6 +32,7 @@
 // External dependencies
 var ld = require('lodash');
 var jwt = require('jsonwebtoken');
+var ExtractJwt = require('passport-jwt').ExtractJwt;
 var LdapAuth = require('ldapauth-fork');
 var settings;
 try {
@@ -112,7 +113,15 @@ module.exports = (function () {
   */
 
   auth.fn.local = function () {
-    var opts = { secretOrKey: auth.secret, passReqToCallback: true };
+    var opts = {
+      secretOrKey: auth.secret,
+      passReqToCallback: true,
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        ExtractJwt.fromUrlQueryParameter('auth_token'),
+        ExtractJwt.fromBodyField('auth_token'),
+        ExtractJwt.fromAuthHeaderWithScheme('JWT')
+      ])
+    };
     passport.use(new JWTStrategy(opts,
       function (req, jwt_payload, callback) {
         var isFS = function (s) { return (ld.isString(s) && !ld.isEmpty(s)); };

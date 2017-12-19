@@ -277,7 +277,7 @@
           );
         });
 
-        it('should not auth if user exists but pasword does not match',
+        it('should not auth if user exists but password does not match',
           function (done) {
             var params = { body: ld.clone(etherAdmin) };
             params.body.password = 'anotherOne';

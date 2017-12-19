@@ -40,14 +40,45 @@ try {
   settings = require('../ep_etherpad-lite/node/utils/Settings');
 }
 catch (e) {
-  // Testing case : we need to mock the express dependency
-  settings = {
-    users: {
-      admin: { password: 'admin', is_admin: true },
-      grace: { password: 'admin', is_admin: true },
-      parker: { password: 'lovesKubiak', is_admin: false }
-    }
-  };
+  if (process.env.TEST_LDAP) {
+    settings = {
+      "users": {
+        "admin": {
+          "password": 'admin',
+          "is_admin": true
+        },
+        "parker": {
+          "password": 'lovesKubiak',
+          "is_admin": false
+        }
+      },
+      "ep_mypads": {
+        "ldap": {
+          "url": "ldap://rroemhild-test-openldap",
+          "bindDN": "cn=admin,dc=planetexpress,dc=com",
+          "bindCredentials": "GoodNewsEveryone",
+          "searchBase": "ou=people,dc=planetexpress,dc=com",
+          "searchFilter": "(uid={{username}})",
+          "properties": {
+            "login": "uid",
+            "email": "mail",
+            "firstname": "givenName",
+            "lastname": "sn"
+          },
+          "defaultLang": "fr"
+        }
+      }
+    };
+  } else {
+    // Testing case : we need to mock the express dependency
+    settings = {
+      users: {
+        admin: { password: 'admin', is_admin: true },
+        grace: { password: 'admin', is_admin: true },
+        parker: { password: 'lovesKubiak', is_admin: false }
+      }
+    };
+  }
 }
 var passport = require('passport');
 var JWTStrategy = require('passport-jwt').Strategy;
@@ -312,21 +343,25 @@ module.exports = (function () {
     }
     if (settings.ep_mypads && settings.ep_mypads.ldap) {
       var lauth = new LdapAuth(settings.ep_mypads.ldap);
-      lauth.authenticate(u.login, password, function(err, ldapuser) {
-        if (err) {
-          var emsg = err;
-          if (err.lde_message === 'Invalid Credentials') {
-            emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
-          } else if (err.match(/no such user/)) {
-            emsg = 'BACKEND.ERROR.USER.NOT_FOUND';
-          } else {
-            console.error('LdapAuth error: ', err);
+      if (u.login === undefined || u.login === null) {
+        return callback(null, false);
+      } else {
+        lauth.authenticate(u.login, password, function(err, ldapuser) {
+          if (err) {
+            var emsg = err;
+            if (err.lde_message === 'Invalid Credentials') {
+              emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
+            } else if (err.match(/no such user/)) {
+              emsg = 'BACKEND.ERROR.USER.NOT_FOUND';
+            } else {
+              console.error('LdapAuth error: ', err);
+            }
+            return callback(null, false);
           }
-          return callback(new Error(emsg));
-        }
-        return callback(null, true);
-      });
-      lauth.close(function(err) { });
+          return callback(null, true);
+        });
+        lauth.close(function(err) { });
+      }
     } else {
       user.fn.hashPassword(u.password.salt, password, function (err, res) {
         if (err) { return callback(err); }

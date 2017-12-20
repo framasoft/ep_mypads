@@ -49,7 +49,28 @@ try {
 }
 catch (e) {
   // Testing case : we need to mock the express dependency
-  settings = {};
+  if (process.env.TEST_LDAP) {
+    settings = {
+      "ep_mypads": {
+        "ldap": {
+          "url": "ldap://rroemhild-test-openldap",
+          "bindDN": "cn=admin,dc=planetexpress,dc=com",
+          "bindCredentials": "GoodNewsEveryone",
+          "searchBase": "ou=people,dc=planetexpress,dc=com",
+          "searchFilter": "(uid={{username}})",
+          "properties": {
+            "login": "uid",
+            "email": "mail",
+            "firstname": "givenName",
+            "lastname": "sn"
+          },
+          "defaultLang": "fr"
+        }
+      }
+    };
+  } else {
+    settings = {};
+  }
 }
 var bodyParser = require('body-parser');
 // Local dependencies
@@ -736,6 +757,10 @@ module.exports = (function () {
     app.post(api.initialRoute + 'passrecover', function (req, res) {
       var email = req.body.email;
       var err;
+      if (settings.ep_mypads && settings.ep_mypads.ldap) {
+        err = 'BACKEND.ERROR.TYPE.NO_RECOVER';
+        return res.status(400).send({ error: err });
+      }
       if (!ld.isEmail(email)) {
         err = 'BACKEND.ERROR.TYPE.MAIL';
         return res.status(400).send({ error: err });
@@ -781,6 +806,10 @@ module.exports = (function () {
       var err;
       var badLogin = (!val || !val.login || !user.logins[val.login]);
       var badAction = (!val || !val.action || (val.action !== 'passrecover'));
+      if (settings.ep_mypads && settings.ep_mypads.ldap) {
+        err = 'BACKEND.ERROR.TYPE.NO_RECOVER';
+        return res.status(400).send({ error: err });
+      }
       if (badLogin || badAction) {
         err = 'BACKEND.ERROR.TOKEN.INCORRECT';
         return res.status(400).send({ error: err });
@@ -816,6 +845,10 @@ module.exports = (function () {
     app.post(api.initialRoute + 'accountconfirm', function (req, res) {
       var val = mail.tokens[req.body.token];
       var err;
+      if (settings.ep_mypads && settings.ep_mypads.ldap) {
+        err = 'BACKEND.ERROR.TYPE.NO_RECOVER';
+        return res.status(400).send({ error: err });
+      }
       if (!val || !val.action || (val.action !== 'accountconfirm')) {
         err = 'BACKEND.ERROR.TOKEN.INCORRECT';
         return res.status(400).send({ error: err });

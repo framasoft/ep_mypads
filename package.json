@@ -61,6 +61,7 @@
     "doc": "./node_modules/docker/docker -I -x node_modules,doc -i . -o doc",
     "lint": "./node_modules/jshint/bin/jshint ./",
     "test": "./node_modules/jasmine/bin/jasmine.js",
+    "test-ldap": "TEST_LDAP=true ./node_modules/jasmine/bin/jasmine.js --config=spec/support/jasmine.ldap.json",
     "default": "npm run lint && npm run test",
     "all": "npm run doc && npm run lint && npm run test"
   },

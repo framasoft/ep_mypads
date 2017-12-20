@@ -10,7 +10,7 @@ test_node_latest:
   script:
    - npm install
    - npm run test
-   - TEST_LDAP=true ./node_modules/jasmine/bin/jasmine.js spec/backend/auth.spec.ldap.js
+   - npm run test-ldap
 
 test_node_4:
   stage: test
@@ -18,7 +18,7 @@ test_node_4:
   script:
    - npm install
    - npm run test
-   - TEST_LDAP=true ./node_modules/jasmine/bin/jasmine.js spec/backend/auth.spec.ldap.js
+   - npm run test-ldap
 
 test_node_6:
   stage: test
@@ -26,7 +26,7 @@ test_node_6:
   script:
    - npm install
    - npm run test
-   - TEST_LDAP=true ./node_modules/jasmine/bin/jasmine.js spec/backend/auth.spec.ldap.js
+   - npm run test-ldap
 
 test_node_8:
   stage: test
@@ -34,7 +34,7 @@ test_node_8:
   script:
    - npm install
    - npm run test
-   - TEST_LDAP=true ./node_modules/jasmine/bin/jasmine.js spec/backend/auth.spec.ldap.js
+   - npm run test-ldap
 
 test_node_9:
   stage: test
@@ -42,7 +42,7 @@ test_node_9:
   script:
    - npm install
    - npm run test
-   - TEST_LDAP=true ./node_modules/jasmine/bin/jasmine.js spec/backend/auth.spec.ldap.js
+   - npm run test-ldap
 
 # Bring in any services we need http://docs.gitlab.com/ee/ci/docker/using_docker_images.html#what-is-a-service
 # See http://docs.gitlab.com/ce/ci/services/README.html for examples.

@@ -758,7 +758,7 @@ module.exports = (function () {
       var email = req.body.email;
       var err;
       if (settings.ep_mypads && settings.ep_mypads.ldap) {
-        err = 'BACKEND.ERROR.TYPE.NO_RECOVER';
+        err = 'BACKEND.ERROR.AUTHENTICATION.NO_RECOVER';
         return res.status(400).send({ error: err });
       }
       if (!ld.isEmail(email)) {
@@ -807,7 +807,7 @@ module.exports = (function () {
       var badLogin = (!val || !val.login || !user.logins[val.login]);
       var badAction = (!val || !val.action || (val.action !== 'passrecover'));
       if (settings.ep_mypads && settings.ep_mypads.ldap) {
-        err = 'BACKEND.ERROR.TYPE.NO_RECOVER';
+        err = 'BACKEND.ERROR.AUTHENTICATION.NO_RECOVER';
         return res.status(400).send({ error: err });
       }
       if (badLogin || badAction) {
@@ -846,7 +846,7 @@ module.exports = (function () {
       var val = mail.tokens[req.body.token];
       var err;
       if (settings.ep_mypads && settings.ep_mypads.ldap) {
-        err = 'BACKEND.ERROR.TYPE.NO_RECOVER';
+        err = 'BACKEND.ERROR.AUTHENTICATION.NO_RECOVER';
         return res.status(400).send({ error: err });
       }
       if (!val || !val.action || (val.action !== 'accountconfirm')) {

@@ -193,12 +193,18 @@ module.exports = (function () {
         user.get(login, function(err, u) {
           if (err) {
             // We have to create the user in mypads database
+            var mail;
+            if (Array.isArray(ldapuser[settings.ep_mypads.ldap.properties.email])) {
+              mail = ldapuser[settings.ep_mypads.ldap.properties.email][0];
+            } else {
+              mail = ldapuser[settings.ep_mypads.ldap.properties.email];
+            }
             user.set({
                 login: ldapuser[settings.ep_mypads.ldap.properties.login],
                 password: 'soooooo_useless',
                 firstname: ldapuser[settings.ep_mypads.ldap.properties.firstname],
                 lastname: ldapuser[settings.ep_mypads.ldap.properties.lastname],
-                email: ldapuser[settings.ep_mypads.ldap.properties.email],
+                email: mail,
                 lang: (settings.ep_mypads.ldap.defaultLang) ? settings.ep_mypads.ldap.defaultLang : 'en'
               }, function (err, u) {
                 if (err) { return callback(err); }
@@ -341,9 +347,10 @@ module.exports = (function () {
     if (!ld.isString(password)) {
       return callback(new TypeError('BACKEND.ERROR.TYPE.PASSWORD_MISSING'));
     }
-    if (settings.ep_mypads && settings.ep_mypads.ldap) {
+    // if u.visibility is defined, u is a group, which we shouldn't authenticate against LDAP
+    if (settings.ep_mypads && settings.ep_mypads.ldap && u.visibility === undefined) {
       var lauth = new LdapAuth(settings.ep_mypads.ldap);
-      if (u.login === undefined || u.login === null) {
+      if (u === undefined || u === null || u.login === undefined || u.login === null) {
         return callback(null, false);
       } else {
         lauth.authenticate(u.login, password, function(err, ldapuser) {

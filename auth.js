@@ -207,10 +207,7 @@ module.exports = (function () {
                 lastname: ldapuser[props.lastname],
                 email: mail,
                 lang: (settings.ep_mypads.ldap.defaultLang) ? settings.ep_mypads.ldap.defaultLang : 'en'
-              }, function (err, u) {
-                if (err) { return callback(err); }
-                return callback(null, u);
-            });
+              }, callback);
           } else {
             return callback(null, u);
           }

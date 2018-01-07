@@ -10,14 +10,14 @@ LDAP tests an be launched with `npm run test-ldap`.
 
 You will need to have the [mockup LDAP server](https://github.com/rroemhild/docker-test-openldap) launched on your computer to run the LDAP tests:
 
-Pull the image (only neede once):
+The first time you start the container:
 
 ```
-docker pull rroemhild/test-openldap
+docker run --privileged -d -p 389:389 rroemhild/test-openldap --name test-openldap
 ```
 
-Then start the container:
+After the first start of the container, you will be able to start it with:
 
 ```
-docker run --privileged -d -p 389:389 rroemhild/test-openldap
+docker start test-openldap
 ```

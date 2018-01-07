@@ -194,16 +194,17 @@ module.exports = (function () {
           if (err) {
             // We have to create the user in mypads database
             var mail;
-            if (Array.isArray(ldapuser[settings.ep_mypads.ldap.properties.email])) {
-              mail = ldapuser[settings.ep_mypads.ldap.properties.email][0];
+            var props = settings.ep_mypads.ldap.properties;
+            if (Array.isArray(ldapuser[props.email])) {
+              mail = ldapuser[props.email][0];
             } else {
-              mail = ldapuser[settings.ep_mypads.ldap.properties.email];
+              mail = ldapuser[props.email];
             }
             user.set({
-                login: ldapuser[settings.ep_mypads.ldap.properties.login],
+                login: ldapuser[props.login],
                 password: 'soooooo_useless',
-                firstname: ldapuser[settings.ep_mypads.ldap.properties.firstname],
-                lastname: ldapuser[settings.ep_mypads.ldap.properties.lastname],
+                firstname: ldapuser[props.firstname],
+                lastname: ldapuser[props.lastname],
                 email: mail,
                 lang: (settings.ep_mypads.ldap.defaultLang) ? settings.ep_mypads.ldap.defaultLang : 'en'
               }, function (err, u) {

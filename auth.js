@@ -355,12 +355,11 @@ module.exports = (function () {
           if (err) {
             var emsg = err;
             if (err.lde_message === 'Invalid Credentials') {
-              emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
+              err = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
             } else if (err.match(/no such user/)) {
-              emsg = 'BACKEND.ERROR.USER.NOT_FOUND';
-            } else {
-              console.error('LdapAuth error: ', err);
+              err = 'BACKEND.ERROR.USER.NOT_FOUND';
             }
+            console.error('LdapAuth error: ', err);
             return callback(null, false);
           }
           return callback(null, true);

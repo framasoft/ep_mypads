@@ -1,5 +1,7 @@
 # This folder is cached between builds
 # http://docs.gitlab.com/ce/ci/yaml/README.html#cache
+# If tests start to fail between different versions, try to disable the cache
+# See https://framagit.org/framasoft/ep_mypads/merge_requests/10#note_172404 for details
 cache:
   paths:
   - node_modules/

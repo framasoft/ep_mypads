@@ -349,9 +349,9 @@ module.exports = (function () {
       return callback(new TypeError('BACKEND.ERROR.TYPE.PASSWORD_MISSING'));
     }
     // if u.visibility is defined, u is a group, which we shouldn't authenticate against LDAP
-    if (settings.ep_mypads && settings.ep_mypads.ldap && u.visibility === undefined) {
+    if (settings.ep_mypads && settings.ep_mypads.ldap && typeof(u.visibility) === 'undefined') {
       var lauth = new LdapAuth(settings.ep_mypads.ldap);
-      if (u === undefined || u === null || u.login === undefined || u.login === null) {
+      if (typeof(u) === 'undefined' || u === null || typeof(u.login) === 'undefined' || u.login === null) {
         return callback(null, false);
       } else {
         lauth.authenticate(u.login, password, function(err, ldapuser) {

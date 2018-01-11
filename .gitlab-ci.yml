@@ -1,0 +1,52 @@
+# This folder is cached between builds
+# http://docs.gitlab.com/ce/ci/yaml/README.html#cache
+# If tests start to fail between different versions, try to disable the cache
+# See https://framagit.org/framasoft/ep_mypads/merge_requests/10#note_172404 for details
+cache:
+  paths:
+  - node_modules/
+
+test_node_latest:
+  stage: test
+  image: node:latest
+  script:
+   - npm install
+   - npm run test
+   - npm run test-ldap
+
+test_node_4:
+  stage: test
+  image: node:4-stretch
+  script:
+   - npm install
+   - npm run test
+   - npm run test-ldap
+
+test_node_6:
+  stage: test
+  image: node:6-stretch
+  script:
+   - npm install
+   - npm run test
+   - npm run test-ldap
+
+test_node_8:
+  stage: test
+  image: node:8-stretch
+  script:
+   - npm install
+   - npm run test
+   - npm run test-ldap
+
+test_node_9:
+  stage: test
+  image: node:9-stretch
+  script:
+   - npm install
+   - npm run test
+   - npm run test-ldap
+
+# Bring in any services we need http://docs.gitlab.com/ee/ci/docker/using_docker_images.html#what-is-a-service
+# See http://docs.gitlab.com/ce/ci/services/README.html for examples.
+services:
+  - rroemhild/test-openldap

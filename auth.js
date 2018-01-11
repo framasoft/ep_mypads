@@ -32,20 +32,53 @@
 // External dependencies
 var ld = require('lodash');
 var jwt = require('jsonwebtoken');
+var ExtractJwt = require('passport-jwt').ExtractJwt;
+var LdapAuth = require('ldapauth-fork');
 var settings;
 try {
   // Normal case : when installed as a plugin
   settings = require('../ep_etherpad-lite/node/utils/Settings');
 }
 catch (e) {
-  // Testing case : we need to mock the express dependency
-  settings = {
-    users: {
-      admin: { password: 'admin', is_admin: true },
-      grace: { password: 'admin', is_admin: true },
-      parker: { password: 'lovesKubiak', is_admin: false }
-    }
-  };
+  if (process.env.TEST_LDAP) {
+    settings = {
+      "users": {
+        "admin": {
+          "password": 'admin',
+          "is_admin": true
+        },
+        "parker": {
+          "password": 'lovesKubiak',
+          "is_admin": false
+        }
+      },
+      "ep_mypads": {
+        "ldap": {
+          "url": "ldap://rroemhild-test-openldap",
+          "bindDN": "cn=admin,dc=planetexpress,dc=com",
+          "bindCredentials": "GoodNewsEveryone",
+          "searchBase": "ou=people,dc=planetexpress,dc=com",
+          "searchFilter": "(uid={{username}})",
+          "properties": {
+            "login": "uid",
+            "email": "mail",
+            "firstname": "givenName",
+            "lastname": "sn"
+          },
+          "defaultLang": "fr"
+        }
+      }
+    };
+  } else {
+    // Testing case : we need to mock the express dependency
+    settings = {
+      users: {
+        admin: { password: 'admin', is_admin: true },
+        grace: { password: 'admin', is_admin: true },
+        parker: { password: 'lovesKubiak', is_admin: false }
+      }
+    };
+  }
 }
 var passport = require('passport');
 var JWTStrategy = require('passport-jwt').Strategy;
@@ -111,7 +144,15 @@ module.exports = (function () {
   */
 
   auth.fn.local = function () {
-    var opts = { secretOrKey: auth.secret, passReqToCallback: true };
+    var opts = {
+      secretOrKey: auth.secret,
+      passReqToCallback: true,
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        ExtractJwt.fromUrlQueryParameter('auth_token'),
+        ExtractJwt.fromBodyField('auth_token'),
+        ExtractJwt.fromAuthHeaderWithScheme('JWT')
+      ])
+    };
     passport.use(new JWTStrategy(opts,
       function (req, jwt_payload, callback) {
         var isFS = function (s) { return (ld.isString(s) && !ld.isEmpty(s)); };
@@ -135,17 +176,57 @@ module.exports = (function () {
   */
 
   auth.fn.checkMyPadsUser = function (login, pass, callback) {
-    user.get(login, function (err, u) {
-      if (err) { return callback(err); }
-      auth.fn.isPasswordValid(u, pass, function (err, isValid) {
-        if (err) { return callback(err); }
-        if (!isValid) {
-          var emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
+    if (settings.ep_mypads && settings.ep_mypads.ldap) {
+      var lauth = new LdapAuth(settings.ep_mypads.ldap);
+      lauth.authenticate(login, pass, function(err, ldapuser) {
+        if (err) {
+          var emsg = err;
+          if (err.lde_message === 'Invalid Credentials') {
+            emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
+          } else if (err.match(/no such user/)) {
+            emsg = 'BACKEND.ERROR.USER.NOT_FOUND';
+          } else {
+            console.error('LdapAuth error: ', err);
+          }
           return callback(new Error(emsg), false);
         }
-        return callback(null, u);
+        user.get(login, function(err, u) {
+          if (err) {
+            // We have to create the user in mypads database
+            var mail;
+            var props = settings.ep_mypads.ldap.properties;
+            if (Array.isArray(ldapuser[props.email])) {
+              mail = ldapuser[props.email][0];
+            } else {
+              mail = ldapuser[props.email];
+            }
+            user.set({
+                login: ldapuser[props.login],
+                password: 'soooooo_useless',
+                firstname: ldapuser[props.firstname],
+                lastname: ldapuser[props.lastname],
+                email: mail,
+                lang: (settings.ep_mypads.ldap.defaultLang) ? settings.ep_mypads.ldap.defaultLang : 'en'
+              }, callback);
+          } else {
+            return callback(null, u);
+          }
+        });
       });
-    });
+      lauth.close(function(err) { });
+    } else {
+      user.get(login, function (err, u) {
+        if (err) { return callback(err); }
+        auth.fn.isPasswordValid(u, pass, function (err, isValid) {
+          if (err) { return callback(err); }
+          if (!isValid) {
+            var emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
+            return callback(new Error(emsg), false);
+          }
+          return callback(null, u);
+        });
+      });
+    }
   };
 
   /**
@@ -264,10 +345,33 @@ module.exports = (function () {
     if (!ld.isString(password)) {
       return callback(new TypeError('BACKEND.ERROR.TYPE.PASSWORD_MISSING'));
     }
-    user.fn.hashPassword(u.password.salt, password, function (err, res) {
-      if (err) { return callback(err); }
-      callback(null, (res.hash === u.password.hash));
-    });
+    // if u.visibility is defined, u is a group, which we shouldn't authenticate against LDAP
+    if (settings.ep_mypads && settings.ep_mypads.ldap && typeof(u.visibility) === 'undefined') {
+      var lauth = new LdapAuth(settings.ep_mypads.ldap);
+      if (typeof(u) === 'undefined' || u === null || typeof(u.login) === 'undefined' || u.login === null) {
+        return callback(null, false);
+      } else {
+        lauth.authenticate(u.login, password, function(err, ldapuser) {
+          if (err) {
+            var emsg = err;
+            if (err.lde_message === 'Invalid Credentials') {
+              err = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
+            } else if (err.match(/no such user/)) {
+              err = 'BACKEND.ERROR.USER.NOT_FOUND';
+            }
+            console.error('LdapAuth error: ', err);
+            return callback(null, false);
+          }
+          return callback(null, true);
+        });
+        lauth.close(function(err) { });
+      }
+    } else {
+      user.fn.hashPassword(u.password.salt, password, function (err, res) {
+        if (err) { return callback(err); }
+        callback(null, (res.hash === u.password.hash));
+      });
+    }
   };
 
   /**

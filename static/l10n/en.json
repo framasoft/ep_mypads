@@ -46,7 +46,9 @@
         "ADMIN": "Access denied : you must be an authenticated Etherpad instance admin.",
         "DENIED": "Access denied",
         "DENIED_RECORD": "You're not allowed to get this record",
-        "DENIED_RECORD_EDIT": "You're not allowed to edit this record"
+        "DENIED_RECORD_EDIT": "You're not allowed to edit this record",
+        "NO_REGISTRATION": "Sorry, registration is disabled",
+        "NO_RECOVER": "Sorry, you can't recover you password from here"
       },
       "PERMISSION": {
         "UNEXPECTED": "Sorry, an unexpected has error has occurred",

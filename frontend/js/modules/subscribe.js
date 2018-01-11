@@ -59,8 +59,12 @@ module.exports = (function () {
       conf.unauthUrl(true);
       return m.route('/login');
     }
-    c.fields = ['login', 'password', 'passwordConfirm', 'email', 'firstname',
-      'lastname', 'organization', 'lang', 'color'];
+    if (conf.SERVER.useLdap && c.profileView()) {
+      c.fields = ['organization', 'lang', 'color'];
+    } else {
+      c.fields = ['login', 'password', 'passwordConfirm', 'email', 'firstname',
+        'lastname', 'organization', 'lang', 'color'];
+    }
     if (c.profileView()) {
       c.fields.push('passwordCurrent', 'useLoginAndColorInPads');
     }
@@ -165,7 +169,15 @@ module.exports = (function () {
           auth_token: auth.token()
         }
       }).then(function () {
-        passwordUpdate();
+        if (!conf.SERVER.useLdap) {
+          passwordUpdate();
+        } else {
+          c.data.login     = auth.userInfo().login;
+          c.data.email     = auth.userInfo().email;
+          c.data.firstname = auth.userInfo().firstname;
+          c.data.lastname  = auth.userInfo().lastname;
+          c.data.password  = c.data.passwordCurrent;
+        }
         m.request({
           method: 'PUT',
           url: conf.URLS.USER + '/' + auth.userInfo().login,
@@ -264,24 +276,34 @@ module.exports = (function () {
       delete fields.password.input.attrs.required;
       delete fields.passwordConfirm.input.attrs.required;
     }
-    var requiredFields = [
-      m('.form-group', [
-        fields.email.label, fields.email.icon,
-        m('.col-sm-7', fields.email.input)
-      ]),
-      m('.form-group', [
-        fields.password.label, fields.password.icon,
-          m('.col-sm-7', fields.password.input)
-      ]),
-      m('.form-group', [
-        fields.passwordConfirm.label, fields.passwordConfirm.icon,
-        m('.col-sm-7', fields.passwordConfirm.input)
-      ]),
-      m('.form-group', [
-        fields.lang.label, fields.lang.icon,
-        m('.col-sm-7', fields.lang.select)
-      ])
-    ];
+    var requiredFields;
+    if (conf.SERVER.useLdap && c.profileView()) {
+      requiredFields = [
+        m('.form-group', [
+          fields.lang.label, fields.lang.icon,
+          m('.col-sm-7', fields.lang.select)
+        ])
+      ];
+    } else {
+      requiredFields = [
+        m('.form-group', [
+          fields.email.label, fields.email.icon,
+          m('.col-sm-7', fields.email.input)
+        ]),
+        m('.form-group', [
+          fields.password.label, fields.password.icon,
+            m('.col-sm-7', fields.password.input)
+        ]),
+        m('.form-group', [
+          fields.passwordConfirm.label, fields.passwordConfirm.icon,
+          m('.col-sm-7', fields.passwordConfirm.input)
+        ]),
+        m('.form-group', [
+          fields.lang.label, fields.lang.icon,
+          m('.col-sm-7', fields.lang.select)
+        ])
+      ];
+    }
     if (c.profileView()) {
       var passC = user.view.field.passwordCurrent(c);
       passC.input.attrs.config = form.focusOnInit;
@@ -314,15 +336,21 @@ module.exports = (function () {
     }
     var USER = conf.LANG.USER;
     var profOrAdm = (c.profileView() || c.adminView());
-    return m('form.form-horizontal', {
-      id: 'subscribe-form',
-      onsubmit: profOrAdm ? c.submit.profileSave : c.submit.subscribe
-      }, [
-      m('fieldset', [
-        m('legend', conf.LANG.USER.MANDATORY_FIELDS),
-        m('div', requiredFields)
-      ]),
-      m('fieldset', [
+    var optionalFields;
+    if (conf.SERVER.useLdap && c.profileView()) {
+      optionalFields = [
+        m('legend.opt', conf.LANG.USER.OPTIONAL_FIELDS),
+          m('.form-group', [
+            fields.organization.label, fields.organization.icon,
+            m('.col-sm-7', fields.organization.input)
+          ]),
+          m('.form-group', [
+            fields.color.label, fields.color.icon,
+            m('.col-sm-7', fields.color.input)
+          ])
+      ];
+    } else {
+      optionalFields = [
         m('legend.opt', conf.LANG.USER.OPTIONAL_FIELDS),
           m('.form-group', [
             fields.firstname.label, fields.firstname.icon,
@@ -340,7 +368,17 @@ module.exports = (function () {
             fields.color.label, fields.color.icon,
             m('.col-sm-7', fields.color.input)
           ])
+      ];
+    }
+    return m('form.form-horizontal', {
+      id: 'subscribe-form',
+      onsubmit: profOrAdm ? c.submit.profileSave : c.submit.subscribe
+      }, [
+      m('fieldset', [
+        m('legend', conf.LANG.USER.MANDATORY_FIELDS),
+        m('div', requiredFields)
       ]),
+      m('fieldset', optionalFields),
       m('.form-group', [
         m('.col-sm-12', [
           m('input.btn.btn-success pull-right', {

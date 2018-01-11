@@ -105,6 +105,15 @@ module.exports = (function () {
         }
       ]
     };
+    if (conf.SERVER.useLdap) {
+      _routes.unauth = [
+        {
+          route: '/login',
+          icon: 'lock',
+          txt: conf.LANG.USER.LOGIN
+        }
+      ];
+    }
     var activeRoute = function (r) {
       var isActive = (m.route().slice(0, r.route.length) === r.route);
       return m('li', { class: (isActive ? 'active' : '') }, [

@@ -36,6 +36,46 @@ You can install MyPads from source. In order to do that :
 * restart your Etherpad instance and you should see *ep_mypads* listed into your administration back-end
 * homepage is available at http://youretherpad/mypads/index.html
 
+### Configuration
+
+You can configure MyPads for using LDAP authentication.
+For that, add a `ep_mypads` section, containing a `ldap` section, in Etherpad's `settings.json` file:
+
+```
+"ep_mypads": {
+    "ldap": {
+        // Your LDAP URL
+        "url": "ldaps://ldap.example.org",
+        // The LDAP user to bind with
+        "bindDN": "uid=ldap,ou=users,dc=example,dc=org",
+        // His password
+        "bindCredentials": "S3cr3t",
+        // Where to search your users
+        "searchBase": "ou=users,dc=example,dc=org",
+        // A LDAP filter ({{username}} is replaced by user's login)
+        "searchFilter": "(uid={{username}})",
+        // LDAP properties mapping for MyPads
+        "properties": {
+            // Which LDAP property will be used as user's login?
+            "login": "uid",
+            // as user's email
+            "email": "mail",
+            // as user's firstname
+            "firstname": "givenName",
+            // as users's lastname
+            "lastname": "sn"
+        },
+        // Default langage for LDAP created users
+        "defaultLang": "fr"
+    }
+}
+```
+
+Beside `properties` and `defaultLang`, all the settings in the `ldap` section are `ldapauth-fork` (the module used for the LDAP authentication) settings.
+You can add other settings to it, just go on <https://www.npmjs.com/package/ldapauth-fork#ldapauth-config-options> to see which.
+
+**NB** When using the LDAP authentication, registration of new accounts is disabled.
+
 ## Roadmap
 
 It's available through [milestones and tickets](https://git.framasoft.org/framasoft/ep_mypads/issues).

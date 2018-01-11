@@ -42,6 +42,36 @@ catch (e) {
   testMode = true;
   express = require('express');
 }
+var settings;
+try {
+  // Normal case : when installed as a plugin
+  settings = require('../ep_etherpad-lite/node/utils/Settings');
+}
+catch (e) {
+  // Testing case : we need to mock the express dependency
+  if (process.env.TEST_LDAP) {
+    settings = {
+      "ep_mypads": {
+        "ldap": {
+          "url": "ldap://rroemhild-test-openldap",
+          "bindDN": "cn=admin,dc=planetexpress,dc=com",
+          "bindCredentials": "GoodNewsEveryone",
+          "searchBase": "ou=people,dc=planetexpress,dc=com",
+          "searchFilter": "(uid={{username}})",
+          "properties": {
+            "login": "uid",
+            "email": "mail",
+            "firstname": "givenName",
+            "lastname": "sn"
+          },
+          "defaultLang": "fr"
+        }
+      }
+    };
+  } else {
+    settings = {};
+  }
+}
 var bodyParser = require('body-parser');
 // Local dependencies
 var conf = require('./configuration.js');
@@ -397,6 +427,7 @@ module.exports = (function () {
       var isAdmin = fn.isAdmin(req);
       var action = isAdmin ? 'all' : 'public';
       var value = conf[action]();
+      value.useLdap = !!(settings.ep_mypads && settings.ep_mypads.ldap);
       var resp = { value: value };
       resp.auth = (isAdmin ? true : !!u);
       if (u) { resp.user = u; }
@@ -598,33 +629,38 @@ module.exports = (function () {
       var value = req.body;
       var stop;
       if (req.method === 'POST') {
-        key = req.body.login;
-        if (conf.get('checkMails')) {
-          var token = mail.genToken({ login: key, action: 'accountconfirm' });
-          var url = conf.get('rootUrl') +
-            '/mypads/index.html?/accountconfirm/' + token;
-          console.log(url);
-          var lang = (function () {
-            if (ld.includes(ld.keys(conf.cache.languages), req.body.lang)) {
-              return req.body.lang;
-            } else {
-              return conf.get('defaultLanguage');
-            }
-          })();
-          var subject = fn.mailMessage('ACCOUNT_CONFIRMATION_SUBJECT', {
-            title: conf.get('title') });
-          var message = fn.mailMessage('ACCOUNT_CONFIRMATION', {
-            login: key,
-            title: conf.get('title'),
-            url: url,
-            duration: conf.get('tokenDuration')
-          }, lang);
-          mail.send(req.body.email, subject, message, function (err) {
-            if (err) {
-              stop = true;
-              return res.status(501).send({ error: err });
-            }
-          }, lang);
+        if (settings.ep_mypads && settings.ep_mypads.ldap) {
+          stop = true;
+          res.status(400).send({ error: 'BACKEND.ERROR.AUTHENTICATION.NO_REGISTRATION' });
+        } else {
+          key = req.body.login;
+          if (conf.get('checkMails')) {
+            var token = mail.genToken({ login: key, action: 'accountconfirm' });
+            var url = conf.get('rootUrl') +
+              '/mypads/index.html?/accountconfirm/' + token;
+            console.log(url);
+            var lang = (function () {
+              if (ld.includes(ld.keys(conf.cache.languages), req.body.lang)) {
+                return req.body.lang;
+              } else {
+                return conf.get('defaultLanguage');
+              }
+            })();
+            var subject = fn.mailMessage('ACCOUNT_CONFIRMATION_SUBJECT', {
+              title: conf.get('title') });
+            var message = fn.mailMessage('ACCOUNT_CONFIRMATION', {
+              login: key,
+              title: conf.get('title'),
+              url: url,
+              duration: conf.get('tokenDuration')
+            }, lang);
+            mail.send(req.body.email, subject, message, function (err) {
+              if (err) {
+                stop = true;
+                return res.status(501).send({ error: err });
+              }
+            }, lang);
+          }
         }
       } else {
         key = req.params.key;
@@ -721,6 +757,10 @@ module.exports = (function () {
     app.post(api.initialRoute + 'passrecover', function (req, res) {
       var email = req.body.email;
       var err;
+      if (settings.ep_mypads && settings.ep_mypads.ldap) {
+        err = 'BACKEND.ERROR.AUTHENTICATION.NO_RECOVER';
+        return res.status(400).send({ error: err });
+      }
       if (!ld.isEmail(email)) {
         err = 'BACKEND.ERROR.TYPE.MAIL';
         return res.status(400).send({ error: err });
@@ -766,6 +806,10 @@ module.exports = (function () {
       var err;
       var badLogin = (!val || !val.login || !user.logins[val.login]);
       var badAction = (!val || !val.action || (val.action !== 'passrecover'));
+      if (settings.ep_mypads && settings.ep_mypads.ldap) {
+        err = 'BACKEND.ERROR.AUTHENTICATION.NO_RECOVER';
+        return res.status(400).send({ error: err });
+      }
       if (badLogin || badAction) {
         err = 'BACKEND.ERROR.TOKEN.INCORRECT';
         return res.status(400).send({ error: err });
@@ -801,6 +845,10 @@ module.exports = (function () {
     app.post(api.initialRoute + 'accountconfirm', function (req, res) {
       var val = mail.tokens[req.body.token];
       var err;
+      if (settings.ep_mypads && settings.ep_mypads.ldap) {
+        err = 'BACKEND.ERROR.AUTHENTICATION.NO_RECOVER';
+        return res.status(400).send({ error: err });
+      }
       if (!val || !val.action || (val.action !== 'accountconfirm')) {
         err = 'BACKEND.ERROR.TOKEN.INCORRECT';
         return res.status(400).send({ error: err });

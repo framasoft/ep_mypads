@@ -46,7 +46,9 @@
         "ADMIN": "Accès interdit : vous devez être un administrateur authentifié de l'instance Etherpad",
         "DENIED": "Accès interdit",
         "DENIED_RECORD": "Vous n'êtes pas autorisé à voir cet enregistrement",
-        "DENIED_RECORD_EDIT": "Vous n'êtes pas autorisé à modifier cet enregistrement"
+        "DENIED_RECORD_EDIT": "Vous n'êtes pas autorisé à modifier cet enregistrement",
+        "NO_REGISTRATION": "Désolé, la création de comptes est désactivée",
+        "NO_RECOVER": "Désolé, vous ne pouvez pas récupérer votre mot de passe à partir d'ici"
       },
       "PERMISSION": {
         "UNEXPECTED": "Désolé, une erreur inattendue s'est produite",

@@ -20,6 +20,7 @@
 (function () {
   'use strict';
 
+  process.env.TEST_LDAP = true;
   var ld = require('lodash');
   var request = require('request');
   var jwt = require('jsonwebtoken');
@@ -43,9 +44,9 @@
 
     /* Global local variables */
     var guest = {
-      login: 'guest',
-      password: 'willnotlivelong',
-      email: 'guest@phantomatic.net'
+      login: 'fry',
+      password: 'soooo_useless',
+      email: 'fry@planetexpress.com'
     };
     var etherAdmin = {
       login: 'admin',
@@ -90,7 +91,7 @@
       });
     });
 
-    describe('authentification API', function () {
+    describe('authentication API', function () {
       var authRoute = route + 'auth';
 
       beforeAll(function (done) {
@@ -106,6 +107,7 @@
 
         beforeAll(function (done) {
           var params = { body: guest };
+          params.body.password = 'fry';
           rq.post(authRoute + '/login', params, function (err, resp, body) {
             if (!err && resp.statusCode === 200) {
               token = body.token;
@@ -128,9 +130,9 @@
         it('should return an error if params are bad', function(done) {
           var params = {
             body: {
-              login: 'guest',
+              login: 'fry',
               password: 'badOne',
-              email: 'guest@phantomatic.net',
+              email: 'fry@planetexpress.com',
               auth_token: jwt.sign({}, 'bad')
             } 
           };
@@ -143,9 +145,9 @@
         it('should return success otherwise', function (done) {
           var params = {
             body: {
-              login: 'guest',
-              password: 'willnotlivelong',
-              email: 'guest@phantomatic.net',
+              login: 'fry',
+              password: 'fry',
+              email: 'fry@planetexpress.com',
               auth_token: token
             } 
           };
@@ -200,12 +202,13 @@
 
         it('should auth otherwise', function (done) {
           var params = { body: guest };
+          params.body.password = 'fry';
           rq.post(authRoute + '/login', params, function (err, resp, body) {
             expect(resp.statusCode).toBe(200);
             expect(body.success).toBeTruthy();
             expect(body.user).toBeDefined();
             expect(body.user._id).toBeDefined();
-            expect(body.user.login).toBe('guest');
+            expect(body.user.login).toBe('fry');
             expect(body.user.password).toBeUndefined();
             done();
           });
@@ -347,6 +350,7 @@
         var kv = { field1: 8, field2: 3, field3: ['a', 'b'] };
         ld.assign(conf.cache, kv);
         user.set(guest, function () {
+          guest.password = 'fry';
           rq.post(route + 'auth/login', { body: guest },
             function (err, resp, b) {
               if (!err && resp.statusCode === 200) {
@@ -563,13 +567,13 @@
         rq.get(route + 'auth/logout', done);
       });
 
-      it('should create in inactive account according to the configuration',
+      it('should not create in inactive account (registration disabled)',
         function (done) {
           var b =  { login: 'shelly', password: 'lovesKubiak' };
           rq.post(route + 'auth/login', { body: b },
             function (err, resp, body) {
               expect(err).toBeNull();
-              expect(body.error).toMatch('ACTIVATION_NEEDED');
+              expect(body.error).toMatch('USER.NOT_FOUND');
               done();
             }
           );
@@ -596,6 +600,9 @@
               p.login = 'mikey';
               p.email = 'mikey@randall.me';
               set(p, function () {
+                guest.password  = 'fry';
+                guest.lastname  = 'Fry';
+                guest.firstname = 'Philip';
                 rq.post(route + 'auth/login', { body: guest },
                   function (err, resp, b) {
                     if (!err && resp.statusCode === 200) {
@@ -612,15 +619,15 @@
 
       describe('user.set/add POST and value as params', function () {
 
-        it('should return error when arguments are not as expected',
+        it('should return error when arguments are not as expected (need a valid LDAP account)',
           function (done) {
             rq.post(userRoute, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('PARAM_STR');
+              expect(body.error).toMatch('AUTHENTICATION.NO_REGISTRATION');
               var b = { body: { login: 'parker', password: '' } };
               rq.post(userRoute, b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
-                expect(body.error).toMatch('PARAM_STR');
+                expect(body.error).toMatch('AUTHENTICATION.NO_REGISTRATION');
                 b = { body: {
                   login: 'parker',
                   password: 'secret',
@@ -628,7 +635,7 @@
                 } };
                 rq.post(userRoute, b, function (err, resp, body) {
                   expect(resp.statusCode).toBe(400);
-                  expect(body.error).toMatch('PASSWORD_SIZE');
+                  expect(body.error).toMatch('AUTHENTICATION.NO_REGISTRATION');
                   done();
                 });
               });
@@ -645,13 +652,13 @@
             } };
             rq.post(userRoute, b, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('PASSWORD_SIZE');
+              expect(body.error).toMatch('AUTHENTICATION.NO_REGISTRATION');
               done();
             });
           }
         );
 
-        it('should create a new user otherwise', function (done) {
+        it('should not create a new user if it\'s not a LDAP user (registration disabled)', function (done) {
           var b = {
             body: {
               login: 'parker',
@@ -663,17 +670,35 @@
           };
           rq.post(userRoute, b, function (err, resp, body) {
             expect(err).toBeNull();
-            expect(resp.statusCode).toBe(200);
-            expect(body.success).toBeTruthy();
-            expect(body.key).toBe('parker');
-            expect(body.value.login).toBe('parker');
-            expect(body.value.lastname).toBe('Lewis');
+            expect(resp.statusCode).toBe(400);
+            expect(body.error).toMatch('AUTHENTICATION.NO_REGISTRATION');
             b = { body: { auth_token: admToken } };
             rq.get(userRoute + '/parker', b, function (err, resp, body) {
-              expect(resp.statusCode).toBe(200);
-              expect(body.value.login).toBe('parker');
-              expect(body.value.firstname).toBe('Parker');
-              expect(ld.isArray(body.value.groups)).toBeTruthy();
+              expect(resp.statusCode).toBe(404);
+              expect(body.error).toMatch('USER.NOT_FOUND');
+              done();
+            });
+          });
+        });
+
+        it('should not create a new user otherwise either (registration disabled)', function (done) {
+          var b = {
+            body: {
+              login: 'bender',
+              password: 'bender',
+              firstname: 'Bender',
+              lastname: 'Rodriguez',
+              email: 'bender@planetexpress.com'
+            }
+          };
+          rq.post(userRoute, b, function (err, resp, body) {
+            expect(err).toBeNull();
+            expect(resp.statusCode).toBe(400);
+            expect(body.error).toMatch('AUTHENTICATION.NO_REGISTRATION');
+            b = { body: { auth_token: admToken } };
+            rq.get(userRoute + '/parker', b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(404);
+              expect(body.error).toMatch('USER.NOT_FOUND');
               done();
             });
           });
@@ -682,14 +707,14 @@
         it('should return an error if the login/key already exists',
           function (done) {
             var b = { body: {
-              login: 'mikey',
-              password: 'missMusso',
-              email: 'mikey@randall.me'
+              login: 'fry',
+              password: 'fry',
+              email: 'fry@no-planetexpress.com'
             } };
             rq.post(userRoute, b, function () {
               rq.post(userRoute, b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
-                expect(body.error).toMatch('USER.ALREADY_EXISTS');
+                expect(body.error).toMatch('AUTHENTICATION.NO_REGISTRATION');
                 done();
               });
             });
@@ -701,12 +726,12 @@
             var b = { body: {
               login: 'martin',
               password: 'mondovideo',
-              email: 'jerry@steiner.me'
+              email: 'fry@planetexpress.com'
             } };
             rq.post(userRoute, b, function () {
               rq.post(userRoute, b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
-                expect(body.error).toMatch('USER.EMAIL_ALREADY_EXISTS');
+                expect(body.error).toMatch('AUTHENTICATION.NO_REGISTRATION');
                 done();
               });
             });
@@ -720,21 +745,21 @@
         it('should return error when arguments are not as expected',
           function (done) {
             var b = { body: { auth_token: token } };
-            rq.put(userRoute + '/guest', b, function (err, resp, body) {
+            rq.put(userRoute + '/fry', b, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
               expect(body.error).toMatch('PARAM_STR');
-              b = { body: { login: 'guest', password: '' } };
+              b = { body: { login: 'fry', password: '' } };
               b.body.auth_token = token;
-              rq.put(userRoute + '/guest', b, function (err, resp, body) {
+              rq.put(userRoute + '/fry', b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(400);
                 expect(body.error).toMatch('PARAM_STR');
-                b = { body: { login: 'guest', password: 'secret' } };
+                b = { body: { login: 'fry', password: 'secret' } };
                 b.body.auth_token = token;
-                rq.put(userRoute + '/guest', b, function (err, resp, body) {
+                rq.put(userRoute + '/fry', b, function (err, resp, body) {
                   expect(resp.statusCode).toBe(400);
                   expect(body.error).toMatch('EMAIL');
-                  b.body.email = 'guest@phantomatic.net';
-                  rq.put(userRoute + '/guest', b, function (err, resp, body) {
+                  b.body.email = 'fry@planetexpress.com';
+                  rq.put(userRoute + '/fry', b, function (err, resp, body) {
                     expect(resp.statusCode).toBe(400);
                     expect(body.error).toMatch('PASSWORD_SIZE');
                     done();
@@ -748,12 +773,12 @@
         it('should return an error if password size is not correct',
           function (done) {
             var b = { body: {
-              login: 'guest',
+              login: 'fry',
               password: '1',
-              email: 'guest@phantomatic.net'
+              email: 'fry@planetexpress.com'
             } };
             b.body.auth_token = token;
-            rq.put(userRoute + '/guest', b, function (err, resp, body) {
+            rq.put(userRoute + '/fry', b, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
               expect(body.error).toMatch('PASSWORD_SIZE');
               done();
@@ -779,7 +804,7 @@
           });
         });
 
-        it('should create a user, if admin, otherwise', function (done) {
+        it('should not create a user, if admin either', function (done) {
           var b = {
             body: {
               password: 'lovesKubiak',
@@ -791,16 +816,34 @@
           };
           rq.put(userRoute + '/parker', b, function (err, resp, body) {
             expect(err).toBeNull();
-            expect(resp.statusCode).toBe(200);
-            expect(body.success).toBeTruthy();
-            expect(body.key).toBe('parker');
-            expect(body.value.login).toBe('parker');
-            expect(body.value.lastname).toBe('Lewis');
+            expect(resp.statusCode).toBe(400);
+            expect(body.error).toMatch('USER.NOT_FOUND');
             rq.get(userRoute + '/parker', b, function (err, resp, body) {
-              expect(resp.statusCode).toBe(200);
-              expect(body.value.login).toBe('parker');
-              expect(body.value.firstname).toBe('Parker');
-              expect(ld.isArray(body.value.groups)).toBeTruthy();
+              expect(resp.statusCode).toBe(404);
+              expect(body.error).toMatch('USER.NOT_FOUND');
+              done();
+            });
+          });
+        });
+
+        it('should not create a user, if admin even if it\'s a LDAP user', function (done) {
+          var b = {
+            body: {
+              login: 'bender',
+              password: 'bender',
+              firstname: 'Bender',
+              lastname: 'Rodriguez',
+              email: 'bender@planetexpress.com',
+              auth_token: admToken
+            }
+          };
+          rq.put(userRoute + '/bender', b, function (err, resp, body) {
+            expect(resp.statusCode).toBe(400);
+            expect(body.error).toMatch('USER.NOT_FOUND');
+            expect(err).toBeNull();
+            rq.get(userRoute + '/bender', b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(404);
+              expect(body.error).toMatch('USER.NOT_FOUND');
               done();
             });
           });
@@ -808,12 +851,12 @@
 
         it('should accept changes with no password if admin', function (done) {
           var b = { body: { organization: 'secret', auth_token: admToken } };
-          rq.put(userRoute + '/parker', b, function (err, resp, body) {
+          rq.put(userRoute + '/fry', b, function (err, resp, body) {
             expect(err).toBeNull();
             expect(resp.statusCode).toBe(200);
             expect(body.success).toBeTruthy();
-            expect(body.key).toBe('parker');
-            expect(body.value.login).toBe('parker');
+            expect(body.key).toBe('fry');
+            expect(body.value.login).toBe('fry');
             expect(body.value.organization).toBe('secret');
             done();
           });
@@ -822,28 +865,28 @@
         it('should accept updates on an existing user, if he is logged himself',
           function (done) {
             var b = { body: guest };
+            b.body.password = 'very_very_useless';
             b.body.email =  'guest@phantomatic.weird';
             b.body.auth_token = token;
-            rq.put(userRoute + '/guest', b, function (err, resp, body) {
+            rq.put(userRoute + '/fry', b, function (err, resp, body) {
               expect(resp.statusCode).toBe(200);
               expect(body.success).toBeTruthy();
-              expect(body.key).toBe('guest');
+              expect(body.key).toBe('fry');
               expect(body.value.email).toBe('guest@phantomatic.weird');
               done();
             });
           }
         );
 
-        xit('should accept login change',
+        xit('should not accept login change',
           function (done) {
             var b = { body: { password: 'missMusso', } };
             rq.put(userRoute + '/mikey', b, function () {
               b.body.login = 'mike';
               rq.put(userRoute + '/mikey', b, function (err, resp, body) {
-                expect(resp.statusCode).toBe(200);
-                expect(body.success).toBeTruthy();
-                expect(body.key).toBe('mikey');
-                expect(body.value.login).toBe('mike');
+                expect(resp.statusCode).toBe(400);
+                expect(body.success).toBeFalsy();
+                expect(body.error).toMatch('DENIED');
                 done();
               });
             });
@@ -870,10 +913,10 @@
           ' excepted otherwise',
           function (done) {
             var b = { body: { auth_token: admToken } };
-            rq.get(userRoute + '/parker', b, function (err, resp, body) {
+            rq.get(userRoute + '/fry', b, function (err, resp, body) {
               expect(resp.statusCode).toBe(200);
-              expect(body.value.login).toBe('parker');
-              expect(body.value.firstname).toBe('Parker');
+              expect(body.value.login).toBe('fry');
+              expect(body.value.firstname).toBe('Philip');
               expect(ld.isArray(body.value.groups)).toBeTruthy();
               done();
             });
@@ -960,7 +1003,7 @@
             function (done) {
               var ulk = ld.keys(ulists)[0];
               var b = { body: {
-                loginsOrEmails: ['inexistent', 'mikey@randall.me', 'jerry']
+                loginsOrEmails: ['inexistent', 'mikey@randall.me', 'jerry', 'bender']
               } };
               b.body.auth_token = token;
               rq.put(userlistRoute + '/' + ulk, b, function (err, resp, body) {
@@ -1075,7 +1118,7 @@
         it('should mark or unmark successfully otherwise',
           function (done) {
             var b = { body: { auth_token: token } };
-            rq.get(userRoute + '/guest', b, function (err, resp, body) {
+            rq.get(userRoute + '/fry', b, function (err, resp, body) {
               b.body.name = 'group1';
               b.body.admin = body.value._id;
               b.body.visibility = 'restricted';
@@ -1100,7 +1143,7 @@
           rq.post(route + 'passrecover', function (err, resp, body) {
             expect(err).toBeNull();
             expect(resp.statusCode).toBe(400);
-            expect(body.error).toMatch('TYPE');
+            expect(body.error).toMatch('NO_RECOVER');
             done();
           });
         });
@@ -1110,7 +1153,7 @@
           rq.post(route + 'passrecover', b, function (err, resp, body) {
             expect(err).toBeNull();
             expect(resp.statusCode).toBe(400);
-            expect(body.error).toMatch('TYPE');
+            expect(body.error).toMatch('NO_RECOVER');
             done();
           });
         });
@@ -1119,8 +1162,8 @@
           var b = { body: { email: 'inexistent@example.org' } };
           rq.post(route + 'passrecover', b, function (err, resp, body) {
             expect(err).toBeNull();
-            expect(resp.statusCode).toBe(404);
-            expect(body.error).toMatch('USER.NOT_FOUND');
+            expect(resp.statusCode).toBe(400);
+            expect(body.error).toMatch('NO_RECOVER');
             done();
           });
         });
@@ -1130,8 +1173,8 @@
             var b = { body: { email: 'guest@phantomatic.weird' } };
             rq.post(route + 'passrecover', b, function (err, resp, body) {
               expect(err).toBeNull();
-              expect(resp.statusCode).toBe(501);
-              expect(body.error).toMatch('ROOTURL_NOT_CONFIGURED');
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('NO_RECOVER');
               done();
             });
           }
@@ -1143,8 +1186,8 @@
             var b = { body: { email: 'guest@phantomatic.weird' } };
             rq.post(route + 'passrecover', b, function (err, resp, body) {
               expect(err).toBeNull();
-              expect(resp.statusCode).toBe(501);
-              expect(body.error).toMatch('MAIL_NOT_CONFIGURED');
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('NO_RECOVER');
               done();
             });
           }
@@ -1164,19 +1207,19 @@
             rq.put(route + 'passrecover/invalid', function (err, resp, body) {
               expect(err).toBeNull();
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('TOKEN.INCORRECT');
-              var mtk = mail.genToken({ login: 'guest', action: 'another' });
+              expect(body.error).toMatch('NO_RECOVER');
+              var mtk = mail.genToken({ login: 'fry', action: 'another' });
               rq.put(route + 'passrecover/' + mtk,
                 function (err, resp, body) {
                   expect(err).toBeNull();
                   expect(resp.statusCode).toBe(400);
-                  expect(body.error).toMatch('TOKEN.INCORRECT');
+                  expect(body.error).toMatch('NO_RECOVER');
                   mtk = mail.genToken({ action: 'passrecover' });
                   rq.put(route + 'passrecover/' + mtk,
                     function (err, resp, body) {
                       expect(err).toBeNull();
                       expect(resp.statusCode).toBe(400);
-                      expect(body.error).toMatch('TOKEN.INCORRECT');
+                      expect(body.error).toMatch('NO_RECOVER');
                       done();
                     }
                   );
@@ -1189,11 +1232,11 @@
         it('should return an error if the token is no more valid',
           function (done) {
             conf.cache.tokenDuration = -1;
-            var tk = mail.genToken({ login: 'guest', action: 'passrecover' });
+            var tk = mail.genToken({ login: 'fry', action: 'passrecover' });
             rq.put(route + 'passrecover/' + tk, function (err, resp, body) {
               expect(err).toBeNull();
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('TOKEN.EXPIRED');
+              expect(body.error).toMatch('NO_RECOVER');
               conf.cache.tokenDuration = 60;
               done();
             });
@@ -1202,17 +1245,17 @@
 
         it('should return an error if the passwords are not given or mismatch',
           function (done) {
-            var tk = mail.genToken({ login: 'guest', action: 'passrecover' });
+            var tk = mail.genToken({ login: 'fry', action: 'passrecover' });
             rq.put(route + 'passrecover/' + tk, function (err, resp, body) {
               expect(err).toBeNull();
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('PASSWORD_MISMATCH');
+              expect(body.error).toMatch('NO_RECOVER');
               var b = { body: { password: 'aPass', passwordConfirm: '2' } };
               rq.put(route + 'passrecover/' + tk, b,
                 function (err, resp, body) {
                   expect(err).toBeNull();
                   expect(resp.statusCode).toBe(400);
-                  expect(body.error).toMatch('PASSWORD_MISMATCH');
+                  expect(body.error).toMatch('NO_RECOVER');
                   conf.cache.tokenDuration = 60;
                   done();
                 }
@@ -1222,27 +1265,26 @@
         );
 
         it('should forbid bad password', function (done) {
-          var tk = mail.genToken({ login: 'guest', action: 'passrecover' });
+          var tk = mail.genToken({ login: 'fry', action: 'passrecover' });
           var b = { body: { password: 'short', passwordConfirm: 'short' } };
           rq.put(route + 'passrecover/' + tk, b, function (err, resp, body) {
             expect(err).toBeNull();
             expect(resp.statusCode).toBe(400);
-            expect(body.error).toMatch('TYPE.PASSWORD_SIZE');
+            expect(body.error).toMatch('NO_RECOVER');
             done();
           });
         });
 
-        it('should change password otherwise', function (done) {
-          var tk = mail.genToken({ login: 'guest', action: 'passrecover' });
+        it('should not change password otherwise (LDAP authentication)', function (done) {
+          var tk = mail.genToken({ login: 'fry', action: 'passrecover' });
           var b = { body: {
             password: 'aBetterPassword',
             passwordConfirm: 'aBetterPassword'
           } };
           rq.put(route + 'passrecover/' + tk, b, function (err, resp, body) {
             expect(err).toBeNull();
-            expect(resp.statusCode).toBe(200);
-            expect(body.login).toBe('guest');
-            expect(body.success).toBeTruthy();
+            expect(resp.statusCode).toBe(400);
+            expect(body.error).toMatch('NO_RECOVER');
             done();
           });
         });
@@ -1261,13 +1303,13 @@
             rq.post(route + 'accountconfirm', function (err, resp, body) {
               expect(err).toBeNull();
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('TOKEN.INCORRECT');
-              var tk = mail.genToken({ login: 'guest', action: 'another' });
+              expect(body.error).toMatch('NO_RECOVER');
+              var tk = mail.genToken({ login: 'fry', action: 'another' });
               var b = { body: { token: tk } };
               rq.post(route + 'accountconfirm', b, function (err, resp, body) {
                 expect(err).toBeNull();
                 expect(resp.statusCode).toBe(400);
-                expect(body.error).toMatch('TOKEN.INCORRECT');
+                expect(body.error).toMatch('NO_RECOVER');
                 done();
               });
             });
@@ -1282,21 +1324,20 @@
             rq.post(route + 'accountconfirm/', b, function (err, resp, body) {
               expect(err).toBeNull();
               expect(resp.statusCode).toBe(400);
-              expect(body.error).toMatch('TOKEN.EXPIRED');
+              expect(body.error).toMatch('NO_RECOVER');
               conf.cache.tokenDuration = 60;
               done();
             });
           }
         );
 
-        it('should activate account otherwise', function (done) {
-          var tk = mail.genToken({ login: 'guest', action: 'accountconfirm' });
+        it('should not activate account otherwise (ldap authentication)', function (done) {
+          var tk = mail.genToken({ login: 'fry', action: 'accountconfirm' });
           var b = { body: { token: tk } };
           rq.post(route + 'accountconfirm', b, function (err, resp, body) {
             expect(err).toBeNull();
-            expect(resp.statusCode).toBe(200);
-            expect(body.login).toBe('guest');
-            expect(body.success).toBeTruthy();
+            expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('NO_RECOVER');
             done();
           });
         });
@@ -1320,12 +1361,12 @@
         it('should delete the record and returns the key and success' +
          ' otherwise', function (done) {
             var b = { body: { auth_token: token } };
-            rq.del(userRoute + '/guest', b, function (err, resp, body) {
+            rq.del(userRoute + '/fry', b, function (err, resp, body) {
               expect(resp.statusCode).toBe(200);
               expect(body.success).toBeTruthy();
-              expect(body.key).toBe('guest');
+              expect(body.key).toBe('fry');
               b.body.auth_token = admToken;
-              rq.get(userRoute + '/guest', b, function (err, resp, body) {
+              rq.get(userRoute + '/fry', b, function (err, resp, body) {
                 expect(resp.statusCode).toBe(404);
                 expect(body.error).toMatch('USER.NOT_FOUND');
                 done();
@@ -1351,9 +1392,9 @@
         specCommon.reInitDatabase(function () {
           var params = guest;
           var oparams = {
-            login: 'other',
-            password: 'willnotlivelong',
-            email: 'other@phantomatic.net'
+            login: 'hermes',
+            password: 'soooo_useless',
+            email: 'hermes@planetexpress.com'
           };
           user.set(params, function (err, u) {
             if (err) { console.log(err); }
@@ -1378,6 +1419,7 @@
                     group.set(gparams, function (err, res) {
                       if (err) { console.log(err); }
                       gprivateid = res._id;
+                      params.password = 'fry';
                       rq.post(route + 'auth/login', { body: params },
                         function (err, resp, body) {
                           if (!err && resp.statusCode === 200) {
@@ -1581,7 +1623,7 @@
             expect(groups[key].visibility).toBe('public');
             expect(groups[key].password).toBeUndefined();
             var admin = ld.first(ld.values(body.value.users));
-            expect(admin.login).toBe('guest');
+            expect(admin.login).toBe('fry');
             expect(admin._id).toBeDefined();
             expect(admin.firstname).toBeDefined();
             expect(admin.lastname).toBeDefined();
@@ -1640,7 +1682,7 @@
                   var pads = body.pads;
                   expect(g.name).toBe('groupPublic');
                   expect(ld.size(pads)).toBe(0);
-                  var params = { login: 'guest', password: 'willnotlivelong' };
+                  var params = { login: 'fry', password: 'fry' };
                   rq.post(route + 'auth/login', { body: params },
                     function (err, resp, body) {
                       if (!err && resp.statusCode === 200) {
@@ -1678,7 +1720,7 @@
                     var pads = body.pads;
                     expect(ld.size(pads)).toBe(1);
                     expect(ld.values(pads)[0].name).toBe('public');
-                    var pms = { login: 'guest', password: 'willnotlivelong' };
+                    var pms = { login: 'fry', password: 'fry' };
                     rq.post(route + 'auth/login', { body: pms },
                       function (err, resp, body) {
                         if (!err && resp.statusCode === 200) {
@@ -2089,6 +2131,7 @@
       beforeAll(function (done) {
         specCommon.reInitDatabase(function () {
           var params = guest;
+          params.password = 'soooo_useless';
           user.set(params, function (err, u) {
             if (err) { console.log(err); }
             uid = u._id;
@@ -2120,6 +2163,7 @@
                             visibility: 'public'
                           }, function (err, p) {
                             ppublicid = p._id;
+                            params.password = 'fry';
                             rq.post(route + 'auth/login', { body: params },
                               function (err, resp, b) {
                                 if (!err && resp.statusCode === 200) {

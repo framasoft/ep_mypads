@@ -31,7 +31,7 @@
         "MSG_STR": "message must be a string"
       },
       "CONFIGURATION": {
-        "LANG_PROBLEM": "Lang update can not be done. Default lang will be used.",
+        "LANG_PROBLEM": "Language update cannot be done. The default language will be used.",
         "CANTGET": "Configuration loading has failed. Please contact your administrator.",
         "KEY_NOT_FOUND": "The record has not been found",
         "MAIL_NOT_CONFIGURED": "Mail settings have not been done on this server. Please contact its administrator.",
@@ -136,7 +136,7 @@
     "PASSCURRENT": "Current password",
     "EMAIL": "Email",
     "EMAIL_SAMPLE": "username@example.org",
-    "LANG": "Lang",
+    "LANG": "Language",
     "USELOGINANDCOLORINPADS": "Use login and color in pads?",
     "FIRSTNAME": "Firstname",
     "LASTNAME": "Lastname",

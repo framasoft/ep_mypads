@@ -107,17 +107,18 @@ module.exports = (function () {
     var login = user.view.field.login(c);
     login.input.attrs.config = form.focusOnInit;
     login.input.attrs.maxlength = 40;
+    login.label.attrs.class = 'col-sm-4';
     var password = user.view.field.password(c);
     return m('form.form-horizontal.col-sm-8.col-sm-offset-2.well', {
       id: 'login-form', onsubmit: c.submit }, [
       m('fieldset', [
         m('legend', conf.LANG.USER.MYPADS_ACCOUNT),
         m('.form-group', [
-          login.label, login.icon,
+          login.label,
           m('.col-sm-7', login.input)
         ]),
         m('.form-group', [
-          password.label, password.icon,
+          password.label,
           m('.col-sm-7', [
             password.input,
             m('p.help-block', [

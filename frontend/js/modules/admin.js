@@ -187,16 +187,18 @@ module.exports = (function () {
     delete password.input.attrs.pattern;
     delete password.input.attrs.minlength;
     delete password.input.attrs.maxlength;
+    login.label.attrs.class = 'col-sm-4';
+    password.label.attrs.class = 'col-sm-4';
     return m('form.form-horizontal.col-sm-8.col-sm-offset-2.well', {
       id: 'login-form', onsubmit: c.login }, [
       m('fieldset', [
         m('legend', conf.LANG.ADMIN.ETHERPAD_ACCOUNT),
         m('.form-group', [
-          login.label, login.icon,
+          login.label,
           m('.col-sm-7', login.input)
         ]),
         m('.form-group', [
-          password.label, password.icon,
+          password.label,
           m('.col-sm-7', password.input)
         ]),
         m('input.btn.btn-success.pull-right', {
@@ -236,7 +238,7 @@ module.exports = (function () {
           class: 'mp-tooltip glyphicon glyphicon-info-sign',
           'data-msg': conf.LANG.ADMIN.INFO.HTMLEXTRA_HEAD
         });
-        var textarea = m('textarea', {
+        var textarea = m('textarea.form-control', {
           name: 'HTMLExtraHead',
           value: c.data.HTMLExtraHead(),
           onchange: m.withAttr('value', c.data.HTMLExtraHead)
@@ -266,13 +268,15 @@ module.exports = (function () {
         return f;
       })(),
       defaultLanguage: (function () {
-        var label = m('label', { for: 'defaultLanguage' },
-          conf.LANG.ADMIN.FIELD.LANGUAGE_DEFAULT);
         var icon = m('i', {
           class: 'mp-tooltip glyphicon glyphicon-info-sign',
           'data-msg': conf.LANG.ADMIN.INFO.LANGUAGE_DEFAULT
         });
-        var select = m('select', {
+        var label = m('label', { for: 'defaultLanguage' }, [
+          conf.LANG.ADMIN.FIELD.LANGUAGE_DEFAULT,
+          icon
+        ]);
+        var select = m('select.form-control', {
           name: 'defaultLanguage',
           required: true,
           value: c.data.defaultLanguage(),
@@ -286,23 +290,37 @@ module.exports = (function () {
       })(),
       allowEtherPads: (function () {
         var icon = form.icon(c, 'allowEtherPads', A.INFO.ALLOW_ETHERPADS);
-        var f = form.field(c, 'allowEtherPads', A.FIELD.ALLOW_ETHERPADS, icon);
-        ld.assign(f.input.attrs, {
+        var opts = {
+          name: 'allowEtherPads',
+        };
+        if (c.data.allowEtherPads) {
+          opts['checked'] = 'checked'
+        }
+        var f = m('input[type="checkbox"]', opts);
+        ld.assign(f.attrs, {
           type: 'checkbox',
           checked: c.data.allowEtherPads(),
           onchange: m.withAttr('checked', c.data.allowEtherPads)
         });
-        return f;
+        var l = m('label', [ f, A.INFO.ALLOW_ETHERPADS, icon ]);
+        return l;
       })(),
       checkMails: (function () {
         var icon = form.icon(c, 'checkMails', A.INFO.CHECKMAILS);
-        var f = form.field(c, 'checkMails', A.FIELD.CHECKMAILS, icon);
-        ld.assign(f.input.attrs, {
+        var opts = {
+          name: 'checkMails',
+        };
+        if (c.data.checkMails) {
+          opts['checked'] = 'checked'
+        }
+        var f = m('input[type="checkbox"]', opts);
+        ld.assign(f.attrs, {
           type: 'checkbox',
           checked: c.data.checkMails(),
           onchange: m.withAttr('checked', c.data.checkMails)
         });
-        return f;
+        var l = m('label', [ f, A.FIELD.CHECKMAILS, icon ]);
+        return l;
       })(),
       tokenDuration: (function () {
         var icon = form.icon(c, 'tokenDuration', A.INFO.TOKEN_DURATION);
@@ -323,24 +341,37 @@ module.exports = (function () {
       })(),
       SMTPSSL: (function () {
         var icon = form.icon(c, 'SMTPSSL', A.INFO.SMTP_SSL);
-        var f = form.field(c, 'SMTPSSL', A.FIELD.SMTP_SSL, icon);
-        ld.assign(f.input.attrs, {
+        var opts = {
+          name: 'SMTPSSL',
+        };
+        if (c.data.SMTPSSL) {
+          opts['checked'] = 'checked'
+        }
+        var f = m('input[type="checkbox"]', opts);
+        ld.assign(f.attrs, {
           type: 'checkbox',
           checked: c.data.SMTPSSL(),
           onchange: m.withAttr('checked', c.data.SMTPSSL)
         });
-        return f;
+        var l = m('label', [ f, A.FIELD.SMTP_SSL, icon ]);
+        return l;
       })(),
       SMTPTLS: (function () {
         var icon = form.icon(c, 'SMTPTLS', A.INFO.SMTP_TLS);
-        var f = form.field(c, 'SMTPTLS', A.FIELD.SMTP_TLS, icon);
-        ld.assign(f.label.attrs, { style: 'clear: left;' });
-        ld.assign(f.input.attrs, {
+        var opts = {
+          name: 'SMTPTLS',
+        };
+        if (c.data.SMTPTLS) {
+          opts['checked'] = 'checked'
+        }
+        var f = m('input[type="checkbox"]', opts);
+        ld.assign(f.attrs, {
           type: 'checkbox',
           checked: c.data.SMTPTLS(),
           onchange: m.withAttr('checked', c.data.SMTPTLS)
         });
-        return f;
+        var l = m('label', [ f, A.FIELD.SMTP_TLS, icon ]);
+        return l;
       })(),
       SMTPUser: (function () {
         var icon = form.icon(c, 'SMTPUser', A.INFO.SMTP_USER);
@@ -368,32 +399,34 @@ module.exports = (function () {
     }, [
       m('fieldset', [
         m('legend', conf.LANG.ADMIN.SETTINGS_GENERAL),
-        m('div', [ f.title.label, f.title.input, f.title.icon,
-          f.rootUrl.label, f.rootUrl.input, f.rootUrl.icon,
-          f.defaultLanguage.label, f.defaultLanguage.select,
-          f.defaultLanguage.icon, f.allowEtherPads.label,
-          f.allowEtherPads.input, f.allowEtherPads.icon,
-          f.HTMLExtraHead.label, f.HTMLExtraHead.icon,
-          f.HTMLExtraHead.textarea
+        m('div', [
+          m('div.form-group', [ f.title.label, f.title.input ]),
+          m('div.form-group', [ f.rootUrl.label, f.rootUrl.input ]),
+          m('div.form-group', [ f.defaultLanguage.label, f.defaultLanguage.select ]),
+          m('div.checkbox',   [ f.allowEtherPads ]),
+          m('div.form-group', [ f.HTMLExtraHead.label, f.HTMLExtraHead.icon, f.HTMLExtraHead.textarea ])
         ])
       ]),
       m('fieldset', [
         m('legend', conf.LANG.ADMIN.SETTINGS_PASSWORD),
-        m('div', [ f.passwordMin.label, f.passwordMin.input, f.passwordMin.icon,
-          f.passwordMax.label, f.passwordMax.input, f.passwordMax.icon
+        m('div', [
+          m('div.form-group', [ f.passwordMin.label, f.passwordMin.input ]),
+          m('div.form-group', [ f.passwordMax.label, f.passwordMax.input ])
         ])
       ]),
       m('fieldset', [
         m('legend', conf.LANG.ADMIN.SETTINGS_MAIL),
-        m('div', [ f.checkMails.label, f.checkMails.input, f.checkMails.icon,
-          f.tokenDuration.label, f.tokenDuration.input, f.tokenDuration.icon,
-          f.SMTPHost.label, f.SMTPHost.input, f.SMTPHost.icon,
-          f.SMTPPort.label, f.SMTPPort.input, f.SMTPPort.icon,
-          f.SMTPSSL.label, f.SMTPSSL.input, f.SMTPSSL.icon,
-          f.SMTPTLS.label, f.SMTPTLS.input, f.SMTPTLS.icon,
-          f.SMTPUser.label, f.SMTPUser.input, f.SMTPUser.icon,
-          f.SMTPPass.label, f.SMTPPass.input, f.SMTPPass.icon,
-          f.SMTPEmailFrom.label, f.SMTPEmailFrom.input, f.SMTPEmailFrom.icon ])
+        m('div', [
+          m('div.checkbox',   [ f.checkMails ]),
+          m('div.form-group', [ f.tokenDuration.label, f.tokenDuration.input ]),
+          m('div.form-group', [ f.SMTPHost.label, f.SMTPHost.input ]),
+          m('div.form-group', [ f.SMTPPort.label, f.SMTPPort.input ]),
+          m('div.checkbox',   [ f.SMTPSSL ]),
+          m('div.checkbox',   [ f.SMTPTLS ]),
+          m('div.form-group', [ f.SMTPUser.label, f.SMTPUser.input ]),
+          m('div.form-group', [ f.SMTPPass.label, f.SMTPPass.input ]),
+          m('div.form-group', [ f.SMTPEmailFrom.label, f.SMTPEmailFrom.input ])
+        ])
       ]),
       m('input.btn.btn-success', {
         form: 'settings-form',

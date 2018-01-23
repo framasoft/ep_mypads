@@ -162,8 +162,9 @@ module.exports = (function () {
   user.view.field._pass = function (c, name, label, extraValid) {
     var passMin = conf.SERVER.passwordMin;
     var passMax = conf.SERVER.passwordMax;
+    var icon = user.view.icon.password(c, name);
     return {
-      label: m('label.col-sm-4', { for: name }, label),
+      label: m('label.col-sm-4', { for: name }, [ label, icon ]),
       input: m('input.form-control', {
         type: 'password',
         name: name,
@@ -174,7 +175,7 @@ module.exports = (function () {
         pattern: '.{' + passMin + ',' + passMax + '}',
         oninput: form.handleField.bind(null, c, extraValid)
       }),
-      icon: user.view.icon.password(c, name)
+      icon: icon
     };
   };
 
@@ -241,11 +242,11 @@ module.exports = (function () {
   */
 
   user.view.field.lang = function (c) {
-    var label = m('label.col-sm-4', { for: 'lang' }, conf.LANG.USER.LANG);
     var icon = m('i', {
       class: 'mp-tooltip glyphicon glyphicon-info-sign',
       'data-msg': conf.LANG.USER.INFO.LANG
     });
+    var label = m('label.col-sm-4', { for: 'lang' }, [ conf.LANG.USER.LANG, icon ]);
     var select = m('select.form-control', {
         name: 'lang',
         required: true,

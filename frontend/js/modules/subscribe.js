@@ -285,21 +285,22 @@ module.exports = (function () {
         ])
       ];
     } else {
+      fields.email.label.attrs.class = 'col-sm-4';
       requiredFields = [
         m('.form-group', [
-          fields.email.label, fields.email.icon,
+          fields.email.label,
           m('.col-sm-7', fields.email.input)
         ]),
         m('.form-group', [
-          fields.password.label, fields.password.icon,
-            m('.col-sm-7', fields.password.input)
+          fields.password.label,
+          m('.col-sm-7', fields.password.input)
         ]),
         m('.form-group', [
-          fields.passwordConfirm.label, fields.passwordConfirm.icon,
+          fields.passwordConfirm.label,
           m('.col-sm-7', fields.passwordConfirm.input)
         ]),
         m('.form-group', [
-          fields.lang.label, fields.lang.icon,
+          fields.lang.label,
           m('.col-sm-7', fields.lang.select)
         ])
       ];
@@ -309,7 +310,7 @@ module.exports = (function () {
       passC.input.attrs.config = form.focusOnInit;
       requiredFields.splice(1, 0,
         m('.form-group', [
-          passC.label, passC.icon,
+          passC.label,
           m('.col-sm-7', passC.input)
         ]
       ));
@@ -318,7 +319,6 @@ module.exports = (function () {
           m('.col-sm-7.col-sm-offset-4', [
             m('.checkbox', [
               fields.useLoginAndColorInPads.label,
-              fields.useLoginAndColorInPads.icon
             ])
           ])
         ])
@@ -327,9 +327,10 @@ module.exports = (function () {
       var log = fields.login;
       log.input.attrs.config = form.focusOnInit;
       log.input.attrs.maxlength = 40;
+      log.label.attrs.class = 'col-sm-4';
       requiredFields.splice(0, 0,
         m('.form-group', [
-          log.label, log.icon,
+          log.label,
           m('.col-sm-7', [log.input])
         ])
       );
@@ -338,34 +339,40 @@ module.exports = (function () {
     var profOrAdm = (c.profileView() || c.adminView());
     var optionalFields;
     if (conf.SERVER.useLdap && c.profileView()) {
+      fields.organization.label.attrs.class = 'col-sm-4';
+      fields.color.label.attrs.class = 'col-sm-4';
       optionalFields = [
         m('legend.opt', conf.LANG.USER.OPTIONAL_FIELDS),
           m('.form-group', [
-            fields.organization.label, fields.organization.icon,
+            fields.organization.label,
             m('.col-sm-7', fields.organization.input)
           ]),
           m('.form-group', [
-            fields.color.label, fields.color.icon,
+            fields.color.label,
             m('.col-sm-7', fields.color.input)
           ])
       ];
     } else {
+      fields.firstname.label.attrs.class = 'col-sm-4';
+      fields.lastname.label.attrs.class = 'col-sm-4';
+      fields.organization.label.attrs.class = 'col-sm-4';
+      fields.color.label.attrs.class = 'col-sm-4';
       optionalFields = [
         m('legend.opt', conf.LANG.USER.OPTIONAL_FIELDS),
           m('.form-group', [
-            fields.firstname.label, fields.firstname.icon,
+            fields.firstname.label,
             m('.col-sm-7', fields.firstname.input)
           ]),
           m('.form-group', [
-            fields.lastname.label, fields.lastname.icon,
+            fields.lastname.label,
             m('.col-sm-7', fields.lastname.input)
           ]),
           m('.form-group', [
-            fields.organization.label, fields.organization.icon,
+            fields.organization.label,
             m('.col-sm-7', fields.organization.input)
           ]),
           m('.form-group', [
-            fields.color.label, fields.color.icon,
+            fields.color.label,
             m('.col-sm-7', fields.color.input)
           ])
       ];

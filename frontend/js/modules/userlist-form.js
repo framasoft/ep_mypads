@@ -180,10 +180,12 @@ module.exports = (function () {
   view.field.users = function (c) {
     return m('div.tag', [
       m('.form-group', [
-        m('label.col-sm-4', { for: c.name }, c.label),
-        m('i', {
-          class: 'mp-tooltip glyphicon glyphicon-info-sign tag',
-          'data-msg': conf.LANG.USERLIST.FIELD.USERS_HELP }),
+        m('label.col-sm-4', { for: c.name }, [
+          c.label,
+          m('i', {
+            class: 'mp-tooltip glyphicon glyphicon-info-sign tag',
+            'data-msg': conf.LANG.USERLIST.FIELD.USERS_HELP })
+        ]),
         m('.col-sm-7', [
           m('.input-group', [
             tag.views.input(c),
@@ -200,10 +202,12 @@ module.exports = (function () {
         ])
       ]),
       m('.form-group', [
-        m('label.col-sm-4', conf.LANG.GLOBAL.OR),
-        m('i', {
-          class: 'mp-tooltip glyphicon glyphicon-info-sign tag',
-          'data-msg': conf.LANG.USERLIST.FIELD.USERSAREA_HELP }),
+        m('label.col-sm-4', [
+          conf.LANG.GLOBAL.OR,
+          m('i', {
+            class: 'mp-tooltip glyphicon glyphicon-info-sign tag',
+            'data-msg': conf.LANG.USERLIST.FIELD.USERSAREA_HELP })
+        ]),
         m('.col-sm-7', [
           m('textarea.form-control', {
             name: 'usersArea',
@@ -226,9 +230,10 @@ module.exports = (function () {
 
   view.form = function (c) {
     var name = view.field.name(c);
+    name.label.attrs.class = 'col-sm-4';
     var fields = [
       m('.form-group', [
-        name.label, name.icon,
+        name.label,
         m('.col-sm-7', name.input)
       ])
     ];

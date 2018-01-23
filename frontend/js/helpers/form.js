@@ -67,7 +67,7 @@ module.exports = (function () {
 
   form.field = function (c, name, label, icon) {
     return {
-      label: m('label.col-sm-4', { for: name }, label),
+      label: m('label', { for: name }, [ label, icon ]),
       input:
         m('input.form-control', {
           name: name,

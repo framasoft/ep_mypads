@@ -1,5 +1,7 @@
 # Contributing
 
+Please, have a look at the [wiki](https://framagit.org/framasoft/ep_mypads/wikis/home).
+
 ## Tests
 
 Tests can be launched with `npm run test`.

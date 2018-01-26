@@ -42,14 +42,16 @@ exports.postToolbarInit = function (hook_name, args) {
     }
   }
 
-  if (typeof params.auth_token !== 'undefined') {
-    updateLinks('auth_token', params.auth_token);
-  } else if (typeof params.mypadspassword !== 'undefined') {
-    updateLinks('mypadspassword', params.mypadspassword);
-  }
+  setTimeout(function() {
+    if (typeof params.auth_token !== 'undefined') {
+      updateLinks('auth_token', params.auth_token);
+    } else if (typeof params.mypadspassword !== 'undefined') {
+      updateLinks('mypadspassword', params.mypadspassword);
+    }
+  }, 500);
 
   function updateLinks(parName, parValue) {
-    $('#exportColumn .exportlink').each(function(index) {
+    $('#exportColumn .exportlink, #import_export #export a.exportlink').each(function(index) {
       var element = $(this);
 
       var link = element.attr('href');

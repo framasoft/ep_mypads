@@ -95,17 +95,17 @@ module.exports = (function () {
 
   view.form = function (c) {
     var email = user.view.field.email(c);
-    return m('form.form-horizontal', {
+    return m('form', {
       id: 'passrec-form',
       onsubmit: c.submit
       }, [
         m('fieldset', [
           m('.form-group', [
-            email.label, email.icon,
-            m('.col-sm-7', email.input)
+            email.label,
+            email.input
           ])
         ]),
-        m('input.btn.btn-success.pull-right', {
+        m('input.btn.btn-success.pull-right.col-sm-12', {
           form: 'passrec-form',
           type: 'submit',
           value: conf.LANG.USER.OK
@@ -117,17 +117,19 @@ module.exports = (function () {
   view.formChange = function (c) {
     var pass = user.view.field.password(c);
     var passC = user.view.field.passwordConfirm(c);
+    pass.label.attrs.class = 'col-sm-4';
+    passC.label.attrs.class = 'col-sm-4';
     return m('form.form-horizontal', {
       id: 'passchange-form',
       onsubmit: c.changePass
       }, [
         m('fieldset', [
           m('.form-group', [
-            pass.label, pass.icon,
+            pass.label,
             m('.col-sm-7', pass.input)
           ]),
           m('.form-group', [
-            passC.label, passC.icon,
+            passC.label,
             m('.col-sm-7', passC.input)
           ])
         ]),

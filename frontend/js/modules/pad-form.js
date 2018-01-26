@@ -148,7 +148,8 @@ module.exports = (function () {
           checked: c.groupParams(),
           onchange: m.withAttr('checked', c.groupParams)
         }),
-        G.FIELD.GROUP_PARAMS
+        G.FIELD.GROUP_PARAMS,
+        icon
       ]),
       icon: icon
     };
@@ -172,13 +173,13 @@ module.exports = (function () {
 
     var fields = [
       m('.form-group', [
-        name.label, name.icon,
+        name.label,
         m('.col-sm-7', name.input)
       ]),
       m('.form-group', [
         m('.col-sm-7.col-sm-offset-4', [
           m('.checkbox', [
-            groupParams.label, groupParams.icon
+            groupParams.label,
           ])
         ])
       ])
@@ -187,14 +188,14 @@ module.exports = (function () {
     if (!c.groupParams()) {
       fields.push(
         m('.form-group', [
-          visibility.label, visibility.icon,
+          visibility.label,
           m('.col-sm-7', visibility.select)
         ])
       );
       if (c.data.visibility() === 'private') {
         fields.push(
           m('.form-group', [
-            password.label, password.icon,
+            password.label,
             m('.col-sm-7', password.input)
           ])
         );

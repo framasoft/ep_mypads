@@ -97,12 +97,13 @@ module.exports = (function () {
     }, [
       m('fieldset.block-group', [
         m('legend', conf.LANG.ADMIN.USERS_SEARCH_LOGIN),
-        m('div', [ login.label, login.input, login.icon ])
+        m('div.form-group', [ login.label, login.input ])
       ]),
       view.user(c),
       m('input.block.send', {
         form: 'users-form',
         type: 'submit',
+        class: 'btn btn-default',
         value: conf.LANG.ADMIN.FIELD.SEARCH
       })
     ]);

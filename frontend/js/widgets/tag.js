@@ -137,8 +137,7 @@ module.exports = (function () {
 
   tag.view = function (c) {
     return m('div.form-group', [
-      m('label.col-sm-4', { for: c.name }, c.label),
-      tag.views.icon(),
+      m('label.col-sm-4', { for: c.name }, [ c.label, tag.views.icon() ]),
       m('.col-sm-7', [
         m('.input-group.input-group-sm', [
           tag.views.input(c),

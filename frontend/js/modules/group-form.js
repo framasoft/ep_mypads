@@ -180,24 +180,27 @@ module.exports = (function () {
         maxlength: 40,
         config: form.focusOnInit
       });
+    f.label.attrs.class = 'col-sm-4';
     return f;
   };
 
   view.field.description = function (c) {
+    var icon = view.icon.description(c);
     var label = m('label.col-sm-4', { for: 'description' },
-      conf.LANG.GROUP.FIELD.DESCRIPTION);
+      [ conf.LANG.GROUP.FIELD.DESCRIPTION, icon ]);
     var textarea = m('textarea.form-control', {
       name: 'description',
       value: (c.data.description() || ''),
       onchange: m.withAttr('value', c.data.description)
     }, c.data.description());
-    return { label: label, icon: view.icon.description(c), textarea: textarea };
+    return { label: label, icon: icon, textarea: textarea };
   };
 
   view.field.visibility = function (c, restricted) {
     restricted = ld.isUndefined(restricted) ? true : restricted;
+    var icon = view.icon.visibility();
     var label = m('label.col-sm-4', { for: 'visibility' },
-      conf.LANG.GROUP.FIELD.VISIBILITY);
+      [ conf.LANG.GROUP.FIELD.VISIBILITY, icon ]);
     var select = m('select.form-control', {
       name: 'visibility',
       required: true,
@@ -215,12 +218,13 @@ module.exports = (function () {
       m('option', { value: 'private' }, conf.LANG.GROUP.FIELD.PRIVATE),
       m('option', { value: 'public' }, conf.LANG.GROUP.FIELD.PUBLIC)
     ]);
-    return { label: label, icon: view.icon.visibility(), select: select };
+    return { label: label, icon: icon, select: select };
   };
 
   view.field.password = function (c) {
+    var icon = view.icon.password();
     var label = m('label.col-sm-4', { for: 'password' },
-      conf.LANG.USER.PASSWORD);
+      [ conf.LANG.USER.PASSWORD, icon ]);
     var input = m('input.form-control', {
       name: 'password',
       type: 'password',
@@ -229,10 +233,11 @@ module.exports = (function () {
       required: (c.addView() && (c.data.visibility() === 'private')),
       oninput: m.withAttr('value', c.data.password)
     });
-    return { label: label, icon: view.icon.password(), input: input };
+    return { label: label, icon: icon, input: input };
   };
 
   view.field.readonly = function (c) {
+    var icon = view.icon.readonly();
     var label = m('label', [
         m('input', {
           name: 'readonly',
@@ -240,9 +245,9 @@ module.exports = (function () {
           checked: c.data.readonly(),
           onchange: m.withAttr('checked', c.data.readonly)
         }),
-        conf.LANG.GROUP.FIELD.READONLY
+        [ conf.LANG.GROUP.FIELD.READONLY, icon ]
       ]);
-    return { label: label, icon: view.icon.readonly()};
+    return { label: label, icon: icon };
   };
 
   view.field.tag = function (c) { return tag.view(c.tag); };
@@ -260,22 +265,22 @@ module.exports = (function () {
     }, {});
     var fields = [
       m('.form-group', [
-        _f.name.label, _f.name.icon,
+        _f.name.label,
         m('.col-sm-7', _f.name.input)
       ]),
       m('.form-group', [
-        _f.description.label, _f.description.icon,
+        _f.description.label,
         m('.col-sm-7', _f.description.textarea)
       ]),
       m('.form-group', [
-        _f.visibility.label, _f.visibility.icon,
+        _f.visibility.label,
         m('.col-sm-7', _f.visibility.select)
       ]),
     ];
     if (c.data.visibility() === 'private') {
       fields.push(
         m('.form-group', [
-          _f.password.label, _f.password.icon,
+          _f.password.label,
           m('.col-sm-7', _f.password.input)
         ])
       );
@@ -285,7 +290,7 @@ module.exports = (function () {
         m('.form-group',
           m('.col-sm-7 .col-sm-offset-4',
             m('.checkbox', [
-              _f.readonly.label, _f.readonly.icon
+              _f.readonly.label,
             ])
           )
         )

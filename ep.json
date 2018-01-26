@@ -9,7 +9,9 @@
         "clientVars": "ep_mypads/hooks:clientVars",
         "pluginUninstall": "ep_mypads/hooks:removeAllData"
       },
-      "client_hooks": {}
+      "client_hooks": {
+        "postToolbarInit": "ep_mypads/static/js/clientHooks:postToolbarInit"
+      }
     }
   ]
 }

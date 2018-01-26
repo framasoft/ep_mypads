@@ -163,8 +163,8 @@ module.exports = (function () {
         ])
       ]),
       m('main.container.ombre', [
-        m('section.col-md-9', main || ''),
-        m('aside.col-md-3', aside || '')
+        m('section.col-md-9.col-xs-12', main || ''),
+        m('aside.col-md-3.col-xs-12', aside || '')
       ]),
       m('section', { class: 'notification' }, notif.view(notif.controller())),
       m('footer.container.ombre', m('p', [

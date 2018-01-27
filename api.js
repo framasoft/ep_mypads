@@ -1130,7 +1130,7 @@ module.exports = (function () {
     var padRoute = api.initialRoute + 'pad';
 
     /**
-    * `canAct` is a pad internal fucntion that checks permissions to allow or
+    * `canAct` is a pad internal function that checks permissions to allow or
     * not interaction with the pad object.
     *
     * It takes :

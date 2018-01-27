@@ -152,51 +152,57 @@ module.exports = (function () {
     var a = (auth.isAuthenticated() ? '&auth_token=' + auth.token() : '');
     var link = '/p/' + c.pad._id + '?' + p + a;
     var isExpanded = function() {
-        return ((' ' + document.querySelector('a.expand-toggle').className + ' ').indexOf('expanded') > -1);
+        return ((document.querySelector('a.expand-toggle').className).indexOf('expanded') > -1);
     }
     var expandIframe = function() {
-      document.querySelectorAll('#mypads header, #mypads aside, #mypads footer').forEach(function(element) {
+      var toHide        = document.querySelectorAll('#mypads header, #mypads aside, #mypads footer');
+      var section9      = document.querySelector('#mypads main.container section.col-md-9');
+      var mainContainer = document.querySelector('#mypads main.container');
+      var iframe        = document.querySelector('section.pad iframe');
+      var aExpandI      = document.querySelector('a.expand-toggle i');
+      var aExpand       = document.querySelector('a.expand-toggle');
+
+      toHide.forEach(function(element) {
           element.classList.add('hidden');
       });
 
-      var section9 = document.querySelector('#mypads main.container section.col-md-9');
       section9.classList.remove('col-md-9');
       section9.classList.add('col-md-12');
 
-      var mainContainer = document.querySelector('#mypads main.container');
       mainContainer.classList.remove('container');
       mainContainer.classList.add('container-fluid');
 
-      document.querySelector('section.pad iframe').style.height = '80vh';
+      iframe.style.height = '80vh';
 
-      var aExpandI = document.querySelector('a.expand-toggle i');
       aExpandI.classList.remove('glyphicon-resize-full');
       aExpandI.classList.add('glyphicon-resize-small');
 
-      var aExpand = document.querySelector('a.expand-toggle');
       aExpand.classList.add('expanded');
       aExpand.title = conf.LANG.GROUP.PAD.REDUCE;
     };
     var reduceIframe = function() {
-      document.querySelectorAll('#mypads header, #mypads aside, #mypads footer').forEach(function(element) {
+      var toShow        = document.querySelectorAll('#mypads header, #mypads aside, #mypads footer');
+      var section12     = document.querySelector('#mypads main.container-fluid section.col-md-12');
+      var mainContainer = document.querySelector('#mypads main.container-fluid');
+      var iframe        = document.querySelector('section.pad iframe');
+      var aExpandI      = document.querySelector('a.expand-toggle i');
+      var aExpand       = document.querySelector('a.expand-toggle');
+
+      toShow.forEach(function(element) {
           element.classList.remove('hidden');
       });
 
-      var section12 = document.querySelector('#mypads main.container-fluid section.col-md-12');
       section12.classList.remove('col-md-12');
       section12.classList.add('col-md-9');
 
-      var mainContainer = document.querySelector('#mypads main.container-fluid');
       mainContainer.classList.remove('container-fluid');
       mainContainer.classList.add('container');
 
-      document.querySelector('section.pad iframe').style.height = null;
+      iframe.style.height = null;
 
-      var aExpandI = document.querySelector('a.expand-toggle i');
       aExpandI.classList.remove('glyphicon-resize-small');
       aExpandI.classList.add('glyphicon-resize-full');
 
-      var aExpand = document.querySelector('a.expand-toggle');
       aExpand.classList.remove('expanded');
       aExpand.title = conf.LANG.GROUP.PAD.EXPAND;
     };

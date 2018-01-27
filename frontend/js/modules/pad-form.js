@@ -205,7 +205,7 @@ module.exports = (function () {
           m('.form-group', [
             m('.col-sm-7.col-sm-offset-4', [
               m('.checkbox', [
-                readonly.label, readonly.icon
+                readonly.label
               ])
             ])
           ])

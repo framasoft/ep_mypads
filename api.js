@@ -1134,7 +1134,7 @@ module.exports = (function () {
     var padRoute = api.initialRoute + 'pad';
 
     /**
-    * `canAct` is a pad internal fucntion that checks permissions to allow or
+    * `canAct` is a pad internal function that checks permissions to allow or
     * not interaction with the pad object.
     *
     * It takes :
@@ -1264,6 +1264,26 @@ module.exports = (function () {
         return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.NOT_AUTH');
       }
       canAct(true, ld.partial(fn.del, pad.del), req, res);
+    });
+
+    /**
+    * GET method : with pad id
+    *
+    * Return true if the pad is public
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/pad/ispublic/xxxx
+    */
+
+    // TODO: + admin, no pass needed...
+    app.get(padRoute + '/ispublic/:key', function (req, res) {
+      pad.get(req.params.key, function(err, p) {
+        if (err) {
+          return res.send({ success: false, error: err });
+        } else {
+          return res.send({ success: true, key: req.params.key, ispublic: (p.visibility === 'public') });
+        }
+      });
     });
 
   };

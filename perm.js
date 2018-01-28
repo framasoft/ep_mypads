@@ -28,6 +28,7 @@
 
 // External dependencies
 var getPad;
+var getPadID;
 var getPadHTML;
 try {
   // Normal case : when installed as a plugin
@@ -214,7 +215,6 @@ module.exports = (function () {
       getPadID(pid, function(err, result) {
         if (err) { return unexpected(err); }
         pid = result.padID;
-        console.log(pid);
         perm.fn.getPadAndGroup(pid, function (err, pg) {
           if (err) { return unexpected(err); }
           params.pg = pg;

@@ -211,7 +211,7 @@ module.exports = (function () {
       refuse: refuse,
       pid: pid
     };
-    if (pid.match(/^r\.[A-Za-z0-9_-]+/)) {
+    if (pid.match(/^r\.[A-Za-z0-9_-]{32}/)) {
       getPadID(pid, function(err, result) {
         if (err) { return unexpected(err); }
         pid = result.padID;
@@ -273,7 +273,7 @@ module.exports = (function () {
 
   perm.init = function (app) {
     //app.all('/p/([A-Za-z0-9_-]+)', perm.check);
-    var rgx = new RegExp('/p/(r\.[A-Za-z0-9_-]+|[A-Za-z0-9_-]+)[A-Za-z0-9_/]*');
+    var rgx = new RegExp('/p/(r\.[A-Za-z0-9_-]{32}|[A-Za-z0-9_-]+)[A-Za-z0-9_/]*');
     app.all(rgx, perm.check);
     app.all('/p/:pid', perm.setNameAndColor);
     app.get('/', function (req, res, next) {

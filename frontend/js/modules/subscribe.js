@@ -381,12 +381,15 @@ module.exports = (function () {
       id: 'subscribe-form',
       onsubmit: profOrAdm ? c.submit.profileSave : c.submit.subscribe
       }, [
-      m('fieldset', [
+      m('div', {
+        id: 'hide-when-ready'
+      }, 'Please wait, the service is currently loading'),
+      m('fieldset.show-when-ready.hidden', [
         m('legend', conf.LANG.USER.MANDATORY_FIELDS),
         m('div', requiredFields)
       ]),
-      m('fieldset', optionalFields),
-      m('.form-group', [
+      m('fieldset.show-when-ready.hidden', optionalFields),
+      m('.form-group.show-when-ready.hidden', [
         m('.col-sm-12', [
           m('input.btn.btn-success pull-right', {
             form: 'subscribe-form',

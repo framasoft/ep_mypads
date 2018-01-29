@@ -109,9 +109,13 @@ module.exports = (function () {
     login.input.attrs.maxlength = 40;
     login.label.attrs.class = 'col-sm-4';
     var password = user.view.field.password(c);
+
     return m('form.form-horizontal.col-sm-8.col-sm-offset-2.well', {
       id: 'login-form', onsubmit: c.submit }, [
-      m('fieldset', [
+      m('div', {
+        id: 'hide-when-ready'
+      }, 'Please wait, the service is currently loading'),
+      m('fieldset.show-when-ready.hidden', [
         m('legend', conf.LANG.USER.MYPADS_ACCOUNT),
         m('.form-group', [
           login.label,

@@ -25,6 +25,8 @@
 *  This module contains the main layout of MyPads application.
 */
 
+var ready = require('../helpers/ready.js');
+setTimeout(ready.checkLoop, 1000);
 module.exports = (function () {
   // Dependencies
   var m = require('mithril');

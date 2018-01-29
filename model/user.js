@@ -49,7 +49,7 @@ module.exports = (function () {
   * - `emails`, which have the same purpose for emails
   */
 
-  var user = { logins: {}, emails: {} };
+  var user = { logins: {}, emails: {}, userCacheReady: false };
 
   /**
   * ## Internal Functions
@@ -426,6 +426,7 @@ module.exports = (function () {
             }
             return memo;
           }, { logins: {}, emails: {} });
+          memo.userCacheReady = true;
           ld.assign(user, memo);
         }
         callback(null);

@@ -28,7 +28,7 @@ module.exports = (function () {
     var rg = new RegExp(['[a-z0-9!#$%&\'*+/=?^_`{|}~-]+',
       '(?:\\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*@(?:[a-z0-9]',
       '(?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9]',
-      '(?:[a-z0-9-]*[a-z0-9])?'].join(''));
+      '(?:[a-z0-9-]*[a-z0-9])?'].join(''), 'i');
     return (ld.isString(val) && rg.test(val));
   }});
 

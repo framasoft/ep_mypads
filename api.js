@@ -92,6 +92,7 @@ module.exports = (function () {
   var userAPI;
   var groupAPI;
   var padAPI;
+  var cacheAPI;
 
   /**
   * `init` is the first function that takes an Express app as argument.
@@ -125,6 +126,7 @@ module.exports = (function () {
     userAPI(app);
     groupAPI(app);
     padAPI(app);
+    cacheAPI(app);
     perm.init(app);
 
     /**
@@ -1263,6 +1265,26 @@ module.exports = (function () {
     });
 
   };
+
+  cacheAPI = function (app) {
+    var cacheRoute = api.initialRoute + 'cache';
+
+    /**
+    * GET method : check, method returning information about the end of users
+    * cache loading
+    *
+    * exemple: { userCacheReady: true }
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/cache/check
+    */
+
+    app.get(cacheRoute + '/check', function (req, res) {
+      return res.send({ userCacheReady: user.userCacheReady });
+    });
+
+  };
+
 
   return api;
 

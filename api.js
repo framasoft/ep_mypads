@@ -35,7 +35,7 @@ var express;
 var testMode = false;
 try {
   // Normal case : when installed as a plugin
-  express = require('../ep_etherpad-lite/node_modules/express');
+  express = require('ep_etherpad-lite/node_modules/express');
 }
 catch (e) {
   // Testing case : we need to mock the express dependency
@@ -45,7 +45,7 @@ catch (e) {
 var settings;
 try {
   // Normal case : when installed as a plugin
-  settings = require('../ep_etherpad-lite/node/utils/Settings');
+  settings = require('ep_etherpad-lite/node/utils/Settings');
 }
 catch (e) {
   // Testing case : we need to mock the express dependency

@@ -37,7 +37,7 @@ var LdapAuth = require('ldapauth-fork');
 var settings;
 try {
   // Normal case : when installed as a plugin
-  settings = require('../ep_etherpad-lite/node/utils/Settings');
+  settings = require('ep_etherpad-lite/node/utils/Settings');
 }
 catch (e) {
   if (process.env.TEST_LDAP) {

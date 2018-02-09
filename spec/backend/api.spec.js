@@ -77,13 +77,35 @@
       beforeAll(function () {
         conf.cache.HTMLExtraHead = '<style>/* custom HTML for head */</style>';
       });
-      afterAll(function () { conf.cache.HTMLExtraHead = ''; });
+      afterAll(function () {
+        conf.cache.HTMLExtraHead = '';
+        conf.cache.hideHelpBlocks = false;
+      });
 
       it('should include custom HTML for head', function (done) {
         rq.get('http://127.0.0.1:8042/mypads/index.html',
           function (err, resp, body) {
             expect(resp.statusCode).toBe(200);
             expect(body).toMatch('custom HTML for head');
+            done();
+          }
+        );
+      });
+      it('should not include mypads-hide-help-blocks.css if hideHelpBlocks is false', function (done) {
+        rq.get('http://127.0.0.1:8042/mypads/index.html',
+          function (err, resp, body) {
+            expect(resp.statusCode).toBe(200);
+            expect(body).not.toMatch('css/mypads-hide-help-blocks.css');
+            done();
+          }
+        );
+      });
+      it('should include mypads-hide-help-blocks.css if hideHelpBlocks is true', function (done) {
+        conf.cache.hideHelpBlocks = true;
+        rq.get('http://127.0.0.1:8042/mypads/index.html',
+          function (err, resp, body) {
+            expect(resp.statusCode).toBe(200);
+            expect(body).toMatch('css/mypads-hide-help-blocks.css');
             done();
           }
         );

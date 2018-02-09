@@ -1,0 +1,7 @@
+aside,
+header > ul.lang {
+  display: none;
+}
+main.ombre > section.col-md-9 {
+  width: 100% !important;
+}

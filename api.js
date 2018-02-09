@@ -1262,6 +1262,22 @@ module.exports = (function () {
       canAct(true, ld.partial(fn.del, pad.del), req, res);
     });
 
+    /**
+    * GET method : with pad id
+    *
+    * Return true if the pad is public
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/pad/ispublic/xxxx
+    */
+
+    // TODO: + admin, no pass needed...
+    app.get(padRoute + '/ispublic/:key', function (req, res) {
+      pad.get(req.params.key, function(err, p) {
+        return res.send({ key: req.params.key, ispublic: (p.visibility === 'public') });
+      });
+    });
+
   };
 
   return api;

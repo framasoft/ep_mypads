@@ -632,6 +632,9 @@ module.exports = (function () {
         if (settings.ep_mypads && settings.ep_mypads.ldap) {
           stop = true;
           res.status(400).send({ error: 'BACKEND.ERROR.AUTHENTICATION.NO_REGISTRATION' });
+        } else if (!conf.get('openRegistration')) {
+          stop = true;
+          res.status(400).send({ error: 'BACKEND.ERROR.AUTHENTICATION.NO_REGISTRATION' });
         } else {
           key = req.body.login;
           if (conf.get('checkMails')) {

@@ -105,7 +105,7 @@ module.exports = (function () {
         }
       ]
     };
-    if (conf.SERVER.useLdap) {
+    if (conf.SERVER.useLdap || conf.SERVER.openRegistration === false) {
       _routes.unauth = [
         {
           route: '/login',

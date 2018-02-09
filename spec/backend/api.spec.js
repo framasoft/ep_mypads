@@ -713,6 +713,30 @@
           }
         );
 
+        it('should not create a new user if registration is disabled', function (done) {
+          var b = {
+            body: {
+              login: 'bender',
+              password: 'bender',
+              firstname: 'Bender',
+              lastname: 'Rodriguez',
+              email: 'bender@planetexpress.com'
+            }
+          };
+          conf.cache.openRegistration = false;
+          rq.post(userRoute, b, function (err, resp, body) {
+            expect(err).toBeNull();
+            expect(resp.statusCode).toBe(400);
+            expect(body.error).toMatch('AUTHENTICATION.NO_REGISTRATION');
+            b = { body: { auth_token: admToken } };
+            rq.get(userRoute + '/bender', b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(404);
+              expect(body.error).toMatch('USER.NOT_FOUND');
+              done();
+            });
+          });
+        });
+
       });
 
       describe('user.set PUT key in URL and value as params', function () {

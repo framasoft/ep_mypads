@@ -77,6 +77,7 @@ exports.postToolbarInit = function (hook_name, args) {
   /*
    * Hide read-only checkbox if the pad is not public
    */
+  $('#embedreadonly').css('display', 'none');
   var padID = window.location.href.split('/').pop().split('?').shift();
   var baseURL = window.location.href.split('/p/'+padID).shift();
   $.ajax({
@@ -84,8 +85,8 @@ exports.postToolbarInit = function (hook_name, args) {
     url: baseURL+'/mypads/api/pad/ispublic/'+padID,
     dataType: 'JSON',
     success: function(data, textStatus, jqXHR) {
-      if (data.success && !data.ispublic) {
-        $('#embedreadonly').css('display', 'none');
+      if (data.success && data.ispublic) {
+        $('#embedreadonly').css('display', 'block');
       }
     }
   });

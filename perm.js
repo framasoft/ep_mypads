@@ -211,10 +211,13 @@ module.exports = (function () {
       refuse: refuse,
       pid: pid
     };
+    // Is pid a real pad id or a read only pad id?
     if (pid.match(/^r\.[A-Za-z0-9_-]{32}/)) {
+      // It's a read only pid, let's get the real pad id
       getPadID(pid, function(err, result) {
         if (err) { return unexpected(err); }
         pid = result.padID;
+        // And then fetch the pad through MyPads API
         perm.fn.getPadAndGroup(pid, function (err, pg) {
           if (err) { return unexpected(err); }
           params.pg = pg;
@@ -222,6 +225,7 @@ module.exports = (function () {
         });
       });
     } else {
+      // It's a real pad id, fetch the pad through MyPads API
       perm.fn.getPadAndGroup(pid, function (err, pg) {
         if (err) { return unexpected(err); }
         params.pg = pg;

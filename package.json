@@ -26,6 +26,7 @@
     "emailjs": "~0.3.16",
     "jasmine": "^2.8.0",
     "js-base64": "~2.1.8",
+    "js-cookie": "^2.2.0",
     "jsonwebtoken": "~5.0.4",
     "ldapauth-fork": "^4.0.2",
     "lodash": "^3.1.0",

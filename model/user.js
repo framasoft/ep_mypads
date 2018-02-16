@@ -49,7 +49,7 @@ module.exports = (function () {
   * - `emails`, which have the same purpose for emails
   */
 
-  var user = { logins: {}, emails: {} };
+  var user = { logins: {}, emails: {}, userCacheReady: false };
 
   /**
   * ## Internal Functions
@@ -416,6 +416,11 @@ module.exports = (function () {
   user.init = function (callback) {
     storage.db.findKeys(UPREFIX + '*', null, function (err, keys) {
       if (err) { return callback(err); }
+      // If you want to delay the user cache readyness (to test #141 for example),
+      // put storage.fn.getKeys function below in
+      // setTimeout(function() { }, 30000);
+      // (NB: won't work with mockupserver since it waits for cache to be
+      // ready before providing the web interface)
       storage.fn.getKeys(keys, function (err, results) {
         if (results) {
           var memo = ld.reduce(results, function (memo, val, key) {
@@ -426,6 +431,7 @@ module.exports = (function () {
             }
             return memo;
           }, { logins: {}, emails: {} });
+          memo.userCacheReady = true;
           ld.assign(user, memo);
         }
         callback(null);

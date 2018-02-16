@@ -33,6 +33,7 @@ module.exports = (function () {
   var auth = require('../auth.js');
   var model = require('../model/group.js');
   var notif = require('../widgets/notification.js');
+  var ready = require('../helpers/ready.js');
 
   var logout = {
     /**

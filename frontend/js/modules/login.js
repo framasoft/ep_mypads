@@ -36,6 +36,7 @@ module.exports = (function () {
   var notif = require('../widgets/notification.js');
   var layout = require('./layout.js');
   var user = require('./user.js');
+  var ready = require('../helpers/ready.js');
 
   var login = {};
 
@@ -113,8 +114,9 @@ module.exports = (function () {
     return m('form.form-horizontal.col-sm-8.col-sm-offset-2.well', {
       id: 'login-form', onsubmit: c.submit }, [
       m('div', {
-        id: 'hide-when-ready'
-      }, 'Please wait, the service is currently loading'),
+        id: 'hide-when-ready',
+        config: ready.checkLoop
+      }, conf.LANG.USER.PLEASE_WAIT),
       m('fieldset.show-when-ready.hidden', [
         m('legend', conf.LANG.USER.MYPADS_ACCOUNT),
         m('.form-group', [

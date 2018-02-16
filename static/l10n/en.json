@@ -147,6 +147,7 @@
     "OK": "Ok",
     "REGISTER": "Register",
     "REMOVE_ACCOUNT": "Remove my account",
+    "PLEASE_WAIT": "Please wait, the service is currently loading.",
     "INFO": {
       "LOGIN": "The unique login you choose when you have subscribed",
       "EMAIL": "The email is required for password recovery",

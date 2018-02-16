@@ -36,7 +36,8 @@ module.exports = (function () {
   * at first initialization.
   */
 
-  ready.checkLoop = function() {
+  ready.checkLoop = function(element, isInitialized) {
+    if (isInitialized) return;
     m.request({
       method: 'GET',
       url: '/mypads/api/cache/check'

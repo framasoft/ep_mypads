@@ -37,6 +37,7 @@ module.exports = (function () {
   var auth = require('../auth.js');
   var layout = require('./layout.js');
   var user = require('./user.js');
+  var ready = require('../helpers/ready.js');
 
   var subscribe = {};
 
@@ -382,8 +383,9 @@ module.exports = (function () {
       onsubmit: profOrAdm ? c.submit.profileSave : c.submit.subscribe
       }, [
       m('div', {
-        id: 'hide-when-ready'
-      }, 'Please wait, the service is currently loading'),
+        id: 'hide-when-ready',
+        config: ready.checkLoop
+      }, conf.LANG.USER.PLEASE_WAIT),
       m('fieldset.show-when-ready.hidden', [
         m('legend', conf.LANG.USER.MANDATORY_FIELDS),
         m('div', requiredFields)

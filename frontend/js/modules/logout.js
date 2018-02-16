@@ -56,7 +56,6 @@ module.exports = (function () {
         document.title = conf.SERVER.title;
         notif.success({ body: conf.LANG.USER.AUTH.SUCCESS_OUT });
         m.route('/');
-        setTimeout(ready.checkLoop, 250);
       }, function (err) {
         notif.error({ body: ld.result(conf.LANG, err.error) });
         m.route('/');

@@ -150,7 +150,7 @@ module.exports = (function () {
   view.pad = function (c) {
     var p = (c.sendPass() ? '&mypadspassword=' + encode(c.password()) : '');
     var a = (auth.isAuthenticated() ? '&auth_token=' + auth.token() : '');
-    var link = '/p/' + c.pad._id + '?' + p + a;
+    var link = conf.URLS.RAWBASE.replace('mypads/', '') + 'p/' + c.pad._id + '?' + p + a;
     var isExpanded = function() {
         return ((document.querySelector('a.expand-toggle').className).indexOf('expanded') > -1);
     }

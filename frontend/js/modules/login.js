@@ -139,13 +139,15 @@ module.exports = (function () {
   };
 
   view.main = function (c) {
+    var children = [ m('span', conf.LANG.USER.FORM) ];
+    if (conf.SERVER.openRegistration && conf.SERVER.useLdap === false) {
+      children.push(m('a.small',
+        { href: '/subscribe', config: m.route },
+        conf.LANG.USER.ORSUB)
+      );
+    }
     return m('section', { class: 'user' }, [
-      m('h2', [
-        m('span', conf.LANG.USER.FORM),
-        m('a.small',
-          { href: '/subscribe', config: m.route },
-          conf.LANG.USER.ORSUB)
-      ]),
+      m('h2', children),
       view.form(c)
     ]);
   };

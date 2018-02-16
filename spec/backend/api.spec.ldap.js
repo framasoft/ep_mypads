@@ -696,7 +696,7 @@
             expect(resp.statusCode).toBe(400);
             expect(body.error).toMatch('AUTHENTICATION.NO_REGISTRATION');
             b = { body: { auth_token: admToken } };
-            rq.get(userRoute + '/parker', b, function (err, resp, body) {
+            rq.get(userRoute + '/bender', b, function (err, resp, body) {
               expect(resp.statusCode).toBe(404);
               expect(body.error).toMatch('USER.NOT_FOUND');
               done();

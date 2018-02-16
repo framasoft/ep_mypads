@@ -63,7 +63,8 @@ module.exports = (function () {
         form.initFields(c, ['title', 'rootUrl', 'allowEtherPads',
           'passwordMin', 'passwordMax', 'defaultLanguage', 'checkMails',
           'tokenDuration', 'SMTPHost', 'SMTPPort', 'SMTPSSL', 'SMTPTLS',
-          'SMTPUser', 'SMTPPass', 'SMTPEmailFrom', 'HTMLExtraHead']);
+          'SMTPUser', 'SMTPPass', 'SMTPEmailFrom', 'HTMLExtraHead',
+          'openRegistration']);
         c.currentConf = resp.value;
         ld.forIn(resp.value, function (v, k) {
           c.data[k] = m.prop(v);
@@ -305,6 +306,23 @@ module.exports = (function () {
         var l = m('label', [ f, A.INFO.ALLOW_ETHERPADS, icon ]);
         return l;
       })(),
+      openRegistration: (function () {
+        var icon = form.icon(c, 'openRegistration', A.INFO.OPEN_REGISTRATION);
+        var opts = {
+          name: 'openRegistration',
+        };
+        if (c.data.openRegistration) {
+          opts['checked'] = 'checked'
+        }
+        var f = m('input[type="checkbox"]', opts);
+        ld.assign(f.attrs, {
+          type: 'checkbox',
+          checked: c.data.openRegistration(),
+          onchange: m.withAttr('checked', c.data.openRegistration)
+        });
+        var l = m('label', [ f, A.FIELD.OPEN_REGISTRATION, icon ]);
+        return l;
+      })(),
       checkMails: (function () {
         var icon = form.icon(c, 'checkMails', A.INFO.CHECKMAILS);
         var opts = {
@@ -404,6 +422,7 @@ module.exports = (function () {
           m('div.form-group', [ f.rootUrl.label, f.rootUrl.input ]),
           m('div.form-group', [ f.defaultLanguage.label, f.defaultLanguage.select ]),
           m('div.checkbox',   [ f.allowEtherPads ]),
+          m('div.checkbox',   [ f.openRegistration ]),
           m('div.form-group', [ f.HTMLExtraHead.label, f.HTMLExtraHead.icon, f.HTMLExtraHead.textarea ])
         ])
       ]),

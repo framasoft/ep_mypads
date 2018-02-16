@@ -52,6 +52,7 @@ module.exports = (function() {
       title: 'MyPads',
       rootUrl: '',
       allowEtherPads: true,
+      openRegistration: true,
       passwordMin: 8,
       passwordMax: 30,
       languages: { en: 'English', fr: 'Français' },
@@ -225,7 +226,7 @@ module.exports = (function() {
     public: function () {
       var all = configuration.all();
       return ld.pick(all, 'title', 'passwordMin', 'passwordMax', 'languages',
-        'HTMLExtraHead');
+        'HTMLExtraHead', 'openRegistration');
     }
   };
 

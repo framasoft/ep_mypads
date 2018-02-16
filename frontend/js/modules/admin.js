@@ -64,7 +64,7 @@ module.exports = (function () {
           'passwordMin', 'passwordMax', 'defaultLanguage', 'checkMails',
           'tokenDuration', 'SMTPHost', 'SMTPPort', 'SMTPSSL', 'SMTPTLS',
           'SMTPUser', 'SMTPPass', 'SMTPEmailFrom', 'HTMLExtraHead',
-          'openRegistration']);
+          'openRegistration', 'hideHelpBlocks']);
         c.currentConf = resp.value;
         ld.forIn(resp.value, function (v, k) {
           c.data[k] = m.prop(v);
@@ -303,7 +303,24 @@ module.exports = (function () {
           checked: c.data.allowEtherPads(),
           onchange: m.withAttr('checked', c.data.allowEtherPads)
         });
-        var l = m('label', [ f, A.INFO.ALLOW_ETHERPADS, icon ]);
+        var l = m('label', [ f, A.FIELD.ALLOW_ETHERPADS, icon ]);
+        return l;
+      })(),
+      hideHelpBlocks: (function () {
+        var icon = form.icon(c, 'hideHelpBlocks', A.INFO.HIDE_HELP_BLOCKS);
+        var opts = {
+          name: 'hideHelpBlocks',
+        };
+        if (c.data.hideHelpBlocks) {
+          opts['checked'] = 'checked'
+        }
+        var f = m('input[type="checkbox"]', opts);
+        ld.assign(f.attrs, {
+          type: 'checkbox',
+          checked: c.data.hideHelpBlocks(),
+          onchange: m.withAttr('checked', c.data.hideHelpBlocks)
+        });
+        var l = m('label', [ f, A.FIELD.HIDE_HELP_BLOCKS, icon ]);
         return l;
       })(),
       openRegistration: (function () {
@@ -423,6 +440,7 @@ module.exports = (function () {
           m('div.form-group', [ f.defaultLanguage.label, f.defaultLanguage.select ]),
           m('div.checkbox',   [ f.allowEtherPads ]),
           m('div.checkbox',   [ f.openRegistration ]),
+          m('div.checkbox',   [ f.hideHelpBlocks ]),
           m('div.form-group', [ f.HTMLExtraHead.label, f.HTMLExtraHead.icon, f.HTMLExtraHead.textarea ])
         ])
       ]),

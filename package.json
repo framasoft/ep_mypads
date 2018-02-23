@@ -5,7 +5,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://git.framasoft.org/framasoft/ep_mypads.git"
+    "url": "https://framagit.org/framasoft/ep_mypads.git"
   },
   "keywords": [
     "etherpad",

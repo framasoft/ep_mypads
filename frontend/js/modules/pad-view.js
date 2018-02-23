@@ -269,6 +269,7 @@ module.exports = (function () {
               m('a', {
                 href: route + '/view',
                 config: m.route,
+                onclick: function() { expandPad.reduceIframe(false) },
                 title: conf.LANG.GROUP.VIEW
               }, c.group.name ),
               ')'

@@ -86,7 +86,10 @@ module.exports = (function () {
   /*
    * Reduce the iframe
    */
-  expandPad.reduceIframe = function() {
+  expandPad.reduceIframe = function(remember) {
+    if (typeof(remember) === 'undefined') {
+      remember = true;
+    }
     var toShow        = document.querySelectorAll('#mypads header, #mypads aside, #mypads footer');
     var section12     = document.querySelector('#mypads main.container-fluid section.col-md-12');
     var mainContainer = document.querySelector('#mypads main.container-fluid');
@@ -111,7 +114,9 @@ module.exports = (function () {
 
     aExpand.classList.remove('expanded');
     aExpand.title = conf.LANG.GROUP.PAD.EXPAND;
-    cookie.set('wantExpandedPad', 'false', { expires: 365, path: conf.URLS.RAWBASE });
+    if (remember) {
+      cookie.set('wantExpandedPad', 'false', { expires: 365, path: conf.URLS.RAWBASE });
+    }
   };
 
   return expandPad;

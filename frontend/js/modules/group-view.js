@@ -38,6 +38,7 @@ module.exports = (function () {
   var model = require('../model/group.js');
   var padMark = require('./pad-mark.js');
   var padShare = require('./pad-share.js');
+  var ready = require('../helpers/ready.js');
 
   var group = {};
 
@@ -395,6 +396,7 @@ module.exports = (function () {
   view.passForm = function (c) {
     return [ m('form', {
       id: 'password-form',
+      config: ready.inFrame,
       onsubmit: c.submitPass
     }, [
       m('label', { for: 'mypadspassword' }, conf.LANG.USER.PASSWORD),

@@ -32,7 +32,7 @@ module.exports = (function () {
   var auth = require('./auth.js');
 
   var config = {};
-  config.URLS = { RAWBASE: window.location.pathname };
+  config.URLS = { RAWBASE: window.location.pathname.replace(new RegExp('index.html'), '') };
   config.URLS.BASE = config.URLS.RAWBASE + 'api';
   config.URLS.CONF = config.URLS.BASE + '/configuration';
   config.URLS.AUTH = config.URLS.BASE + '/auth';

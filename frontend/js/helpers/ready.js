@@ -28,6 +28,7 @@
 module.exports = (function () {
   // Dependencies
   var m = require('mithril');
+  var conf = require('../configuration.js');
 
   var ready = {};
 
@@ -40,7 +41,7 @@ module.exports = (function () {
     if (isInitialized) return;
     m.request({
       method: 'GET',
-      url: '/mypads/api/cache/check'
+      url: conf.URLS.CACHECHECK
     }).then(function (resp) {
       if (resp.userCacheReady) {
         var toHide = document.getElementById('hide-when-ready').classList;

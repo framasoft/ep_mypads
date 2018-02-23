@@ -32,7 +32,8 @@ module.exports = (function () {
   var auth = require('./auth.js');
 
   var config = {};
-  config.URLS = { BASE: '/mypads/api' };
+  config.URLS = { RAWBASE: window.location.pathname };
+  config.URLS.BASE = config.URLS.RAWBASE + 'api';
   config.URLS.CONF = config.URLS.BASE + '/configuration';
   config.URLS.AUTH = config.URLS.BASE + '/auth';
   config.URLS.LOGIN = config.URLS.AUTH + '/login';
@@ -45,6 +46,7 @@ module.exports = (function () {
   config.URLS.USERLIST = config.URLS.BASE + '/userlist';
   config.URLS.PASSRECOVER = config.URLS.BASE + '/passrecover';
   config.URLS.ACCOUNT_CONFIRMATION = config.URLS.BASE + '/accountconfirm';
+  config.URLS.CACHECHECK = config.URLS.BASE + '/cache/check';
   config.SERVER = m.prop();
   // default to en
   var USERLANG_DEFAULT = 'en';
@@ -61,7 +63,7 @@ module.exports = (function () {
   config.updateLang = function (key) {
     m.request({
       method: 'GET',
-      url: '/mypads/l10n/' + key + '.json'
+      url: config.URLS.RAWBASE + 'l10n/' + key + '.json'
     }).then(function (resp) {
       config.USERLANG = key;
       config.LANG = resp;

@@ -36,6 +36,7 @@ module.exports = (function () {
   var notif = require('../widgets/notification.js');
   var layout = require('./layout.js');
   var user = require('./user.js');
+  var ready = require('../helpers/ready.js');
 
   var login = {};
 
@@ -109,9 +110,14 @@ module.exports = (function () {
     login.input.attrs.maxlength = 40;
     login.label.attrs.class = 'col-sm-4';
     var password = user.view.field.password(c);
+
     return m('form.form-horizontal.col-sm-8.col-sm-offset-2.well', {
       id: 'login-form', onsubmit: c.submit }, [
-      m('fieldset', [
+      m('div', {
+        id: 'hide-when-ready',
+        config: ready.checkLoop
+      }, conf.LANG.USER.PLEASE_WAIT),
+      m('fieldset.show-when-ready.hidden', [
         m('legend', conf.LANG.USER.MYPADS_ACCOUNT),
         m('.form-group', [
           login.label,
@@ -139,13 +145,15 @@ module.exports = (function () {
   };
 
   view.main = function (c) {
+    var children = [ m('span', conf.LANG.USER.FORM) ];
+    if (conf.SERVER.openRegistration && conf.SERVER.useLdap === false) {
+      children.push(m('a.small',
+        { href: '/subscribe', config: m.route },
+        conf.LANG.USER.ORSUB)
+      );
+    }
     return m('section', { class: 'user' }, [
-      m('h2', [
-        m('span', conf.LANG.USER.FORM),
-        m('a.small',
-          { href: '/subscribe', config: m.route },
-          conf.LANG.USER.ORSUB)
-      ]),
+      m('h2', children),
       view.form(c)
     ]);
   };

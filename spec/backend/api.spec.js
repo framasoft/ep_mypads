@@ -77,13 +77,35 @@
       beforeAll(function () {
         conf.cache.HTMLExtraHead = '<style>/* custom HTML for head */</style>';
       });
-      afterAll(function () { conf.cache.HTMLExtraHead = ''; });
+      afterAll(function () {
+        conf.cache.HTMLExtraHead = '';
+        conf.cache.hideHelpBlocks = false;
+      });
 
       it('should include custom HTML for head', function (done) {
         rq.get('http://127.0.0.1:8042/mypads/index.html',
           function (err, resp, body) {
             expect(resp.statusCode).toBe(200);
             expect(body).toMatch('custom HTML for head');
+            done();
+          }
+        );
+      });
+      it('should not include mypads-hide-help-blocks.css if hideHelpBlocks is false', function (done) {
+        rq.get('http://127.0.0.1:8042/mypads/index.html',
+          function (err, resp, body) {
+            expect(resp.statusCode).toBe(200);
+            expect(body).not.toMatch('css/mypads-hide-help-blocks.css');
+            done();
+          }
+        );
+      });
+      it('should include mypads-hide-help-blocks.css if hideHelpBlocks is true', function (done) {
+        conf.cache.hideHelpBlocks = true;
+        rq.get('http://127.0.0.1:8042/mypads/index.html',
+          function (err, resp, body) {
+            expect(resp.statusCode).toBe(200);
+            expect(body).toMatch('css/mypads-hide-help-blocks.css');
             done();
           }
         );
@@ -712,6 +734,30 @@
             });
           }
         );
+
+        it('should not create a new user if registration is disabled', function (done) {
+          var b = {
+            body: {
+              login: 'bender',
+              password: 'bender',
+              firstname: 'Bender',
+              lastname: 'Rodriguez',
+              email: 'bender@planetexpress.com'
+            }
+          };
+          conf.cache.openRegistration = false;
+          rq.post(userRoute, b, function (err, resp, body) {
+            expect(err).toBeNull();
+            expect(resp.statusCode).toBe(400);
+            expect(body.error).toMatch('AUTHENTICATION.NO_REGISTRATION');
+            b = { body: { auth_token: admToken } };
+            rq.get(userRoute + '/bender', b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(404);
+              expect(body.error).toMatch('USER.NOT_FOUND');
+              done();
+            });
+          });
+        });
 
       });
 
@@ -2469,6 +2515,18 @@
             });
           }
         );
+      });
+    });
+
+    describe('cacheAPI GET', function () {
+      var cacheRoute = route + 'cache';
+
+      it('should return {"userCacheReady":true} (with mockupserver, the cache is ready before the server)', function (done) {
+        rq.get(cacheRoute + '/check', {}, function (err, resp, body) {
+          expect(resp.statusCode).toBe(200);
+          expect(body.userCacheReady).toBeTruthy();
+          done();
+        });
       });
     });
   });

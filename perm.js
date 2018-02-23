@@ -28,15 +28,18 @@
 
 // External dependencies
 var getPad;
+var getPadID;
 var getPadHTML;
 try {
   // Normal case : when installed as a plugin
   getPad = require('ep_etherpad-lite/node/db/PadManager').getPad;
+  getPadID = require('ep_etherpad-lite/node/db/API').getPadID;
   getPadHTML = require('ep_etherpad-lite/node/utils/ExportHtml').getPadHTML;
 }
 catch (e) {
   // Testing case : noop functions
     getPad = function (padId, callback) { callback(null); };
+    getPadID = function (padId, callback) { callback(null); };
     getPadHTML = function (pad, rev, callback) {
       callback(null, '<p>Testing only</p>');
     };
@@ -208,11 +211,27 @@ module.exports = (function () {
       refuse: refuse,
       pid: pid
     };
-    perm.fn.getPadAndGroup(pid, function (err, pg) {
-      if (err) { return unexpected(err); }
-      params.pg = pg;
-      perm.fn.check(params);
-    });
+    // Is pid a real pad id or a read only pad id?
+    if (pid.match(/^r\.[A-Za-z0-9_-]{32}/)) {
+      // It's a read only pid, let's get the real pad id
+      getPadID(pid, function(err, result) {
+        if (err) { return unexpected(err); }
+        pid = result.padID;
+        // And then fetch the pad through MyPads API
+        perm.fn.getPadAndGroup(pid, function (err, pg) {
+          if (err) { return unexpected(err); }
+          params.pg = pg;
+          perm.fn.check(params);
+        });
+      });
+    } else {
+      // It's a real pad id, fetch the pad through MyPads API
+      perm.fn.getPadAndGroup(pid, function (err, pg) {
+        if (err) { return unexpected(err); }
+        params.pg = pg;
+        perm.fn.check(params);
+      });
+    }
   };
 
   /**
@@ -258,7 +277,7 @@ module.exports = (function () {
 
   perm.init = function (app) {
     //app.all('/p/([A-Za-z0-9_-]+)', perm.check);
-    var rgx = new RegExp('/p/([A-Za-z0-9_-]+)[A-Za-z0-9_/]*');
+    var rgx = new RegExp('/p/(r\.[A-Za-z0-9_-]{32}|[A-Za-z0-9_-]+)[A-Za-z0-9_/]*');
     app.all(rgx, perm.check);
     app.all('/p/:pid', perm.setNameAndColor);
     app.get('/', function (req, res, next) {

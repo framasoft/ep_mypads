@@ -30,6 +30,9 @@
 
 var $ = require('ep_etherpad-lite/static/js/rjquery').$;
 exports.postToolbarInit = function (hook_name, args) {
+  /*
+   * Fix links with auth_token
+   */
   var params = {};
 
   if (location.search) {
@@ -70,4 +73,21 @@ exports.postToolbarInit = function (hook_name, args) {
     $('li[data-key="timeslider_returnToPad"]').unbind('click');
     $('li[data-key="timeslider_returnToPad"] a').attr('href', padLoc+'?'+parName+'='+parValue);
   }
+
+  /*
+   * Hide read-only checkbox if the pad is not public
+   */
+  $('#embedreadonly').css('display', 'none');
+  var padID = window.location.href.split('/').pop().split('?').shift();
+  var baseURL = window.location.href.split('/p/'+padID).shift();
+  $.ajax({
+    method: 'GET',
+    url: baseURL+'/mypads/api/pad/ispublic/'+padID,
+    dataType: 'JSON',
+    success: function(data, textStatus, jqXHR) {
+      if (data.success && data.ispublic) {
+        $('#embedreadonly').css('display', 'block');
+      }
+    }
+  });
 }

@@ -162,19 +162,22 @@ module.exports = (function () {
   user.view.field._pass = function (c, name, label, extraValid) {
     var passMin = conf.SERVER.passwordMin;
     var passMax = conf.SERVER.passwordMax;
+    var options = {
+      type: 'password',
+      name: name,
+      placeholder: conf.LANG.USER.UNDEF,
+      required: (!c.profileView || !c.profileView()),
+      oninput: form.handleField.bind(null, c, extraValid)
+    };
+    if (!conf.SERVER.useLdap) {
+      options.minlength = passMin;
+      options.maxlength = passMax;
+      options.pattern   = '.{' + passMin + ',' + passMax + '}';
+    }
     var icon = user.view.icon.password(c, name);
     return {
       label: m('label.col-sm-4', { for: name }, [ label, icon ]),
-      input: m('input.form-control', {
-        type: 'password',
-        name: name,
-        placeholder: conf.LANG.USER.UNDEF,
-        required: (!c.profileView || !c.profileView()),
-        minlength: passMin,
-        maxlength: passMax,
-        pattern: '.{' + passMin + ',' + passMax + '}',
-        oninput: form.handleField.bind(null, c, extraValid)
-      }),
+      input: m('input.form-control', options),
       icon: icon
     };
   };

@@ -696,7 +696,7 @@
             expect(resp.statusCode).toBe(400);
             expect(body.error).toMatch('AUTHENTICATION.NO_REGISTRATION');
             b = { body: { auth_token: admToken } };
-            rq.get(userRoute + '/parker', b, function (err, resp, body) {
+            rq.get(userRoute + '/bender', b, function (err, resp, body) {
               expect(resp.statusCode).toBe(404);
               expect(body.error).toMatch('USER.NOT_FOUND');
               done();
@@ -2513,6 +2513,18 @@
             });
           }
         );
+      });
+    });
+
+    describe('cacheAPI GET', function () {
+      var cacheRoute = route + 'cache';
+
+      it('should return {"userCacheReady":true} (with mockupserver, the cache is ready before the server)', function (done) {
+        rq.get(cacheRoute + '/check', {}, function (err, resp, body) {
+          expect(resp.statusCode).toBe(200);
+          expect(body.userCacheReady).toBeTruthy();
+          done();
+        });
       });
     });
   });

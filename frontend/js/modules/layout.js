@@ -32,6 +32,7 @@ module.exports = (function () {
   var conf = require('../configuration.js');
   var auth = require('../auth.js');
   var notif = require('../widgets/notification.js');
+  var expandPad = require('../helpers/expandPad.js');
 
   var layout = {};
 
@@ -105,7 +106,7 @@ module.exports = (function () {
         }
       ]
     };
-    if (conf.SERVER.useLdap) {
+    if (conf.SERVER.useLdap || conf.SERVER.openRegistration === false) {
       _routes.unauth = [
         {
           route: '/login',
@@ -141,7 +142,11 @@ module.exports = (function () {
   * - `aside` vdom content.
   */
 
-  layout.view = function (main, aside) {
+  layout.view = function (main, aside, padView) {
+    var options = {};
+    if (padView) {
+      options = { config: expandPad.autoExpand };
+    };
     return [
       m('header', [
         m('ul.lang.container', ld.reduce(conf.SERVER.languages,
@@ -163,7 +168,7 @@ module.exports = (function () {
         ])
       ]),
       m('main.container.ombre', [
-        m('section.col-md-9.col-xs-12', main || ''),
+        m('section.col-md-9.col-xs-12', options, main || ''),
         m('aside.col-md-3.col-xs-12', aside || '')
       ]),
       m('section', { class: 'notification' }, notif.view(notif.controller())),

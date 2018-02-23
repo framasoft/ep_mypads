@@ -35,7 +35,7 @@ var express;
 var testMode = false;
 try {
   // Normal case : when installed as a plugin
-  express = require('../ep_etherpad-lite/node_modules/express');
+  express = require('ep_etherpad-lite/node_modules/express');
 }
 catch (e) {
   // Testing case : we need to mock the express dependency
@@ -45,7 +45,7 @@ catch (e) {
 var settings;
 try {
   // Normal case : when installed as a plugin
-  settings = require('../ep_etherpad-lite/node/utils/Settings');
+  settings = require('ep_etherpad-lite/node/utils/Settings');
 }
 catch (e) {
   // Testing case : we need to mock the express dependency
@@ -92,6 +92,7 @@ module.exports = (function () {
   var userAPI;
   var groupAPI;
   var padAPI;
+  var cacheAPI;
 
   /**
   * `init` is the first function that takes an Express app as argument.
@@ -125,6 +126,7 @@ module.exports = (function () {
     userAPI(app);
     groupAPI(app);
     padAPI(app);
+    cacheAPI(app);
     perm.init(app);
 
     /**
@@ -132,7 +134,8 @@ module.exports = (function () {
     */
     var idxTpl = ld.template(rFS(__dirname + '/templates/index.html', rFSOpts));
     var idxHandle = function (req, res) {
-      return res.send(idxTpl({ HTMLExtraHead: conf.get('HTMLExtraHead') }));
+      var cssTag = (conf.get('hideHelpBlocks')) ? '<link href="css/mypads-hide-help-blocks.css" rel="stylesheet">' : '';
+      return res.send(idxTpl({ HTMLExtraHead: conf.get('HTMLExtraHead'), hideHelpBlocks: cssTag }));
     };
     app.get('/mypads/index.html', idxHandle);
     app.get('/mypads/', idxHandle);
@@ -630,6 +633,9 @@ module.exports = (function () {
       var stop;
       if (req.method === 'POST') {
         if (settings.ep_mypads && settings.ep_mypads.ldap) {
+          stop = true;
+          res.status(400).send({ error: 'BACKEND.ERROR.AUTHENTICATION.NO_REGISTRATION' });
+        } else if (!conf.get('openRegistration')) {
           stop = true;
           res.status(400).send({ error: 'BACKEND.ERROR.AUTHENTICATION.NO_REGISTRATION' });
         } else {
@@ -1130,7 +1136,7 @@ module.exports = (function () {
     var padRoute = api.initialRoute + 'pad';
 
     /**
-    * `canAct` is a pad internal fucntion that checks permissions to allow or
+    * `canAct` is a pad internal function that checks permissions to allow or
     * not interaction with the pad object.
     *
     * It takes :
@@ -1262,7 +1268,47 @@ module.exports = (function () {
       canAct(true, ld.partial(fn.del, pad.del), req, res);
     });
 
+    /**
+    * GET method : with pad id
+    *
+    * Return true if the pad is public
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/pad/ispublic/xxxx
+    */
+
+    // TODO: + admin, no pass needed...
+    app.get(padRoute + '/ispublic/:key', function (req, res) {
+      pad.get(req.params.key, function(err, p) {
+        if (err) {
+          return res.send({ success: false, error: err });
+        } else {
+          return res.send({ success: true, key: req.params.key, ispublic: (p.visibility === 'public') });
+        }
+      });
+    });
+
   };
+
+  cacheAPI = function (app) {
+    var cacheRoute = api.initialRoute + 'cache';
+
+    /**
+    * GET method : check, method returning information about the end of users
+    * cache loading
+    *
+    * exemple: { userCacheReady: true }
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/cache/check
+    */
+
+    app.get(cacheRoute + '/check', function (req, res) {
+      return res.send({ userCacheReady: user.userCacheReady });
+    });
+
+  };
+
 
   return api;
 

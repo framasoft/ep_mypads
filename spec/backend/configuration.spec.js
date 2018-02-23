@@ -143,6 +143,8 @@
           expect(settings.passwordMax).toBeDefined();
           expect(settings.languages).toBeDefined();
           expect(settings.HTMLExtraHead).toBeDefined();
+          expect(settings.openRegistration).toBeDefined();
+          expect(settings.hideHelpBlocks).toBeDefined();
           done();
         });
       });

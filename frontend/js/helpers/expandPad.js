@@ -63,7 +63,8 @@ module.exports = (function () {
     var aExpandI      = document.querySelector('a.expand-toggle i');
     var aExpand       = document.querySelector('a.expand-toggle');
 
-    toHide.forEach(function(element) {
+    // Hack due to browsers that does not support forEach on nodeList
+    [].forEach.call(toHide, function(element) {
         element.classList.add('hidden');
     });
 
@@ -97,7 +98,8 @@ module.exports = (function () {
     var aExpandI      = document.querySelector('a.expand-toggle i');
     var aExpand       = document.querySelector('a.expand-toggle');
 
-    toShow.forEach(function(element) {
+    // Hack due to browsers that does not support forEach on nodeList
+    [].forEach.call(toShow, function(element) {
         element.classList.remove('hidden');
     });
 

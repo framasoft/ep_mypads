@@ -47,7 +47,8 @@ module.exports = (function () {
         var toHide = document.getElementById('hide-when-ready').classList;
         var toShow = document.querySelectorAll('.show-when-ready');
         toHide.add('hidden');
-        toShow.forEach(function(element) {
+        // Hack due to browsers that does not support forEach on nodeList
+        [].forEach.call(toShow, function(element) {
           element.classList.remove('hidden');
         });
         return 'user cache ready';

@@ -486,6 +486,20 @@ module.exports = (function () {
 
     app.delete(confRoute + '/:key', fn.ensureAdmin,
       ld.partial(fn.del, conf.del));
+
+    /**
+    * GET method
+    *
+    * Return the value of useFirstLastNameInPads configuration setting
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/configuration/public/usefirstlastname
+    */
+
+    app.get(confRoute + '/public/usefirstlastname', function (req, res) {
+      return res.send({ success: true, usefirstlastname: conf.get('useFirstLastNameInPads') });
+    });
+
   };
 
   /**
@@ -1277,7 +1291,6 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/pad/ispublic/xxxx
     */
 
-    // TODO: + admin, no pass needed...
     app.get(padRoute + '/ispublic/:key', function (req, res) {
       pad.get(req.params.key, function(err, p) {
         if (err) {

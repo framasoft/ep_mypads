@@ -145,6 +145,7 @@
           expect(settings.HTMLExtraHead).toBeDefined();
           expect(settings.openRegistration).toBeDefined();
           expect(settings.hideHelpBlocks).toBeDefined();
+          expect(settings.useDisplayNameInPads).toBeDefined();
           done();
         });
       });

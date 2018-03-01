@@ -90,4 +90,18 @@ exports.postToolbarInit = function (hook_name, args) {
       }
     }
   });
+
+  /*
+   * Prevents users to change their nickname if useDisplayNameInPads is set
+   */
+  $.ajax({
+    method: 'GET',
+    url: baseURL+'/mypads/api/configuration/public/usedisplayname',
+    dataType: 'JSON',
+    success: function(data, textStatus, jqXHR) {
+      if (data.success && data.usedisplayname) {
+        $('#myusernameedit').prop('disabled', true);
+      }
+    }
+  });
 }

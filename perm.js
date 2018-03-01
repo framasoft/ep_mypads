@@ -252,6 +252,11 @@ module.exports = (function () {
     var u = auth.fn.getUser(token);
     if (u && u.useLoginAndColorInPads) {
       var opts = { userName: u.login };
+      if (conf.get('useDisplayNameInPads')) {
+        var firstname = (u.firstname) ? u.firstname : '';
+        var lastname  = (u.lastname)  ? u.lastname  : '';
+        opts = { userName: firstname+' '+lastname };
+      }
       if (u.color) {
         opts.userColor = u.color;
       }

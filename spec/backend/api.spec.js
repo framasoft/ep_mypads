@@ -566,6 +566,21 @@
         );
 
       });
+
+      describe('configuration.public GET usedisplayname', function () {
+
+        it('should return the value of useDisplayNameInPads',
+          function (done) {
+            rq.get(confRoute + '/public/usedisplayname', function (err, resp, body) {
+              expect(resp.statusCode).toBe(200);
+              expect(body.success).toBeTruthy();
+              expect(body.usedisplayname).toBeDefined();
+              done();
+            });
+          }
+        );
+      });
+
     });
 
     describe('user inactive account limitations', function () {

@@ -67,7 +67,8 @@ module.exports = (function() {
       SMTPEmailFrom: undefined,
       SMTPSSL: false,
       SMTPTLS: true,
-      tokenDuration: 60 // in minutes
+      tokenDuration: 60, // in minutes
+      useDisplayNameInPads: false
     },
 
     /**
@@ -227,7 +228,7 @@ module.exports = (function() {
     public: function () {
       var all = configuration.all();
       return ld.pick(all, 'title', 'passwordMin', 'passwordMax', 'languages',
-        'HTMLExtraHead', 'openRegistration', 'hideHelpBlocks');
+        'HTMLExtraHead', 'openRegistration', 'hideHelpBlocks', 'useDisplayNameInPads');
     }
   };
 

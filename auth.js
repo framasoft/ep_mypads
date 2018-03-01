@@ -181,9 +181,13 @@ module.exports = (function () {
       lauth.authenticate(login, pass, function(err, ldapuser) {
         if (err) {
           var emsg = err;
-          if (err.lde_message === 'Invalid Credentials') {
+          // openldap error message || active directory error message
+          if (typeof(err.lde_message) === 'string' && (err.lde_message === 'Invalid Credentials' || err.lde_message.match(/data 52e,/))) {
             emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
-          } else if ((typeof(err) === 'string' && err.match(/no such user/)) || err.lde_message.match(/no such user/)) {
+          } else if (
+              (typeof(err) === 'string' && err.match(/no such user/)) ||
+              (typeof(err.lde_message) === 'string' && (err.lde_message.match(/no such user/) || err.lde_message.match(/data 525,/)))
+          ) {
             emsg = 'BACKEND.ERROR.USER.NOT_FOUND';
           } else {
             console.error('LdapAuth error: ', err);

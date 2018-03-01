@@ -64,7 +64,7 @@ module.exports = (function () {
           'passwordMin', 'passwordMax', 'defaultLanguage', 'checkMails',
           'tokenDuration', 'SMTPHost', 'SMTPPort', 'SMTPSSL', 'SMTPTLS',
           'SMTPUser', 'SMTPPass', 'SMTPEmailFrom', 'HTMLExtraHead',
-          'openRegistration', 'hideHelpBlocks']);
+          'openRegistration', 'hideHelpBlocks', 'useFirstLastNameInPads']);
         c.currentConf = resp.value;
         ld.forIn(resp.value, function (v, k) {
           c.data[k] = m.prop(v);
@@ -323,6 +323,23 @@ module.exports = (function () {
         var l = m('label', [ f, A.FIELD.HIDE_HELP_BLOCKS, icon ]);
         return l;
       })(),
+      useFirstLastNameInPads: (function () {
+        var icon = form.icon(c, 'useFirstLastNameInPads', A.INFO.USE_FIRST_AND_LAST_NAME_IN_PADS);
+        var opts = {
+          name: 'useFirstLastNameInPads',
+        };
+        if (c.data.useFirstLastNameInPads) {
+          opts['checked'] = 'checked';
+        }
+        var f = m('input[type="checkbox"]', opts);
+        ld.assign(f.attrs, {
+          type: 'checkbox',
+          checked: c.data.useFirstLastNameInPads(),
+          onchange: m.withAttr('checked', c.data.useFirstLastNameInPads)
+        });
+        var l = m('label', [ f, A.FIELD.USE_FIRST_AND_LAST_NAME_IN_PADS, icon ]);
+        return l;
+      })(),
       openRegistration: (function () {
         var icon = form.icon(c, 'openRegistration', A.INFO.OPEN_REGISTRATION);
         var opts = {
@@ -441,6 +458,7 @@ module.exports = (function () {
           m('div.checkbox',   [ f.allowEtherPads ]),
           m('div.checkbox',   [ f.openRegistration ]),
           m('div.checkbox',   [ f.hideHelpBlocks ]),
+          m('div.checkbox',   [ f.useFirstLastNameInPads ]),
           m('div.form-group', [ f.HTMLExtraHead.label, f.HTMLExtraHead.icon, f.HTMLExtraHead.textarea ])
         ])
       ]),

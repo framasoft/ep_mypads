@@ -90,4 +90,18 @@ exports.postToolbarInit = function (hook_name, args) {
       }
     }
   });
+
+  /*
+   * Prevents users from changing their nickname if useFirstLastNameInPads is set
+   */
+  $.ajax({
+    method: 'GET',
+    url: baseURL+'/mypads/api/configuration/public/usefirstlastname',
+    dataType: 'JSON',
+    success: function(data, textStatus, jqXHR) {
+      if (data.success && data.usefirstlastname) {
+        $('#myusernameedit').prop('disabled', true);
+      }
+    }
+  });
 }

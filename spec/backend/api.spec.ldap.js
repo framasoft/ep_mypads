@@ -548,6 +548,21 @@
         );
 
       });
+
+      describe('configuration.public GET usefirstlastname', function () {
+
+        it('should return the value of useFirstLastNameInPads',
+          function (done) {
+            rq.get(confRoute + '/public/usefirstlastname', function (err, resp, body) {
+              expect(resp.statusCode).toBe(200);
+              expect(body.success).toBeTruthy();
+              expect(body.usefirstlastname).toBeDefined();
+              done();
+            });
+          }
+        );
+      });
+
     });
 
     describe('user inactive account limitations', function () {

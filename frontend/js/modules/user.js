@@ -260,7 +260,7 @@ module.exports = (function () {
           return memo;
         }, [])
       );
-    return { label: label, icon: icon, select: select };
+    return { label: label, select: select };
   };
 
   /**
@@ -276,12 +276,12 @@ module.exports = (function () {
           checked: c.data.useLoginAndColorInPads(),
           onchange: m.withAttr('checked', c.data.useLoginAndColorInPads)
         }),
-        conf.LANG.USER.USELOGINANDCOLORINPADS
+        ((conf.SERVER.useFirstLastNameInPads) ? conf.LANG.USER.USECOLORINPADS : conf.LANG.USER.USELOGINANDCOLORINPADS),
+        m('i',{
+          class: 'mp-tooltip glyphicon glyphicon-info-sign',
+          'data-msg': ((conf.SERVER.useFirstLastNameInPads) ? conf.LANG.USER.INFO.USECOLORINPADS : conf.LANG.USER.INFO.USELOGINANDCOLORINPADS)
+        }),
       ]),
-      icon: m('i',{
-        class: 'mp-tooltip glyphicon glyphicon-info-sign',
-        'data-msg': conf.LANG.USER.INFO.USELOGINANDCOLORINPADS
-      }),
     };
   };
 

@@ -72,6 +72,8 @@ exports.postToolbarInit = function (hook_name, args) {
     var padLoc = location.pathname.replace(new RegExp('/timeslider$'), '');
     $('li[data-key="timeslider_returnToPad"]').unbind('click');
     $('li[data-key="timeslider_returnToPad"] a').attr('href', padLoc+'?'+parName+'='+parValue);
+
+    $('#importform').attr('action', $('#importform').attr('action')+'?'+parName+'='+parValue);
   }
 
   /*

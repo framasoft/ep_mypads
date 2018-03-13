@@ -110,6 +110,17 @@ module.exports = (function () {
     login.input.attrs.maxlength = 40;
     login.label.attrs.class = 'col-sm-4';
     var password = user.view.field.password(c);
+    var passwordBlock = [ password.input ];
+    if (conf.SERVER.useLdap === false) {
+      passwordBlock.push(
+        m('p.help-block', [
+          m('a', {
+            href: '/passrecover',
+            config: m.route
+          }, conf.LANG.USER.PASSWORD_LOST)
+        ])
+      );
+    }
 
     return m('form.form-horizontal.col-sm-8.col-sm-offset-2.well', {
       id: 'login-form', onsubmit: c.submit }, [
@@ -125,15 +136,7 @@ module.exports = (function () {
         ]),
         m('.form-group', [
           password.label,
-          m('.col-sm-7', [
-            password.input,
-            m('p.help-block', [
-              m('a', {
-                href: '/passrecover',
-                config: m.route
-              }, conf.LANG.USER.PASSWORD_LOST)
-            ])
-          ])
+          m('.col-sm-7', passwordBlock)
         ]),
         m('input.btn.btn-success.pull-right', {
           form: 'login-form',

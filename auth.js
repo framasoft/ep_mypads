@@ -179,6 +179,7 @@ module.exports = (function () {
     if (settings.ep_mypads && settings.ep_mypads.ldap) {
       var lauth = new LdapAuth(settings.ep_mypads.ldap);
       lauth.authenticate(login, pass, function(err, ldapuser) {
+        lauth.close(function(error) { });
         if (err) {
           var emsg = err;
           // openldap error message || active directory error message
@@ -217,7 +218,6 @@ module.exports = (function () {
           }
         });
       });
-      lauth.close(function(err) { });
     } else {
       user.get(login, function (err, u) {
         if (err) { return callback(err); }
@@ -356,6 +356,7 @@ module.exports = (function () {
         return callback(null, false);
       } else {
         lauth.authenticate(u.login, password, function(err, ldapuser) {
+          lauth.close(function(error) { });
           if (err) {
             var emsg = err;
             if (err.lde_message === 'Invalid Credentials') {
@@ -368,7 +369,6 @@ module.exports = (function () {
           }
           return callback(null, true);
         });
-        lauth.close(function(err) { });
       }
     } else {
       user.fn.hashPassword(u.password.salt, password, function (err, res) {

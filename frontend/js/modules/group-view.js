@@ -39,6 +39,7 @@ module.exports = (function () {
   var padMark = require('./pad-mark.js');
   var padShare = require('./pad-share.js');
   var ready = require('../helpers/ready.js');
+  var rememberSorting = require('../helpers/rememberSorting.js');
 
   var group = {};
 
@@ -73,14 +74,17 @@ module.exports = (function () {
           c.isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
           var pads = model.pads();
           var users = model.users();
-          c.pads = ld.map(c.group.pads, function (x) { return pads[x]; });
+          c.pads = ld.sortBy(ld.map(c.group.pads, function (x) { return pads[x]; }), rememberSorting.wantPadByField());
           c.users = ld.map(c.group.users, function (x) { return users[x]; });
           c.admins = ld.map(c.group.admins, function (x) { return users[x]; });
         } else {
           c.isAdmin = false;
           c.pads = ld.sortBy(ld.compact(ld.map(c.group.pads, function (x) {
             return data.pads()[x];
-          })), 'ctime');
+          })), rememberSorting.wantPadByField());
+        }
+        if (!rememberSorting.wantPadAsc()) {
+          c.pads.reverse();
         }
         document.title = conf.LANG.GROUP.GROUP + ' ' + c.group.name +
           ' - ' + conf.SERVER.title;
@@ -109,13 +113,19 @@ module.exports = (function () {
     * If already sorted by the same field, it reverses order.
     */
 
-    c.sortField = m.prop('ctime');
-    c.sortAsc = m.prop(true);
-    c.sortBy = function (field) {
-      if (c.sortField() === field) { c.sortAsc(!c.sortAsc()); }
+    c.sortField = m.prop(rememberSorting.wantPadByField());
+    c.sortAsc = m.prop(rememberSorting.wantPadAsc());
+    c.sortBy = function (field, asc) {
+      if (c.sortField() === field && typeof(asc) !== 'boolean') {
+        c.sortAsc(!c.sortAsc());
+      }
       c.sortField(field);
       var direction = c.sortAsc() ? 'asc' : 'desc';
       c.pads = ld.sortByOrder(c.pads, field, direction);
+      rememberSorting.updateValues({
+        wantPadByField: c.sortField(),
+        wantPadAsc: c.sortAsc()
+      });
     };
 
     /**
@@ -159,7 +169,7 @@ module.exports = (function () {
         var data = c.isGuest ? model.tmp() : model;
         c.group = data.groups()[key];
         c.pads = ld.sortBy(ld.compact(ld.map(c.group.pads,
-          function (x) { return data.pads()[x]; })), 'ctime');
+          function (x) { return data.pads()[x]; })), rememberSorting.wantPadByField());
         c.sendPass(true);
       });
     };
@@ -249,12 +259,14 @@ module.exports = (function () {
   var sortView = m('p.col-sm-6.text-right.small', [
     m('span', ' '+conf.LANG.GROUP.PAD.SORT_BY),
     m('button.btn.btn-default.btn-xs', {
+      class: (c.sortField() === 'ctime') ? ' btn-info': '',
       type: 'button',
       onclick: ld.partial(c.sortBy, 'ctime')
     }, [conf.LANG.GROUP.PAD.SORT_BY_CREATION+' ',
       m('i.small.glyphicon glyphicon-triangle-' + sortIcon)]
     ),
     m('button.btn.btn-default.btn-xs', {
+      class: (c.sortField() === 'name') ? ' btn-info': '',
       type: 'button',
       onclick: ld.partial(c.sortBy, 'name')
     }, [ conf.LANG.GROUP.PAD.SORT_BY_NAME+' ',

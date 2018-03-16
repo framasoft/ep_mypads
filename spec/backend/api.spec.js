@@ -23,6 +23,7 @@
   var ld = require('lodash');
   var request = require('request');
   var jwt = require('jsonwebtoken');
+  var encode = require('js-base64').Base64.encode;
   var api = require('../../api.js');
   var mail = require('../../mail.js');
   var auth = require('../../auth.js');
@@ -1787,7 +1788,7 @@
 
         it('should return the group in case of private unauth or non-admin ' +
           'if password is correct', function (done) {
-            var route = groupRoute + '/' + gprivateid + '?password=secret';
+            var route = groupRoute + '/' + gprivateid + '?password=' + encode('secret');
             rq.get(route, function (err, resp, body) {
               expect(err).toBeNull();
               expect(resp.statusCode).toBe(200);
@@ -2349,7 +2350,7 @@
             expect(body.key).toBeDefined();
             var key = body.key;
             expect(body.value.name).toBe('padOk');
-            rq.get(padRoute + '/' + key + '?password=secret',
+            rq.get(padRoute + '/' + key + '?password=' + encode('secret'),
               function (err, resp, body) {
                 expect(err).toBeNull();
                 expect(resp.statusCode).toBe(200);

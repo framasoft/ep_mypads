@@ -73,6 +73,7 @@ catch (e) {
   }
 }
 var bodyParser = require('body-parser');
+var decode = require('js-base64').Base64.decode;
 // Local dependencies
 var conf = require('./configuration.js');
 var mail = require('./mail.js');
@@ -981,7 +982,8 @@ module.exports = (function () {
           var isPrivate = (g.visibility === 'private');
           if (isPrivate) {
             if (req.query.password) {
-              auth.fn.isPasswordValid(g, req.query.password,
+              var pwd = (typeof req.query.password === 'undefined') ? undefined : decode(req.query.password);
+              auth.fn.isPasswordValid(g, pwd,
                 function (err, valid) {
                   if (!err && !valid) {
                     err = { message: 'BACKEND.ERROR.PERMISSION.UNAUTHORIZED' };
@@ -1171,7 +1173,8 @@ module.exports = (function () {
           return successFn(req, res, p);
         }
         if (!edit && (p.visibility === 'private')) {
-          auth.fn.isPasswordValid(p, req.query.password, function (err, valid) {
+          var pwd = (typeof req.query.password === 'undefined') ? undefined : decode(req.query.password);
+          auth.fn.isPasswordValid(p, pwd, function (err, valid) {
             if (!err && !valid) {
               err = { message: 'BACKEND.ERROR.PERMISSION.UNAUTHORIZED' };
             }
@@ -1186,7 +1189,8 @@ module.exports = (function () {
             if (!edit && (g.visibility === 'public')) {
               return successFn(req, res, p);
             } else if (!edit && (g.visibility === 'private')) {
-              auth.fn.isPasswordValid(g, req.query.password,
+              var pwd = (typeof req.query.password === 'undefined') ? undefined : decode(req.query.password);
+              auth.fn.isPasswordValid(g, pwd,
                 function (err, valid) {
                   if (!err && !valid) {
                     err = { message: 'BACKEND.ERROR.PERMISSION.UNAUTHORIZED' };

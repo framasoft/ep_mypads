@@ -772,7 +772,7 @@
                 b.body.auth_token = token;
                 rq.put(userRoute + '/fry', b, function (err, resp, body) {
                   expect(resp.statusCode).toBe(400);
-                  expect(body.error).toMatch('EMAIL');
+                  expect(body.error).toMatch('MAIL');
                   b.body.email = 'fry@planetexpress.com';
                   rq.put(userRoute + '/fry', b, function (err, resp, body) {
                     expect(resp.statusCode).toBe(400);

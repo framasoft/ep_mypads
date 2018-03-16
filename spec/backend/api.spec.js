@@ -793,7 +793,7 @@
                 b.body.auth_token = token;
                 rq.put(userRoute + '/guest', b, function (err, resp, body) {
                   expect(resp.statusCode).toBe(400);
-                  expect(body.error).toMatch('EMAIL');
+                  expect(body.error).toMatch('MAIL');
                   b.body.email = 'guest@phantomatic.net';
                   rq.put(userRoute + '/guest', b, function (err, resp, body) {
                     expect(resp.statusCode).toBe(400);

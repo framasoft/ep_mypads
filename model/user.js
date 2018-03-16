@@ -468,7 +468,7 @@ module.exports = (function () {
   user.set = function (params, callback) {
     common.addSetInit(params, callback, ['login', 'password']);
     if (!ld.isEmail(params.email)) {
-      throw new TypeError('BACKEND.ERROR.TYPE.EMAIL');
+      throw new TypeError('BACKEND.ERROR.TYPE.MAIL');
     }
     var u = user.fn.assignProps(params);
     user.fn.checkLogin(params._id, u, function (err) {

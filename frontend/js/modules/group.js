@@ -38,6 +38,7 @@ module.exports = (function () {
   var layout = require('./layout.js');
   var model = require('../model/group.js');
   var padShare = require('./pad-share.js');
+  var rememberSorting = require('../helpers/rememberSorting.js');
 
   var group = {};
 
@@ -190,14 +191,18 @@ module.exports = (function () {
     */
 
     window.c = c;
-    c.sortField = m.prop('ctime');
-    c.sortAsc = m.prop(true);
+    c.sortField = m.prop(rememberSorting.wantGroupByField());
+    c.sortAsc = m.prop(rememberSorting.wantGroupAsc());
     c.sortBy = function (field) {
       if (c.sortField() === field) { c.sortAsc(!c.sortAsc()); }
       c.sortField(field);
       var direction = c.sortAsc() ? 'asc' : 'desc';
       c.groups = ld.transform(c.groups, function (memo, groups, type) {
         memo[type] = ld.sortByOrder(groups, field, direction);
+      });
+      rememberSorting.updateValues({
+        wantGroupByField: c.sortField(),
+        wantGroupAsc: c.sortAsc()
       });
     };
 
@@ -215,6 +220,9 @@ module.exports = (function () {
 
     c.computeGroups = function () {
       c.groups = ld(model.groups()).values().sortBy(c.sortField()).value();
+      if (!c.sortAsc()) {
+        c.groups.reverse();
+      }
       var userGroups = u().bookmarks.groups;
       c.groups = ld.reduce(c.groups, function (memo, g) {
         for (var k in c.filters) {

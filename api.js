@@ -31,6 +31,7 @@ var rFS = require('fs').readFileSync;
 var ld = require('lodash');
 var passport = require('passport');
 var jwt = require('jsonwebtoken');
+var cookie = require('js-cookie');
 var express;
 var testMode = false;
 try {
@@ -350,6 +351,25 @@ module.exports = (function () {
             login: u.login,
             key: auth.tokens[u.login].key
           };
+
+          /*
+           * Fix pad authorship mixup
+           * See https://framagit.org/framasoft/ep_mypads/issues/148
+           */
+          if (req.cookies) {
+            var myPadsAuthorCookie  = req.cookies['token-' + u.login];
+            if (myPadsAuthorCookie) {
+              // 60 days * 86400 seconds a day * 1000 = 5184000000 ms
+              res.cookie('token', myPadsAuthorCookie, { maxAge: 5184000000 });
+            } else {
+              var browserAuthorCookie = req.cookies['token'];
+              if (browserAuthorCookie) {
+                // 365 days * 86400 seconds a day * 1000 = 31536000000 ms
+                res.cookie('token-' + u.login, browserAuthorCookie, { maxAge: 31536000000 });
+              }
+            }
+          }
+
           return res.status(200).send({
             success: true,
             user: ld.omit(u, 'password'),
@@ -371,6 +391,16 @@ module.exports = (function () {
 
     app.get(authRoute + '/logout', fn.ensureAuthenticated, function (req, res) {
       delete auth.tokens[req.mypadsLogin];
+
+      /*
+       * Fix pad authorship mixup
+       * See https://framagit.org/framasoft/ep_mypads/issues/148
+       */
+      if (req.cookies && req.cookies['token']) {
+        res.cookie('token-' + req.mypadsLogin, req.cookies['token'], { maxAge: 31536000000 });
+        res.clearCookie('token');
+      }
+
       res.status(200).send({ success: true });
     });
 
@@ -955,7 +985,7 @@ module.exports = (function () {
     * Returns pads too because usefull for public groups and unauth users.
     *
     * Sample URL:
-    * http://etherpad.ndd/mypemailads/api/group/xxxx
+    * http://etherpad.ndd/mypads/api/group/xxxx
     */
 
     app.get(groupRoute + '/:key', function (req, res) {

@@ -1,9 +1,9 @@
 {
    "ACTIONS": {
-      "ACTIONS": "Actions",
-      "CANCEL": "Cancel",
-      "HELP": "Help",
-      "SAVE": "Save"
+      "ACTIONS": "Aktionen",
+      "CANCEL": "Abbrechen",
+      "HELP": "Hilfe",
+      "SAVE": "Speichern"
    },
    "ADMIN": {
       "ERR": {
@@ -83,34 +83,34 @@
    "BACKEND": {
       "ERROR": {
          "AUTHENTICATION": {
-            "ACTIVATION_NEEDED": "Your account has not been confirmed",
-            "ADMIN": "Access denied : you must be an authenticated Etherpad instance admin.",
-            "DENIED": "Access denied",
-            "DENIED_RECORD": "You're not allowed to get this record",
-            "DENIED_RECORD_EDIT": "You're not allowed to edit this record",
-            "MUST_BE": "You must be authenticated",
-            "NOT_AUTH": "Not authenticated",
+            "ACTIVATION_NEEDED": "Dein Account wurde nicht bestätigt.",
+            "ADMIN": "Zugang verweiget. : Du musst als für die Administration der Instanz Etherpad authentifiziert sein.",
+            "DENIED": "Zugang verweiget.",
+            "DENIED_RECORD": "Es ist dir nicht erlaubt diesen Eintrag zu erhalten.",
+            "DENIED_RECORD_EDIT": "Es ist dir nicht erlaubt diesen Eintrag zu ändern.",
+            "MUST_BE": "Du musst authentifiziert sein.",
+            "NOT_AUTH": "Nicht authentifiziert!",
             "NO_RECOVER": "Sorry, you can't recover you password from here",
             "NO_REGISTRATION": "Sorry, registration is disabled",
-            "PASSWORD_INCORRECT": "Password is not correct",
-            "TOKEN_INCORRECT": "Your security token is invalid"
+            "PASSWORD_INCORRECT": "Das Passwor ist nicht korrekt.",
+            "TOKEN_INCORRECT": "Dein Sicherheitstoken ist ungültig."
          },
          "CONFIGURATION": {
-            "CANTGET": "Configuration loading has failed. Please contact your administrator.",
-            "KEY_NOT_FOUND": "The record has not been found",
-            "LANG_PROBLEM": "Language update cannot be done. The default language will be used.",
-            "MAIL_NOT_CONFIGURED": "Mail settings have not been done on this server. Please contact its administrator.",
-            "ROOTURL_NOT_CONFIGURED": "Root Url setting has not been entered on this server. Please contact its administrator."
+            "CANTGET": "Laden der Konfiguration schlug fehl. Bitte kontaktiere Sie die Administration.",
+            "KEY_NOT_FOUND": "Der Eintrag wurde nicht gefunden.",
+            "LANG_PROBLEM": "Aktualisierung von lang kann nicht erledigt werden. Die Voreinstellung (default) wird genutzt werden.",
+            "MAIL_NOT_CONFIGURED": "Einstellungen für Mail wurden auf diesem Server nicht erledigt. Bitte kontaktiere Sie seine Administration.",
+            "ROOTURL_NOT_CONFIGURED": "Einstellung der zentralen (root) URL wurde auf diesen Server nicht eingetragen. Bitte kontaktiere Sie seine Administration."
          },
          "GROUP": {
             "CASCADE_REMOVAL_PROBLEM": "Something goes wrong with cascade pads removal",
-            "INEXISTENT": "Folder does not exist",
-            "ITEMS_NOT_FOUND": "Some users, admins or pads have not been found",
-            "NOT_USER": "You are not an user of this folder",
+            "INEXISTENT": "Der Ordner existiert nicht.",
+            "ITEMS_NOT_FOUND": "Einige Accounts zur Benutzung oder Administration oder Pads konnten nicht gefunden werden.",
+            "NOT_USER": "Ihr Account gehört nicht zu diesen Ordner.",
             "RESIGN_UNIQUE_ADMIN": "You can't resign the unique administrator"
          },
          "PAD": {
-            "INEXISTENT": "Pad does not exist",
+            "INEXISTENT": "Pad exisiert nicht.",
             "ITEMS_NOT_FOUND": "Pad folder or at least one of the users are not found"
          },
          "PERMISSION": {
@@ -118,44 +118,44 @@
             "UNEXPECTED": "Sorry, an unexpected has error has occurred"
          },
          "TOKEN": {
-            "EXPIRED": "Token has expired. Please make a new request.",
-            "INCORRECT": "Used token contains incorrect data for this request."
+            "EXPIRED": "Der Token ist abgelaufen. Bitte fordere eine Neue an.",
+            "INCORRECT": "Der verwendeter Token beinhaltet nicht richtige Daten für diese Anforderung."
          },
          "TYPE": {
-            "CALLBACK_FN": "Callback must be a function",
-            "GID_STR": "gid must be a string",
-            "ID_STR": "_id, when defined, must be a string",
-            "INVITE_BOOL": "Invite must be a boolean",
-            "KEY_STR": "Key must be a string",
-            "LOGINS_ARR": "logins must be an array",
-            "LOGIN_REQUIRED": "Login is required",
-            "LOGIN_STR": "Login must be a string",
-            "MAIL": "Email is invalid",
-            "MSG_STR": "message must be a string",
-            "PARAMS_REQUIRED": "Parameters are mandatory",
-            "PARAM_STR": "Some parameter must be a string",
-            "PASSWORD_MISSING": "Missing password",
-            "PASSWORD_SIZE": "Password size is too short or too long",
-            "PASSWORD_STR": "Password must be a string",
-            "SMTP_CONFIG": "Your SMTP server configuration is invalid",
-            "STR_100": "String can't be more than 100 characters",
-            "SUBJECT_STR": "subject must be a string",
-            "TO_MAIL": "to must be an email address",
-            "TYPE_PADSORGROUPS": "Type must be either pads or folders",
-            "USERLIST_CRUD": "crud must be add, set or del",
-            "USERLIST_ID": "In set and del modes, ulistid is mandatory",
-            "USERLIST_NAME": "In add mode, name of the userlist is mandatory",
-            "USERLIST_SET_PARAMS": "In set mode, name or uids is madantory",
-            "USER_INVALID": "User is invalid",
-            "VALUE_REQUIRED": "Value is mandatory",
-            "WITHEXTRA_BOOL": "withExtra must be a boolean"
+            "CALLBACK_FN": "Rückruf (Callback) muss eine Funktion sein.",
+            "GID_STR": "gid muss eine Zeichenkette (string) sein.",
+            "ID_STR": "_id, wenn definiert, muss eine Zeichenkette (string) sein.",
+            "INVITE_BOOL": "Invite muss boolesch (boolean) sein.",
+            "KEY_STR": "Schlüssel muss eine Zeichenkette (string) sein.",
+            "LOGINS_ARR": "Anmeldungen müssen ein Datenfeld (array) sein.",
+            "LOGIN_REQUIRED": "Anmeldung ist erforderlich.",
+            "LOGIN_STR": "Anmeldung muss eine Zeichenkette (string) sein.",
+            "MAIL": "Mail-Adresse ist ungültig.",
+            "MSG_STR": "message muss eine Zeichenkette (string) sein.",
+            "PARAMS_REQUIRED": "Parameter sind verpflichend.",
+            "PARAM_STR": "Manche Parameter müssen ein eine Zeichenkette (string) sein.",
+            "PASSWORD_MISSING": "Fehlendes Passwort!",
+            "PASSWORD_SIZE": "Größe des Passwortes ist zu kurz oder zu lang.",
+            "PASSWORD_STR": "Passwort muss eine Zeichenkette (string) sein.",
+            "SMTP_CONFIG": "Deine Konfiguration vom Server für SMTP ist gültig.",
+            "STR_100": "Zeichenkette (string) kann nicht länger als 100 Zeichen (char) sein.",
+            "SUBJECT_STR": "subject muss eine Zeichenkette (string) sein.",
+            "TO_MAIL": "to muss eine Mail-Adresse sein.",
+            "TYPE_PADSORGROUPS": "Typ muss entweder eines der Pads oder eine der Ordner sein.",
+            "USERLIST_CRUD": "crud muss add, set or del sein.",
+            "USERLIST_ID": "In den Modi set und del, ist ulistid verpflichtend.",
+            "USERLIST_NAME": "Im Modus add, ist name der userlist verpflichtend.",
+            "USERLIST_SET_PARAMS": "Im Modus set, ist name oder uids verpflichtend.",
+            "USER_INVALID": "Account ist ungültig.",
+            "VALUE_REQUIRED": "Wert ist verpflichend.",
+            "WITHEXTRA_BOOL": "withExtra muss boolesch (boolean) sein."
          },
          "USER": {
-            "ALREADY_EXISTS": "User already exists, please choose another login",
-            "BOOKMARK_NOT_FOUND": "Bookmark not found",
-            "EMAIL_ALREADY_EXISTS": "This user email has already been used, please choose another one",
-            "NOT_FOUND": "User not found",
-            "USERLIST_NOT_FOUND": "Userlist not found"
+            "ALREADY_EXISTS": "Dieser Account existiert bereits. Bitte wähle eine andere Anmeldung.",
+            "BOOKMARK_NOT_FOUND": "Lesezeichnen nicht gefunden.",
+            "EMAIL_ALREADY_EXISTS": "Diese Mail-Adresse wird bereits benutzt. Bitte wähle eine andere.",
+            "NOT_FOUND": "Account nicht gefunden.",
+            "USERLIST_NOT_FOUND": "Liste von Accounts nicht gefunden."
          }
       }
    },
@@ -164,13 +164,13 @@
       "TITLE": "My Bookmarks"
    },
    "GLOBAL": {
-      "AND": "and",
-      "DESCRIPTION": "MyPads is an <a href='http://etherpad.org/'>Etherpad</a> plugin which have been founded in 2014 on Ulule by <a href='http://ulule.com/etherpad-framapad/supporters/'>413 backers</a> and organized by the non-profit organization <a href='http://framasoft.org'>Framasoft</a>. It handles :<ul><li>users and their authentication; </li><li>folders of pads per user, unlimited, sharable;</li><li>attached pads, with choice between invite known users to use them, making them private with password or letting them public.</li></ul>",
-      "FOOTER": "Powered by <a href='https://git.framasoft.org/framasoft/ep_mypads'>MyPads</a><br>Published under Apache License 2.0",
-      "LANG": "English",
-      "NO": "no",
-      "OR": "or",
-      "YES": "yes"
+      "AND": "und",
+      "DESCRIPTION": "MyPads ist eine Erweiterung (plugin) für <a href='http://etherpad.org/'>Etherpad</a>, die 2014 von <a href='http://ulule.com/etherpad-framapad/supporters/'>413 Unterstützenden auf Ulule</a> gegründet und von der nicht gewinnorientierten (gemeinnützigen) Organisation <a href='http://framasoft.org'>Framasoft</a> organisiert wird. Sie kümmert sich um :<ul><li>Accounts und deren users and their Authentifikation;</li><li>Ordner von Pads je Account, unbegrenzt, teilbar;</li><li>angehängte Pads, mit der Wahl zwischen dem Einladen von bekannten Accounts, um sie zu nutzen, das Schaffen von Privatheit mit Passwort oder das Belassen als öffentlich.</li></ul>",
+      "FOOTER": "Betrieben durch <a href='https://git.framasoft.org/framasoft/ep_mypads'>MyPads</a><br>Veröffentlicht unter der Lizenz Apache 2.0",
+      "LANG": "Deutsch",
+      "NO": "nein",
+      "OR": "oder",
+      "YES": "ja"
    },
    "GROUP": {
       "ADD": "Add a new folder",
@@ -296,25 +296,25 @@
    },
    "MENU": {
       "ADMIN": "Administration",
-      "BOOKMARK": "My Bookmarks",
-      "CONFIG": "Configuration",
-      "LOGOUT": "Logout",
-      "PAD": "My Folders & Pads",
-      "PROFILE": "My Profile",
-      "USERLIST": "My Userlists",
-      "USERS": "Users"
+      "BOOKMARK": "Meine Lesezeichnen",
+      "CONFIG": "Konfiguration",
+      "LOGOUT": "Abmelden",
+      "PAD": "Meine Ordner & Pads",
+      "PROFILE": "Mein Profil",
+      "USERLIST": "Meine Liste von Accounts",
+      "USERS": "Accounts"
    },
    "NOTIFICATION": {
-      "ERROR": "Error",
-      "ERROR_UNEXPECTED": "An unexpected error has been raised. Please contact the administrator.",
+      "ERROR": "Fehler",
+      "ERROR_UNEXPECTED": "Ein unerwarteter Fehler wurde erreicht. Bitte kontaktire die Administration.",
       "INFO": "Info",
-      "SUCCESS": "Success",
-      "SUCCESS_GENERIC": "Action has been successfully achieved",
-      "WARNING": "Warning"
+      "SUCCESS": "Erfolg",
+      "SUCCESS_GENERIC": "Aktion wurde erfogreich ausgeführt",
+      "WARNING": "Warnung"
    },
    "TAG": {
-      "HELP": "You can associate to this element as many tags as you wish",
-      "PLACEHOLDER": "Enter your tag",
+      "HELP": "Du kannst zu diesem Element so viele Tags wie du möchtest hinzufügen",
+      "PLACEHOLDER": "Gib dein Tag ein",
       "TAGS": "Tags"
    },
    "USER": {
@@ -326,10 +326,10 @@
          "SUCCESS_OUT": "You have been successfully disconnected.",
          "WELCOME": "Welcome"
       },
-      "COLOR": "Customized color for pads",
+      "COLOR": "Angepasste Farbe für Pads",
       "COLOR_SAMPLE": "#00cc00",
-      "EMAIL": "Email",
-      "EMAIL_SAMPLE": "username@example.org",
+      "EMAIL": "Mail-Adresse",
+      "EMAIL_SAMPLE": "account@example.org",
       "ERR": {
          "COLOR": "The hexadecimal code must be like #000000",
          "EMAIL": "The email is required and should be valid",
@@ -337,53 +337,53 @@
          "LOGOUT": "Log out error : you were not authenticated.",
          "PASSWORD_MISMATCH": "The entered passwords do not match."
       },
-      "FIRSTNAME": "Firstname",
-      "FORM": "Login",
+      "FIRSTNAME": "Vorname",
+      "FORM": "Anmeldung",
       "HELP": {
          "PROFILE": "<p>Every change into your profile needs the current password field to be correctly filled. Please note that :</p><ul><li>you can change everything by updating the appropriate field;</li><li>leaving password and password confirmation empty won't affect your current password;</li><li>you can't change your login at the moment but it will be possible in the future;</li><li>if you want to change your password, please enter the new one into the password field and confirm it with the password confirmation.</li></ul>"
       },
       "INFO": {
          "ACCOUNT_CONFIRMATION_SUCCESS": "Your account has been successfully confirmed. You can now login.",
          "CHANGEPASS_SUCCESS": "Your password has been successfully updated.",
-         "COLOR": "The hexademical code for color you want to be used by default in pads",
-         "EMAIL": "The email is required for password recovery",
-         "LANG": "Your default browser configuration, depending on available languages on MyPads",
-         "LOGIN": "The unique login you choose when you have subscribed",
-         "OPTIONAL": "Optional field",
+         "COLOR": "Der hexademizimale Code der Farbe, den du als Voreinstellung in Pads verwenden möchtest,",
+         "EMAIL": "Die Mail-Adresse ist für die Widerherstellung des Passwortes notwendig.",
+         "LANG": "Deine Voreinstellung der Konfiguration beim Browser, abhängig von den verfügbaren Sprachen bei MyPads.",
+         "LOGIN": "Die eindeutige Anmeldung, die du auswähltest als du beitratest.",
+         "OPTIONAL": "freiwillige Angabe",
          "PASSRECOVER_SUCCESS": "You should have received an email to the address you have used when you subscribe. This email contains a Web address that is temporary valid. Please follow this url to change your password.",
-         "PASSWORD_BEGIN": "Must be between ",
-         "PASSWORD_CHECK": "For verification : must be the same as password",
-         "PASSWORD_CURRENT": "Security check : required for all profile changes",
-         "PASSWORD_END": " characters",
+         "PASSWORD_BEGIN": "Muss zwischen",
+         "PASSWORD_CHECK": "Zur Bestätigung : Muss das gleiche wie das Passwort sein",
+         "PASSWORD_CURRENT": "Sicherheitsprüfung : Notwendig für alle Änderungen des Profils",
+         "PASSWORD_END": " Zeichen",
          "REMOVE_ACCOUNT": "Remove definitively your account and all the folders and pads on which you are the unique administrator",
          "REMOVE_ACCOUNT_SUCCESS": "Account removed with success",
          "REMOVE_ACCOUNT_SURE": "You are on the verge of removing definitively your account and all the folders and pads on which you are the unique administrator. If you are really sure about what you are doing, please enter your current password and click OK",
          "USECOLORINPADS": "Use chosen color in pads by default?",
-         "USELOGINANDCOLORINPADS": "Use login and chosen color in pads by default?"
+         "USELOGINANDCOLORINPADS": "Verwende der Anmeldung und ausgewählte Farbe in Pads durch Voreinstellung?"
       },
-      "LANG": "Language",
-      "LASTNAME": "Lastname",
-      "LOGIN": "Login",
-      "MANDATORY_FIELDS": "Mandatory fields",
-      "MYPADS_ACCOUNT": "MyPads account",
-      "OK": "Ok",
-      "OPTIONAL_FIELDS": "Optional fields",
-      "ORGANIZATION": "Organization",
-      "ORSUB": " (or subscribe)",
-      "PASSCHECK": "Password Confirmation",
-      "PASSCURRENT": "Current password",
-      "PASSRECOVER": "Password recovery",
-      "PASSWORD": "Password",
-      "PASSWORD_LOST": "Lost your password?",
+      "LANG": "Lang",
+      "LASTNAME": "Nachname",
+      "LOGIN": "Anmeldung",
+      "MANDATORY_FIELDS": "verpflichtende Angaben",
+      "MYPADS_ACCOUNT": "Account bei MyPads",
+      "OK": "OK",
+      "OPTIONAL_FIELDS": "freiwillige Angaben",
+      "ORGANIZATION": "Organisation",
+      "ORSUB": " (oder beitreten)",
+      "PASSCHECK": "Bestätigung des Passwortes",
+      "PASSCURRENT": "gegenwärtiges Passwort",
+      "PASSRECOVER": "Wiederherstellung des Passwortes",
+      "PASSWORD": "Passwort",
+      "PASSWORD_LOST": "Du hast dein Passwort verloren?",
       "PLEASE_WAIT": "Please wait, the service is currently loading.",
-      "PROFILE": "Profile",
-      "REGISTER": "Register",
-      "REMOVE_ACCOUNT": "Remove my account",
-      "SUBSCRIBE": "Subscribe",
+      "PROFILE": "Profil",
+      "REGISTER": "Registrieren",
+      "REMOVE_ACCOUNT": "Entferne meinen Account.",
+      "SUBSCRIBE": "Beitreten",
       "UNDEF": "********",
       "USECOLORINPADS": "Use color in pads?",
       "USELOGINANDCOLORINPADS": "Use login and color in pads?",
-      "USERNAME": "Username"
+      "USERNAME": "Names des Accounts"
    },
    "USERLIST": {
       "ADD": "Create a new userlist",

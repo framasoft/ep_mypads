@@ -174,6 +174,7 @@ module.exports = (function () {
           target: '_blank',
           title: conf.LANG.GROUP.PAD.OPEN_TAB,
           onclick: function () {
+            expandPad.reduceIframe(false);
             c.showIframe(false);
             return true;
           }
@@ -199,11 +200,9 @@ module.exports = (function () {
     })();
     var showPass = (!c.isAdmin && isPrivate && !c.sendPass());
     if (showPass) { return view.passForm(c); }
-    var options = { class: 'group' };
-    if (isPrivate && c.sendPass()) { options.config = expandPad.autoExpand; }
     var route = '/mypads/group/' + c.gid;
     var GROUP = conf.LANG.GROUP;
-    return m('section', options, [
+    return m('section', { class: 'group' }, [
       m('.btn-group.pull-right', [
         (function () {
           var isGroupSharable = (c.group && c.group.visibility &&
@@ -269,7 +268,6 @@ module.exports = (function () {
               m('a', {
                 href: route + '/view',
                 config: m.route,
-                onclick: function() { expandPad.reduceIframe(false) },
                 title: conf.LANG.GROUP.VIEW
               }, c.group.name ),
               ')'

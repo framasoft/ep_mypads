@@ -142,13 +142,23 @@ module.exports = (function () {
   * - `aside` vdom content.
   */
 
+  var padViewRouteRegex = new RegExp('/mypads/group/[^/]*/pad/view/[^/]*');
   layout.view = function (main, aside, padView) {
-    var options = {};
-    if (padView) {
-      options = { config: expandPad.autoExpand };
-    };
+    var header  = 'header';
+    var footer  = 'footer.container.ombre';
+    var asideC  = 'aside.col-md-3.col-xs-12';
+    var mainC   = 'main.container.ombre';
+    var section = 'section.col-md-9.col-xs-12';
+    // If the user wants to expand pad and if we are on the view pad page
+    if (expandPad.wantExpandedPad() && m.route().match(padViewRouteRegex)) {
+      header  = header+'.hidden';
+      footer  = footer+'.hidden';
+      asideC  = asideC+'.hidden';
+      mainC   = 'main.container-fluid.ombre';
+      section = 'section.col-md-12.col-xs-12';
+    }
     return [
-      m('header', [
+      m(header, [
         m('ul.lang.container', ld.reduce(conf.SERVER.languages,
           function (memo, val, key) {
             var cls = (key === conf.USERLANG) ? 'active': '';
@@ -167,12 +177,12 @@ module.exports = (function () {
           ])
         ])
       ]),
-      m('main.container.ombre', [
-        m('section.col-md-9.col-xs-12', options, main || ''),
-        m('aside.col-md-3.col-xs-12', aside || '')
+      m(mainC, [
+        m(section, { config: expandPad.autoExpand }, main || ''),
+        m(asideC, aside || '')
       ]),
       m('section', { class: 'notification' }, notif.view(notif.controller())),
-      m('footer.container.ombre', m('p', [
+      m(footer, m('p', [
         m('span', m.trust(conf.LANG.GLOBAL.FOOTER + ' | ')),
         m('a', { href: '/admin', config: m.route }, conf.LANG.MENU.ADMIN)
       ]))

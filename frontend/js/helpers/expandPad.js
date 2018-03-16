@@ -34,15 +34,22 @@ module.exports = (function () {
   var expandPad = {};
 
   /*
-   * Expand iframe when view is initialized and the cookie says to
+   * Expand iframe when the cookie says to
    */
   expandPad.autoExpand = function(element, isInitialized) {
     if (isInitialized) return;
 
-    var wantExpandedPad = cookie.get('wantExpandedPad');
-    if (typeof wantExpandedPad === 'string' && wantExpandedPad === 'true') {
+    if (expandPad.wantExpandedPad()) {
       expandPad.expandIframe();
     }
+  }
+
+  /*
+   * Read the wantExpandedPad cookie and if it says that the user wants to expand iframe
+   */
+  expandPad.wantExpandedPad = function() {
+    var wantExpandedPad = cookie.get('wantExpandedPad');
+    return (typeof wantExpandedPad === 'string' && wantExpandedPad === 'true');
   }
 
   /*
@@ -56,23 +63,9 @@ module.exports = (function () {
    * Expand the iframe
    */
   expandPad.expandIframe = function() {
-    var toHide        = document.querySelectorAll('#mypads header, #mypads aside, #mypads footer');
-    var section9      = document.querySelector('#mypads main.container section.col-md-9');
-    var mainContainer = document.querySelector('#mypads main.container');
     var iframe        = document.querySelector('section.pad iframe');
     var aExpandI      = document.querySelector('a.expand-toggle i');
     var aExpand       = document.querySelector('a.expand-toggle');
-
-    // Hack due to browsers that does not support forEach on nodeList
-    [].forEach.call(toHide, function(element) {
-        element.classList.add('hidden');
-    });
-
-    section9.classList.remove('col-md-9');
-    section9.classList.add('col-md-12');
-
-    mainContainer.classList.remove('container');
-    mainContainer.classList.add('container-fluid');
 
     iframe.style.height = '80vh';
 
@@ -91,23 +84,9 @@ module.exports = (function () {
     if (typeof(remember) === 'undefined') {
       remember = true;
     }
-    var toShow        = document.querySelectorAll('#mypads header, #mypads aside, #mypads footer');
-    var section12     = document.querySelector('#mypads main.container-fluid section.col-md-12');
-    var mainContainer = document.querySelector('#mypads main.container-fluid');
     var iframe        = document.querySelector('section.pad iframe');
     var aExpandI      = document.querySelector('a.expand-toggle i');
     var aExpand       = document.querySelector('a.expand-toggle');
-
-    // Hack due to browsers that does not support forEach on nodeList
-    [].forEach.call(toShow, function(element) {
-        element.classList.remove('hidden');
-    });
-
-    section12.classList.remove('col-md-12');
-    section12.classList.add('col-md-9');
-
-    mainContainer.classList.remove('container-fluid');
-    mainContainer.classList.add('container');
 
     iframe.style.height = null;
 

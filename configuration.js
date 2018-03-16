@@ -56,7 +56,7 @@ module.exports = (function() {
       hideHelpBlocks: false,
       passwordMin: 8,
       passwordMax: 30,
-      languages: { en: 'English', fr: 'Français' },
+      languages: { en: 'English', fr: 'Français', de: 'Deutsch' },
       defaultLanguage: 'en',
       HTMLExtraHead: '',
       checkMails: false,
@@ -127,7 +127,11 @@ module.exports = (function() {
           if (err) { return callback(err); }
           configuration.cache = ld.transform(res, function (memo, val, key) {
             key = key.replace(DBPREFIX, '');
-            memo[key] = val;
+            if (key === 'languages') {
+              memo[key] = configuration.DEFAULTS.languages;
+            } else {
+              memo[key] = val;
+            }
           });
           return callback(null);
         });

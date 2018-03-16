@@ -33,6 +33,7 @@ module.exports = (function () {
   var conf = require('../configuration.js');
   var auth = require('../auth.js');
   var notif = require('../widgets/notification.js');
+  var encode = require('js-base64').Base64.encode;
 
   var model = {};
   model.init = function () {
@@ -117,7 +118,7 @@ module.exports = (function () {
         url: conf.URLS.PAD + '/' + keys.pad + '?',
         method: 'GET'
       };
-      if (password) { opts.url += '&password=' + password; }
+      if (password) { opts.url += '&password=' + encode(password); }
       if (auth.isAuthenticated()) { opts.url += '&auth_token=' + auth.token(); }
       m.request(opts).then(
         function (resp) {
@@ -153,7 +154,7 @@ module.exports = (function () {
         url: conf.URLS.GROUP + '/' + keys.group + '?',
         method: 'GET',
       };
-      if (password) { opts.url += '&password=' + password; }
+      if (password) { opts.url += '&password=' + encode(password); }
       if (auth.isAuthenticated()) { opts.url += '&auth_token=' + auth.token(); }
       m.request(opts).then(
         function (resp) {

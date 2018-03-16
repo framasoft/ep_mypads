@@ -1,418 +1,415 @@
 {
-  "BACKEND": {
-    "ERROR": {
-      "TYPE": {
-        "PARAMS_REQUIRED": "Des paramètres sont obligatoires",
-        "PARAM_STR": "L'un des arguments devrait être une chaîne de caractères",
-        "STR_100": "La chaîne de caractères ne peut dépasser 100 caractères",
-        "CALLBACK_FN": "Callback doit être une fonction",
-        "KEY_STR": "Key doit être une chaîne de caractères",
-        "VALUE_REQUIRED": "Value est obligatoire",
-        "LOGIN_STR": "Login doit être une chaîne de caractères",
-        "LOGIN_REQUIRED": "Un identifiant est obligatoire",
-        "PASSWORD_STR": "Password doit être une chaîne de caractères",
-        "PASSWORD_MISSING": "Le mot de passe est manquant",
-        "PASSWORD_SIZE": "La taille du mot de passe est invalide",
-        "MAIL": "Le mail est invalide",
-        "ID_STR": "_id, lorsque défini, doit être une chaîne de caractères",
-        "USER_INVALID": "User n'est pas valide",
-        "WITHEXTRA_BOOL": "withExtra doit être un booléen",
-        "INVITE_BOOL": "Invite doit être un booléen",
-        "GID_STR": "gid doit être une chaîne de caractères",
-        "LOGINS_ARR": "logins doit être un tableau JavaScript",
-        "TYPE_PADSORGROUPS": "Type doit être soit pads, soit groups",
-        "USERLIST_CRUD": "crud doit être add, set ou del",
-        "USERLIST_ID": "Dans les modes set et del, ulistid est obligatoire",
-        "USERLIST_NAME": "Dans le mode création, le nom de la liste utilisateur est obligatoire",
-        "USERLIST_SET_PARAMS": "Dans le mode édition, le nom ou la liste des identifiants utilisateurs est obligatoire",
-        "SMTP_CONFIG": "Votre configuration SMTP est invalide",
-        "TO_MAIL": "to doit être une adresse mail valide",
-        "SUBJECT_STR": "subject doit être une chaîne de caractères",
-        "MSG_STR": "message doit être une chaîne de caractères"
+   "ACTIONS": {
+      "ACTIONS": "Actions",
+      "CANCEL": "Annuler",
+      "HELP": "Aide",
+      "SAVE": "Sauvegarder"
+   },
+   "ADMIN": {
+      "ERR": {
+         "LANGUAGE_DEFAULT": "Une langue par défaut doit être choisie",
+         "PASSWORD_MAX": "La taille maximum est obligatoire",
+         "PASSWORD_MIN": "La taille minimum est obligatoire",
+         "PASSWORD_SIZE": "La taille minimum ne peut être plus élevée que la maximum. Merci de vérifier vos saisies.",
+         "ROOTURL": "Doit être une URL valide",
+         "SMTP_EMAILFROM": "Doit être une adresse mail valide",
+         "TITLE": "Le titre est obligatoire"
       },
-      "CONFIGURATION": {
-        "LANG_PROBLEM": "Le changement de langue n'a pu être fait. La langue par défaut sera utilisée.",
-        "CANTGET": "Le chargement de la configuration a échoué. Merci de contacter votre administrateur.",
-        "KEY_NOT_FOUND": "L'enregistrement n'a pas été trouvé",
-        "MAIL_NOT_CONFIGURED": "Le paramétrage des envois de mail n'a pas été fait sur ce serveur. Merci de contacter son administrateur.",
-        "ROOTURL_NOT_CONFIGURED": "Le paramétrage de l'adresse Web racine n'a pas été fait sur ce serveur. Merci de contacter son administrateur."
+      "ETHERPAD_ACCOUNT": "Compte Etherpad",
+      "FIELD": {
+         "ALLOW_ETHERPADS": "Pads anonymes",
+         "APPLY": "Appliquer",
+         "CHECKMAILS": "Vérifier les mails",
+         "HIDE_HELP_BLOCKS": "Cacher les blocs d'aide",
+         "HTMLEXTRA_HEAD": "HTML pour <head>",
+         "LANGUAGE_DEFAULT": "Langue par défaut",
+         "OPEN_REGISTRATION": "Inscriptions ouvertes",
+         "PASSWORD_MAX": "Taille maximum",
+         "PASSWORD_MIN": "Taille minimum",
+         "ROOTURL": "Adresse Web",
+         "SEARCH": "Rechercher",
+         "SMTP_EMAILFROM": "Email d'envoi",
+         "SMTP_HOST": "Hôte SMTP",
+         "SMTP_PASS": "Mot de passe",
+         "SMTP_PORT": "Port SMTP",
+         "SMTP_SSL": "Chiffrement par SSL",
+         "SMTP_TLS": "Chiffrement par TLS",
+         "SMTP_USER": "Utilisateur",
+         "TITLE": "Titre",
+         "TOKEN_DURATION": "Validité des jetons",
+         "USE_FIRST_AND_LAST_NAME_IN_PADS": "Utiliser le prénom et le nom comme identifiant dans les pads"
       },
-      "AUTHENTICATION": {
-        "MUST_BE": "Vous devez être authentifié",
-        "ACTIVATION_NEEDED": "Votre compte n'a pas été confirmé",
-        "NOT_AUTH": "Pas authentifié",
-        "PASSWORD_INCORRECT": "Le mot de passe n'est pas correct",
-        "TOKEN_INCORRECT": "Votre jeton de sécurité est invalide",
-        "ADMIN": "Accès interdit : vous devez être un administrateur authentifié de l'instance Etherpad",
-        "DENIED": "Accès interdit",
-        "DENIED_RECORD": "Vous n'êtes pas autorisé à voir cet enregistrement",
-        "DENIED_RECORD_EDIT": "Vous n'êtes pas autorisé à modifier cet enregistrement",
-        "NO_REGISTRATION": "Désolé, la création de comptes est désactivée",
-        "NO_RECOVER": "Désolé, vous ne pouvez pas récupérer votre mot de passe à partir d'ici"
+      "FORM_LOGIN": "Identification pour l'administration",
+      "FORM_SETTINGS": "Configuration MyPads",
+      "FORM_USERS_SEARCH": "Rechercher un utilisateur",
+      "FORM_USER_EDIT": "Modification du profil de l'utilisateur",
+      "HELP_LOGIN": "<p>L'administration de MyPads utilise celle d'Etherpad. Merci de saisir un couple identifiant mot de passe autorisé, tel que fixé dans le fichier de configuration d'Etherpad, <em>settings.json</em>, afin de pouvoir modifier la configuration de MyPads.</p>",
+      "HELP_SETTINGS": "<h3>Paramètres</h3><p>Seuls les administrateurs de l'instance Etherpad ont accès à cette page. Vous pouvez y éditer les paramètres généraux et appliquer vos changements. Ceux-ci seront effectifs immédiatement.</p><h3>Mots de passe</h3><p>Attention avec les tailles de mot de passe : si vous avez déjà des utilisateurs et que vous augmentez la taille minimum ou réduisez le maximum, certains mots de passe risquent de ne plus pouvoir être saisis.</p><h3>Configuration mail</h3><p>MyPads peut vérifier les adresses mails des inscrits en leur envoyant un mail à partir duquel ils pourront confirmer que leur adresse existe bien. De plus, MyPads a besoin d'envoyer un mail pour la récupération de mot de passe.</p><p>Soyez prudents avec la configuration du serveur d'envoi SMTP : de mauvais paramètres pourraient conduire à l'arrêt de votre instance Etherpad.</p><p>Veuillez noter qu'à la différence des autres paramètres, la configuration SMTP ne sera prise en compte qu'après redémarrage de l'instance Eherpad.</p>",
+      "HELP_USERS": "<p>Cette page d'administration est là afin que vous puissiez trouver un utilisateur en saisissant son identifiant. Une fois cela fait, vous serez en capacité de modifier ou supprimer cet utilisateur.</p><p>Pour des questions de simplicité et de performance, nous ne proposons pas ici une liste complète de tous les utilisateurs inscrits.</p>",
+      "HELP_USER_EDIT": "<p>Vous pourrez ici mettre à jour toutes les données associées à un utilisateur existant.</p><p>Veuillez noter que par défaut, laisser le mot de passe vide signifie conserver le mot de passe utilisateur actuel. Si vous voulez changer ce mot de passe, vous devez remplir le champ correspondant ainsi que celui de confirmation.</p>",
+      "INFO": {
+         "ALLOW_ETHERPADS": "Autoriser les pads anonymes classiques sur l'instance Etherpad, pads créés à partir de l'adresse racine du serveur",
+         "CHECKMAILS": "Vérification des adresses mails données par les utilisateurs lors de leur inscription",
+         "HIDE_HELP_BLOCKS": "Des blocs d'aide sont affichés dans de multiples pages de MyPads, vous pouvez les cacher avec ce paramètre de configuration",
+         "HTMLEXTRA_HEAD": "Code HTML personnalisé qui sera ajouté à la balise <head>",
+         "LANGUAGE_DEFAULT": "Langue par défaut pour les utilisateurs sans compte",
+         "LOGIN": "L'identifiant administrateur donné dans le fichier settings.json d'Etherpad",
+         "NOCHANGE": "La configuration n'a pas été modifiée, aucune mise à jour n'a donc été envoyée",
+         "OPEN_REGISTRATION": "Permettre à tout un chacun de se créer un compte (sans effet si l'authentification LDAP est utilisée)",
+         "PASSWORD_MAX": "Nombre maximum de caractères pour les mots de passe",
+         "PASSWORD_MIN": "Nombre minimum de caractères pour les mots de passe",
+         "ROOTURL": "La racine de l'adresse Web utilisée pour accéder à Etherpad",
+         "SMTP_EMAILFROM": "Adresse courriel à utiliser pour envoyer des messages depuis MyPads",
+         "SMTP_HOST": "Le nom de domaine sur lequel pointer pour le serveur SMTP",
+         "SMTP_PASS": "Facultatif : si le serveur SMTP nécessite une authentification, mot de passe à utiliser",
+         "SMTP_PORT": "Le port à utiliser",
+         "SMTP_SSL": "Utiliser le chiffrement SSL pour la connection entre MyPads et le serveur SMTP",
+         "SMTP_TLS": "Utiliser le chiffrement TLS pour la connection entre MyPads et le serveur SMTP",
+         "SMTP_USER": "Facultatif : si le serveur SMTP nécessite une authentification, identifiant à utiliser",
+         "SUCCESS": "La configuration a été mise à jour avec succès",
+         "TITLE": "Titre principal affiché sur votre instance MyPads",
+         "TOKEN_DURATION": "Le temps, en minutes, pendant lequel les jetons générés sont valides, afin que les utilisateurs puissent confirmer leur adresse mail",
+         "USERS_SEARCH_LOGIN": "Merci de saisir un identifiant de manière à effectuer une recherche dans la base de données",
+         "USER_FOUND": "Utilisateur trouvé. Voyez les options dans le formulaire",
+         "USER_NONE": "Pas d'utilisateur pour cet identifiant",
+         "USER_REMOVE_SURE": "Vous êtes sur le point de supprimer définitivement ce compte utilisateur et tous les dossiers et pads pour lesquels cet utilisateur est seul administrateur. Si vous êtes sûr de ce que vous faites, vous pouvez cliquer sur le bouton OK.",
+         "USE_FIRST_AND_LAST_NAME_IN_PADS": "Force l’utilisation du prénom et du nom des utilisateurs dans les pads"
       },
-      "PERMISSION": {
-        "UNEXPECTED": "Désolé, une erreur inattendue s'est produite",
-        "UNAUTHORIZED": "Vous n'êtes pas autorisé à accéder à cet enregistrement"
-      },
-      "GROUP": {
-        "INEXISTENT": "Le dossier n'existe pas",
-        "CASCADE_REMOVAL_PROBLEM": "Quelque chose s'est mal déroulé avec la suppression en cascade des pads",
-        "ITEMS_NOT_FOUND": "Des utilisateurs, administrateurs ou pads n'ont pas été trouvés",
-        "NOT_USER": "Vous n'êtes pas utilisateur de ce dossier",
-        "RESIGN_UNIQUE_ADMIN": "Vous ne pouvez pas désinscrire cet utilisateur du dossier s'il est l'unique administrateur"
-      },
-      "USER": {
-        "ALREADY_EXISTS": "L'utilisateur existe déjà, merci de choisir un autre identifiant",
-        "EMAIL_ALREADY_EXISTS": "Ce mail utilisateur a déjà été utilisé, merci d'en indiquer un autre",
-        "NOT_FOUND": "Utilisateur non trouvé",
-        "BOOKMARK_NOT_FOUND": "Favori non trouvé",
-        "USERLIST_NOT_FOUND": "Liste utilisateur non trouvée"
-      },
-      "PAD": {
-        "INEXISTENT": "Le pad n'existe pas",
-        "ITEMS_NOT_FOUND": "Le dossier rattaché à ce pad ou au moins l'un de ses utilisateurs n'a pas été trouvé"
-      },
-      "TOKEN": {
-        "INCORRECT": "Le token employé contient des données incorrectes pour cette requête.",
-        "EXPIRED": "Le token a expiré. Merci de faire une nouvelle requête."
+      "SETTINGS_GENERAL": "Paramètres généraux",
+      "SETTINGS_MAIL": "Paramètres mails",
+      "SETTINGS_PASSWORD": "Paramètres mot de passe",
+      "USERS_SEARCH_LOGIN": "Rechercher par identifiant"
+   },
+   "BACKEND": {
+      "ERROR": {
+         "AUTHENTICATION": {
+            "ACTIVATION_NEEDED": "Votre compte n'a pas été confirmé",
+            "ADMIN": "Accès interdit : vous devez être un administrateur authentifié de l'instance Etherpad",
+            "DENIED": "Accès interdit",
+            "DENIED_RECORD": "Vous n'êtes pas autorisé à voir cet enregistrement",
+            "DENIED_RECORD_EDIT": "Vous n'êtes pas autorisé à modifier cet enregistrement",
+            "MUST_BE": "Vous devez être authentifié",
+            "NOT_AUTH": "Pas authentifié",
+            "NO_RECOVER": "Désolé, vous ne pouvez pas récupérer votre mot de passe à partir d'ici",
+            "NO_REGISTRATION": "Désolé, la création de comptes est désactivée",
+            "PASSWORD_INCORRECT": "Le mot de passe n'est pas correct",
+            "TOKEN_INCORRECT": "Votre jeton de sécurité est invalide"
+         },
+         "CONFIGURATION": {
+            "CANTGET": "Le chargement de la configuration a échoué. Merci de contacter votre administrateur.",
+            "KEY_NOT_FOUND": "L'enregistrement n'a pas été trouvé",
+            "LANG_PROBLEM": "Le changement de langue n'a pu être fait. La langue par défaut sera utilisée.",
+            "MAIL_NOT_CONFIGURED": "Le paramétrage des envois de mail n'a pas été fait sur ce serveur. Merci de contacter son administrateur.",
+            "ROOTURL_NOT_CONFIGURED": "Le paramétrage de l'adresse Web racine n'a pas été fait sur ce serveur. Merci de contacter son administrateur."
+         },
+         "GROUP": {
+            "CASCADE_REMOVAL_PROBLEM": "Quelque chose s'est mal déroulé avec la suppression en cascade des pads",
+            "INEXISTENT": "Le dossier n'existe pas",
+            "ITEMS_NOT_FOUND": "Des utilisateurs, administrateurs ou pads n'ont pas été trouvés",
+            "NOT_USER": "Vous n'êtes pas utilisateur de ce dossier",
+            "RESIGN_UNIQUE_ADMIN": "Vous ne pouvez pas désinscrire cet utilisateur du dossier s'il est l'unique administrateur"
+         },
+         "PAD": {
+            "INEXISTENT": "Le pad n'existe pas",
+            "ITEMS_NOT_FOUND": "Le dossier rattaché à ce pad ou au moins l'un de ses utilisateurs n'a pas été trouvé"
+         },
+         "PERMISSION": {
+            "UNAUTHORIZED": "Vous n'êtes pas autorisé à accéder à cet enregistrement",
+            "UNEXPECTED": "Désolé, une erreur inattendue s'est produite"
+         },
+         "TOKEN": {
+            "EXPIRED": "Le token a expiré. Merci de faire une nouvelle requête.",
+            "INCORRECT": "Le token employé contient des données incorrectes pour cette requête."
+         },
+         "TYPE": {
+            "CALLBACK_FN": "Callback doit être une fonction",
+            "GID_STR": "gid doit être une chaîne de caractères",
+            "ID_STR": "_id, lorsque défini, doit être une chaîne de caractères",
+            "INVITE_BOOL": "Invite doit être un booléen",
+            "KEY_STR": "Key doit être une chaîne de caractères",
+            "LOGINS_ARR": "logins doit être un tableau JavaScript",
+            "LOGIN_REQUIRED": "Un identifiant est obligatoire",
+            "LOGIN_STR": "Login doit être une chaîne de caractères",
+            "MAIL": "Le mail est invalide",
+            "MSG_STR": "message doit être une chaîne de caractères",
+            "PARAMS_REQUIRED": "Des paramètres sont obligatoires",
+            "PARAM_STR": "L'un des arguments devrait être une chaîne de caractères",
+            "PASSWORD_MISSING": "Le mot de passe est manquant",
+            "PASSWORD_SIZE": "La taille du mot de passe est invalide",
+            "PASSWORD_STR": "Password doit être une chaîne de caractères",
+            "SMTP_CONFIG": "Votre configuration SMTP est invalide",
+            "STR_100": "La chaîne de caractères ne peut dépasser 100 caractères",
+            "SUBJECT_STR": "subject doit être une chaîne de caractères",
+            "TO_MAIL": "to doit être une adresse mail valide",
+            "TYPE_PADSORGROUPS": "Type doit être soit pads, soit groups",
+            "USERLIST_CRUD": "crud doit être add, set ou del",
+            "USERLIST_ID": "Dans les modes set et del, ulistid est obligatoire",
+            "USERLIST_NAME": "Dans le mode création, le nom de la liste utilisateur est obligatoire",
+            "USERLIST_SET_PARAMS": "Dans le mode édition, le nom ou la liste des identifiants utilisateurs est obligatoire",
+            "USER_INVALID": "User n'est pas valide",
+            "VALUE_REQUIRED": "Value est obligatoire",
+            "WITHEXTRA_BOOL": "withExtra doit être un booléen"
+         },
+         "USER": {
+            "ALREADY_EXISTS": "L'utilisateur existe déjà, merci de choisir un autre identifiant",
+            "BOOKMARK_NOT_FOUND": "Favori non trouvé",
+            "EMAIL_ALREADY_EXISTS": "Ce mail utilisateur a déjà été utilisé, merci d'en indiquer un autre",
+            "NOT_FOUND": "Utilisateur non trouvé",
+            "USERLIST_NOT_FOUND": "Liste utilisateur non trouvée"
+         }
       }
-    }
-  },
-  "GLOBAL": {
-    "LANG": "Français",
-    "DESCRIPTION": "MyPads est un plugin <a href='http://etherpad.org/'>Etherpad</a> qui a été financé en 2014 par <a href='http://fr.ulule.com/etherpad-framapad/supporters/'>413 contributeurs</a> sur Ulule et porté par l'association <a href='http://framasoft.org'>Framasoft</a>. Il prend en charge<ul><li>des utilisateurs et leur authentification;</li><li>des dossiers de pads par utilisateur, illimités et partageables;</li><li>les pads qui leur sont attachés, donne la possibilité d'inviter des utilisateurs connus à les utiliser, les rendre privés sous contrainte de mot de passe ou les fixer en accès public.</li></ul>",
-    "FOOTER": "Propulsé par <a href='https://git.framasoft.org/framasoft/ep_mypads'>MyPads</a><br>Publié sous la licence Apache 2.0",
-    "AND": "et",
-    "OR": "ou",
-    "YES": "oui",
-    "NO": "non"
-  },
-  "ACTIONS": {
-    "ACTIONS": "Actions",
-    "HELP": "Aide",
-    "SAVE": "Sauvegarder",
-    "CANCEL": "Annuler"
-  },
-  "MENU": {
-    "PAD": "Mes Dossiers & Pads",
-    "BOOKMARK": "Mes Favoris",
-    "USERLIST": "Mes listes utilisateurs",
-    "PROFILE": "Mon Profil",
-    "ADMIN": "Administration",
-    "CONFIG": "Configuration",
-    "USERS": "Utilisateurs",
-    "LOGOUT": "Déconnexion"
-  },
-  "ADMIN": {
-    "GLOBAL_SETTINGS": "Paramètres généraux"
-  },
-  "NOTIFICATION": {
-    "SUCCESS": "Succès",
-    "SUCCESS_GENERIC": "L'action s'est achevée avec succès",
-    "INFO": "Info",
-    "ERROR": "Erreur",
-    "ERROR_UNEXPECTED": "Une erreur inattendue s'est produite. Merci de contacter l'administrateur.",
-    "WARNING": "Avertissement"
-  },
-  "TAG": {
-    "TAGS": "Labels",
-    "PLACEHOLDER": "Entrez votre label",
-    "HELP": "Vous pouvez associer à cet élément autant de labels que vous le souhaitez"
-  },
-  "USER": {
-    "FORM": "Connexion",
-    "ORSUB": " (ou inscription)",
-    "MANDATORY_FIELDS": "Champs obligatoires",
-    "OPTIONAL_FIELDS": "Champs facultatifs",
-    "MYPADS_ACCOUNT": "Compte MyPads",
-    "SUBSCRIBE": "S'inscrire",
-    "PROFILE": "Profil",
-    "PASSRECOVER": "Récupération de mot de passe",
-    "USERNAME": "Identifiant",
-    "LOGIN": "Se connecter",
-    "PASSWORD": "Mot de passe",
-    "PASSCHECK": "Confirmation de mot de passe",
-    "PASSWORD_LOST": "Mot de passe perdu ?",
-    "PASSCURRENT": "Mot de passe actuel",
-    "EMAIL": "Courriel",
-    "EMAIL_SAMPLE": "identifiant@exemple.org",
-    "LANG": "Langue",
-    "USELOGINANDCOLORINPADS": "Identifiant et couleur dans les pads ?",
-    "USECOLORINPADS": "Couleur dans les pads ?",
-    "FIRSTNAME": "Prénom",
-    "LASTNAME": "Nom",
-    "ORGANIZATION": "Organisation",
-    "COLOR": "Couleur pour les pads",
-    "COLOR_SAMPLE": "#00cc00",
-    "UNDEF": "********",
-    "OK": "Ok",
-    "REGISTER": "S'enregistrer",
-    "REMOVE_ACCOUNT": "Supprimer mon compte",
-    "PLEASE_WAIT": "Veuillez patienter, le service est en train de charger.",
-    "INFO": {
-      "LOGIN": "L'identifiant unique que vous avez choisi lorsque vous vous êtes inscrit",
-      "EMAIL": "L'adresse mail est nécessaire pour la procédure de récupération de mot de passe",
-      "COLOR": "Le code hexadécimal pour la couleur que vous souhaitez utiliser par défaut pour les pads",
-      "LANG": "Selon la configuration de votre navigateur par défaut, dépend de ceux disponibles sur MyPads",
-      "USELOGINANDCOLORINPADS": "Utiliser votre identifiant et votre couleur dans les pads par défaut ?",
-      "USECOLORINPADS": "Utiliser la couleur choisie dans les pads par défaut ?",
-      "PASSWORD_BEGIN": "Doit être compris entre ",
-      "PASSWORD_END": " caractères",
-      "PASSWORD_CHECK": "Pour confirmer : doit être le même que le mot de passe",
-      "PASSWORD_CURRENT": "Mesure de sécurité : nécessaire pour tout changement sur le profil",
-      "OPTIONAL": "Champ facultatif",
-      "REMOVE_ACCOUNT": "Supprimer définitivement votre compte et tous les dossiers et pads dont vous êtes l'unique administrateur",
-      "REMOVE_ACCOUNT_SURE": "Vous êtes sur le point de supprimer définitivement votre compte ainsi que tous les dossiers et pads dont vous êtes l'unique administrateur. Si vous êtes réellement sûr de ce que vous faisez, merci de saisir votre mot de passe et de cliquer sur OK",
-      "REMOVE_ACCOUNT_SUCCESS": "Compte supprimé avec succès",
-      "PASSRECOVER_SUCCESS": "Vous devriez avoir reçu un message sur l'adresse mail que vous avez saisie lors de votre inscription. Ce message contient une adresse Web qui n'est valide que temporairement. Merci de suivre cette adresse afin de modifier votre mot de passe.",
-      "CHANGEPASS_SUCCESS": "Votre mot de passe a été mis à jour avec succès.",
-      "ACCOUNT_CONFIRMATION_SUCCESS": "Votre compte a été confirmé avec succès. Vous pouvez dorénavant vous identifier."
-    },
-    "ERR": {
-      "LOGIN": "Un identifiant est nécessaire",
-      "EMAIL": "Une adresse email est obligatoire et doit être valide",
-      "COLOR": "Le code hexadécimal doit être au format #000000",
-      "LOGOUT": "Erreur à la déconnexion : vous n'étiez pas authentifié",
-      "PASSWORD_MISMATCH": "Les mots de passe saisis ne correspondent pas l'un à l'autre"
-    },
-    "AUTH": {
-      "SUCCESS": "Authentification réussie ! Bienvenue.",
-      "SUCCESS_OUT": "Vous avez été déconnecté avec succès.",
-      "SUBSCRIBE_SUCCESS": "Inscription terminée avec succès ! Bienvenue.",
-      "SUBSCRIBE_CONFIRM_SUCCESS": "Inscription terminée avec succès. Un email vous a été envoyé afin de confirmer votre adresse email avant que vous puissiez vous identifier.",
-      "PROFILE_SUCCESS": "Profil mis à jour avec succès.",
-      "WELCOME": "Bienvenue"
-    },
-    "HELP": {
-      "PROFILE": "<p>Tout changement dans votre profil nécessite votre mot de passe actuel. Merci de noter que :</p><ul><li>vous pouvez modifier toute information en utilisant le champ correspondant;</li><li>laisser les champs de mot de passe et de confirmation vides n'aura pas d'effet sur votre mot de passe actuel;</li><li>vous ne pouvez pas changer d'identifiant pour le moment mais ce sera bientôt possible;</li><li>si vous voulez changer votre mot de passe, merci d'en saisir un nouveau dans le champ mot de passe et de le confirmer avec le champ de confirmation.</li></ul>"
-    }
-  },
-  "GROUP": {
-    "MYGROUPS": "Mes dossiers",
-    "HELP": "Les dossiers peuvent contenir des pads. Vous trouverez ici vos dossiers, c'est à dire ceux que vous avez créés et ceux auxquels vous avez été explicitement invités",
-    "GROUP": "Dossier",
-    "GROUPS": "Dossiers",
-    "NONE": "Aucun dossier",
-    "BOOKMARKED": "Favoris",
-    "ARCHIVED": "Archivés",
-    "ADD": "Créer un nouveau dossier",
-    "ADD_HELP": "<h3>Accès</h3><p>Vous avez le choix entre trois niveaux de visibilité. Cela impactera tous les pads liés :<ul><li><em>restreint</em>, le choix par défaut : l'accès aux pads sera limité à une liste d'utilisateurs invités que vous aurez choisis ;</li><li><em>privé</em> : dans ce mode vous aurez à saisir un mot de passe qui sera vérifié pour autoriser l'accès ;</li><li><em>public</em> : dans ce mode, tous les pads sont publics, les utilisateurs n'ont alors besoin que de l'adresse URL pour y accéder.</li></ul></p><h3>Lecture seule</h3><p>Si vous activez la <em>lecture seule</em>, tous les pads attachés conserveront leur dernier état connu et ne pourront être édités. Notez que la visibilité fonctionnera toujours.</p><h3>Labels</h3><p>Vous pouvez associer des labels à cet élément en cliquant sur le champ correspondant et en les sélectionnant un par un.</p><p>Pour créer un nouveau label, saisissez-le et appuyez sur la touche ENTRÉE ou cliquez sur le bouton 'Ok'. Une fois le label ajouté, il sera automatiquement sélectionné sur ce formulaire.</p><p>Vous pouvez supprimer un label en cliquant sur la croix située à sa droite.</p>",
-    "EDIT": "Modifier",
-    "EDIT_GROUP": "Modifier un dossier",
-    "VIEW": "Voir",
-    "VIEW_MANAGE": "Voir et gérer le dossier et ses pads",
-    "VIEW_HELP": "<p>Les détails d'un dossier vous montrent :<ul><li>les options définies lorsque le dossier a été créé ou mis à jour;</li><li>la liste des pads créés pour ce dossier;</li><li>et la liste des administrateurs et utilisateurs de ce dossier.</li></ul></p><p>À partir de là, vous pouvez : <ul><li>créer de nouveaux pads, les modifier, les supprimer ou les mettre en favoris;</li><li>partager l'administration de votre dossier avec d'autres utilisateurs;</li><li>inviter d'autres utilisateurs à voir et participer aux pads de ce dossier.</li></ul></p>",
-    "SHARE": "Partager",
-    "SHARE_LINK": "Merci de partager cette adresse avec vos invités",
-    "SHARE_PASSWORD": "Merci de saisir le mot de passe afin de pouvoir partager le pad",
-    "REMOVE": "Supprimer",
-    "BOOKMARK": "Mettre en favori",
-    "UNMARK": "Supprimer des favoris",
-    "MARK_SUCCESS": "Favori créé avec succès",
-    "SHARE_ADMIN": "Partager l'administration",
-    "QUIT_GROUP": "Se désabonner du dossier",
-    "INVITE_USER": {
-      "IU": "Inviter et gérer les utilisateurs",
-      "HELP": "<h4>Liste d'utilisateurs</h4><p>Vous pouvez sélectionner une ou plusieurs listes. En en choisissant une, ses membres seront tous invités.</p><h4>Inviter des utilisateurs</h4><p>Ce champ accepte un email ou identifiant à la fois. Quand vous pressez ENTRÉE ou cliquez sur OK, l'élément saisi est ajouté à la liste des utilisateurs invités. Une liste d'utilisateurs connus vous aide à saisir.</p><h4>Utilisateurs</h4><p>Cette liste contient tous les utilisateurs sélectionnés. Vous pouvez les supprimer en cliquant sur la croix rouge [X] derrière chaque élément.</p><h4>Note</h4><p>Merci de noter que, pour le moment, seuls les utilisateurs enregistrés pourront être ajoutés à votre dossier. Cela signifie que les utilisateurs externes à Mypads ne recevront pas de mail pour les inviter à créer un compte.</p>",
-      "USERS_SELECTION": "Sélection d'utilisateurs",
-      "USERS_SELECTED": "Utilisateurs sélectionnés",
-      "PLACEHOLDER": "Mail ou identifiant",
-      "INPUT_HELP": "Vous pouvez inviter autant d'utilisateurs que vous le souhaitez",
-      "SUCCESS": "L'invitation s'est déroulée avec succès pour ",
-      "FAILURE": "Vous ne pouvez pas inviter des utilisateurs qui ne possèdent pas de compte sur cette instance : "
-    },
-    "INVITE_USERLIST": "Inviter une liste d'utilisateurs",
-    "ADMIN_SHARE": {
-      "AS": "Partage d'administration",
-      "SUCCESS": "La partage d'administration s'est achevé avec succès pour ",
-      "FAILURE": "Vous ne pouvez pas partager l'administration de ce dossier avec des utilisateurs qui ne possèdent pas de compte sur cette instance : "
-    },
-    "SORT": {
-      "TITLE": "Ranger par",
-      "HELP": "Par défaut, les dossiers sont ordonnés par la date de création, les plus anciens en premier. Vous pouvez opter pour d'autres tris ici. Cliquer à nouveau inverse l'ordre de tri."
-    },
-    "SEARCH": {
-      "TITLE": "Recherche",
-      "TYPE": "Saisissez ici",
-      "HELP": "Recherche sur les champs les plus communs avec au moins 2 caractères"
-    },
-    "PROPERTIES": "Propriétés",
-    "FIELD": {
-      "NAME": "Nom",
-      "DESCRIPTION": "Description",
-      "VISIBILITY": "Accès",
-      "PRIVATE": "Privé",
-      "RESTRICTED": "Restreint",
-      "PUBLIC": "Public",
-      "READONLY": "Lecture seule",
-      "GROUP_PARAMS": "Paramètres du dossier ?"
-    },
-    "FILTERS": {
-      "TITLE": "Filtres",
-      "ADMIN": "Dossiers dont je suis l'administrateur",
-      "USER": "Dossiers auxquels j'ai été invité",
-      "HELP": "Vous pouvez sélectionner un ou plusieurs filtres, cliquez à nouveau pour les désactiver"
-    },
-    "TAGS": {
-      "TITLE": "Labels",
-      "HELP": "Vous pouvez filtrer par un ou plusieurs labels. Cliquez à nouveau pour les désactiver"
-    },
-    "PAD": {
-      "TITLE": "Titre",
-      "ADMINS": "Administrateurs",
-      "USERS": "Utilisateurs",
-      "USERS_NONE": "Pas d'utilisateur",
-      "PUBLIC_DENIED": "Accès public : vous n'êtes pas autorisé à voir ces données.",
-      "VISIBILITY": "Visibilité",
-      "PAD": "Pad",
-      "PADS": "Pads",
-      "NONE": "Aucun pad attaché",
-      "ADD": "Créer un nouveau pad",
-      "ADD_PROMPT": "Saisissez le nom du nouveau pad",
-      "EDIT": "Modifier un pad",
-      "EDIT_PROMPT": "Saisissez le nouveau nom du pad",
-      "SORT_BY": "Ranger les pads par",
-      "SORT_BY_CREATION": "date de création",
-      "SORT_BY_NAME": "nom",
-      "SORT_BY_UPDATE": "dernière mise à jour",
-      "MOVE": "Déplacer tous les pads vers un autre dossier",
-      "MOVE_TITLE": "Migration des pads du dossier ",
-      "MOVE_HELP": "<p>Merci de sélectionner le dossier souhaité pour votre migration. Seuls les dossiers dont vous êtes administrateur apparaissent.</p><p>Une fois choisi, cliquez sur le bouton d'envoi et attendez un moment</p>",
-      "FROM_GROUP": "dossier :",
-      "VIEW_HELP": "<p>Vous voici sur l'interface principale du pad affiché.</p><p>Si le dossier ou le pad est privé, vous aurez besoin de saisir le mot de passe pour y avoir accès.</p><p>Si vous voulez visualiser le dossier et que vous y avez accès, vous pouvez cliquer sur le nom de celui-ci.</p>",
-      "OPEN_TAB": "Ouvrir dans un nouvel onglet",
-      "EXPAND": "Agrandir",
-      "REDUCE": "Réduire"
-    },
-    "INFO": {
-      "NAME": "Nom",
-      "DESCRIPTION": "Un texte facultatif pour décrire votre dossier",
-      "VISIBILITY": "Requis, restreint par défaut aux utilisateurs ou administrateurs invités",
-      "READONLY": "Si sélectionné les pads liés seront en lecture seule",
-      "PASSWORD": "Requis pour le mode privé",
-      "GROUP_PARAMS": "Par défaut, les pads héritent des paramètres du dossier dont ils font partie. Vous pouvez cependant leur fixer des règles spécifiques",
-      "ADD_SUCCESS": "Le dossier a été ajouté avec succès",
-      "EDIT_SUCCESS": "Le dossier a été mis à jour avec succès",
-      "REMOVE_SUCCESS": "Le dossier a été supprimé avec succès",
-      "REMOVE_SURE": "Voulez-vous vraiment supprimer ce dossier ?",
-      "RESIGN": "Voulez-vous vraiment quitter ce dossier ?",
-      "RESIGN_SUCCESS": "Dossier quitté avec succès",
-      "PAD_REMOVE_SUCCESS": "Le pad a été supprimé avec succès",
-      "PAD_REMOVE_SURE": "Voulez-vous vraiment supprimer ce pad ?",
-      "PAD_ADD_SUCCESS": "Le pad a été créé avec succès",
-      "PAD_EDIT_SUCCESS": "Le pad a été mis à jour avec succès",
-      "PAD_MOVE": "Choisissez le dossier souhaité pour votre migration",
-      "PAD_MOVE_NOGROUP": "Désolé mais aucun autre dossier n'est disponible. Vous devriez en créer un d'abord.",
-      "PAD_MOVE_SUCCESS": "Tous les pads ont été déplacés avec succès"
-    },
-    "ERR": {
-      "NAME": "Le nom du dossier est nécessaire"
-    }
-  },
-  "BOOKMARK": {
-    "TITLE": "Mes favoris",
-    "HELP": "<p>La page de favoris vous permet de voir l'ensemble des éléments de MyPads que vous avez mis en favoris et éventuellement de les en supprimer.</p>"
-  },
-  "USERLIST": {
-    "USERLIST": "Liste utilisateurs",
-    "ADD": "Créer une nouvelle liste d'utilisateurs",
-    "EDIT": "Modifier la liste utilisateurs ",
-    "HELP": "<p>Vous trouverez ici toutes vos listes d'utilisateurs, rangées par date de création. Des informations résumées sont disponibles avec le nom de chaque liste et le nombre d'utilisateurs liés.</p><p>Avec les icônes d'actions, situées en haut à droite de chaque liste, vous pouvez modifier ou supprimer les listes. Davantage de détails sont disponibles sur le formulaire d'édition.</p>",
-    "FORM_HELP": "<h3>Nom</h3><p>Vous devez saisir un nom pour la liste d'utilisateurs, afin de pouvoir l'identifier.</p><h3>Utilisateurs</h3><p>Vous pouvez ajouter autant d'utilisateurs que vous le souhaitez. Pour cela, entrez l'adresse email ou l'identifiant et cliquez sur le bouton 'OK'. Notez que les utilisateurs déjà connus peuvent être sélectionnés depuis la zone de saisie.</p><p>Pour supprimer des utilisateurs, cliquez sur le croix située à la droite de chaque utilisateur.</p>",
-    "FIELD": {
-      "NAME": "Nom",
-      "USERS": "Utilisateurs",
-      "USERS_HELP": "Ajoutez autant d'utilisateurs que vous le souhaitez",
-      "USERSAREA_PLACEHOLDER": "Un email ou identifiant par ligne",
-      "USERSAREA_HELP": "Vous pouvez ajouter autant d'emails ou d'identifiants que vous le souhaitez"
-    },
-    "INFO": {
-      "NAME": "Nom de la liste d'utilisateurs",
-      "ADD_SUCCESS": "La liste d'utilisateurs a été créée avec succès",
-      "EDIT_SUCCESS": "La liste d'utilisateurs a été mise à jour avec succès",
-      "REMOVE_SURE": "Voulez-vous vraiment supprimer cette liste d'utilisateurs ?",
-      "REMOVE_SUCCESS": "La liste d'utilisateurs a été supprimée avec succès",
-      "USER_INVITE": "En sélectionnant une liste, vous inviterez tous ses utilisateurs en même temps",
-      "USER_SUCCESS": "L'ajout d'utilisateurs a été réalisé avec succès pour ",
-      "USER_FAILURE": "Vous ne pouvez pas ajouter des utilisateurs qui ne possèdent pas de compte sur cette instance : "
-    },
-    "ERR": {
-      "NAME": "Le nom de la liste utilisateurs est obligatoire"
-    }
-  },
-  "ADMIN": {
-    "FORM_LOGIN": "Identification pour l'administration",
-    "FORM_SETTINGS": "Configuration MyPads",
-    "FORM_USERS_SEARCH": "Rechercher un utilisateur",
-    "FORM_USER_EDIT": "Modification du profil de l'utilisateur",
-    "SETTINGS_GENERAL": "Paramètres généraux",
-    "SETTINGS_PASSWORD": "Paramètres mot de passe",
-    "SETTINGS_MAIL": "Paramètres mails",
-    "ETHERPAD_ACCOUNT": "Compte Etherpad",
-    "USERS_SEARCH_LOGIN": "Rechercher par identifiant",
-    "HELP_LOGIN": "<p>L'administration de MyPads utilise celle d'Etherpad. Merci de saisir un couple identifiant mot de passe autorisé, tel que fixé dans le fichier de configuration d'Etherpad, <em>settings.json</em>, afin de pouvoir modifier la configuration de MyPads.</p>",
-    "HELP_SETTINGS": "<h3>Paramètres</h3><p>Seuls les administrateurs de l'instance Etherpad ont accès à cette page. Vous pouvez y éditer les paramètres généraux et appliquer vos changements. Ceux-ci seront effectifs immédiatement.</p><h3>Mots de passe</h3><p>Attention avec les tailles de mot de passe : si vous avez déjà des utilisateurs et que vous augmentez la taille minimum ou réduisez le maximum, certains mots de passe risquent de ne plus pouvoir être saisis.</p><h3>Configuration mail</h3><p>MyPads peut vérifier les adresses mails des inscrits en leur envoyant un mail à partir duquel ils pourront confirmer que leur adresse existe bien. De plus, MyPads a besoin d'envoyer un mail pour la récupération de mot de passe.</p><p>Soyez prudents avec la configuration du serveur d'envoi SMTP : de mauvais paramètres pourraient conduire à l'arrêt de votre instance Etherpad.</p><p>Veuillez noter qu'à la différence des autres paramètres, la configuration SMTP ne sera prise en compte qu'après redémarrage de l'instance Eherpad.</p>",
-    "HELP_USERS": "<p>Cette page d'administration est là afin que vous puissiez trouver un utilisateur en saisissant son identifiant. Une fois cela fait, vous serez en capacité de modifier ou supprimer cet utilisateur.</p><p>Pour des questions de simplicité et de performance, nous ne proposons pas ici une liste complète de tous les utilisateurs inscrits.</p>",
-    "HELP_USER_EDIT": "<p>Vous pourrez ici mettre à jour toutes les données associées à un utilisateur existant.</p><p>Veuillez noter que par défaut, laisser le mot de passe vide signifie conserver le mot de passe utilisateur actuel. Si vous voulez changer ce mot de passe, vous devez remplir le champ correspondant ainsi que celui de confirmation.</p>",
-    "FIELD": {
-      "TITLE": "Titre",
-      "ROOTURL": "Adresse Web",
-      "HTMLEXTRA_HEAD": "HTML pour <head>",
-      "PASSWORD_MIN": "Taille minimum",
-      "PASSWORD_MAX": "Taille maximum",
-      "LANGUAGE_DEFAULT": "Langue par défaut",
-      "ALLOW_ETHERPADS": "Pads anonymes",
-      "OPEN_REGISTRATION": "Inscriptions ouvertes",
-      "HIDE_HELP_BLOCKS": "Cacher les blocs d'aide",
-      "USE_FIRST_AND_LAST_NAME_IN_PADS": "Utiliser le prénom et le nom comme identifiant dans les pads",
-      "CHECKMAILS": "Vérifier les mails",
-      "TOKEN_DURATION": "Validité des jetons",
-      "SMTP_HOST": "Hôte SMTP",
-      "SMTP_PORT": "Port SMTP",
-      "SMTP_SSL": "Chiffrement par SSL",
-      "SMTP_TLS": "Chiffrement par TLS",
-      "SMTP_USER": "Utilisateur",
-      "SMTP_PASS": "Mot de passe",
-      "SMTP_EMAILFROM": "Email d'envoi",
-      "APPLY": "Appliquer",
-      "SEARCH": "Rechercher"
-    },
-    "INFO": {
-      "LOGIN": "L'identifiant administrateur donné dans le fichier settings.json d'Etherpad",
-      "TITLE": "Titre principal affiché sur votre instance MyPads",
-      "ROOTURL": "La racine de l'adresse Web utilisée pour accéder à Etherpad",
-      "HTMLEXTRA_HEAD": "Code HTML personnalisé qui sera ajouté à la balise <head>",
-      "PASSWORD_MIN": "Nombre minimum de caractères pour les mots de passe",
-      "PASSWORD_MAX": "Nombre maximum de caractères pour les mots de passe",
-      "LANGUAGE_DEFAULT": "Langue par défaut pour les utilisateurs sans compte",
-      "ALLOW_ETHERPADS": "Autoriser les pads anonymes classiques sur l'instance Etherpad, pads créés à partir de l'adresse racine du serveur",
-      "OPEN_REGISTRATION": "Permettre à tout un chacun de se créer un compte (sans effet si l'authentification LDAP est utilisée)",
-      "HIDE_HELP_BLOCKS": "Des blocs d'aide sont affichés dans de multiples pages de MyPads, vous pouvez les cacher avec ce paramètre de configuration",
-      "USE_FIRST_AND_LAST_NAME_IN_PADS": "Force l’utilisation du prénom et du nom des utilisateurs dans les pads",
-      "CHECKMAILS": "Vérification des adresses mails données par les utilisateurs lors de leur inscription",
-      "TOKEN_DURATION": "Le temps, en minutes, pendant lequel les jetons générés sont valides, afin que les utilisateurs puissent confirmer leur adresse mail",
-      "SMTP_HOST": "Le nom de domaine sur lequel pointer pour le serveur SMTP",
-      "SMTP_PORT": "Le port à utiliser",
-      "SMTP_SSL": "Utiliser le chiffrement SSL pour la connection entre MyPads et le serveur SMTP",
-      "SMTP_TLS": "Utiliser le chiffrement TLS pour la connection entre MyPads et le serveur SMTP",
-      "SMTP_USER": "Facultatif : si le serveur SMTP nécessite une authentification, identifiant à utiliser",
-      "SMTP_PASS": "Facultatif : si le serveur SMTP nécessite une authentification, mot de passe à utiliser",
-      "SMTP_EMAILFROM": "Adresse courriel à utiliser pour envoyer des messages depuis MyPads",
-      "SUCCESS": "La configuration a été mise à jour avec succès",
-      "NOCHANGE": "La configuration n'a pas été modifiée, aucune mise à jour n'a donc été envoyée",
-      "USERS_SEARCH_LOGIN": "Merci de saisir un identifiant de manière à effectuer une recherche dans la base de données",
-      "USER_FOUND": "Utilisateur trouvé. Voyez les options dans le formulaire",
-      "USER_NONE": "Pas d'utilisateur pour cet identifiant",
-      "USER_REMOVE_SURE": "Vous êtes sur le point de supprimer définitivement ce compte utilisateur et tous les dossiers et pads pour lesquels cet utilisateur est seul administrateur. Si vous êtes sûr de ce que vous faites, vous pouvez cliquer sur le bouton OK."
-    },
-    "ERR": {
-      "TITLE": "Le titre est obligatoire",
-      "ROOTURL": "Doit être une URL valide",
-      "PASSWORD_MIN": "La taille minimum est obligatoire",
-      "PASSWORD_MAX": "La taille maximum est obligatoire",
-      "PASSWORD_SIZE": "La taille minimum ne peut être plus élevée que la maximum. Merci de vérifier vos saisies.",
-      "LANGUAGE_DEFAULT": "Une langue par défaut doit être choisie",
-      "SMTP_EMAILFROM": "Doit être une adresse mail valide"
-    }
-  }
+   },
+   "BOOKMARK": {
+      "HELP": "<p>La page de favoris vous permet de voir l'ensemble des éléments de MyPads que vous avez mis en favoris et éventuellement de les en supprimer.</p>",
+      "TITLE": "Mes favoris"
+   },
+   "GLOBAL": {
+      "AND": "et",
+      "DESCRIPTION": "MyPads est un plugin <a href='http://etherpad.org/'>Etherpad</a> qui a été financé en 2014 par <a href='http://fr.ulule.com/etherpad-framapad/supporters/'>413 contributeurs</a> sur Ulule et porté par l'association <a href='http://framasoft.org'>Framasoft</a>. Il prend en charge<ul><li>des utilisateurs et leur authentification;</li><li>des dossiers de pads par utilisateur, illimités et partageables;</li><li>les pads qui leur sont attachés, donne la possibilité d'inviter des utilisateurs connus à les utiliser, les rendre privés sous contrainte de mot de passe ou les fixer en accès public.</li></ul>",
+      "FOOTER": "Propulsé par <a href='https://git.framasoft.org/framasoft/ep_mypads'>MyPads</a><br>Publié sous la licence Apache 2.0",
+      "LANG": "Français",
+      "NO": "non",
+      "OR": "ou",
+      "YES": "oui"
+   },
+   "GROUP": {
+      "ADD": "Créer un nouveau dossier",
+      "ADD_HELP": "<h3>Accès</h3><p>Vous avez le choix entre trois niveaux de visibilité. Cela impactera tous les pads liés :<ul><li><em>restreint</em>, le choix par défaut : l'accès aux pads sera limité à une liste d'utilisateurs invités que vous aurez choisis ;</li><li><em>privé</em> : dans ce mode vous aurez à saisir un mot de passe qui sera vérifié pour autoriser l'accès ;</li><li><em>public</em> : dans ce mode, tous les pads sont publics, les utilisateurs n'ont alors besoin que de l'adresse URL pour y accéder.</li></ul></p><h3>Lecture seule</h3><p>Si vous activez la <em>lecture seule</em>, tous les pads attachés conserveront leur dernier état connu et ne pourront être édités. Notez que la visibilité fonctionnera toujours.</p><h3>Labels</h3><p>Vous pouvez associer des labels à cet élément en cliquant sur le champ correspondant et en les sélectionnant un par un.</p><p>Pour créer un nouveau label, saisissez-le et appuyez sur la touche ENTRÉE ou cliquez sur le bouton 'Ok'. Une fois le label ajouté, il sera automatiquement sélectionné sur ce formulaire.</p><p>Vous pouvez supprimer un label en cliquant sur la croix située à sa droite.</p>",
+      "ADMIN_SHARE": {
+         "AS": "Partage d'administration",
+         "FAILURE": "Vous ne pouvez pas partager l'administration de ce dossier avec des utilisateurs qui ne possèdent pas de compte sur cette instance : ",
+         "SUCCESS": "La partage d'administration s'est achevé avec succès pour "
+      },
+      "ARCHIVED": "Archivés",
+      "BOOKMARK": "Mettre en favori",
+      "BOOKMARKED": "Favoris",
+      "EDIT": "Modifier",
+      "EDIT_GROUP": "Modifier un dossier",
+      "ERR": {
+         "NAME": "Le nom du dossier est nécessaire"
+      },
+      "FIELD": {
+         "DESCRIPTION": "Description",
+         "GROUP_PARAMS": "Paramètres du dossier ?",
+         "NAME": "Nom",
+         "PRIVATE": "Privé",
+         "PUBLIC": "Public",
+         "READONLY": "Lecture seule",
+         "RESTRICTED": "Restreint",
+         "VISIBILITY": "Accès"
+      },
+      "FILTERS": {
+         "ADMIN": "Dossiers dont je suis l'administrateur",
+         "HELP": "Vous pouvez sélectionner un ou plusieurs filtres, cliquez à nouveau pour les désactiver",
+         "TITLE": "Filtres",
+         "USER": "Dossiers auxquels j'ai été invité"
+      },
+      "GROUP": "Dossier",
+      "GROUPS": "Dossiers",
+      "HELP": "Les dossiers peuvent contenir des pads. Vous trouverez ici vos dossiers, c'est à dire ceux que vous avez créés et ceux auxquels vous avez été explicitement invités",
+      "INFO": {
+         "ADD_SUCCESS": "Le dossier a été ajouté avec succès",
+         "DESCRIPTION": "Un texte facultatif pour décrire votre dossier",
+         "EDIT_SUCCESS": "Le dossier a été mis à jour avec succès",
+         "GROUP_PARAMS": "Par défaut, les pads héritent des paramètres du dossier dont ils font partie. Vous pouvez cependant leur fixer des règles spécifiques",
+         "NAME": "Nom",
+         "PAD_ADD_SUCCESS": "Le pad a été créé avec succès",
+         "PAD_EDIT_SUCCESS": "Le pad a été mis à jour avec succès",
+         "PAD_MOVE": "Choisissez le dossier souhaité pour votre migration",
+         "PAD_MOVE_NOGROUP": "Désolé mais aucun autre dossier n'est disponible. Vous devriez en créer un d'abord.",
+         "PAD_MOVE_SUCCESS": "Tous les pads ont été déplacés avec succès",
+         "PAD_REMOVE_SUCCESS": "Le pad a été supprimé avec succès",
+         "PAD_REMOVE_SURE": "Voulez-vous vraiment supprimer ce pad ?",
+         "PASSWORD": "Requis pour le mode privé",
+         "READONLY": "Si sélectionné les pads liés seront en lecture seule",
+         "REMOVE_SUCCESS": "Le dossier a été supprimé avec succès",
+         "REMOVE_SURE": "Voulez-vous vraiment supprimer ce dossier ?",
+         "RESIGN": "Voulez-vous vraiment quitter ce dossier ?",
+         "RESIGN_SUCCESS": "Dossier quitté avec succès",
+         "VISIBILITY": "Requis, restreint par défaut aux utilisateurs ou administrateurs invités"
+      },
+      "INVITE_USER": {
+         "FAILURE": "Vous ne pouvez pas inviter des utilisateurs qui ne possèdent pas de compte sur cette instance : ",
+         "HELP": "<h4>Liste d'utilisateurs</h4><p>Vous pouvez sélectionner une ou plusieurs listes. En en choisissant une, ses membres seront tous invités.</p><h4>Inviter des utilisateurs</h4><p>Ce champ accepte un email ou identifiant à la fois. Quand vous pressez ENTRÉE ou cliquez sur OK, l'élément saisi est ajouté à la liste des utilisateurs invités. Une liste d'utilisateurs connus vous aide à saisir.</p><h4>Utilisateurs</h4><p>Cette liste contient tous les utilisateurs sélectionnés. Vous pouvez les supprimer en cliquant sur la croix rouge [X] derrière chaque élément.</p><h4>Note</h4><p>Merci de noter que, pour le moment, seuls les utilisateurs enregistrés pourront être ajoutés à votre dossier. Cela signifie que les utilisateurs externes à Mypads ne recevront pas de mail pour les inviter à créer un compte.</p>",
+         "INPUT_HELP": "Vous pouvez inviter autant d'utilisateurs que vous le souhaitez",
+         "IU": "Inviter et gérer les utilisateurs",
+         "PLACEHOLDER": "Mail ou identifiant",
+         "SUCCESS": "L'invitation s'est déroulée avec succès pour ",
+         "USERS_SELECTED": "Utilisateurs sélectionnés",
+         "USERS_SELECTION": "Sélection d'utilisateurs"
+      },
+      "INVITE_USERLIST": "Inviter une liste d'utilisateurs",
+      "MARK_SUCCESS": "Favori créé avec succès",
+      "MYGROUPS": "Mes dossiers",
+      "NONE": "Aucun dossier",
+      "PAD": {
+         "ADD": "Créer un nouveau pad",
+         "ADD_PROMPT": "Saisissez le nom du nouveau pad",
+         "ADMINS": "Administrateurs",
+         "EDIT": "Modifier un pad",
+         "EDIT_PROMPT": "Saisissez le nouveau nom du pad",
+         "EXPAND": "Agrandir",
+         "FROM_GROUP": "dossier :",
+         "MOVE": "Déplacer tous les pads vers un autre dossier",
+         "MOVE_HELP": "<p>Merci de sélectionner le dossier souhaité pour votre migration. Seuls les dossiers dont vous êtes administrateur apparaissent.</p><p>Une fois choisi, cliquez sur le bouton d'envoi et attendez un moment</p>",
+         "MOVE_TITLE": "Migration des pads du dossier ",
+         "NONE": "Aucun pad attaché",
+         "OPEN_TAB": "Ouvrir dans un nouvel onglet",
+         "PAD": "Pad",
+         "PADS": "Pads",
+         "PUBLIC_DENIED": "Accès public : vous n'êtes pas autorisé à voir ces données.",
+         "REDUCE": "Réduire",
+         "SORT_BY": "Ranger les pads par",
+         "SORT_BY_CREATION": "date de création",
+         "SORT_BY_NAME": "nom",
+         "SORT_BY_UPDATE": "dernière mise à jour",
+         "TITLE": "Titre",
+         "USERS": "Utilisateurs",
+         "USERS_NONE": "Pas d'utilisateur",
+         "VIEW_HELP": "<p>Vous voici sur l'interface principale du pad affiché.</p><p>Si le dossier ou le pad est privé, vous aurez besoin de saisir le mot de passe pour y avoir accès.</p><p>Si vous voulez visualiser le dossier et que vous y avez accès, vous pouvez cliquer sur le nom de celui-ci.</p>",
+         "VISIBILITY": "Visibilité"
+      },
+      "PROPERTIES": "Propriétés",
+      "QUIT_GROUP": "Se désabonner du dossier",
+      "REMOVE": "Supprimer",
+      "SEARCH": {
+         "HELP": "Recherche sur les champs les plus communs avec au moins 2 caractères",
+         "TITLE": "Recherche",
+         "TYPE": "Saisissez ici"
+      },
+      "SHARE": "Partager",
+      "SHARE_ADMIN": "Partager l'administration",
+      "SHARE_LINK": "Merci de partager cette adresse avec vos invités",
+      "SHARE_PASSWORD": "Merci de saisir le mot de passe afin de pouvoir partager le pad",
+      "SORT": {
+         "HELP": "Par défaut, les dossiers sont ordonnés par la date de création, les plus anciens en premier. Vous pouvez opter pour d'autres tris ici. Cliquer à nouveau inverse l'ordre de tri.",
+         "TITLE": "Ranger par"
+      },
+      "TAGS": {
+         "HELP": "Vous pouvez filtrer par un ou plusieurs labels. Cliquez à nouveau pour les désactiver",
+         "TITLE": "Labels"
+      },
+      "UNMARK": "Supprimer des favoris",
+      "VIEW": "Voir",
+      "VIEW_HELP": "<p>Les détails d'un dossier vous montrent :<ul><li>les options définies lorsque le dossier a été créé ou mis à jour;</li><li>la liste des pads créés pour ce dossier;</li><li>et la liste des administrateurs et utilisateurs de ce dossier.</li></ul></p><p>À partir de là, vous pouvez : <ul><li>créer de nouveaux pads, les modifier, les supprimer ou les mettre en favoris;</li><li>partager l'administration de votre dossier avec d'autres utilisateurs;</li><li>inviter d'autres utilisateurs à voir et participer aux pads de ce dossier.</li></ul></p>",
+      "VIEW_MANAGE": "Voir et gérer le dossier et ses pads"
+   },
+   "MENU": {
+      "ADMIN": "Administration",
+      "BOOKMARK": "Mes Favoris",
+      "CONFIG": "Configuration",
+      "LOGOUT": "Déconnexion",
+      "PAD": "Mes Dossiers & Pads",
+      "PROFILE": "Mon Profil",
+      "USERLIST": "Mes listes utilisateurs",
+      "USERS": "Utilisateurs"
+   },
+   "NOTIFICATION": {
+      "ERROR": "Erreur",
+      "ERROR_UNEXPECTED": "Une erreur inattendue s'est produite. Merci de contacter l'administrateur.",
+      "INFO": "Info",
+      "SUCCESS": "Succès",
+      "SUCCESS_GENERIC": "L'action s'est achevée avec succès",
+      "WARNING": "Avertissement"
+   },
+   "TAG": {
+      "HELP": "Vous pouvez associer à cet élément autant de labels que vous le souhaitez",
+      "PLACEHOLDER": "Entrez votre label",
+      "TAGS": "Labels"
+   },
+   "USER": {
+      "AUTH": {
+         "PROFILE_SUCCESS": "Profil mis à jour avec succès.",
+         "SUBSCRIBE_CONFIRM_SUCCESS": "Inscription terminée avec succès. Un email vous a été envoyé afin de confirmer votre adresse email avant que vous puissiez vous identifier.",
+         "SUBSCRIBE_SUCCESS": "Inscription terminée avec succès ! Bienvenue.",
+         "SUCCESS": "Authentification réussie ! Bienvenue.",
+         "SUCCESS_OUT": "Vous avez été déconnecté avec succès.",
+         "WELCOME": "Bienvenue"
+      },
+      "COLOR": "Couleur pour les pads",
+      "COLOR_SAMPLE": "#00cc00",
+      "EMAIL": "Courriel",
+      "EMAIL_SAMPLE": "identifiant@exemple.org",
+      "ERR": {
+         "COLOR": "Le code hexadécimal doit être au format #000000",
+         "EMAIL": "Une adresse email est obligatoire et doit être valide",
+         "LOGIN": "Un identifiant est nécessaire",
+         "LOGOUT": "Erreur à la déconnexion : vous n'étiez pas authentifié",
+         "PASSWORD_MISMATCH": "Les mots de passe saisis ne correspondent pas l'un à l'autre"
+      },
+      "FIRSTNAME": "Prénom",
+      "FORM": "Connexion",
+      "HELP": {
+         "PROFILE": "<p>Tout changement dans votre profil nécessite votre mot de passe actuel. Merci de noter que :</p><ul><li>vous pouvez modifier toute information en utilisant le champ correspondant;</li><li>laisser les champs de mot de passe et de confirmation vides n'aura pas d'effet sur votre mot de passe actuel;</li><li>vous ne pouvez pas changer d'identifiant pour le moment mais ce sera bientôt possible;</li><li>si vous voulez changer votre mot de passe, merci d'en saisir un nouveau dans le champ mot de passe et de le confirmer avec le champ de confirmation.</li></ul>"
+      },
+      "INFO": {
+         "ACCOUNT_CONFIRMATION_SUCCESS": "Votre compte a été confirmé avec succès. Vous pouvez dorénavant vous identifier.",
+         "CHANGEPASS_SUCCESS": "Votre mot de passe a été mis à jour avec succès.",
+         "COLOR": "Le code hexadécimal pour la couleur que vous souhaitez utiliser par défaut pour les pads",
+         "EMAIL": "L'adresse mail est nécessaire pour la procédure de récupération de mot de passe",
+         "LANG": "Selon la configuration de votre navigateur par défaut, dépend de ceux disponibles sur MyPads",
+         "LOGIN": "L'identifiant unique que vous avez choisi lorsque vous vous êtes inscrit",
+         "OPTIONAL": "Champ facultatif",
+         "PASSRECOVER_SUCCESS": "Vous devriez avoir reçu un message sur l'adresse mail que vous avez saisie lors de votre inscription. Ce message contient une adresse Web qui n'est valide que temporairement. Merci de suivre cette adresse afin de modifier votre mot de passe.",
+         "PASSWORD_BEGIN": "Doit être compris entre ",
+         "PASSWORD_CHECK": "Pour confirmer : doit être le même que le mot de passe",
+         "PASSWORD_CURRENT": "Mesure de sécurité : nécessaire pour tout changement sur le profil",
+         "PASSWORD_END": " caractères",
+         "REMOVE_ACCOUNT": "Supprimer définitivement votre compte et tous les dossiers et pads dont vous êtes l'unique administrateur",
+         "REMOVE_ACCOUNT_SUCCESS": "Compte supprimé avec succès",
+         "REMOVE_ACCOUNT_SURE": "Vous êtes sur le point de supprimer définitivement votre compte ainsi que tous les dossiers et pads dont vous êtes l'unique administrateur. Si vous êtes réellement sûr de ce que vous faisez, merci de saisir votre mot de passe et de cliquer sur OK",
+         "USECOLORINPADS": "Utiliser la couleur choisie dans les pads par défaut ?",
+         "USELOGINANDCOLORINPADS": "Utiliser votre identifiant et votre couleur dans les pads par défaut ?"
+      },
+      "LANG": "Langue",
+      "LASTNAME": "Nom",
+      "LOGIN": "Se connecter",
+      "MANDATORY_FIELDS": "Champs obligatoires",
+      "MYPADS_ACCOUNT": "Compte MyPads",
+      "OK": "Ok",
+      "OPTIONAL_FIELDS": "Champs facultatifs",
+      "ORGANIZATION": "Organisation",
+      "ORSUB": " (ou inscription)",
+      "PASSCHECK": "Confirmation de mot de passe",
+      "PASSCURRENT": "Mot de passe actuel",
+      "PASSRECOVER": "Récupération de mot de passe",
+      "PASSWORD": "Mot de passe",
+      "PASSWORD_LOST": "Mot de passe perdu ?",
+      "PLEASE_WAIT": "Veuillez patienter, le service est en train de charger.",
+      "PROFILE": "Profil",
+      "REGISTER": "S'enregistrer",
+      "REMOVE_ACCOUNT": "Supprimer mon compte",
+      "SUBSCRIBE": "S'inscrire",
+      "UNDEF": "********",
+      "USECOLORINPADS": "Couleur dans les pads ?",
+      "USELOGINANDCOLORINPADS": "Identifiant et couleur dans les pads ?",
+      "USERNAME": "Identifiant"
+   },
+   "USERLIST": {
+      "ADD": "Créer une nouvelle liste d'utilisateurs",
+      "EDIT": "Modifier la liste utilisateurs ",
+      "ERR": {
+         "NAME": "Le nom de la liste utilisateurs est obligatoire"
+      },
+      "FIELD": {
+         "NAME": "Nom",
+         "USERS": "Utilisateurs",
+         "USERSAREA_HELP": "Vous pouvez ajouter autant d'emails ou d'identifiants que vous le souhaitez",
+         "USERSAREA_PLACEHOLDER": "Un email ou identifiant par ligne",
+         "USERS_HELP": "Ajoutez autant d'utilisateurs que vous le souhaitez"
+      },
+      "FORM_HELP": "<h3>Nom</h3><p>Vous devez saisir un nom pour la liste d'utilisateurs, afin de pouvoir l'identifier.</p><h3>Utilisateurs</h3><p>Vous pouvez ajouter autant d'utilisateurs que vous le souhaitez. Pour cela, entrez l'adresse email ou l'identifiant et cliquez sur le bouton 'OK'. Notez que les utilisateurs déjà connus peuvent être sélectionnés depuis la zone de saisie.</p><p>Pour supprimer des utilisateurs, cliquez sur le croix située à la droite de chaque utilisateur.</p>",
+      "HELP": "<p>Vous trouverez ici toutes vos listes d'utilisateurs, rangées par date de création. Des informations résumées sont disponibles avec le nom de chaque liste et le nombre d'utilisateurs liés.</p><p>Avec les icônes d'actions, situées en haut à droite de chaque liste, vous pouvez modifier ou supprimer les listes. Davantage de détails sont disponibles sur le formulaire d'édition.</p>",
+      "INFO": {
+         "ADD_SUCCESS": "La liste d'utilisateurs a été créée avec succès",
+         "EDIT_SUCCESS": "La liste d'utilisateurs a été mise à jour avec succès",
+         "NAME": "Nom de la liste d'utilisateurs",
+         "REMOVE_SUCCESS": "La liste d'utilisateurs a été supprimée avec succès",
+         "REMOVE_SURE": "Voulez-vous vraiment supprimer cette liste d'utilisateurs ?",
+         "USER_FAILURE": "Vous ne pouvez pas ajouter des utilisateurs qui ne possèdent pas de compte sur cette instance : ",
+         "USER_INVITE": "En sélectionnant une liste, vous inviterez tous ses utilisateurs en même temps",
+         "USER_SUCCESS": "L'ajout d'utilisateurs a été réalisé avec succès pour "
+      },
+      "USERLIST": "Liste utilisateurs"
+   }
 }

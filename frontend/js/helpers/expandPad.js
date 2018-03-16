@@ -67,13 +67,20 @@ module.exports = (function () {
     var aExpandI      = document.querySelector('a.expand-toggle i');
     var aExpand       = document.querySelector('a.expand-toggle');
 
-    iframe.style.height = '80vh';
+    if (iframe) {
+      iframe.style.height = '80vh';
+    }
 
-    aExpandI.classList.remove('glyphicon-resize-full');
-    aExpandI.classList.add('glyphicon-resize-small');
+    if (aExpandI) {
+      aExpandI.classList.remove('glyphicon-resize-full');
+      aExpandI.classList.add('glyphicon-resize-small');
+    }
 
-    aExpand.classList.add('expanded');
-    aExpand.title = conf.LANG.GROUP.PAD.REDUCE;
+    if (aExpand) {
+      aExpand.classList.add('expanded');
+      aExpand.title = conf.LANG.GROUP.PAD.REDUCE;
+    }
+
     cookie.set('wantExpandedPad', 'true', { expires: 365, path: conf.URLS.RAWBASE });
   };
 
@@ -88,13 +95,20 @@ module.exports = (function () {
     var aExpandI      = document.querySelector('a.expand-toggle i');
     var aExpand       = document.querySelector('a.expand-toggle');
 
-    iframe.style.height = null;
+    if (iframe) {
+      iframe.style.height = null;
+    }
 
-    aExpandI.classList.remove('glyphicon-resize-small');
-    aExpandI.classList.add('glyphicon-resize-full');
+    if (aExpandI) {
+      aExpandI.classList.remove('glyphicon-resize-small');
+      aExpandI.classList.add('glyphicon-resize-full');
+    }
 
-    aExpand.classList.remove('expanded');
-    aExpand.title = conf.LANG.GROUP.PAD.EXPAND;
+    if (aExpand) {
+      aExpand.classList.remove('expanded');
+      aExpand.title = conf.LANG.GROUP.PAD.EXPAND;
+    }
+
     if (remember) {
       cookie.set('wantExpandedPad', 'false', { expires: 365, path: conf.URLS.RAWBASE });
     }

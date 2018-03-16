@@ -6,7 +6,6 @@
       "hooks": {
         "init_ep_mypads": "ep_mypads/hooks:init",
         "expressConfigure": "ep_mypads/hooks:expressConfigure",
-        "clientVars": "ep_mypads/hooks:clientVars",
         "pluginUninstall": "ep_mypads/hooks:removeAllData"
       },
       "client_hooks": {

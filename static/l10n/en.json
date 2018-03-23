@@ -209,6 +209,8 @@
       "HELP": "Folders can contain pads. Here are your folders : those you have created, those you have been explicitly invited",
       "INFO": {
          "ADD_SUCCESS": "Folder has been successfully created",
+         "CHAT_HISTORY_REMOVE_SUCCESS": "The chat history of the pad has been successfully removed",
+         "CHAT_HISTORY_REMOVE_SURE": "Are you sure you want to remove the chat history of this pad?",
          "DESCRIPTION": "An optional long text to describe your folder",
          "EDIT_SUCCESS": "Folder has been successfully updated",
          "GROUP_PARAMS": "By default, pad inherits from parameters of the folder they belong to. You can overwrite them if you want",
@@ -272,6 +274,7 @@
       "PROPERTIES": "Properties",
       "QUIT_GROUP": "Unsubscribe from the folder",
       "REMOVE": "Remove",
+      "REMOVE_CHAT_HISTORY": "Remove chat history",
       "SEARCH": {
          "HELP": "Search on common fields with at least 2 characters",
          "TITLE": "Search",

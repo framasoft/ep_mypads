@@ -1287,6 +1287,23 @@ module.exports = (function () {
     });
 
     /**
+    * DELETE method : `pad.delChatHistory` with pad id
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/pad/chathistory/xxxx
+    */
+
+    app.delete(padRoute + '/chathistory/:key', function (req, res) {
+      var isAdmin = fn.isAdmin(req);
+      var u;
+      if (!isAdmin) { u = auth.fn.getUser(req.body.auth_token); }
+      if (!isAdmin && !u) {
+        return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.NOT_AUTH');
+      }
+      canAct(true, ld.partial(fn.del, pad.delChatHistory), req, res);
+    });
+
+    /**
     * GET method : with pad id
     *
     * Return true if the pad is public

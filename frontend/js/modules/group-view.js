@@ -284,6 +284,11 @@ module.exports = (function () {
                 title: conf.LANG.MENU.CONFIG
               }, [ m('i.glyphicon.glyphicon-wrench') ]),
               m('a.btn.btn-default.btn-xs', {
+                href: route + '/pad/remove/chat/history/' + p._id,
+                config: m.route,
+                title: conf.LANG.GROUP.REMOVE_CHAT_HISTORY
+              }, [ m('i.glyphicon.glyphicon-volume-off') ]),
+              m('a.btn.btn-default.btn-xs', {
                 href: route + '/pad/remove/' + p._id,
                 config: m.route,
                 title: conf.LANG.GROUP.REMOVE

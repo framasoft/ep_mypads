@@ -209,6 +209,8 @@
       "HELP": "Les dossiers peuvent contenir des pads. Vous trouverez ici vos dossiers, c'est à dire ceux que vous avez créés et ceux auxquels vous avez été explicitement invités",
       "INFO": {
          "ADD_SUCCESS": "Le dossier a été ajouté avec succès",
+         "CHAT_HISTORY_REMOVE_SUCCESS": "L’historique du chat du pad a été supprimé avec succès",
+         "CHAT_HISTORY_REMOVE_SURE": "Voulez-vous vraiment supprimer l’historique du chat de ce pad ?",
          "DESCRIPTION": "Un texte facultatif pour décrire votre dossier",
          "EDIT_SUCCESS": "Le dossier a été mis à jour avec succès",
          "GROUP_PARAMS": "Par défaut, les pads héritent des paramètres du dossier dont ils font partie. Vous pouvez cependant leur fixer des règles spécifiques",
@@ -272,6 +274,7 @@
       "PROPERTIES": "Propriétés",
       "QUIT_GROUP": "Se désabonner du dossier",
       "REMOVE": "Supprimer",
+      "REMOVE_CHAT_HISTORY": "Supprimer l’historique du chat",
       "SEARCH": {
          "HELP": "Recherche sur les champs les plus communs avec au moins 2 caractères",
          "TITLE": "Recherche",

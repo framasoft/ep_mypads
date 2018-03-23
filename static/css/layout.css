@@ -127,3 +127,6 @@ section.pad iframe {
   border: 1px solid #BDBDBD;
   border-radius: 5px 0 5px 5px;
 }
+label[for="pad-filter-form"] {
+  padding-right: 10px;
+}

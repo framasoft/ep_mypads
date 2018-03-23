@@ -433,36 +433,35 @@ module.exports = (function () {
         m('span', ' '+conf.LANG.GROUP.SHARE)
       ]);
     }
+    var buttonsArray = [shareBtn];
     if (c.isAdmin) {
-      h2Elements.push(
-        m('.btn-group.pull-right', {role:'group'}, [
-          shareBtn,
-          m('a.btn.btn-default', {
-            href: '/mypads/group/' + c.group._id + '/edit',
-            config: m.route,
-            title: conf.LANG.MENU.CONFIG
-          },
-          [ m('i.glyphicon.glyphicon-wrench'),
-            m('span', ' '+conf.LANG.MENU.CONFIG)
-          ]),
-          m('a.btn.btn-danger', {
-            href: '/mypads/group/' + c.group._id + '/remove',
-            config: m.route,
-            title: conf.LANG.GROUP.REMOVE
-          },
-          [ m('i.glyphicon.glyphicon-trash'),
-            m('span', ' '+conf.LANG.GROUP.REMOVE)
-          ])
+      buttonsArray.push(
+        m('a.btn.btn-default', {
+          href: '/mypads/group/' + c.group._id + '/edit',
+          config: m.route,
+          title: conf.LANG.MENU.CONFIG
+        },
+        [ m('i.glyphicon.glyphicon-wrench'),
+          m('span', ' '+conf.LANG.MENU.CONFIG)
+        ]),
+        m('a.btn.btn-danger', {
+          href: '/mypads/group/' + c.group._id + '/remove',
+          config: m.route,
+          title: conf.LANG.GROUP.REMOVE
+        },
+        [ m('i.glyphicon.glyphicon-trash'),
+          m('span', ' '+conf.LANG.GROUP.REMOVE)
         ])
       );
-    } else {
-      h2Elements.push(shareBtn);
     }
     var canQuit = (c.isAdmin && c.admins.length > 1) || (!c.isAdmin);
     if (!c.isGuest && canQuit) {
-      h2Elements.push(m('button.cancel', { onclick: c.quit },
-          [ m('i.glyphicon glyphicon-remove'), conf.LANG.GROUP.QUIT_GROUP ]));
+      buttonsArray.push(m('button.cancel.btn.btn-warning', { onclick: c.quit },
+          [ m('i.glyphicon glyphicon-fire'), ' '+conf.LANG.GROUP.QUIT_GROUP ]));
     }
+    h2Elements.push(
+      m('.btn-group.pull-right', {role:'group'}, buttonsArray)
+    );
     var showPass = (!c.isAdmin && (c.group.visibility === 'private') &&
       !c.sendPass());
     if (showPass) {

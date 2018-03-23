@@ -143,6 +143,7 @@ module.exports = (function () {
   */
 
   var padViewRouteRegex = new RegExp('/mypads/group/[^/]*/pad/view/[^/]*');
+  var indexRouteRegex = new RegExp('/mypads$');
   layout.view = function (main, aside, padView) {
     var header  = 'header';
     var footer  = 'footer.container.ombre';
@@ -156,6 +157,9 @@ module.exports = (function () {
       asideC  = asideC+'.hidden';
       mainC   = 'main.container-fluid.ombre';
       section = 'section.col-md-12.col-xs-12';
+    }
+    if (m.route().match(indexRouteRegex)) {
+      section = section+'.groupList';
     }
     return [
       m(header, [

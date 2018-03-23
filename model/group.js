@@ -337,10 +337,36 @@ module.exports = (function () {
       if (err) { return callback(err); }
       var removed;
       if (invite) {
+        // Remove users from admin before setting them as invited
+        var toRemoveFromAdmins = ld.intersection(g.admins, users.uids);
+        g.admins = ld.filter(g.admins, function(n) {
+          if (ld.indexOf(toRemoveFromAdmins, n) === -1) {
+            return true;
+          } else {
+            return false;
+          }
+        });
+        if ((ld.size(g.admins)) === 0) {
+          var e = new Error('BACKEND.ERROR.GROUP.RESIGN_UNIQUE_ADMIN');
+          return callback(e);
+        }
+
+        // Setting users as invited
         removed = ld.difference(g.users, users.uids);
         g.users = ld.unique(ld.reject(users.uids,
           ld.partial(ld.includes, g.admins)));
       } else {
+        // Remove users from invite before setting them as admins
+        var toRemoveFromUsers = ld.intersection(g.users, users.uids);
+        g.users = ld.filter(g.users, function(n) {
+          if (ld.indexOf(toRemoveFromUsers, n) === -1) {
+            return true;
+          } else {
+            return false;
+          }
+        });
+
+        // Setting users as admins
         removed = ld.difference(g.admins, users.uids);
         g.admins = ld.unique(ld.reject(users.uids,
           ld.partial(ld.includes, g.users)));

@@ -39,6 +39,7 @@ module.exports = (function () {
   var padMark = require('./pad-mark.js');
   var padShare = require('./pad-share.js');
   var ready = require('../helpers/ready.js');
+  var filterPads = require('../helpers/filterPads.js');
 
   var group = {};
 
@@ -227,7 +228,7 @@ module.exports = (function () {
   view.pads = function (c) {
     var route = '/mypads/group/' + c.group._id;
     var GROUP = conf.LANG.GROUP;
-    var addView = m('p.col-sm-6.text-center', [
+    var addView = m('p.col-sm-4.text-center', [
       m('a.btn.btn-default', { href: route + '/pad/add', config: m.route }, [
         m('i.glyphicon.glyphicon-plus.text-success'),
         ' '+conf.LANG.GROUP.PAD.ADD
@@ -239,27 +240,40 @@ module.exports = (function () {
         ' '+conf.LANG.GROUP.PAD.MOVE
       ])
     ]);
-  var sortIcon = (function () {
-    if (c.sortField()) {
-      return (c.sortAsc() ? 'top' : 'bottom');
-    } else {
-      return 'arrow-combo';
-    }
-  })();
-  var sortView = m('p.col-sm-6.text-right.small', [
-    m('span', ' '+conf.LANG.GROUP.PAD.SORT_BY),
-    m('button.btn.btn-default.btn-xs', {
-      type: 'button',
-      onclick: ld.partial(c.sortBy, 'ctime')
-    }, [conf.LANG.GROUP.PAD.SORT_BY_CREATION+' ',
-      m('i.small.glyphicon glyphicon-triangle-' + sortIcon)]
-    ),
-    m('button.btn.btn-default.btn-xs', {
-      type: 'button',
-      onclick: ld.partial(c.sortBy, 'name')
-    }, [ conf.LANG.GROUP.PAD.SORT_BY_NAME+' ',
-      m('i.small.glyphicon glyphicon-triangle-' + sortIcon)])
-  ]);
+    var filterView = m('p.col-sm-4.text-center.form-inline', [
+      m('.form-group', [
+        m('label', {
+          for: 'pad-filter-form'
+        }, conf.LANG.GROUP.SEARCH.TITLE+' '),
+        m('input.form-control', {
+          id: 'pad-filter-form',
+          type: 'search',
+          placeholder: conf.LANG.GROUP.SEARCH.TYPE,
+          oninput: m.withAttr('value', filterPads.filterKeyword)
+        }),
+      ])
+    ]);
+    var sortIcon = (function () {
+      if (c.sortField()) {
+        return (c.sortAsc() ? 'top' : 'bottom');
+      } else {
+        return 'arrow-combo';
+      }
+    })();
+    var sortView = m('p.col-sm-4.text-right.small', [
+      m('span', ' '+conf.LANG.GROUP.PAD.SORT_BY),
+      m('button.btn.btn-default.btn-xs', {
+        type: 'button',
+        onclick: ld.partial(c.sortBy, 'ctime')
+      }, [conf.LANG.GROUP.PAD.SORT_BY_CREATION+' ',
+        m('i.small.glyphicon glyphicon-triangle-' + sortIcon)]
+      ),
+      m('button.btn.btn-default.btn-xs', {
+        type: 'button',
+        onclick: ld.partial(c.sortBy, 'name')
+      }, [ conf.LANG.GROUP.PAD.SORT_BY_NAME+' ',
+        m('i.small.glyphicon glyphicon-triangle-' + sortIcon)])
+    ]);
     var padView = (function () {
       if (ld.size(c.group.pads) === 0) {
         return m('p', conf.LANG.GROUP.PAD.NONE);
@@ -300,7 +314,9 @@ module.exports = (function () {
             var visib = conf.LANG.GROUP.FIELD[p.visibility.toUpperCase()];
             padName += ' (' + visib + ')';
           }
-          return m('li.list-group-item', [
+          return m('li.list-group-item.group-pad-item', {
+              'data-padname': padName
+            }, [
             (function () {
               if (!c.isGuest) {
                 var isBookmarked = ld.includes(c.bookmarks, p._id);
@@ -328,7 +344,7 @@ module.exports = (function () {
     })();
     var padBlocks = [];
     if (c.isAdmin) { padBlocks.push(addView);}
-    padBlocks.push(sortView, padView);
+    padBlocks.push(filterView, sortView, padView);
     if (c.isAdmin) { padBlocks.push(moveView);}
     return m('section.panel-body', padBlocks);
   };

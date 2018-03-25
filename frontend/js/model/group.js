@@ -45,6 +45,7 @@ module.exports = (function () {
       users: m.prop([]),
       admins: m.prop([]),
       tags: m.prop([]),
+      bookmarks: m.prop({ groups: m.prop({}), pads: m.prop({}) }),
       tmp: m.prop({ groups: m.prop({}), pads: m.prop({}) })
     });
   };
@@ -74,6 +75,7 @@ module.exports = (function () {
       function (resp) {
         model.groups(resp.value.groups); 
         model.pads(resp.value.pads);
+        model.bookmarks(resp.value.bookmarks);
         var u = auth.userInfo();
         resp.value.users[u._id] = u;
         model.users(resp.value.users);

@@ -1,5 +1,5 @@
 /**
-*  # Pad bookmarking module
+*  # Group bookmarking module
 *
 *  ## License
 *
@@ -22,7 +22,7 @@
 *
 *  ## Description
 *
-*  Short module for pad bookmark and unmark
+*  Short module for group bookmark and unmark
 */
 
 module.exports = (function () {
@@ -43,23 +43,27 @@ module.exports = (function () {
   * given, called with no argument after successfull operation.
   */
 
-  return function (pad, successFn) {
-    var pid = pad._id
+  return function (group, successFn) {
+    var gid  = group._id;
     var user = auth.userInfo();
-    if (ld.includes(user.bookmarks.pads, pid)) {
-      ld.pull(user.bookmarks.pads, pid);
+    if (ld.includes(user.bookmarks.groups, gid)) {
+      ld.pull(user.bookmarks.groups, gid);
     } else {
-      user.bookmarks.pads.push(pid);
+      user.bookmarks.groups.push(gid);
     }
-    if (typeof(model.bookmarks().pads[pad._id]) !== 'undefined') {
-      delete model.bookmarks().pads[pad._id];
+    if (typeof(model.bookmarks().groups[group._id]) !== 'undefined') {
+      delete model.bookmarks().groups[group._id];
     } else {
-      model.bookmarks().pads[pad._id] = pad;
+      model.bookmarks().groups[group._id] = group;
     }
     m.request({
       url: conf.URLS.USERMARK,
       method: 'POST',
-      data: { type: 'pads', key: pid, auth_token: auth.token() }
+      data: {
+        type: 'groups',
+        key: gid,
+        auth_token: auth.token()
+      }
     }).then(function () {
       notif.success({ body: conf.LANG.GROUP.MARK_SUCCESS });
       if (successFn) { successFn(); }

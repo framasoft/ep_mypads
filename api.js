@@ -970,7 +970,32 @@ module.exports = (function () {
                     'lastname', 'email');
                 }
               );
-              res.send({ value: data });
+              data.bookmarks = { groups: {}, pads: {} }
+              group.getBookmarkedGroupsByUser(u, function (err, bookmarks) {
+                if (err) {
+                  return res.status(404).send({
+                    error: err.message
+                  });
+                }
+                data.bookmarks.groups = ld.transform(bookmarks,
+                  function (memo, val, key) {
+                    memo[key] = ld.omit(val, 'password');
+                  }
+                );
+                pad.getBookmarkedPadsByUser(u, function (err, bookmarks) {
+                  if (err) {
+                    return res.status(404).send({
+                      error: err.message
+                    });
+                  }
+                  data.bookmarks.pads = ld.transform(bookmarks,
+                    function (memo, val, key) {
+                      memo[key] = ld.omit(val, 'password');
+                    }
+                  );
+                  res.send({ value: data });
+                });
+              });
             });
           }
           catch (e) {

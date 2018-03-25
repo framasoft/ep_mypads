@@ -36,7 +36,7 @@ module.exports = (function () {
   var auth = require('../auth.js');
   var u = auth.userInfo;
   var layout = require('./layout.js');
-  var groupMark = require('./group.js').mark;
+  var groupMark = require('./group-mark.js');
   var padMark = require('./pad-mark.js');
   var model = require('../model/group.js');
 
@@ -74,8 +74,8 @@ module.exports = (function () {
           .value();
       };
       c.bookmarks = {
-        groups: items(model.groups(), uMarks.groups),
-        pads: items(model.pads(), uMarks.pads)
+        groups: items(model.bookmarks().groups, uMarks.groups),
+        pads: items(model.bookmarks().pads, uMarks.pads)
       };
     };
 
@@ -86,9 +86,9 @@ module.exports = (function () {
     * bookmark.
     */
 
-    c.unmark = function (itemId, type) {
+    c.unmark = function (item, type) {
       var action = (type === 'groups') ? groupMark : padMark;
-      action(itemId, c.computeBookmarks);
+      action(item, c.computeBookmarks);
     };
 
     // Bootstrapping
@@ -126,7 +126,7 @@ module.exports = (function () {
         return m('li', [
           m('button.btn.btn-link.btn-lg', {
             title: conf.LANG.GROUP.UNMARK,
-            onclick: ld.partial(c.unmark, item._id, type)
+            onclick: ld.partial(c.unmark, item, type)
           }, [ m('i.glyphicon glyphicon-star') ]),
           m('a', { href: route, config: m.route }, item.name)
         ]);

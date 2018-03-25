@@ -310,6 +310,39 @@ module.exports = (function () {
   };
 
   /**
+  * ### getBookmarkedPadsByUser
+  *
+  * `getBookmarkedPadsByUser` is an asynchronous function that returns all
+  * bookmarked pads for a defined user, using `storage.fn.getKeys`. It takes :
+  *
+  * - a `user` object
+  * - a `callback` function, called with *error* if needed, *null* and the
+  *   results, an object with keys and groups values, otherwise.
+  *
+  */
+
+  pad.getBookmarkedPadsByUser = function(user, callback) {
+    if (!ld.isObject(user) || !ld.isArray(user.bookmarks.pads)) {
+      throw new TypeError('BACKEND.ERROR.TYPE.USER_INVALID');
+    }
+    if (!ld.isFunction(callback)) {
+      throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
+    }
+    storage.fn.getKeys(
+      ld.map(user.bookmarks.pads, function (p) { return PPREFIX + p; }),
+      function (err, pads) {
+        if (err) { return callback(err); }
+        pads = ld.reduce(pads, function (memo, val, key) {
+          key = key.substr(PPREFIX.length);
+          memo[key] = val;
+          return memo;
+        }, {});
+        callback(null, pads);
+      }
+    );
+  };
+
+  /**
    * ### delChatHistory
    *
    * Removes all chat messages for a pad

@@ -1,5 +1,5 @@
 /**
-*  # Pad bookmarking module
+*  # Group bookmarking module
 *
 *  ## License
 *
@@ -22,7 +22,7 @@
 *
 *  ## Description
 *
-*  Short module for pad bookmark and unmark
+*  Short module for group bookmark and unmark
 */
 
 module.exports = (function () {
@@ -38,28 +38,32 @@ module.exports = (function () {
   /**
   * ## Main function
   *
-  * Takes a pad object and adds or removes it from the bookmarks of the
+  * Takes a group object and adds or removes it from the bookmarks of the
   * current user. An optional `successFn` can be given, called with no
   * argument after successfull operation.
   */
 
-  return function (pad, successFn) {
-    var pid = pad._id;
+  return function (group, successFn) {
+    var gid  = group._id;
     var user = auth.userInfo();
-    if (ld.includes(user.bookmarks.pads, pid)) {
-      ld.pull(user.bookmarks.pads, pid);
+    if (ld.includes(user.bookmarks.groups, gid)) {
+      ld.pull(user.bookmarks.groups, gid);
     } else {
-      user.bookmarks.pads.push(pid);
+      user.bookmarks.groups.push(gid);
     }
-    if (typeof(model.bookmarks().pads[pid]) !== 'undefined') {
-      delete model.bookmarks().pads[pid];
+    if (typeof(model.bookmarks().groups[gid]) !== 'undefined') {
+      delete model.bookmarks().groups[gid];
     } else {
-      model.bookmarks().pads[pid] = pad;
+      model.bookmarks().groups[gid] = group;
     }
     m.request({
       url: conf.URLS.USERMARK,
       method: 'POST',
-      data: { type: 'pads', key: pid, auth_token: auth.token() }
+      data: {
+        type: 'groups',
+        key: gid,
+        auth_token: auth.token()
+      }
     }).then(function () {
       notif.success({ body: conf.LANG.GROUP.MARK_SUCCESS });
       if (successFn) { successFn(); }

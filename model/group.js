@@ -149,6 +149,27 @@ module.exports = (function () {
     );
   };
 
+  group.getBookmarkedGroupsByUser = function (user, callback) {
+    if (!ld.isObject(user) || !ld.isArray(user.bookmarks.groups)) {
+      throw new TypeError('BACKEND.ERROR.TYPE.USER_INVALID');
+    }
+    if (!ld.isFunction(callback)) {
+      throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
+    }
+    storage.fn.getKeys(
+      ld.map(user.bookmarks.groups, function (g) { return GPREFIX + g; }),
+      function (err, groups) {
+        if (err) { return callback(err); }
+        groups = ld.reduce(groups, function (memo, val, key) {
+          key = key.substr(GPREFIX.length);
+          memo[key] = val;
+          return memo;
+        }, {});
+        callback(null, groups);
+      }
+    );
+  };
+
   /**
   * ### set
   *

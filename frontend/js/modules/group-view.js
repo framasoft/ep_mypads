@@ -39,7 +39,9 @@ module.exports = (function () {
   var padMark = require('./pad-mark.js');
   var padShare = require('./pad-share.js');
   var ready = require('../helpers/ready.js');
+  var groupMark = require('./group-mark.js');
 
+  var u = auth.userInfo;
   var group = {};
 
   /**
@@ -422,7 +424,22 @@ module.exports = (function () {
   */
 
   view.main = function (c) {
-    var h2Elements = [ m('span', conf.LANG.GROUP.GROUP + ' ' + c.group.name) ];
+    var isBookmarked = (ld.includes(u().bookmarks.groups, c.group._id));
+    var h2Elements = [ m('span', [
+      m('button.btn.btn-link.btn-lg', {
+          onclick: function (e) {
+            e.preventDefault();
+            groupMark(c.group)
+          },
+          title: (isBookmarked ? conf.LANG.GROUP.UNMARK : conf.LANG.GROUP.BOOKMARK)
+        }, [
+          m('i',
+            { class: 'glyphicon glyphicon-star' +
+              (isBookmarked ? '' : '-empty') })
+        ]
+      ),
+      conf.LANG.GROUP.GROUP + ' ' + c.group.name
+    ])];
     var shareBtn = '';
     if (c.group.visibility !== 'restricted') {
       shareBtn = m('button.btn.btn-default', {

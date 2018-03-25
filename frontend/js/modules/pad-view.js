@@ -265,11 +265,11 @@ module.exports = (function () {
       ]),
       m('h2', [
         (function () {
-          if (!c.isGuest) {
+          if (auth.isAuthenticated()) {
             var isBookmarked = ld.includes(c.bookmarks, c.pad._id);
             return m('button.btn.btn-link.btn-lg', {
               title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK),
-              onclick: function () { padMark(c.pad._id); }
+              onclick: function () { padMark(c.pad); }
             }, [
               m('i',
                 { class: 'glyphicon glyphicon-star' +

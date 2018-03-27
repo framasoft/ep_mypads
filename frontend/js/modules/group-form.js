@@ -273,12 +273,16 @@ module.exports = (function () {
       m('.form-group', [
         _f.description.label,
         m('.col-sm-7', _f.description.textarea)
-      ]),
-      m('.form-group', [
-        _f.visibility.label,
-        m('.col-sm-7', _f.visibility.select)
-      ]),
+      ])
     ];
+    if (!conf.SERVER.allPadsPublicsAuthentifiedOnly) {
+      fields.push(
+        m('.form-group', [
+          _f.visibility.label,
+          m('.col-sm-7', _f.visibility.select)
+        ])
+      );
+    }
     if (c.data.visibility() === 'private') {
       fields.push(
         m('.form-group', [
@@ -287,7 +291,7 @@ module.exports = (function () {
         ])
       );
     }
-    if (!c.addView()) {
+    if (!c.addView() && !conf.SERVER.allPadsPublicsAuthentifiedOnly) {
       fields.push(
         m('.form-group',
           m('.col-sm-7 .col-sm-offset-4',

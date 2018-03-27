@@ -376,9 +376,10 @@ module.exports = (function () {
   };
 
   view.aside = function (c) {
-    return m('section.group-aside', [
-      view.search(c), view.sort(c), view.filters(c), view.tags(c)
-    ]);
+    var views = [ view.search(c), view.sort(c) ];
+    if (!conf.SERVER.allPadsPublicsAuthentifiedOnly) { views.push(view.filters(c)); }
+    views.push(view.tags(c));
+    return m('section.group-aside', views);
   };
 
   view.group = function (c, g) {
@@ -388,7 +389,7 @@ module.exports = (function () {
     var isAdmin = ld.includes(g.admins, u()._id);
     var actions = [
       (function () {
-        if (g.visibility !== 'restricted') {
+        if (g.visibility !== 'restricted' || conf.SERVER.allPadsPublicsAuthentifiedOnly) {
           return m('button.btn.btn-default.btn-xs', {
             type: 'button',
             onclick: padShare.bind(c, g._id, null),
@@ -442,8 +443,8 @@ module.exports = (function () {
           return icons;
         })()
       ]),
-      m('td', conf.LANG.GROUP.FIELD[g.visibility.toUpperCase()]),
-      m('td', [ ld.size(g.admins), (function () {
+      (conf.SERVER.allPadsPublicsAuthentifiedOnly) ? null : m('td', conf.LANG.GROUP.FIELD[g.visibility.toUpperCase()]),
+      (conf.SERVER.allPadsPublicsAuthentifiedOnly) ? null : m('td', [ ld.size(g.admins), (function () {
         if (isAdmin) {
           return m('a.btn.btn-default.btn-xs.pull-right',
             { href: padRoute + '/user/share', config: m.route },
@@ -453,7 +454,7 @@ module.exports = (function () {
         }
       })()
       ]),
-      m('td', [
+      (conf.SERVER.allPadsPublicsAuthentifiedOnly) ? null : m('td', [
         (function () {
           if (g.visibility === 'restricted') {
             return [
@@ -514,17 +515,17 @@ module.exports = (function () {
             m('tr', [
               m('th', {scope: 'col'}, conf.LANG.GROUP.GROUPS),
               m('th', {scope: 'col'}, conf.LANG.GROUP.PAD.PADS),
-              m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.VISIBILITY},
+              (conf.SERVER.allPadsPublicsAuthentifiedOnly) ? null : m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.VISIBILITY},
                 m('i.glyphicon.glyphicon-eye-open',
                   m('span.sr-only', conf.LANG.GROUP.PAD.VISIBILITY)
                 )
               ),
-              m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.ADMINS},
+              (conf.SERVER.allPadsPublicsAuthentifiedOnly) ? null : m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.ADMINS},
                 m('i.glyphicon.glyphicon-knight',
                   m('span.sr-only', conf.LANG.GROUP.PAD.ADMINS)
                 )
               ),
-              m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.USERS},
+              (conf.SERVER.allPadsPublicsAuthentifiedOnly) ? null : m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.USERS},
                 m('i.glyphicon.glyphicon-user',
                   m('span.sr-only', conf.LANG.GROUP.PAD.USERS)
                 )
@@ -548,17 +549,17 @@ module.exports = (function () {
             m('tr', [
               m('th', {scope: 'col'}, conf.LANG.GROUP.GROUPS),
               m('th', {scope: 'col'}, conf.LANG.GROUP.PAD.PADS),
-              m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.VISIBILITY},
+              (conf.SERVER.allPadsPublicsAuthentifiedOnly) ? null : m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.VISIBILITY},
                 m('i.glyphicon.glyphicon-eye-open',
                   m('span.sr-only', conf.LANG.GROUP.PAD.VISIBILITY)
                 )
               ),
-              m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.ADMINS},
+              (conf.SERVER.allPadsPublicsAuthentifiedOnly) ? null : m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.ADMINS},
                 m('i.glyphicon.glyphicon-knight',
                   m('span.sr-only', conf.LANG.GROUP.PAD.ADMINS)
                 )
               ),
-              m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.USERS},
+              (conf.SERVER.allPadsPublicsAuthentifiedOnly) ? null : m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.USERS},
                 m('i.glyphicon.glyphicon-user',
                   m('span.sr-only', conf.LANG.GROUP.PAD.USERS)
                 )

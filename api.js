@@ -173,7 +173,11 @@ module.exports = (function () {
           });
         }
         if (cond && !cond(val)) {
-          return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.DENIED_RECORD');
+          if (conf.get('allPadsPublicsAuthentifiedOnly')) {
+            return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.MUST_BE');
+          } else {
+            return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.DENIED_RECORD');
+          }
         } else {
           return res.send({ key: req.params.key, value: val });
         }
@@ -501,6 +505,35 @@ module.exports = (function () {
 
     app.get(confRoute + '/public/usefirstlastname', function (req, res) {
       return res.send({ success: true, usefirstlastname: conf.get('useFirstLastNameInPads') });
+    });
+
+    /**
+    * GET method
+    *
+    * Return the value of allPadsPublicsAuthentifiedOnly configuration setting
+    * + given pad's group if allPadsPublicsAuthentifiedOnly is true
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/configuration/public/allpadspublicsauthentifiedonly
+    */
+
+    app.get(confRoute + '/public/allpadspublicsauthentifiedonly', function (req, res) {
+      var confValue = conf.get('allPadsPublicsAuthentifiedOnly');
+      var data = {
+        success: true,
+        allpadspublicsauthentifiedonly: confValue
+      };
+      if (confValue) {
+        pad.get(req.query.pid, function (err, p) {
+          if (err) {
+            return res.send({ success: false, error: err });
+          }
+          data.group = p.group;
+          return res.send(data);
+        });
+      } else {
+        return res.send(data);
+      }
     });
 
   };
@@ -954,7 +987,7 @@ module.exports = (function () {
 
     /**
     * GET method : `group.getWithPads` unique id
-    * Returns pads too because usefull for public groups and unauth users.
+    * Returns pads too because useful for public groups and unauth users.
     *
     * Sample URL:
     * http://etherpad.ndd/mypads/api/group/xxxx
@@ -971,6 +1004,15 @@ module.exports = (function () {
           var isAdmin = fn.isAdmin(req);
           var isUser = (u && ld.includes(ld.union(g.admins, g.users), u._id));
           var isAllowedForPublic = (g.visibility === 'public');
+
+          // allPadsPublicsAuthentifiedOnly feature
+          if (u && conf.get('allPadsPublicsAuthentifiedOnly')) {
+            isAllowedForPublic = false;
+            if (!isAdmin) {
+              isUser = true;
+            }
+          }
+
           if (isAllowedForPublic && !isAdmin && !isUser) {
             pads = ld.transform(pads, function (memo, p, key) {
               if (!p.visibility || p.visibility === g.visibility) {
@@ -981,7 +1023,7 @@ module.exports = (function () {
           if (isAdmin || isUser || isAllowedForPublic) {
             return res.send({ key: key, value: g, pads: pads });
           }
-          var isPrivate = (g.visibility === 'private');
+          var isPrivate = (g.visibility === 'private' && !conf.get('allPadsPublicsAuthentifiedOnly'));
           if (isPrivate) {
             if (req.query.password) {
               var pwd = (typeof req.query.password === 'undefined') ? undefined : decode(req.query.password);
@@ -1009,7 +1051,11 @@ module.exports = (function () {
               return res.send({ key: req.params.key, value: value });
             }
           } else {
-            return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.DENIED_RECORD');
+            if (conf.get('allPadsPublicsAuthentifiedOnly')) {
+              return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.MUST_BE');
+            } else {
+              return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.DENIED_RECORD');
+            }
           }
         });
       }
@@ -1171,6 +1217,18 @@ module.exports = (function () {
         if (err) { return res.status(404).send({ error: err.message }); }
         var isAdmin = fn.isAdmin(req);
         if (isAdmin) { return successFn(req, res, p); }
+
+        // allPadsPublicsAuthentifiedOnly feature
+        if (conf.get('allPadsPublicsAuthentifiedOnly') && req.route.method === 'get') {
+          var token = req.body.auth_token || req.query.auth_token;
+          var u = auth.fn.getUser(token);
+          if (!u) {
+            return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.MUST_BE');
+          } else {
+            return successFn(req, res, p);
+          }
+        }
+
         if (!edit && (p.visibility === 'public')) {
           return successFn(req, res, p);
         }

@@ -228,7 +228,7 @@ module.exports = (function () {
             c.group.visibility !== 'restricted');
           var isPadSharable = (c.pad.visibility &&
             c.pad.visibility !== 'restricted');
-          if (isGroupSharable || isPadSharable) {
+          if (isGroupSharable || isPadSharable || conf.SERVER.allPadsPublicsAuthentifiedOnly) {
               return m('button.btn.btn-default', {
                 title: conf.LANG.GROUP.SHARE,
                 onclick: padShare.bind(c, c.gid, c.pad._id)

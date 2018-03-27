@@ -240,10 +240,7 @@ module.exports = (function () {
 
   view.form = function (c) {
     var GROUP = conf.LANG.GROUP;
-    return m('form.form-horizontal', {
-      id: 'group-form',
-      onsubmit: c.submit
-    }, [
+    var fields = [
       m('fieldset', [
         m('legend', (GROUP.INVITE_USERLIST)),
         m('div', view.userlistField(c))
@@ -261,7 +258,14 @@ module.exports = (function () {
         type: 'submit',
         value: conf.LANG.ACTIONS.SAVE
       })
-    ]);
+    ];
+    if (conf.SERVER.allPadsPublicsAuthentifiedOnly) {
+      fields.shift();
+    }
+    return m('form.form-horizontal', {
+      id: 'group-form',
+      onsubmit: c.submit
+    }, fields);
   };
 
   view.main = function (c) {

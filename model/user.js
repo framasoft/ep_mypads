@@ -308,7 +308,8 @@ module.exports = (function () {
       throw new TypeError('BACKEND.ERROR.TYPE.LOGINS_ARR');
     }
     return ld.reduce(loginsMails, function (memo, lm) {
-      var uid = user.logins[lm] || user.emails[lm];
+      var email = (conf.insensitiveMailMatch) ? lm.toLowerCase() : lm;
+      var uid = user.logins[lm] || user.emails[email];
       if (uid) {
         memo.uids.push(uid);
         memo.present.push(lm);
@@ -427,7 +428,8 @@ module.exports = (function () {
             if (val) {
               var k = key.replace(UPREFIX, '');
               memo.logins[val.login] = k;
-              memo.emails[val.email] = k;
+              var email = (conf.insensitiveMailMatch) ? val.email.toLowerCase() : val.email;
+              memo.emails[email] = k;
             }
             return memo;
           }, { logins: {}, emails: {} });

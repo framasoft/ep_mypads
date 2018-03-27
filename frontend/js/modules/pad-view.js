@@ -151,9 +151,24 @@ module.exports = (function () {
   };
 
   view.pad = function (c) {
-    var p = (c.sendPass() ? '&mypadspassword=' + encode(c.password()) : '');
-    var a = (auth.isAuthenticated() ? '&auth_token=' + auth.token() : '');
-    var link = conf.URLS.RAWBASE.replace('mypads/', '') + 'p/' + c.pad._id + '?' + p + a;
+    var u  = auth.userInfo();
+    var p  = (c.sendPass() ? '&mypadspassword=' + encode(c.password()) : '');
+    var a  = (auth.isAuthenticated() ? '&auth_token=' + auth.token() : '');
+    var n  = '';
+    var co = '';
+    if (u) {
+      if (((u.useLoginAndColorInPads || conf.SERVER.useFirstLastNameInPads) && u.color)) {
+        co = '&userColor=' + u.color;
+      }
+      if (conf.SERVER.useFirstLastNameInPads) {
+        var firstname = (u.firstname) ? u.firstname : '';
+        var lastname  = (u.lastname)  ? u.lastname  : '';
+        n = '&userName=' + firstname + ' ' + lastname;
+      } else if (u.useLoginAndColorInPads) {
+        n = '&userName=' + u.login;
+      }
+    }
+    var link = conf.URLS.RAWBASE.replace('mypads/', '') + 'p/' + c.pad._id + '?' + p + a + co + n;
     return [
       m('p.text-right', [
         m('a.btn.btn-default.expand-toggle', {

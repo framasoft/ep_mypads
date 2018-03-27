@@ -18,6 +18,7 @@
       "ETHERPAD_ACCOUNT": "Cuenta de Etherpad",
       "FIELD": {
          "ALLOW_ETHERPADS": "Pads anónimos",
+         "ALL_PADS_PUBLICS_AUTHENTIFIED_ONLY": "Make all pads public, but always ask to be authentified",
          "APPLY": "Aplicar",
          "CHECKMAILS": "Comprobar los mails de usuario",
          "HIDE_HELP_BLOCKS": "Esconder los bloques de ayuda",
@@ -49,6 +50,7 @@
       "HELP_USER_EDIT": "<p>Aquí puede actualizar todos los datos asociados a una usuaria existente. </p><p>Por favor, tenga en cuenta que por defecto, dejar la contraseña vacía significa mantener la contraseña actual. Si desea cambiarla, tiene que rellenar el campo de contraseña y su confirmación.</p>",
       "INFO": {
          "ALLOW_ETHERPADS": "Permitir pads anónimos clásicos desde la instancia de Etherpad, creada desde la URL raíz del servidor",
+         "ALL_PADS_PUBLICS_AUTHENTIFIED_ONLY": "This option removes the notion of restreint or private pads, making all of them public but they will be accessible to authentified users only.",
          "CHECKMAILS": "Comprobar el correo del usuario dado en la suscripción",
          "HIDE_HELP_BLOCKS": "Los bloques de ayuda se muestran en varias páginas de MyPads, puedes ocultarlos con esta configuración",
          "HTMLEXTRA_HEAD": "Código HTML personalizado añadido al tag <head>",

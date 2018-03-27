@@ -198,18 +198,18 @@ module.exports = (function () {
       m('thead',
         m('tr', [
           m('th', {scope: 'col'}, conf.LANG.GROUP.PAD.PADS),
-          m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.VISIBILITY},
+          (conf.SERVER.allPadsPublicsAuthentifiedOnly) ? null : m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.VISIBILITY},
             m('i.glyphicon.glyphicon-eye-open',
               m('span.sr-only', conf.LANG.GROUP.PAD.VISIBILITY)
             )
           ),
-          m('th', {scope: 'col'}, conf.LANG.GROUP.FIELD.READONLY),
-          m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.ADMINS},
+          (conf.SERVER.allPadsPublicsAuthentifiedOnly) ? null : m('th', {scope: 'col'}, conf.LANG.GROUP.FIELD.READONLY),
+          (conf.SERVER.allPadsPublicsAuthentifiedOnly) ? null : m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.ADMINS},
             m('i.glyphicon.glyphicon-knight',
               m('span.sr-only', conf.LANG.GROUP.PAD.ADMINS)
             )
           ),
-          m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.USERS},
+          (conf.SERVER.allPadsPublicsAuthentifiedOnly) ? null : m('th', {scope: 'col', title: conf.LANG.GROUP.PAD.USERS},
             m('i.glyphicon.glyphicon-user',
               m('span.sr-only', conf.LANG.GROUP.PAD.USERS)
             )
@@ -220,10 +220,10 @@ module.exports = (function () {
       m('tbody',
         m('tr.text-center', [
           m('td', ld.size(c.group.pads)),
-          m('td', conf.LANG.GROUP.FIELD[c.group.visibility.toUpperCase()]),
-          m('td', conf.LANG.GLOBAL[c.group.readonly ? 'YES' : 'NO']),
-          m('td', ld.size(c.group.admins)),
-          m('td', ld.size(c.group.users)),
+          (conf.SERVER.allPadsPublicsAuthentifiedOnly) ? null : m('td', conf.LANG.GROUP.FIELD[c.group.visibility.toUpperCase()]),
+          (conf.SERVER.allPadsPublicsAuthentifiedOnly) ? null : m('td', conf.LANG.GLOBAL[c.group.readonly ? 'YES' : 'NO']),
+          (conf.SERVER.allPadsPublicsAuthentifiedOnly) ? null : m('td', ld.size(c.group.admins)),
+          (conf.SERVER.allPadsPublicsAuthentifiedOnly) ? null : m('td', ld.size(c.group.users)),
           m('td', m('ul.list-inline', ld.map(c.group.tags, function (t) {
                     return m('li.label.label-default', t);
           })))
@@ -284,7 +284,8 @@ module.exports = (function () {
           var actions = [
             (function () {
               if ((c.group.visibility !== 'restricted') ||
-                (p.visibility && p.visibility !== 'restricted')) {
+                (p.visibility && p.visibility !== 'restricted') ||
+                conf.SERVER.allPadsPublicsAuthentifiedOnly) {
                 return m('button.btn.btn-default.btn-xs', {
                   title: conf.LANG.GROUP.SHARE,
                   onclick: padShare.bind(c, c.group._id, p._id)
@@ -381,6 +382,9 @@ module.exports = (function () {
     };
     var route = '/mypads/group/' + c.group._id;
     var sectionListAdmins = [ m('h4', conf.LANG.GROUP.PAD.ADMINS) ];
+    if (conf.SERVER.allPadsPublicsAuthentifiedOnly) {
+      sectionListAdmins = [];
+    }
     if (c.isAdmin) {
       sectionListAdmins.push(
         m('p.text-center',
@@ -409,8 +413,8 @@ module.exports = (function () {
     }
     sectionListUsers.push(list(c.users));
     return m('section.panel-body', [
-      m('.col-sm-6',sectionListAdmins),
-      m('.col-sm-6',sectionListUsers)
+      m((conf.SERVER.allPadsPublicsAuthentifiedOnly) ? '.col-sm-12' : '.col-sm-6',sectionListAdmins),
+      (conf.SERVER.allPadsPublicsAuthentifiedOnly) ? null : m('.col-sm-6',sectionListUsers)
     ]);
   };
 
@@ -445,7 +449,7 @@ module.exports = (function () {
   view.main = function (c) {
     var h2Elements = [ m('span', conf.LANG.GROUP.GROUP + ' ' + c.group.name) ];
     var shareBtn = '';
-    if (c.group.visibility !== 'restricted') {
+    if (c.group.visibility !== 'restricted' || conf.SERVER.allPadsPublicsAuthentifiedOnly) {
       shareBtn = m('button.btn.btn-default', {
         title: conf.LANG.GROUP.SHARE,
         onclick: padShare.bind(c, c.group._id, null)
@@ -491,6 +495,10 @@ module.exports = (function () {
         view.passForm(c)
       ]);
     } else {
+      var adminPanelTitle = conf.LANG.GROUP.PAD.ADMINS + ' & ' + conf.LANG.GROUP.PAD.USERS;
+      if (conf.SERVER.allPadsPublicsAuthentifiedOnly) {
+        adminPanelTitle = conf.LANG.GROUP.PAD.ADMINS;
+      }
       return m('section', [
         m('h2', h2Elements),
         m('section.description', [  ]),
@@ -509,9 +517,7 @@ module.exports = (function () {
         ]),
         m('section.panel.panel-warning.users', [
           m('.panel-heading',
-            m('h3.panel-title',
-              conf.LANG.GROUP.PAD.ADMINS + ' & ' + conf.LANG.GROUP.PAD.USERS
-            )
+            m('h3.panel-title', adminPanelTitle)
           ),
           view.users(c)
         ])

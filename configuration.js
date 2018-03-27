@@ -70,7 +70,8 @@ module.exports = (function() {
       SMTPSSL: false,
       SMTPTLS: true,
       tokenDuration: 60, // in minutes
-      useFirstLastNameInPads: false
+      useFirstLastNameInPads: false,
+      insensitiveMailMatch: false
     },
 
     /**

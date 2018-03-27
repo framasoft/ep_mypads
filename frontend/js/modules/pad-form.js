@@ -178,22 +178,28 @@ module.exports = (function () {
         name.label,
         m('.col-sm-7', name.input)
       ]),
-      m('.form-group', [
-        m('.col-sm-7.col-sm-offset-4', [
-          m('.checkbox', [
-            groupParams.label,
-          ])
-        ])
-      ])
     ];
-
-    if (!c.groupParams()) {
+    if (!conf.SERVER.allPadsPublicsAuthentifiedOnly) {
       fields.push(
         m('.form-group', [
-          visibility.label,
-          m('.col-sm-7', visibility.select)
+          m('.col-sm-7.col-sm-offset-4', [
+            m('.checkbox', [
+              groupParams.label,
+            ])
+          ])
         ])
       );
+    }
+
+    if (!c.groupParams()) {
+      if (!conf.SERVER.allPadsPublicsAuthentifiedOnly) {
+        fields.push(
+          m('.form-group', [
+            visibility.label,
+            m('.col-sm-7', visibility.select)
+          ])
+        );
+      }
       if (c.data.visibility() === 'private') {
         fields.push(
           m('.form-group', [

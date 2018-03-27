@@ -72,6 +72,7 @@ module.exports = (function () {
         c.group = data.groups()[key];
         if (!c.isGuest) {
           c.isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
+          c.isUser  = ld.includes(c.group.users,  auth.userInfo()._id);
           var pads = model.pads();
           var users = model.users();
           c.pads = ld.sortBy(ld.map(c.group.pads, function (x) { return pads[x]; }), sortingPreferences.padByField());
@@ -79,6 +80,7 @@ module.exports = (function () {
           c.admins = ld.map(c.group.admins, function (x) { return users[x]; });
         } else {
           c.isAdmin = false;
+          c.isUser  = false;
           c.pads = ld.sortBy(ld.compact(ld.map(c.group.pads, function (x) {
             return data.pads()[x];
           })), sortingPreferences.padByField());
@@ -392,7 +394,7 @@ module.exports = (function () {
     sectionListAdmins.push(list(c.admins));
 
     var sectionListUsers = [ m('h4', conf.LANG.GROUP.PAD.USERS) ];
-    if (c.isAdmin && (c.group.visibility === 'restricted')) {
+    if (c.isAdmin) {
       sectionListUsers.push(
         m('p.text-center',
           m('a.btn.btn-default',
@@ -479,7 +481,7 @@ module.exports = (function () {
     h2Elements.push(
       m('.btn-group.pull-right', {role:'group'}, buttonsArray)
     );
-    var showPass = (!c.isAdmin && (c.group.visibility === 'private') &&
+    var showPass = (!c.isAdmin && !c.isUser && (c.group.visibility === 'private') &&
       !c.sendPass());
     if (showPass) {
       return m('section', [

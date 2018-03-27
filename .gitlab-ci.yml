@@ -46,6 +46,16 @@ test_node_9:
    - npm run test
    - npm run test-ldap
 
+# Push new translations strings to https://trad.framasoft.org
+trads:
+  stage: test
+  image: framasoft/push-trad:latest
+  script:
+  - if [ ! -z ${ZANATA_CONFIG_FRAMABOT+x} ]; then mkdir -p ${HOME}/.config; echo -e "${ZANATA_CONFIG_FRAMABOT}" > ${HOME}/.config/zanata.ini; fi
+  - if [ ! -z ${ZANATA_CONFIG_FRAMABOT+x} ]; then make push-locales; fi
+  only:
+    - development
+
 # Bring in any services we need http://docs.gitlab.com/ee/ci/docker/using_docker_images.html#what-is-a-service
 # See http://docs.gitlab.com/ce/ci/services/README.html for examples.
 services:

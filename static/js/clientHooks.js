@@ -1,4 +1,6 @@
 /**
+*  vim:set sw=2 ts=2 sts=2 ft=javascript expandtab:
+*
 *  # Client Hooks Module
 *
 *  ## License
@@ -29,6 +31,16 @@
 'use strict';
 
 var $ = require('ep_etherpad-lite/static/js/rjquery').$;
+
+// Reload page on disconnect to prevent unauthorized access
+var automaticReconnect = require('ep_etherpad-lite/static/js/pad_automatic_reconnect');
+var showCountDownTimerToReconnectOnModal = automaticReconnect.showCountDownTimerToReconnectOnModal;
+automaticReconnect.showCountDownTimerToReconnectOnModal = function($modal, pad) {
+  if ($modal.is('.with_reconnect_timer')) {
+    location.reload();
+  }
+};
+
 exports.postToolbarInit = function (hook_name, args) {
   /*
    * Fix links with auth_token
@@ -103,6 +115,27 @@ exports.postToolbarInit = function (hook_name, args) {
     success: function(data, textStatus, jqXHR) {
       if (data.success && data.usefirstlastname) {
         $('#myusernameedit').prop('disabled', true);
+      }
+    }
+  });
+
+  /*
+   * Replace the Etherpad share URL by MyPads share URL and hide embed code
+   * if using allPadsPublicsAuthentifiedOnly
+   */
+  $.ajax({
+    method: 'GET',
+    url: baseURL+'/mypads/api/configuration/public/allpadspublicsauthentifiedonly',
+    dataType: 'JSON',
+    data: {
+      pid: padID
+    },
+    success: function(data, textStatus, jqXHR) {
+      if (data.success && data.allpadspublicsauthentifiedonly) {
+        var url = baseURL+'/mypads/?/mypads/group/'+data.group+'/pad/view/'+padID;
+        $('#linkinput').hide();
+        $('#embedcode').hide();
+        $('#linkinput').parent().append('<input id="linkinput2" value="'+url+'" onclick="this.select()" type="text">');
       }
     }
   });

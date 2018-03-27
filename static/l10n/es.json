@@ -209,6 +209,8 @@
       "HELP": "Las carpetas pueden contener pads. Aquí tienes tus carpetas : las que has creado, las que has sido invitadas explícitamente",
       "INFO": {
          "ADD_SUCCESS": "La carpeta ha sido creada con éxito",
+         "CHAT_HISTORY_REMOVE_SUCCESS": "El historial de chat del pad ha sido eliminado con éxito",
+         "CHAT_HISTORY_REMOVE_SURE": "¿Estás segura de que quieres eliminar el historial de chat de este pad?",
          "DESCRIPTION": "Un largo texto explicativo opcional para describir su carpeta",
          "EDIT_SUCCESS": "La carpeta se ha actualizado correctamente",
          "GROUP_PARAMS": "Por defecto, el pad hereda de los parámetros de la carpeta a la que pertenece. Se pueden sobrescribir si se desea",
@@ -272,6 +274,7 @@
       "PROPERTIES": "Propiedades",
       "QUIT_GROUP": "Desuscribirse de la carpeta",
       "REMOVE": "Eliminar",
+      "REMOVE_CHAT_HISTORY": "¿Estás segura de que quieres eliminar el historial de chat de este pad?",
       "SEARCH": {
          "HELP": "Búsqueda en campos comunes con al menos 2 caracteres",
          "TITLE": "Buscar",

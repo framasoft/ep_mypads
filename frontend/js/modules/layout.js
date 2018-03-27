@@ -163,16 +163,21 @@ module.exports = (function () {
     }
     return [
       m(header, [
-        m('ul.lang.container', ld.reduce(conf.SERVER.languages,
-          function (memo, val, key) {
-            var cls = (key === conf.USERLANG) ? 'active': '';
-            memo.push(m('li', {
-              class: cls,
-              onclick: conf.updateLang.bind(null, key)
-            }, val));
-            return memo;
-          }, [])
-        ),
+        m('div.lang.container.form-inline', [
+          m('select.form-control', ld.reduce(conf.SERVER.languages,
+            function (memo, val, key) {
+              var opts = {
+                onclick: conf.updateLang.bind(null, key),
+                value: key
+              };
+              if (key === conf.USERLANG) {
+                opts.selected = 'selected';
+              }
+              memo.push(m('option', opts, val));
+              return memo;
+            }, [])
+          ),
+        ]),
         m('div.container.ombre', [
           m('h1', conf.SERVER.title),
           m('hr.trait', {role: 'presentation'}),

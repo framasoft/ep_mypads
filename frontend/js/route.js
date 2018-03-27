@@ -46,6 +46,7 @@ module.exports = (function () {
   var groupRemove = require('./modules/group-remove.js');
   var padForm = require('./modules/pad-form.js');
   var padRemove = require('./modules/pad-remove.js');
+  var padRemoveChatHistory = require('./modules/pad-remove-chat-history.js');
   var padView = require('./modules/pad-view.js');
   var padMove = require('./modules/pad-move.js');
   var userInvite = require('./modules/user-invitation.js');
@@ -88,6 +89,7 @@ module.exports = (function () {
     '/mypads/group/:group/pad/move': padMove,
     '/mypads/group/:group/pad/edit/:pad': padForm,
     '/mypads/group/:group/pad/remove/:pad': padRemove,
+    '/mypads/group/:group/pad/remove/chat/history/:pad': padRemoveChatHistory,
     '/mypads/group/:group/pad/view/:pad': padView,
     '/mypads/group/:group/user/:action': userInvite,
     '/admin': admin,

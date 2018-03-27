@@ -26,13 +26,16 @@ module.exports = (function () {
 
   // Dependencies
   var removePad;
+  var getChatHead;
   try {
     // Normal case : when installed as a plugin
     removePad = require('ep_etherpad-lite/node/db/PadManager').removePad;
+    getChatHead = require('ep_etherpad-lite/node/db/API').getChatHead;
   }
   catch (e) {
     // Testing case : noop function
     removePad = function () {};
+    getChatHead = function () {};
   }
   var ld = require('lodash');
   var cuid = require('cuid');
@@ -301,6 +304,20 @@ module.exports = (function () {
       if (err) { return callback(err); }
       removePad(p._id);
       pad.fn.indexGroups(true, p, callback);
+    });
+  };
+
+  /**
+   * ### delChatHistory
+   *
+   */
+  pad.delChatHistory = function(padID, callback) {
+    getChatHead(padID, function(err, res) {
+      if (err) { return callback(err); }
+      for (var i = 0; i <= res.chatHead; i++) {
+        storage.db.remove('pad:' + padID + ':chat:'+i);
+      }
+      callback();
     });
   };
 

@@ -31,6 +31,7 @@ module.exports = (function () {
   // Global dependencies
   var m = require('mithril');
   var ld = require('lodash');
+  var cookies = require('js-cookie');
   // Local dependencies
   var conf = require('../configuration.js');
   var auth = require('../auth.js');
@@ -78,6 +79,23 @@ module.exports = (function () {
       }).then(function (resp) {
         auth.userInfo(resp.user);
         localStorage.setItem('token', resp.token);
+
+        /*
+         * Fix pad authorship mixup
+         * See https://framagit.org/framasoft/ep_mypads/issues/148
+         */
+        var myPadsAuthorCookie  = cookies.get('token-' + resp.user.login);
+        if (myPadsAuthorCookie) {
+          // 60 days
+          cookies.set('token', myPadsAuthorCookie, { expires: 60 });
+        } else {
+          var browserAuthorCookie = cookies('token');
+          if (browserAuthorCookie) {
+            // 365 days
+            cookies.set('token-' + resp.user.login, browserAuthorCookie, { expires: 365 });
+          }
+        }
+
         var lang = auth.userInfo().lang;
         if (lang !== conf.USERLANG) {
           conf.updateLang(lang);

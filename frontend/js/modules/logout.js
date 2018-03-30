@@ -31,6 +31,8 @@ module.exports = (function () {
   // Global dependencies
   var m = require('mithril');
   var ld = require('lodash');
+  var cookies = require('js-cookie');
+  // Local dependencies
   var conf = require('../configuration.js');
   var auth = require('../auth.js');
   var model = require('../model/group.js');
@@ -52,6 +54,15 @@ module.exports = (function () {
         url: conf.URLS.LOGOUT,
         config: auth.fn.xhrConfig
       }).then(function () {
+        /*
+         * Fix pad authorship mixup
+         * See https://framagit.org/framasoft/ep_mypads/issues/148
+         */
+        if (cookies.get('token')) {
+          cookies.set('token-' + auth.userInfo().login, cookies.get('token'), { expires: 365 });
+          cookies.remove('token');
+        }
+
         auth.userInfo(null);
         localStorage.removeItem('token');
         model.init();

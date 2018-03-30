@@ -1,4 +1,6 @@
 /**
+*  vim:set sw=2 ts=2 sts=2 ft=javascript expandtab:
+*
 *  # Notification module
 *
 *  ## License
@@ -146,7 +148,7 @@ module.exports = (function () {
     options.title = conf.LANG.NOTIFICATION.ERROR;
     options.cls = 'alert alert-danger';
     options.icon = 'exclamation-sign';
-    options.timeout = false;
+    options.timeout = 15;
     notif.send(options, callback);
   };
 

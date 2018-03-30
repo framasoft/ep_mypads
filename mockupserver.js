@@ -1,4 +1,6 @@
 /**
+*  vim:set sw=2 ts=2 sts=2 ft=javascript expandtab:
+*
 *  licensed to the apache software foundation (asf) under one
 *  or more contributor license agreements.  see the notice file
 *  distributed with this work for additional information

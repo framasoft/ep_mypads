@@ -3,3 +3,4 @@ test.db
 *swp
 .ep_initialized
 npm-debug.log
+.zanata-cache/

@@ -1,4 +1,6 @@
 /**
+*  vim:set sw=2 ts=2 sts=2 ft=javascript expandtab:
+*
 *  # User invitation and admin sharing module
 *
 *  ## License
@@ -38,6 +40,7 @@ module.exports = (function () {
   var notif = require('../widgets/notification.js');
   var tag = require('../widgets/tag.js');
   var form = require('../helpers/form.js');
+  var cleanupXss = require('../helpers/cleanupXss.js');
 
   var invite = {};
 
@@ -65,11 +68,11 @@ module.exports = (function () {
       var lpfx = c.isInvite ? 'INVITE_USER' : 'ADMIN_SHARE';
       var msg;
       if (resp.present.length > 0) {
-        msg = conf.LANG.GROUP[lpfx].SUCCESS + resp.present.join(', ');
+        msg = conf.LANG.GROUP[lpfx].SUCCESS + cleanupXss.cleanup(resp.present.join(', '));
         notif.success({ body: msg });
       }
       if (resp.absent.length > 0) {
-        msg = conf.LANG.GROUP[lpfx].FAILURE + resp.absent.join(', ');
+        msg = conf.LANG.GROUP[lpfx].FAILURE + cleanupXss.cleanup(resp.absent.join(', '));
         notif.warning({ body: msg });
       }
       if ((resp.absent.length === 0) && (resp.present.length === 0)) {

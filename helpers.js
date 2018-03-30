@@ -1,7 +1,9 @@
 /**
-* # Helpers Module
+*  vim:set sw=2 ts=2 sts=2 ft=javascript expandtab:
 *
-* This module contains all transversal helpers functions.
+*  # Helpers Module
+*
+*  This module contains all transversal helpers functions.
 */
 
 module.exports = (function () {

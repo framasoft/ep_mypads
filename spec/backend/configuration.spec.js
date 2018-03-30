@@ -1,4 +1,6 @@
 /**
+*  vim:set sw=2 ts=2 sts=2 ft=javascript expandtab:
+*
 * Licensed to the Apache Software Foundation (ASF) under one
 * or more contributor license agreements.  See the NOTICE file
 * distributed with this work for additional information
@@ -145,6 +147,7 @@
           expect(settings.HTMLExtraHead).toBeDefined();
           expect(settings.openRegistration).toBeDefined();
           expect(settings.hideHelpBlocks).toBeDefined();
+          expect(settings.useFirstLastNameInPads).toBeDefined();
           done();
         });
       });

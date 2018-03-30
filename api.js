@@ -1,4 +1,6 @@
 /**
+*  vim:set sw=2 ts=2 sts=2 ft=javascript expandtab:
+*
 *  # API Module
 *
 *  ## License
@@ -31,6 +33,7 @@ var rFS = require('fs').readFileSync;
 var ld = require('lodash');
 var passport = require('passport');
 var jwt = require('jsonwebtoken');
+var cookie = require('js-cookie');
 var express;
 var testMode = false;
 try {
@@ -73,6 +76,7 @@ catch (e) {
   }
 }
 var bodyParser = require('body-parser');
+var decode = require('js-base64').Base64.decode;
 // Local dependencies
 var conf = require('./configuration.js');
 var mail = require('./mail.js');
@@ -349,6 +353,25 @@ module.exports = (function () {
             login: u.login,
             key: auth.tokens[u.login].key
           };
+
+          /*
+           * Fix pad authorship mixup
+           * See https://framagit.org/framasoft/ep_mypads/issues/148
+           */
+          if (req.cookies) {
+            var myPadsAuthorCookie  = req.cookies['token-' + u.login];
+            if (myPadsAuthorCookie) {
+              // 60 days * 86400 seconds a day * 1000 = 5184000000 ms
+              res.cookie('token', myPadsAuthorCookie, { maxAge: 5184000000 });
+            } else {
+              var browserAuthorCookie = req.cookies['token'];
+              if (browserAuthorCookie) {
+                // 365 days * 86400 seconds a day * 1000 = 31536000000 ms
+                res.cookie('token-' + u.login, browserAuthorCookie, { maxAge: 31536000000 });
+              }
+            }
+          }
+
           return res.status(200).send({
             success: true,
             user: ld.omit(u, 'password'),
@@ -370,6 +393,16 @@ module.exports = (function () {
 
     app.get(authRoute + '/logout', fn.ensureAuthenticated, function (req, res) {
       delete auth.tokens[req.mypadsLogin];
+
+      /*
+       * Fix pad authorship mixup
+       * See https://framagit.org/framasoft/ep_mypads/issues/148
+       */
+      if (req.cookies && req.cookies['token']) {
+        res.cookie('token-' + req.mypadsLogin, req.cookies['token'], { maxAge: 31536000000 });
+        res.clearCookie('token');
+      }
+
       res.status(200).send({ success: true });
     });
 
@@ -486,6 +519,20 @@ module.exports = (function () {
 
     app.delete(confRoute + '/:key', fn.ensureAdmin,
       ld.partial(fn.del, conf.del));
+
+    /**
+    * GET method
+    *
+    * Return the value of useFirstLastNameInPads configuration setting
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/configuration/public/usefirstlastname
+    */
+
+    app.get(confRoute + '/public/usefirstlastname', function (req, res) {
+      return res.send({ success: true, usefirstlastname: conf.get('useFirstLastNameInPads') });
+    });
+
   };
 
   /**
@@ -940,7 +987,7 @@ module.exports = (function () {
     * Returns pads too because usefull for public groups and unauth users.
     *
     * Sample URL:
-    * http://etherpad.ndd/mypemailads/api/group/xxxx
+    * http://etherpad.ndd/mypads/api/group/xxxx
     */
 
     app.get(groupRoute + '/:key', function (req, res) {
@@ -967,7 +1014,8 @@ module.exports = (function () {
           var isPrivate = (g.visibility === 'private');
           if (isPrivate) {
             if (req.query.password) {
-              auth.fn.isPasswordValid(g, req.query.password,
+              var pwd = (typeof req.query.password === 'undefined') ? undefined : decode(req.query.password);
+              auth.fn.isPasswordValid(g, pwd,
                 function (err, valid) {
                   if (!err && !valid) {
                     err = { message: 'BACKEND.ERROR.PERMISSION.UNAUTHORIZED' };
@@ -1157,7 +1205,8 @@ module.exports = (function () {
           return successFn(req, res, p);
         }
         if (!edit && (p.visibility === 'private')) {
-          auth.fn.isPasswordValid(p, req.query.password, function (err, valid) {
+          var pwd = (typeof req.query.password === 'undefined') ? undefined : decode(req.query.password);
+          auth.fn.isPasswordValid(p, pwd, function (err, valid) {
             if (!err && !valid) {
               err = { message: 'BACKEND.ERROR.PERMISSION.UNAUTHORIZED' };
             }
@@ -1172,7 +1221,8 @@ module.exports = (function () {
             if (!edit && (g.visibility === 'public')) {
               return successFn(req, res, p);
             } else if (!edit && (g.visibility === 'private')) {
-              auth.fn.isPasswordValid(g, req.query.password,
+              var pwd = (typeof req.query.password === 'undefined') ? undefined : decode(req.query.password);
+              auth.fn.isPasswordValid(g, pwd,
                 function (err, valid) {
                   if (!err && !valid) {
                     err = { message: 'BACKEND.ERROR.PERMISSION.UNAUTHORIZED' };
@@ -1269,6 +1319,23 @@ module.exports = (function () {
     });
 
     /**
+    * DELETE method : `pad.delChatHistory` with pad id
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/pad/chathistory/xxxx
+    */
+
+    app.delete(padRoute + '/chathistory/:key', function (req, res) {
+      var isAdmin = fn.isAdmin(req);
+      var u;
+      if (!isAdmin) { u = auth.fn.getUser(req.body.auth_token); }
+      if (!isAdmin && !u) {
+        return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.NOT_AUTH');
+      }
+      canAct(true, ld.partial(fn.del, pad.delChatHistory), req, res);
+    });
+
+    /**
     * GET method : with pad id
     *
     * Return true if the pad is public
@@ -1277,7 +1344,6 @@ module.exports = (function () {
     * http://etherpad.ndd/mypads/api/pad/ispublic/xxxx
     */
 
-    // TODO: + admin, no pass needed...
     app.get(padRoute + '/ispublic/:key', function (req, res) {
       pad.get(req.params.key, function(err, p) {
         if (err) {

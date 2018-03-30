@@ -1,4 +1,6 @@
 /**
+*  vim:set sw=2 ts=2 sts=2 ft=javascript expandtab:
+*
 *  # Userlist form module
 *
 *  ## License
@@ -38,6 +40,7 @@ module.exports = (function () {
   var tag = require('../widgets/tag.js');
   var form = require('../helpers/form.js');
   var model = require('../model/group.js');
+  var cleanupXss = require('../helpers/cleanupXss.js');
 
   var ulistform = {};
 
@@ -131,11 +134,11 @@ module.exports = (function () {
         notif.success({ body: successMsg });
         var msg;
         if (resp.present.length > 0) {
-          msg = conf.LANG.USERLIST.INFO.USER_SUCCESS + resp.present.join(', ');
+          msg = conf.LANG.USERLIST.INFO.USER_SUCCESS + cleanupXss.cleanup(resp.present.join(', '));
           notif.success({ body: msg });
         }
         if (resp.absent.length > 0) {
-          msg = conf.LANG.USERLIST.INFO.USER_FAILURE + resp.absent.join(', ');
+          msg = conf.LANG.USERLIST.INFO.USER_FAILURE + cleanupXss.cleanup(resp.absent.join(', '));
           notif.warning({ body: msg });
         }
         m.route('/myuserlists');

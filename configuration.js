@@ -1,28 +1,30 @@
 /**
-* # Configuration Module
+*  vim:set sw=2 ts=2 sts=2 ft=javascript expandtab:
 *
-* ## License
+*  # Configuration Module
 *
-* Licensed to the Apache Software Foundation (ASF) under one
-* or more contributor license agreements.  See the NOTICE file
-* distributed with this work for additional information
-* regarding copyright ownership.  The ASF licenses this file
-* to you under the Apache License, Version 2.0 (the
-* "License"); you may not use this file except in compliance
-* with the License.  You may obtain a copy of the License at
+*  ## License
 *
-*   http://www.apache.org/licenses/LICENSE-2.0
+*  Licensed to the Apache Software Foundation (ASF) under one
+*  or more contributor license agreements.  See the NOTICE file
+*  distributed with this work for additional information
+*  regarding copyright ownership.  The ASF licenses this file
+*  to you under the Apache License, Version 2.0 (the
+*  "License"); you may not use this file except in compliance
+*  with the License.  You may obtain a copy of the License at
 *
-* Unless required by applicable law or agreed to in writing,
-* software distributed under the License is distributed on an
-* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-* KIND, either express or implied.  See the License for the
-* specific language governing permissions and limitations
-* under the License.
+*    http://www.apache.org/licenses/LICENSE-2.0
 *
-* ## Description
+*  Unless required by applicable law or agreed to in writing,
+*  software distributed under the License is distributed on an
+*  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+*  KIND, either express or implied.  See the License for the
+*  specific language governing permissions and limitations
+*  under the License.
 *
-* This is the module for MyPads configuration.
+*  ## Description
+*
+*  This is the module for MyPads configuration.
 */
 
 module.exports = (function() {
@@ -56,7 +58,7 @@ module.exports = (function() {
       hideHelpBlocks: false,
       passwordMin: 8,
       passwordMax: 30,
-      languages: { en: 'English', fr: 'Français' },
+      languages: { en: 'English', fr: 'Français', de: 'Deutsch', es: 'Español' },
       defaultLanguage: 'en',
       HTMLExtraHead: '',
       checkMails: false,
@@ -67,7 +69,9 @@ module.exports = (function() {
       SMTPEmailFrom: undefined,
       SMTPSSL: false,
       SMTPTLS: true,
-      tokenDuration: 60 // in minutes
+      tokenDuration: 60, // in minutes
+      useFirstLastNameInPads: false,
+      insensitiveMailMatch: false
     },
 
     /**
@@ -126,7 +130,11 @@ module.exports = (function() {
           if (err) { return callback(err); }
           configuration.cache = ld.transform(res, function (memo, val, key) {
             key = key.replace(DBPREFIX, '');
-            memo[key] = val;
+            if (key === 'languages') {
+              memo[key] = configuration.DEFAULTS.languages;
+            } else {
+              memo[key] = val;
+            }
           });
           return callback(null);
         });
@@ -227,7 +235,7 @@ module.exports = (function() {
     public: function () {
       var all = configuration.all();
       return ld.pick(all, 'title', 'passwordMin', 'passwordMax', 'languages',
-        'HTMLExtraHead', 'openRegistration', 'hideHelpBlocks');
+        'HTMLExtraHead', 'openRegistration', 'hideHelpBlocks', 'useFirstLastNameInPads');
     }
   };
 

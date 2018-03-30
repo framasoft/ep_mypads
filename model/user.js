@@ -1,4 +1,6 @@
 /**
+*  vim:set sw=2 ts=2 sts=2 ft=javascript expandtab:
+*
 *  # User Model
 *
 *  ## License
@@ -308,7 +310,8 @@ module.exports = (function () {
       throw new TypeError('BACKEND.ERROR.TYPE.LOGINS_ARR');
     }
     return ld.reduce(loginsMails, function (memo, lm) {
-      var uid = user.logins[lm] || user.emails[lm];
+      var email = (conf.insensitiveMailMatch) ? lm.toLowerCase() : lm;
+      var uid = user.logins[lm] || user.emails[email];
       if (uid) {
         memo.uids.push(uid);
         memo.present.push(lm);
@@ -427,7 +430,8 @@ module.exports = (function () {
             if (val) {
               var k = key.replace(UPREFIX, '');
               memo.logins[val.login] = k;
-              memo.emails[val.email] = k;
+              var email = (conf.insensitiveMailMatch) ? val.email.toLowerCase() : val.email;
+              memo.emails[email] = k;
             }
             return memo;
           }, { logins: {}, emails: {} });
@@ -468,7 +472,7 @@ module.exports = (function () {
   user.set = function (params, callback) {
     common.addSetInit(params, callback, ['login', 'password']);
     if (!ld.isEmail(params.email)) {
-      throw new TypeError('BACKEND.ERROR.TYPE.EMAIL');
+      throw new TypeError('BACKEND.ERROR.TYPE.MAIL');
     }
     var u = user.fn.assignProps(params);
     user.fn.checkLogin(params._id, u, function (err) {

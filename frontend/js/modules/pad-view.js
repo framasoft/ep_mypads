@@ -1,4 +1,6 @@
 /**
+*  vim:set sw=2 ts=2 sts=2 ft=javascript expandtab:
+*
 *  # Group View module
 *
 *  ## License
@@ -39,6 +41,7 @@ module.exports = (function () {
   var padMark = require('./pad-mark.js');
   var padShare = require('./pad-share.js');
   var expandPad = require('../helpers/expandPad.js');
+  var ready = require('../helpers/ready.js');
 
   var pad = {};
 
@@ -130,6 +133,7 @@ module.exports = (function () {
   view.passForm = function(c) {
     return m('form', {
       id: 'password-form',
+      config: ready.inFrame,
       onsubmit: c.submit
     }, [
       m('label.block', { for: 'mypadspassword' }, conf.LANG.USER.PASSWORD),
@@ -149,9 +153,24 @@ module.exports = (function () {
   };
 
   view.pad = function (c) {
-    var p = (c.sendPass() ? '&mypadspassword=' + encode(c.password()) : '');
-    var a = (auth.isAuthenticated() ? '&auth_token=' + auth.token() : '');
-    var link = conf.URLS.RAWBASE.replace('mypads/', '') + 'p/' + c.pad._id + '?' + p + a;
+    var u  = auth.userInfo();
+    var p  = (c.sendPass() ? '&mypadspassword=' + encode(c.password()) : '');
+    var a  = (auth.isAuthenticated() ? '&auth_token=' + auth.token() : '');
+    var n  = '';
+    var co = '';
+    if (u) {
+      if (((u.useLoginAndColorInPads || conf.SERVER.useFirstLastNameInPads) && u.color)) {
+        co = '&userColor=' + u.color;
+      }
+      if (conf.SERVER.useFirstLastNameInPads) {
+        var firstname = (u.firstname) ? u.firstname : '';
+        var lastname  = (u.lastname)  ? u.lastname  : '';
+        n = '&userName=' + firstname + ' ' + lastname;
+      } else if (u.useLoginAndColorInPads) {
+        n = '&userName=' + u.login;
+      }
+    }
+    var link = conf.URLS.RAWBASE.replace('mypads/', '') + 'p/' + c.pad._id + '?' + p + a + co + n;
     return [
       m('p.text-right', [
         m('a.btn.btn-default.expand-toggle', {

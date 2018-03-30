@@ -1,7 +1,6 @@
-aside,
-header > ul.lang {
+aside section.user-aside {
   display: none;
 }
-main.ombre > section.col-md-9 {
+main.ombre > section.col-md-9:not(.groupList) {
   width: 100% !important;
 }

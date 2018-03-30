@@ -1,4 +1,6 @@
 /**
+*  vim:set sw=2 ts=2 sts=2 ft=javascript expandtab:
+*
 *  # Ready helpers functions
 *
 *  ## License
@@ -33,12 +35,17 @@ module.exports = (function () {
   var ready = {};
 
   /**
-  * `focusOnInit` is a mithril.config attribute that focus on a given `element`
-  * at first initialization.
+  * `checkLoop` will poll the server to know if the user cache is fully loaded
+  * It will call ready.inFrame too.
   */
 
   ready.checkLoop = function(element, isInitialized) {
     if (isInitialized) return;
+
+    // Are we in an iFrame?
+    ready.inFrame(element, isInitialized);
+
+    // Is the user cache ready?
     m.request({
       method: 'GET',
       url: conf.URLS.CACHECHECK
@@ -70,6 +77,25 @@ module.exports = (function () {
       }
     })
   };
+
+  /**
+  * `inFrame` checks if we are in a MyPads iFrame and reload the parent window
+  * if it's the case.
+  *
+  * Example: you're using a pad through a MyPads iFrame, the server crashes, you
+  * need to relog, but this prevents the login page to show inside the iFrame.
+  */
+  var rgx = new RegExp('/mypads');
+  ready.inFrame = function(element, isInitialized) {
+    if (isInitialized) return;
+
+    var windowMode     = location.href;
+    window.displaymode = windowMode;
+    //detect if we are in a iframe
+    if (window.parent.location.href.match(rgx) && (typeof(window.parent.displaymode) === 'undefined' || window.parent.displaymode !== windowMode)) {
+      window.parent.location.reload();
+    }
+  }
 
   return ready;
 

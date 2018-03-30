@@ -1,4 +1,6 @@
 /**
+*  vim:set sw=2 ts=2 sts=2 ft=javascript expandtab:
+*
 *  Licensed to the Apache Software Foundation (ASF) under one
 *  or more contributor license agreements.  See the NOTICE file
 *  distributed with this work for additional information
@@ -23,6 +25,7 @@
   var ld = require('lodash');
   var request = require('request');
   var jwt = require('jsonwebtoken');
+  var encode = require('js-base64').Base64.encode;
   var api = require('../../api.js');
   var mail = require('../../mail.js');
   var auth = require('../../auth.js');
@@ -566,6 +569,21 @@
         );
 
       });
+
+      describe('configuration.public GET usefirstlastname', function () {
+
+        it('should return the value of useFirstLastNameInPads',
+          function (done) {
+            rq.get(confRoute + '/public/usefirstlastname', function (err, resp, body) {
+              expect(resp.statusCode).toBe(200);
+              expect(body.success).toBeTruthy();
+              expect(body.usefirstlastname).toBeDefined();
+              done();
+            });
+          }
+        );
+      });
+
     });
 
     describe('user inactive account limitations', function () {
@@ -778,7 +796,7 @@
                 b.body.auth_token = token;
                 rq.put(userRoute + '/guest', b, function (err, resp, body) {
                   expect(resp.statusCode).toBe(400);
-                  expect(body.error).toMatch('EMAIL');
+                  expect(body.error).toMatch('MAIL');
                   b.body.email = 'guest@phantomatic.net';
                   rq.put(userRoute + '/guest', b, function (err, resp, body) {
                     expect(resp.statusCode).toBe(400);
@@ -1772,7 +1790,7 @@
 
         it('should return the group in case of private unauth or non-admin ' +
           'if password is correct', function (done) {
-            var route = groupRoute + '/' + gprivateid + '?password=secret';
+            var route = groupRoute + '/' + gprivateid + '?password=' + encode('secret');
             rq.get(route, function (err, resp, body) {
               expect(err).toBeNull();
               expect(resp.statusCode).toBe(200);
@@ -2334,7 +2352,7 @@
             expect(body.key).toBeDefined();
             var key = body.key;
             expect(body.value.name).toBe('padOk');
-            rq.get(padRoute + '/' + key + '?password=secret',
+            rq.get(padRoute + '/' + key + '?password=' + encode('secret'),
               function (err, resp, body) {
                 expect(err).toBeNull();
                 expect(resp.statusCode).toBe(200);

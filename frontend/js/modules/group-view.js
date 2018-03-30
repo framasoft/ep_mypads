@@ -1,4 +1,6 @@
 /**
+*  vim:set sw=2 ts=2 sts=2 ft=javascript expandtab:
+*
 *  # Group View module
 *
 *  ## License
@@ -38,6 +40,9 @@ module.exports = (function () {
   var model = require('../model/group.js');
   var padMark = require('./pad-mark.js');
   var padShare = require('./pad-share.js');
+  var ready = require('../helpers/ready.js');
+  var sortingPreferences = require('../helpers/sortingPreferences.js');
+  var filterPads = require('../helpers/filterPads.js');
 
   var group = {};
 
@@ -70,16 +75,21 @@ module.exports = (function () {
         c.group = data.groups()[key];
         if (!c.isGuest) {
           c.isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
+          c.isUser  = ld.includes(c.group.users,  auth.userInfo()._id);
           var pads = model.pads();
           var users = model.users();
-          c.pads = ld.map(c.group.pads, function (x) { return pads[x]; });
+          c.pads = ld.sortBy(ld.map(c.group.pads, function (x) { return pads[x]; }), sortingPreferences.padByField());
           c.users = ld.map(c.group.users, function (x) { return users[x]; });
           c.admins = ld.map(c.group.admins, function (x) { return users[x]; });
         } else {
           c.isAdmin = false;
+          c.isUser  = false;
           c.pads = ld.sortBy(ld.compact(ld.map(c.group.pads, function (x) {
             return data.pads()[x];
-          })), 'ctime');
+          })), sortingPreferences.padByField());
+        }
+        if (!sortingPreferences.padAsc()) {
+          c.pads.reverse();
         }
         document.title = conf.LANG.GROUP.GROUP + ' ' + c.group.name +
           ' - ' + conf.SERVER.title;
@@ -108,13 +118,19 @@ module.exports = (function () {
     * If already sorted by the same field, it reverses order.
     */
 
-    c.sortField = m.prop('ctime');
-    c.sortAsc = m.prop(true);
-    c.sortBy = function (field) {
-      if (c.sortField() === field) { c.sortAsc(!c.sortAsc()); }
+    c.sortField = m.prop(sortingPreferences.padByField());
+    c.sortAsc = m.prop(sortingPreferences.padAsc());
+    c.sortBy = function (field, asc) {
+      if (c.sortField() === field && typeof(asc) !== 'boolean') {
+        c.sortAsc(!c.sortAsc());
+      }
       c.sortField(field);
       var direction = c.sortAsc() ? 'asc' : 'desc';
       c.pads = ld.sortByOrder(c.pads, field, direction);
+      sortingPreferences.updateValues({
+        padByField: c.sortField(),
+        padAsc: c.sortAsc()
+      });
     };
 
     /**
@@ -158,7 +174,7 @@ module.exports = (function () {
         var data = c.isGuest ? model.tmp() : model;
         c.group = data.groups()[key];
         c.pads = ld.sortBy(ld.compact(ld.map(c.group.pads,
-          function (x) { return data.pads()[x]; })), 'ctime');
+          function (x) { return data.pads()[x]; })), sortingPreferences.padByField());
         c.sendPass(true);
       });
     };
@@ -226,7 +242,7 @@ module.exports = (function () {
   view.pads = function (c) {
     var route = '/mypads/group/' + c.group._id;
     var GROUP = conf.LANG.GROUP;
-    var addView = m('p.col-sm-6.text-center', [
+    var addView = m('p.col-sm-4.text-center', [
       m('a.btn.btn-default', { href: route + '/pad/add', config: m.route }, [
         m('i.glyphicon.glyphicon-plus.text-success'),
         ' '+conf.LANG.GROUP.PAD.ADD
@@ -238,27 +254,40 @@ module.exports = (function () {
         ' '+conf.LANG.GROUP.PAD.MOVE
       ])
     ]);
-  var sortIcon = (function () {
-    if (c.sortField()) {
-      return (c.sortAsc() ? 'top' : 'bottom');
-    } else {
-      return 'arrow-combo';
-    }
-  })();
-  var sortView = m('p.col-sm-6.text-right.small', [
-    m('span', ' '+conf.LANG.GROUP.PAD.SORT_BY),
-    m('button.btn.btn-default.btn-xs', {
-      type: 'button',
-      onclick: ld.partial(c.sortBy, 'ctime')
-    }, [conf.LANG.GROUP.PAD.SORT_BY_CREATION+' ',
-      m('i.small.glyphicon glyphicon-triangle-' + sortIcon)]
-    ),
-    m('button.btn.btn-default.btn-xs', {
-      type: 'button',
-      onclick: ld.partial(c.sortBy, 'name')
-    }, [ conf.LANG.GROUP.PAD.SORT_BY_NAME+' ',
-      m('i.small.glyphicon glyphicon-triangle-' + sortIcon)])
-  ]);
+    var filterView = m('p.col-sm-4.text-center.form-inline', [
+      m('.form-group', [
+        m('label', {
+          for: 'pad-filter-form'
+        }, conf.LANG.GROUP.SEARCH.TITLE+' '),
+        m('input.form-control', {
+          id: 'pad-filter-form',
+          type: 'search',
+          placeholder: conf.LANG.GROUP.SEARCH.TYPE,
+          oninput: m.withAttr('value', filterPads.filterKeyword)
+        }),
+      ])
+    ]);
+    var sortIcon = (function () {
+      if (c.sortField()) {
+        return (c.sortAsc() ? 'top' : 'bottom');
+      } else {
+        return 'arrow-combo';
+      }
+    })();
+    var sortView = m('p.col-sm-4.text-right.small', [
+      m('span', ' '+conf.LANG.GROUP.PAD.SORT_BY),
+      m('button.btn.btn-default.btn-xs', {
+        type: 'button',
+        onclick: ld.partial(c.sortBy, 'ctime')
+      }, [conf.LANG.GROUP.PAD.SORT_BY_CREATION+' ',
+        m('i.small.glyphicon glyphicon-triangle-' + sortIcon)]
+      ),
+      m('button.btn.btn-default.btn-xs', {
+        type: 'button',
+        onclick: ld.partial(c.sortBy, 'name')
+      }, [ conf.LANG.GROUP.PAD.SORT_BY_NAME+' ',
+        m('i.small.glyphicon glyphicon-triangle-' + sortIcon)])
+    ]);
     var padView = (function () {
       if (ld.size(c.group.pads) === 0) {
         return m('p', conf.LANG.GROUP.PAD.NONE);
@@ -283,6 +312,11 @@ module.exports = (function () {
                 title: conf.LANG.MENU.CONFIG
               }, [ m('i.glyphicon.glyphicon-wrench') ]),
               m('a.btn.btn-default.btn-xs', {
+                href: route + '/pad/remove/chat/history/' + p._id,
+                config: m.route,
+                title: conf.LANG.GROUP.REMOVE_CHAT_HISTORY
+              }, [ m('i.glyphicon.glyphicon-volume-off') ]),
+              m('a.btn.btn-default.btn-xs', {
                 href: route + '/pad/remove/' + p._id,
                 config: m.route,
                 title: conf.LANG.GROUP.REMOVE
@@ -294,7 +328,9 @@ module.exports = (function () {
             var visib = conf.LANG.GROUP.FIELD[p.visibility.toUpperCase()];
             padName += ' (' + visib + ')';
           }
-          return m('li.list-group-item', [
+          return m('li.list-group-item.group-pad-item', {
+              'data-padname': padName
+            }, [
             (function () {
               if (!c.isGuest) {
                 var isBookmarked = ld.includes(c.bookmarks, p._id);
@@ -322,7 +358,7 @@ module.exports = (function () {
     })();
     var padBlocks = [];
     if (c.isAdmin) { padBlocks.push(addView);}
-    padBlocks.push(sortView, padView);
+    padBlocks.push(filterView, sortView, padView);
     if (c.isAdmin) { padBlocks.push(moveView);}
     return m('section.panel-body', padBlocks);
   };
@@ -374,7 +410,7 @@ module.exports = (function () {
     sectionListAdmins.push(list(c.admins));
 
     var sectionListUsers = [ m('h4', conf.LANG.GROUP.PAD.USERS) ];
-    if (c.isAdmin && (c.group.visibility === 'restricted')) {
+    if (c.isAdmin) {
       sectionListUsers.push(
         m('p.text-center',
           m('a.btn.btn-default',
@@ -395,6 +431,7 @@ module.exports = (function () {
   view.passForm = function (c) {
     return [ m('form', {
       id: 'password-form',
+      config: ready.inFrame,
       onsubmit: c.submitPass
     }, [
       m('label', { for: 'mypadspassword' }, conf.LANG.USER.PASSWORD),
@@ -431,37 +468,36 @@ module.exports = (function () {
         m('span', ' '+conf.LANG.GROUP.SHARE)
       ]);
     }
+    var buttonsArray = [shareBtn];
     if (c.isAdmin) {
-      h2Elements.push(
-        m('.btn-group.pull-right', {role:'group'}, [
-          shareBtn,
-          m('a.btn.btn-default', {
-            href: '/mypads/group/' + c.group._id + '/edit',
-            config: m.route,
-            title: conf.LANG.MENU.CONFIG
-          },
-          [ m('i.glyphicon.glyphicon-wrench'),
-            m('span', ' '+conf.LANG.MENU.CONFIG)
-          ]),
-          m('a.btn.btn-danger', {
-            href: '/mypads/group/' + c.group._id + '/remove',
-            config: m.route,
-            title: conf.LANG.GROUP.REMOVE
-          },
-          [ m('i.glyphicon.glyphicon-trash'),
-            m('span', ' '+conf.LANG.GROUP.REMOVE)
-          ])
+      buttonsArray.push(
+        m('a.btn.btn-default', {
+          href: '/mypads/group/' + c.group._id + '/edit',
+          config: m.route,
+          title: conf.LANG.MENU.CONFIG
+        },
+        [ m('i.glyphicon.glyphicon-wrench'),
+          m('span', ' '+conf.LANG.MENU.CONFIG)
+        ]),
+        m('a.btn.btn-danger', {
+          href: '/mypads/group/' + c.group._id + '/remove',
+          config: m.route,
+          title: conf.LANG.GROUP.REMOVE
+        },
+        [ m('i.glyphicon.glyphicon-trash'),
+          m('span', ' '+conf.LANG.GROUP.REMOVE)
         ])
       );
-    } else {
-      h2Elements.push(shareBtn);
     }
     var canQuit = (c.isAdmin && c.admins.length > 1) || (!c.isAdmin);
     if (!c.isGuest && canQuit) {
-      h2Elements.push(m('button.cancel', { onclick: c.quit },
-          [ m('i.glyphicon glyphicon-remove'), conf.LANG.GROUP.QUIT_GROUP ]));
+      buttonsArray.push(m('button.cancel.btn.btn-warning', { onclick: c.quit },
+          [ m('i.glyphicon glyphicon-fire'), ' '+conf.LANG.GROUP.QUIT_GROUP ]));
     }
-    var showPass = (!c.isAdmin && (c.group.visibility === 'private') &&
+    h2Elements.push(
+      m('.btn-group.pull-right', {role:'group'}, buttonsArray)
+    );
+    var showPass = (!c.isAdmin && !c.isUser && (c.group.visibility === 'private') &&
       !c.sendPass());
     if (showPass) {
       return m('section', [

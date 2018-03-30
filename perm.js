@@ -1,4 +1,6 @@
 /**
+*  vim:set sw=2 ts=2 sts=2 ft=javascript expandtab:
+*
 *  # Permission Module
 *
 *  ## License
@@ -252,10 +254,17 @@ module.exports = (function () {
     var u = auth.fn.getUser(token);
     if (u && u.useLoginAndColorInPads) {
       var opts = { userName: u.login };
+      if (conf.get('useFirstLastNameInPads')) {
+        var firstname = (u.firstname) ? u.firstname : '';
+        var lastname  = (u.lastname)  ? u.lastname  : '';
+        opts.userName = firstname+' '+lastname;
+      }
       if (u.color) {
         opts.userColor = u.color;
+        req.query.userColor = opts.userColor;
       }
       perm.padAndAuthor[req.params.pid] = opts;
+      req.query.userName = opts.userName;
     } else {
       delete perm.padAndAuthor[req.params.pid];
     }
@@ -268,7 +277,7 @@ module.exports = (function () {
   *
   * ### init
   *
-  * `iniŧ` is a synchronous function used to set up authentification. It :
+  * `init` is a synchronous function used to set up authentification. It :
   *
   * - initializes routes with `check` and `setNameAndColor`
   * - if configuration option `forbidPublicPads` is *true*, redirects etherpad

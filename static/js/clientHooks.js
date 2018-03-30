@@ -72,6 +72,8 @@ exports.postToolbarInit = function (hook_name, args) {
     var padLoc = location.pathname.replace(new RegExp('/timeslider$'), '');
     $('li[data-key="timeslider_returnToPad"]').unbind('click');
     $('li[data-key="timeslider_returnToPad"] a').attr('href', padLoc+'?'+parName+'='+parValue);
+
+    $('#importform').attr('action', $('#importform').attr('action')+'?'+parName+'='+parValue);
   }
 
   /*
@@ -87,6 +89,20 @@ exports.postToolbarInit = function (hook_name, args) {
     success: function(data, textStatus, jqXHR) {
       if (data.success && data.ispublic) {
         $('#embedreadonly').css('display', 'block');
+      }
+    }
+  });
+
+  /*
+   * Prevents users from changing their nickname if useFirstLastNameInPads is set
+   */
+  $.ajax({
+    method: 'GET',
+    url: baseURL+'/mypads/api/configuration/public/usefirstlastname',
+    dataType: 'JSON',
+    success: function(data, textStatus, jqXHR) {
+      if (data.success && data.usefirstlastname) {
+        $('#myusernameedit').prop('disabled', true);
       }
     }
   });

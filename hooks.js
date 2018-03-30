@@ -1,4 +1,6 @@
 /**
+*  vim:set sw=2 ts=2 sts=2 ft=javascript expandtab:
+*
 *  # Hooks Module
 *
 *  ## License
@@ -32,7 +34,6 @@ module.exports = (function () {
 
   // Dependencies
   var configuration = require('./configuration.js');
-  var padAndAuthor = require('./perm.js').padAndAuthor;
 
   var hooks = {};
 
@@ -64,17 +65,6 @@ module.exports = (function () {
         callback(null);
       });
     });
-  };
-
-  /**
-  * `clientVars` hook will use user login per default for pad `authorName` and
-  * profile selected `userColor`. Authenticated user can overwrite default
-  * values.
-  */
-
-  hooks.clientVars = function (name, context, callback) {
-    var opts = padAndAuthor[context.pad.id];
-    return callback(opts);
   };
 
   /**

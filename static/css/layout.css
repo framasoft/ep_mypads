@@ -24,25 +24,11 @@ h1 {font-family: "DejaVu Sans", Verdana, Geneva, sans-serif; font-weight:bold; }
   box-shadow: -4px 6px 9px rgba(50, 50, 50, 0.5);
 }
 
-header ul.lang {
+header div.lang {
   margin-top: 0;
   list-style-type: none;
   text-align: right;
-}
-
-header ul.lang li {
-  display: inline-block;
-  color: #666;
-  padding: 15px;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-header ul.lang li:hover,
-header ul.lang li:focus,
-header ul.lang li.active {
-  background-color: #767676;
-  color:#fff;
+  padding: 10px 0 10px 0;
 }
 
 footer.ombre {
@@ -127,5 +113,6 @@ section.pad iframe {
   border: 1px solid #BDBDBD;
   border-radius: 5px 0 5px 5px;
 }
-
-h2 button.cancel { font-size: medium; }
+label[for="pad-filter-form"] {
+  padding-right: 10px;
+}

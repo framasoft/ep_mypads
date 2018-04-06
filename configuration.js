@@ -27,6 +27,12 @@
 *  This is the module for MyPads configuration.
 */
 
+try {
+  settings = require('ep_etherpad-lite/node/utils/Settings');
+}
+catch (e) {
+  throw new TypeError('BACKEND.ERROR.TYPE.UNABLE_TO_USE_EP_SETTINGS');
+}
 module.exports = (function() {
   'use strict';
 
@@ -71,7 +77,10 @@ module.exports = (function() {
       SMTPTLS: true,
       tokenDuration: 60, // in minutes
       useFirstLastNameInPads: false,
-      insensitiveMailMatch: false
+      insensitiveMailMatch: false,
+      authMethod: 'internal',
+      availableAuthMethods: [ 'internal', 'ldap' ],
+      authLdapSettings: {}
     },
 
     /**
@@ -101,7 +110,7 @@ module.exports = (function() {
           if (val) {
             memo[key] = val;
           } else {
-            var dval = configuration.DEFAULTS[key.replace(DBPREFIX, '')];
+            var dval  = configuration.DEFAULTS[key.replace(DBPREFIX, '')];
             memo[key] = ld.clone(dval);
           }
         });
@@ -128,29 +137,58 @@ module.exports = (function() {
       var initFromDatabase = function () {
         storage.fn.getKeys(ld.keys(confDefaults), function (err, res) {
           if (err) { return callback(err); }
+
+          var pushLdapSettingsToDB = false;
           configuration.cache = ld.transform(res, function (memo, val, key) {
             key = key.replace(DBPREFIX, '');
-            if (key === 'languages') {
-              memo[key] = configuration.DEFAULTS.languages;
+
+            /* get ldap settings from settings.json if exists and database
+             * informations are empty */
+            if (key === 'authLdapSettings' && ld.isEqual(val, {}) && settings.ep_mypads && settings.ep_mypads.ldap) {
+              // json parsing of the settings is made by Etherpad, no need to check
+              val = settings.ep_mypads.ldap;
+              pushLdapSettingsToDB = true;
+            }
+
+            if (typeof(val) === 'undefined') {
+              memo[key] = configuration.DEFAULTS[key];
             } else {
               memo[key] = val;
             }
           });
-          return callback(null);
+          if (pushLdapSettingsToDB) {
+            configuration.cache.authMethod = 'ldap';
+
+            var kv = {
+              authLdapSettings: configuration.cache.authLdapSettings,
+              authMethod: 'ldap'
+            };
+            var dbKv = ld.transform(kv,
+              function (memo, val, key) { memo[DBPREFIX + key] = val; });
+
+            storage.fn.setKeys(dbKv, function(err) {
+              if (err) { return callback(err); }
+              return callback(null);
+            });
+          } else {
+            return callback(null);
+          }
         });
       };
 
-      var initToDatabase = function () {
-        storage.fn.setKeys(confDefaults, function (err) {
-          if (err) { return callback(err); }
-          configuration.cache = ld.clone(configuration.DEFAULTS, true);
-          return callback(null);
-        });
+      var force = {
+        availableAuthMethods: configuration.DEFAULTS.availableAuthMethods,
+        languages: configuration.DEFAULTS.languages
       };
+      var dbForce = ld.transform(force,
+        function (memo, val, key) { memo[DBPREFIX + key] = val; });
 
-      storage.db.get(DBPREFIX + 'title', function (err, title) {
+      storage.fn.setKeys(dbForce, function(err) {
         if (err) { return callback(err); }
-        (title ? initFromDatabase : initToDatabase)();
+        storage.fn.setKeysIfNotExists(confDefaults, function (err) {
+          if (err) { return callback(err); }
+          initFromDatabase();
+        });
       });
     },
 
@@ -235,7 +273,9 @@ module.exports = (function() {
     public: function () {
       var all = configuration.all();
       return ld.pick(all, 'title', 'passwordMin', 'passwordMax', 'languages',
-        'HTMLExtraHead', 'openRegistration', 'hideHelpBlocks', 'useFirstLastNameInPads');
+        'HTMLExtraHead', 'openRegistration', 'hideHelpBlocks', 'useFirstLastNameInPads',
+        'authMethod'
+      );
     }
   };
 

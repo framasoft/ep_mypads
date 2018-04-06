@@ -131,7 +131,7 @@ module.exports = (function () {
     login.label.attrs.class = 'col-sm-4';
     var password = user.view.field.password(c);
     var passwordBlock = [ password.input ];
-    if (conf.SERVER.useLdap === false) {
+    if (conf.SERVER.authMethod !== 'ldap') {
       passwordBlock.push(
         m('p.help-block', [
           m('a', {
@@ -169,7 +169,7 @@ module.exports = (function () {
 
   view.main = function (c) {
     var children = [ m('span', conf.LANG.USER.FORM) ];
-    if (conf.SERVER.openRegistration && conf.SERVER.useLdap === false) {
+    if (conf.SERVER.openRegistration && conf.SERVER.authMethod !== 'ldap') {
       children.push(m('a.small',
         { href: '/subscribe', config: m.route },
         conf.LANG.USER.ORSUB)

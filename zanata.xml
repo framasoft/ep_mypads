@@ -2,8 +2,8 @@
 <config xmlns="http://zanata.org/namespace/config/">
   <url>https://trad.framasoft.org/zanata/</url>
   <project>mypads</project>
-  <project-version>master</project-version>
   <project-type>gettext</project-type>
+  <project-version>development</project-version>
   <src-dir>po</src-dir>
   <trans-dir>po</trans-dir>
 </config>

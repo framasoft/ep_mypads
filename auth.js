@@ -88,6 +88,7 @@ var cuid = require('cuid');
 
 // Local dependencies
 var user = require('./model/user.js');
+var conf = require('./configuration.js');
 
 module.exports = (function () {
   'use strict';
@@ -178,8 +179,9 @@ module.exports = (function () {
   */
 
   auth.fn.checkMyPadsUser = function (login, pass, callback) {
-    if (settings.ep_mypads && settings.ep_mypads.ldap) {
-      var lauth = new LdapAuth(settings.ep_mypads.ldap);
+    if (conf.get('authMethod') === 'ldap') {
+      var ldapConf = conf.get('authLdapSettings');
+      var lauth    = new LdapAuth(ldapConf);
       lauth.authenticate(login, pass, function(err, ldapuser) {
         lauth.close(function(error) {
           if (error) { console.log(error); }
@@ -208,7 +210,7 @@ module.exports = (function () {
           if (err) {
             // We have to create the user in mypads database
             var mail;
-            var props = settings.ep_mypads.ldap.properties;
+            var props = ldapConf.properties;
             if (Array.isArray(ldapuser[props.email])) {
               mail = ldapuser[props.email][0];
             } else {
@@ -220,7 +222,7 @@ module.exports = (function () {
                 firstname: ldapuser[props.firstname],
                 lastname: ldapuser[props.lastname],
                 email: mail,
-                lang: (settings.ep_mypads.ldap.defaultLang) ? settings.ep_mypads.ldap.defaultLang : 'en'
+                lang: (ldapConf.defaultLang) ? ldapConf.defaultLang : 'en'
               }, callback);
           } else {
             return callback(null, u);
@@ -359,8 +361,8 @@ module.exports = (function () {
       return callback(new TypeError('BACKEND.ERROR.TYPE.PASSWORD_MISSING'));
     }
     // if u.visibility is defined, u is a group, which we shouldn't authenticate against LDAP
-    if (settings.ep_mypads && settings.ep_mypads.ldap && typeof(u.visibility) === 'undefined') {
-      var lauth = new LdapAuth(settings.ep_mypads.ldap);
+    if (conf.get('authMethod') === 'ldap' && typeof(u.visibility) === 'undefined') {
+      var lauth = new LdapAuth(conf.get('authLdapSettings'));
       if (typeof(u) === 'undefined' || u === null || typeof(u.login) === 'undefined' || u.login === null) {
         return callback(null, false);
       } else {

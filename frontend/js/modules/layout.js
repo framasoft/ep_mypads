@@ -119,6 +119,9 @@ module.exports = (function () {
     }
     var activeRoute = function (r) {
       var isActive = (m.route().slice(0, r.route.length) === r.route);
+      if (m.route().indexOf('/admin') !== -1) {
+        isActive = (m.route() === r.route);
+      }
       return m('li', { class: (isActive ? 'active' : '') }, [
         m('a', { href: r.route, config: m.route }, [
           m('i', { class: 'glyphicon glyphicon-' + r.icon, title: r.txt }),

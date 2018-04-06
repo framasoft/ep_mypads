@@ -385,7 +385,7 @@ module.exports = (function () {
   *
   * ### init
   *
-  * `iniŧ` is a synchronous function used to set up authentification. It :
+  * `init` is a synchronous function used to set up authentification. It :
   *
   * - initializes local strategy by default
   * - uses of passport middlwares for express

@@ -91,6 +91,7 @@ module.exports = (function () {
 
   perm.fn.getPadAndGroup = function (pid, callback) {
     pad.get(pid, function (err, p) {
+      if (err) { console.log(err); }
       if (err || !p) { return callback(null, null); }
       group.get(p.group, function (err, g) {
         if (err) { return callback(err); }
@@ -214,7 +215,7 @@ module.exports = (function () {
       pid: pid
     };
     // Is pid a real pad id or a read only pad id?
-    if (pid.match(/^r\.[A-Za-z0-9_-]{32}/)) {
+    if (pid.match(/^r\.[A-Za-z0-9_-]{32}$/)) {
       // It's a read only pid, let's get the real pad id
       getPadID(pid, function(err, result) {
         if (err) { return unexpected(err); }
@@ -286,7 +287,7 @@ module.exports = (function () {
 
   perm.init = function (app) {
     //app.all('/p/([A-Za-z0-9_-]+)', perm.check);
-    var rgx = new RegExp('/p/(r\.[A-Za-z0-9_-]{32}|[A-Za-z0-9_-]+)[A-Za-z0-9_/]*');
+    var rgx = new RegExp('/p/(r\.[A-Za-z0-9_-]{32}$|[A-Za-z0-9_-]+[A-Za-z0-9_/]*)');
     app.all(rgx, perm.check);
     app.all('/p/:pid', perm.setNameAndColor);
     app.get('/', function (req, res, next) {

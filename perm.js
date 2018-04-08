@@ -191,9 +191,11 @@ module.exports = (function () {
   * result alongside request, result and chained function.
   */
 
+  var trimRgx = new RegExp('/.*');
   perm.check = function (req, res, next) {
     var params;
     var pid = req.params.pid || req.params[0];
+        pid = pid.replace(trimRgx, '');
     var unexpected = function (err) {
       return res.status(401).send({
         error: 'BACKEND.ERROR.PERMISSION.UNEXPECTED',
@@ -287,7 +289,7 @@ module.exports = (function () {
 
   perm.init = function (app) {
     //app.all('/p/([A-Za-z0-9_-]+)', perm.check);
-    var rgx = new RegExp('/p/(r\.[A-Za-z0-9_-]{32}$|[A-Za-z0-9_-]+[A-Za-z0-9_/]*)');
+    var rgx = new RegExp('/p/(r\.[A-Za-z0-9_-]{32}$|[.A-Za-z0-9_-]+[A-Za-z0-9_/-]*)');
     app.all(rgx, perm.check);
     app.all('/p/:pid', perm.setNameAndColor);
     app.get('/', function (req, res, next) {

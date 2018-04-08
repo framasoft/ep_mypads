@@ -1318,12 +1318,16 @@ module.exports = (function () {
       pad.get(req.params.key, function(err, p) {
         if (err) {
           return res.send({ success: false, error: err });
-        } else {
+        } else if (p.visibility !== null) {
           return res.send({ success: true, key: req.params.key, ispublic: (p.visibility === 'public') });
+        } else {
+          group.get(p.group, function(err, g) {
+            if (err) { return res.send({ success: false, error: err }); }
+            return res.send({ success: true, key: req.params.key, ispublic: (g.visibility === 'public') });
+          });
         }
       });
     });
-
   };
 
   cacheAPI = function (app) {

@@ -96,6 +96,7 @@ module.exports = (function () {
   var groupAPI;
   var padAPI;
   var cacheAPI;
+  var statsAPI;
 
   /**
   * `init` is the first function that takes an Express app as argument.
@@ -132,6 +133,7 @@ module.exports = (function () {
     groupAPI(app);
     padAPI(app);
     cacheAPI(app);
+    statsAPI(app);
     perm.init(app);
 
     /**
@@ -1339,7 +1341,7 @@ module.exports = (function () {
     * GET method : check, method returning information about the end of users
     * cache loading
     *
-    * exemple: { userCacheReady: true }
+    * exemple: { "userCacheReady": true }
     *
     * Sample URL:
     * http://etherpad.ndd/mypads/api/cache/check
@@ -1351,6 +1353,36 @@ module.exports = (function () {
 
   };
 
+  statsAPI = function (app) {
+    var statsRoute = api.initialRoute + 'stats';
+
+    /**
+    * GET method : stats.json, method returning some stats about MyPads
+    * instance usage
+    *
+    * exemple: { "timestamp":1524035674, "users":3, "pad":3, "groups":3 }
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/stats/stats.json
+    */
+
+    app.get(statsRoute + '/stats.json', function (req, res) {
+      var time = Math.floor(Date.now() / 1000);
+
+      pad.count(function(err, pcount) {
+        if (err) { return res.send({ timestamp: time, err: err }); }
+        group.count(function(err, gcount) {
+          if (err) { return res.send({ timestamp: time, err: err }); }
+          return res.send({
+            timestamp: time,
+            users: ld.size(user.logins),
+            pad: pcount,
+            groups: gcount
+          });
+        });
+      });
+    });
+  }
 
   return api;
 

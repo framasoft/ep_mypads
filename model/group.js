@@ -345,8 +345,9 @@ module.exports = (function () {
           return (ld.indexOf(toRemoveFromAdmins, n) === -1);
         });
         if (ld.size(g.admins) === 0) {
-          var e = new Error('BACKEND.ERROR.GROUP.RESIGN_UNIQUE_ADMIN');
-          return callback(e);
+          return callback(
+            new Error('BACKEND.ERROR.GROUP.RESIGN_UNIQUE_ADMIN')
+          );
         }
 
         // Setting users as invited
@@ -365,8 +366,9 @@ module.exports = (function () {
         g.admins = ld.unique(ld.reject(users.uids,
           ld.partial(ld.includes, g.users)));
         if ((ld.size(g.admins)) === 0) {
-          var e = new Error('BACKEND.ERROR.GROUP.RESIGN_UNIQUE_ADMIN');
-          return callback(e);
+          return callback(
+            new Error('BACKEND.ERROR.GROUP.RESIGN_UNIQUE_ADMIN')
+          );
         }
       }
       // indexUsers with deletion for full reindexation process

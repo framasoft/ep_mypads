@@ -270,6 +270,12 @@ module.exports = (function () {
   */
 
   user.view.field.useLoginAndColorInPads = function (c) {
+    var dataMsg  = conf.LANG.USER.INFO.USELOGINANDCOLORINPADS;
+    var labelTxt = conf.LANG.USER.USELOGINANDCOLORINPADS;
+    if (conf.SERVER.useFirstLastNameInPads) {
+      dataMsg  = conf.LANG.USER.INFO.USECOLORINPADS;
+      labelTxt = conf.LANG.USER.USECOLORINPADS;
+    }
     return {
       label: m('label', [
         m('input', {
@@ -278,10 +284,10 @@ module.exports = (function () {
           checked: c.data.useLoginAndColorInPads(),
           onchange: m.withAttr('checked', c.data.useLoginAndColorInPads)
         }),
-        ((conf.SERVER.useFirstLastNameInPads) ? conf.LANG.USER.USECOLORINPADS : conf.LANG.USER.USELOGINANDCOLORINPADS),
+        labelTxt,
         m('i',{
           class: 'mp-tooltip glyphicon glyphicon-info-sign',
-          'data-msg': ((conf.SERVER.useFirstLastNameInPads) ? conf.LANG.USER.INFO.USECOLORINPADS : conf.LANG.USER.INFO.USELOGINANDCOLORINPADS)
+          'data-msg': dataMsg
         }),
       ]),
     };

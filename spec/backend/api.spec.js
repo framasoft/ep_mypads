@@ -2539,13 +2539,15 @@
     describe('cacheAPI GET', function () {
       var cacheRoute = route + 'cache';
 
-      it('should return {"userCacheReady":true} (with mockupserver, the cache is ready before the server)', function (done) {
-        rq.get(cacheRoute + '/check', {}, function (err, resp, body) {
-          expect(resp.statusCode).toBe(200);
-          expect(body.userCacheReady).toBeTruthy();
-          done();
-        });
-      });
+      it('should return {"userCacheReady":true} (with mockupserver, the cache is ready before the server)',
+        function (done) {
+          rq.get(cacheRoute + '/check', {}, function (err, resp, body) {
+            expect(resp.statusCode).toBe(200);
+            expect(body.userCacheReady).toBeTruthy();
+            done();
+          });
+        }
+      );
     });
   });
 

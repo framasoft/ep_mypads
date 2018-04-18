@@ -27,7 +27,6 @@
 
 module.exports = (function () {
   // Dependencies
-  var m = require('mithril');
 
   var filterPads = {};
 

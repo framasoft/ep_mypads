@@ -40,7 +40,7 @@ module.exports = (function () {
   */
 
   ready.checkLoop = function(element, isInitialized) {
-    if (isInitialized) return;
+    if (isInitialized) { return; }
 
     // Are we in an iFrame?
     ready.inFrame(element, isInitialized);
@@ -66,7 +66,7 @@ module.exports = (function () {
       }
     }, function (err) {
       console.log('user cache check loop:' + err);
-      var emsg = config.LANG.BACKEND.CONFIGURATION.LANG_PROBLEM +
+      var emsg = conf.LANG.BACKEND.CONFIGURATION.LANG_PROBLEM +
         ' (' + err + ')';
       var notifErr = require('../widgets/notification.js').error;
       notifErr({ body: emsg });
@@ -75,7 +75,7 @@ module.exports = (function () {
           return ready.checkLoop();
         }, 500);
       }
-    })
+    });
   };
 
   /**
@@ -87,15 +87,18 @@ module.exports = (function () {
   */
   var rgx = new RegExp('/mypads');
   ready.inFrame = function(element, isInitialized) {
-    if (isInitialized) return;
+    if (isInitialized) { return; }
 
     var windowMode     = location.href;
     window.displaymode = windowMode;
     //detect if we are in a iframe
-    if (window.parent.location.href.match(rgx) && (typeof(window.parent.displaymode) === 'undefined' || window.parent.displaymode !== windowMode)) {
+    if (window.parent.location.href.match(rgx) &&
+        (typeof(window.parent.displaymode) === 'undefined' ||
+         window.parent.displaymode !== windowMode)
+    ) {
       window.parent.location.reload();
     }
-  }
+  };
 
   return ready;
 

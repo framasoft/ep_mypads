@@ -44,30 +44,30 @@ try {
 catch (e) {
   if (process.env.TEST_LDAP) {
     settings = {
-      "users": {
-        "admin": {
-          "password": 'admin',
-          "is_admin": true
+      'users': {
+        'admin': {
+          'password': 'admin',
+          'is_admin': true
         },
-        "parker": {
-          "password": 'lovesKubiak',
-          "is_admin": false
+        'parker': {
+          'password': 'lovesKubiak',
+          'is_admin': false
         }
       },
-      "ep_mypads": {
-        "ldap": {
-          "url": "ldap://rroemhild-test-openldap",
-          "bindDN": "cn=admin,dc=planetexpress,dc=com",
-          "bindCredentials": "GoodNewsEveryone",
-          "searchBase": "ou=people,dc=planetexpress,dc=com",
-          "searchFilter": "(uid={{username}})",
-          "properties": {
-            "login": "uid",
-            "email": "mail",
-            "firstname": "givenName",
-            "lastname": "sn"
+      'ep_mypads': {
+        'ldap': {
+          'url': 'ldap://rroemhild-test-openldap',
+          'bindDN': 'cn=admin,dc=planetexpress,dc=com',
+          'bindCredentials': 'GoodNewsEveryone',
+          'searchBase': 'ou=people,dc=planetexpress,dc=com',
+          'searchFilter': '(uid={{username}})',
+          'properties': {
+            'login': 'uid',
+            'email': 'mail',
+            'firstname': 'givenName',
+            'lastname': 'sn'
           },
-          "defaultLang": "fr"
+          'defaultLang': 'fr'
         }
       }
     };
@@ -181,15 +181,22 @@ module.exports = (function () {
     if (settings.ep_mypads && settings.ep_mypads.ldap) {
       var lauth = new LdapAuth(settings.ep_mypads.ldap);
       lauth.authenticate(login, pass, function(err, ldapuser) {
-        lauth.close(function(error) { });
+        lauth.close(function(error) {
+          if (error) { console.log(error); }
+        });
         if (err) {
           var emsg = err;
           // openldap error message || active directory error message
-          if (typeof(err.lde_message) === 'string' && (err.lde_message === 'Invalid Credentials' || err.lde_message.match(/data 52e,/))) {
+          if (typeof(err.lde_message) === 'string' &&
+              (err.lde_message === 'Invalid Credentials' ||
+                err.lde_message.match(/data 52e,/))
+          ) {
             emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
           } else if (
               (typeof(err) === 'string' && err.match(/no such user/)) ||
-              (typeof(err.lde_message) === 'string' && (err.lde_message.match(/no such user/) || err.lde_message.match(/data 525,/)))
+              (typeof(err.lde_message) === 'string' &&
+                (err.lde_message.match(/no such user/) ||
+                  err.lde_message.match(/data 525,/)))
           ) {
             emsg = 'BACKEND.ERROR.USER.NOT_FOUND';
           } else {
@@ -357,10 +364,11 @@ module.exports = (function () {
       if (typeof(u) === 'undefined' || u === null || typeof(u.login) === 'undefined' || u.login === null) {
         return callback(null, false);
       } else {
-        lauth.authenticate(u.login, password, function(err, ldapuser) {
-          lauth.close(function(error) { });
+        lauth.authenticate(u.login, password, function(err) {
+          lauth.close(function(error) {
+            if (error) { console.log(error); }
+          });
           if (err) {
-            var emsg = err;
             if (err.lde_message === 'Invalid Credentials') {
               err = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
             } else if (err.match(/no such user/)) {

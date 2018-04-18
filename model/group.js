@@ -652,6 +652,21 @@ module.exports = (function () {
     });
   };
 
+  /**
+   * ### count
+   *
+   * Returns the number of groups of the MyPads instance
+   * As arguments, it takes mandatory :
+   * - a `callback` function
+   */
+
+  group.count = function(callback) {
+    storage.db.findKeys(GPREFIX + '*', null, function (err, res) {
+      if (err) { return callback(err); }
+      return callback(null, ld.size(res));
+    });
+  };
+
   return group;
 
 

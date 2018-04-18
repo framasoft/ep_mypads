@@ -78,7 +78,9 @@ module.exports = (function () {
           c.isUser  = ld.includes(c.group.users,  auth.userInfo()._id);
           var pads = model.pads();
           var users = model.users();
-          c.pads = ld.sortBy(ld.map(c.group.pads, function (x) { return pads[x]; }), sortingPreferences.padByField());
+          c.pads = ld.sortBy(ld.map(c.group.pads, function (x) {
+              return pads[x];
+            }), sortingPreferences.padByField());
           c.users = ld.map(c.group.users, function (x) { return users[x]; });
           c.admins = ld.map(c.group.admins, function (x) { return users[x]; });
         } else {

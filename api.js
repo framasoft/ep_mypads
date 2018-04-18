@@ -53,20 +53,20 @@ catch (e) {
   // Testing case : we need to mock the express dependency
   if (process.env.TEST_LDAP) {
     settings = {
-      "ep_mypads": {
-        "ldap": {
-          "url": "ldap://rroemhild-test-openldap",
-          "bindDN": "cn=admin,dc=planetexpress,dc=com",
-          "bindCredentials": "GoodNewsEveryone",
-          "searchBase": "ou=people,dc=planetexpress,dc=com",
-          "searchFilter": "(uid={{username}})",
-          "properties": {
-            "login": "uid",
-            "email": "mail",
-            "firstname": "givenName",
-            "lastname": "sn"
+      'ep_mypads': {
+        'ldap': {
+          'url': 'ldap://rroemhild-test-openldap',
+          'bindDN': 'cn=admin,dc=planetexpress,dc=com',
+          'bindCredentials': 'GoodNewsEveryone',
+          'searchBase': 'ou=people,dc=planetexpress,dc=com',
+          'searchFilter': '(uid={{username}})',
+          'properties': {
+            'login': 'uid',
+            'email': 'mail',
+            'firstname': 'givenName',
+            'lastname': 'sn'
           },
-          "defaultLang": "fr"
+          'defaultLang': 'fr'
         }
       }
     };
@@ -1380,7 +1380,7 @@ module.exports = (function () {
         });
       });
     });
-  }
+  };
 
   return api;
 

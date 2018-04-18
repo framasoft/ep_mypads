@@ -312,14 +312,7 @@ module.exports = (function () {
   };
 
   pad.view = function (c) {
-    var tryAutoExpand = false;
-    if (c.pad && c.pad.visibility) {
-      tryAutoExpand = (c.pad.visibility === 'public');
-    }
-    if (auth.isAuthenticated()) {
-      tryAutoExpand = true;
-    }
-    return layout.view(view.main(c), view.aside(), tryAutoExpand);
+    return layout.view(view.main(c), view.aside());
   };
 
   return pad;

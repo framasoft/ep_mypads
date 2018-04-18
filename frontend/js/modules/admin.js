@@ -299,7 +299,7 @@ module.exports = (function () {
           name: 'allowEtherPads',
         };
         if (c.data.allowEtherPads) {
-          opts['checked'] = 'checked'
+          opts.checked = 'checked';
         }
         var f = m('input[type="checkbox"]', opts);
         ld.assign(f.attrs, {
@@ -316,7 +316,7 @@ module.exports = (function () {
           name: 'hideHelpBlocks',
         };
         if (c.data.hideHelpBlocks) {
-          opts['checked'] = 'checked'
+          opts.checked = 'checked';
         }
         var f = m('input[type="checkbox"]', opts);
         ld.assign(f.attrs, {
@@ -333,7 +333,7 @@ module.exports = (function () {
           name: 'useFirstLastNameInPads',
         };
         if (c.data.useFirstLastNameInPads) {
-          opts['checked'] = 'checked';
+          opts.checked = 'checked';
         }
         var f = m('input[type="checkbox"]', opts);
         ld.assign(f.attrs, {
@@ -350,7 +350,7 @@ module.exports = (function () {
           name: 'insensitiveMailMatch',
         };
         if (c.data.insensitiveMailMatch) {
-          opts['checked'] = 'checked';
+          opts.checked = 'checked';
         }
         var f = m('input[type="checkbox"]', opts);
         ld.assign(f.attrs, {
@@ -367,7 +367,7 @@ module.exports = (function () {
           name: 'openRegistration',
         };
         if (c.data.openRegistration) {
-          opts['checked'] = 'checked'
+          opts.checked = 'checked';
         }
         var f = m('input[type="checkbox"]', opts);
         ld.assign(f.attrs, {
@@ -384,7 +384,7 @@ module.exports = (function () {
           name: 'checkMails',
         };
         if (c.data.checkMails) {
-          opts['checked'] = 'checked'
+          opts.checked = 'checked';
         }
         var f = m('input[type="checkbox"]', opts);
         ld.assign(f.attrs, {
@@ -418,7 +418,7 @@ module.exports = (function () {
           name: 'SMTPSSL',
         };
         if (c.data.SMTPSSL) {
-          opts['checked'] = 'checked'
+          opts.checked = 'checked';
         }
         var f = m('input[type="checkbox"]', opts);
         ld.assign(f.attrs, {
@@ -435,7 +435,7 @@ module.exports = (function () {
           name: 'SMTPTLS',
         };
         if (c.data.SMTPTLS) {
-          opts['checked'] = 'checked'
+          opts.checked = 'checked';
         }
         var f = m('input[type="checkbox"]', opts);
         ld.assign(f.attrs, {

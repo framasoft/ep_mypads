@@ -29,7 +29,6 @@
 
 module.exports = (function () {
   // Dependencies
-  var m = require('mithril');
   var conf = require('../configuration.js');
   var cookie = require('js-cookie');
 
@@ -38,7 +37,7 @@ module.exports = (function () {
   /*
    * Default values
    */
-  currentValues = {
+  var currentValues = {
     padByField: 'ctime',
     padAsc: true,
     groupByField: 'ctime',
@@ -61,7 +60,7 @@ module.exports = (function () {
       } catch(e) {
       }
     }
-  }
+  };
 
   /*
    * Update the values and save them in the cookie
@@ -73,23 +72,23 @@ module.exports = (function () {
       }
     }
     cookie.set('sortingPreferences', JSON.stringify(currentValues), { expires: 365, path: conf.URLS.RAWBASE });
-  }
+  };
 
   /*
    * Expose values
    */
   sortingPreferences.padByField = function() {
     return currentValues.padByField;
-  }
+  };
   sortingPreferences.padAsc = function() {
     return currentValues.padAsc;
-  }
+  };
   sortingPreferences.groupByField = function() {
     return currentValues.groupByField;
-  }
+  };
   sortingPreferences.groupAsc = function() {
     return currentValues.groupAsc;
-  }
+  };
 
   sortingPreferences.init();
 

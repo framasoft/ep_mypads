@@ -11,6 +11,7 @@ test_node_latest:
   image: node:latest
   script:
    - npm install
+   - npm run lint
    - npm run test
    - npm run test-ldap
 
@@ -19,6 +20,7 @@ test_node_4:
   image: node:4-stretch
   script:
    - npm install
+   - npm run lint
    - npm run test
    - npm run test-ldap
 
@@ -27,6 +29,7 @@ test_node_6:
   image: node:6-stretch
   script:
    - npm install
+   - npm run lint
    - npm run test
    - npm run test-ldap
 
@@ -35,6 +38,7 @@ test_node_8:
   image: node:8-stretch
   script:
    - npm install
+   - npm run lint
    - npm run test
    - npm run test-ldap
 
@@ -43,6 +47,7 @@ test_node_9:
   image: node:9-stretch
   script:
    - npm install
+   - npm run lint
    - npm run test
    - npm run test-ldap
 

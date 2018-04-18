@@ -34,7 +34,6 @@ module.exports = (function () {
   var ld = require('lodash');
   var auth = require('../auth.js');
   var conf = require('../configuration.js');
-  var model = require('../model/group.js');
   var notif = require('../widgets/notification.js');
 
   var remove = {};
@@ -59,6 +58,7 @@ module.exports = (function () {
         url: conf.URLS.PAD + '/chathistory/' + key,
         data: { auth_token: auth.token() }
       }).then(function (resp) {
+        console.log(resp);
         notif.success({ body: conf.LANG.GROUP.INFO.CHAT_HISTORY_REMOVE_SUCCESS });
         m.route('/mypads/group/' + gkey + '/view');
       }, function (err) {

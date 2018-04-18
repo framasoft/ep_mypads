@@ -312,6 +312,11 @@ module.exports = (function () {
   /**
    * ### delChatHistory
    *
+   * Removes all chat messages for a pad
+   * As arguments, it takes mandatory :
+   * - `padId`, the id of the pad
+   * - a `callback` function
+   *
    */
   pad.delChatHistory = function(padID, callback) {
     getChatHead(padID, function(err, res) {
@@ -324,12 +329,20 @@ module.exports = (function () {
   };
 
   /**
-  * ## Helpers functions
-  *
-  *  TODO
-  *  Helper here are public functions created to facilitate interaction with
-  *  the API and improve performance avoiding extra checking.
-  */
+   * ### count
+   *
+   * Returns the number of pads of the MyPads instance (anonymous pads are
+   * not counted)
+   * As arguments, it takes mandatory :
+   * - a `callback` function
+   */
+
+  pad.count = function(callback) {
+    storage.db.findKeys(PPREFIX + '*', null, function (err, res) {
+      if (err) { return callback(err); }
+      return callback(null, ld.size(res));
+    });
+  };
 
   return pad;
 

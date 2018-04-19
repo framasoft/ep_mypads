@@ -191,6 +191,7 @@
          "NAME": "The name of the folder is required"
       },
       "FIELD": {
+         "ARCHIVED": "Archived",
          "DESCRIPTION": "Description",
          "GROUP_PARAMS": "Folder parameters ?",
          "NAME": "Name",
@@ -211,6 +212,7 @@
       "HELP": "Folders can contain pads. Here are your folders : those you have created, those you have been explicitly invited",
       "INFO": {
          "ADD_SUCCESS": "Folder has been successfully created",
+         "ARCHIVED": "If checked, folder will appear in the archived folders list even if it's bookmarked",
          "CHAT_HISTORY_REMOVE_SUCCESS": "The chat history of the pad has been successfully removed",
          "CHAT_HISTORY_REMOVE_SURE": "Are you sure you want to remove the chat history of this pad?",
          "DESCRIPTION": "An optional long text to describe your folder",
@@ -225,7 +227,7 @@
          "PAD_REMOVE_SUCCESS": "Pad has been successfully removed",
          "PAD_REMOVE_SURE": "Are you sure you want to remove this pad ?",
          "PASSWORD": "Required in private mode",
-         "READONLY": "If checked, linked pads will be in readonly mode",
+         "READONLY": "If checked, linked pads will be in readonly mode and the folder will be in the archived folders list unless it's bookmarked",
          "REMOVE_SUCCESS": "Folder has been successfully removed",
          "REMOVE_SURE": "Are you sure you want to remove this folder ?",
          "RESIGN": "Are you sure you want to resign from this folder ?",

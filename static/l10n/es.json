@@ -192,6 +192,7 @@
       },
       "FIELD": {
          "ALLOW_USERS_TO_CREATE_PADS": "Allow simple users of the folder to create pads?",
+         "ARCHIVED": "Archived",
          "DESCRIPTION": "Descripción ",
          "GROUP_PARAMS": "Opciones de carpetas?",
          "NAME": "Nombre",
@@ -213,6 +214,7 @@
       "INFO": {
          "ADD_SUCCESS": "La carpeta ha sido creada con éxito",
          "ALLOW_USERS_TO_CREATE_PADS": "This allows users of the folder that don't have administrator rights to create pads in the folder",
+         "ARCHIVED": "If checked, folder will appear in the archived folders list even if it's bookmarked",
          "CHAT_HISTORY_REMOVE_SUCCESS": "El historial de chat del pad ha sido eliminado con éxito",
          "CHAT_HISTORY_REMOVE_SURE": "¿Estás segura de que quieres eliminar el historial de chat de este pad?",
          "DESCRIPTION": "Un largo texto explicativo opcional para describir su carpeta",
@@ -227,7 +229,7 @@
          "PAD_REMOVE_SUCCESS": "El pad has sido eliminado con éxito",
          "PAD_REMOVE_SURE": "Esta segura de que quieres eliminar ese pad? ATENCIÓN: esta acción es irreversible, el pad será borrado PARA TODOS los que tengan acceso a él.",
          "PASSWORD": "Se requiere en modo privado",
-         "READONLY": "Si esta opción está seleccionada, los pads enlazados estarán en modo de sólo lectura",
+         "READONLY": "If checked, linked pads will be in readonly mode and the folder will be in the archived folders list unless it's bookmarked",
          "REMOVE_SUCCESS": "La carpeta se ha eliminado correctamente",
          "REMOVE_SURE": "¿Estás segura de que quieres eliminar esta carpeta? ATENCIÓN: esta acción es irreversible, la carpeta y sus pads serán borrados PARA TODOS los que tengan acceso a ella.",
          "RESIGN": "¿Estás segura de que quieres retirarse esta carpeta?",

@@ -250,6 +250,7 @@
          "ADD": "Erstelle ein neues Pad",
          "ADD_PROMPT": "Titel des neuen Pads",
          "ADMINS": "Admins",
+         "DESELECT_ALL": "Deselect all pads",
          "EDIT": "Bearbeite das Pad",
          "EDIT_PROMPT": "Neuer Name des Pads",
          "EXPAND": "Erweitern",

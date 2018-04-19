@@ -66,6 +66,7 @@ module.exports = (function () {
           return (isAdmin && (g._id !== gid));
         })
         .value();
+      c.noSelectedPads = m.prop(false);
       c.group = model.groups()[gid];
     };
 
@@ -83,7 +84,7 @@ module.exports = (function () {
       e.preventDefault();
       var _pads = ld.clone(model.pads(), true);
       var pads = ld.reduce(model.pads(), function (memo, p, k) {
-        if (p.group === gid) {
+        if (p.group === gid && document.querySelectorAll('input.pad-to-move[name="'+p._id+'"]:checked').length > 0) {
           p.group = c.data.newGroup();
           _pads[k] = p;
           memo.push(p);
@@ -158,6 +159,27 @@ module.exports = (function () {
     return { label: label, icon: icon, select: select };
   };
 
+  view.pads = function (c) {
+    var pads = [];
+    var gid = m.route.param('group');
+    ld.forEach(model.pads(), function(p) {
+      if (p.group === gid) {
+        pads.push(m('.checkbox', [
+          m('label', [
+            m('input.pad-to-move[type="checkbox"]', {
+              name: p._id, checked: 'checked',
+              onchange: function() {
+                c.noSelectedPads(document.querySelectorAll('input.pad-to-move:checked').length === 0);
+              }
+            }),
+            p.name
+          ])
+        ]));
+      }
+    });
+    return pads;
+  };
+
   /**
   * ### form
   *
@@ -166,17 +188,48 @@ module.exports = (function () {
 
   view.form = function (c) {
     var vg = view.groups(c);
+    var vp = view.pads(c);
     var elements = [ m('.form-group', [
         vg.label, vg.icon,
         m('.col-sm-7', vg.select)
       ])
     ];
     if (c.selectedGroups.length > 0) {
-      elements.push(m('input.btn.btn-success.pull-right', {
-        form: 'padmove-form',
-        type: 'submit',
-        value: conf.LANG.ACTIONS.SAVE
-      }));
+      elements.push([
+        m('div', [
+          m('button.btn.btn-info.btn-sm', {
+            onclick: function(e) {
+              e.preventDefault();
+              var pads = document.querySelectorAll('input.pad-to-move');
+              [].forEach.call(pads, function(element) {
+                element.checked = true;
+              });
+              c.noSelectedPads(false);
+            },
+          }, conf.LANG.GROUP.PAD.SELECT_ALL),
+          m('span', ' '),
+          m('button.btn.btn-info.btn-sm', {
+            onclick: function(e) {
+              e.preventDefault();
+              var pads = document.querySelectorAll('input.pad-to-move');
+              [].forEach.call(pads, function(element) {
+                element.checked = false;
+              });
+              c.noSelectedPads(true);
+            },
+          }, conf.LANG.GROUP.PAD.DESELECT_ALL),
+        ]),
+        m('div', {
+          class: (c.noSelectedPads()) ? 'h3' : 'hidden'
+        }, [ m('b', conf.LANG.GROUP.PAD.SELECT_AT_LEAST_ONE_PAD) ]),
+        vp,
+        m('input.btn.btn-success.pull-right', {
+          form: 'padmove-form',
+          type: 'submit',
+          disabled: c.noSelectedPads(),
+          value: conf.LANG.ACTIONS.SAVE
+        })
+      ]);
     }
     return m('form.form-horizontal', {
       id: 'padmove-form',

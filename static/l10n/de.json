@@ -192,6 +192,7 @@
       },
       "FIELD": {
          "ALLOW_USERS_TO_CREATE_PADS": "Allow simple users of the folder to create pads?",
+         "ARCHIVED": "Archived",
          "DESCRIPTION": "Beschreibung",
          "GROUP_PARAMS": "Ordner-Parameter?",
          "NAME": "Name",
@@ -213,6 +214,7 @@
       "INFO": {
          "ADD_SUCCESS": "Ordner wurde erfolgreich erstellt.",
          "ALLOW_USERS_TO_CREATE_PADS": "This allows users of the folder that don't have administrator rights to create pads in the folder",
+         "ARCHIVED": "If checked, folder will appear in the archived folders list even if it's bookmarked",
          "CHAT_HISTORY_REMOVE_SUCCESS": "Der Chat-Verlauf des Pads wurde erfolgreich entfernt.",
          "CHAT_HISTORY_REMOVE_SURE": "Sind Sie sicher, dass Sie den Chatverlauf dieses Pads entfernen möchten?",
          "DESCRIPTION": "Eine optimale Beschreibung zu diesem Ordner.",
@@ -227,7 +229,7 @@
          "PAD_REMOVE_SUCCESS": "Pad wurde erfolgreich entfernt",
          "PAD_REMOVE_SURE": "Sind Sie sicher, dass Sie dieses Pad entfernen wollen? WARNUNG: Diese Aktion ist irreversibel, das Pad wird für JEDEN gelöscht, der Zugriff darauf hat.",
          "PASSWORD": "Erforderlich im privaten Modus",
-         "READONLY": "Wenn diese Option aktiviert ist, werden die verknüpften Pads im Nur-Lese-Modus angezeigt.",
+         "READONLY": "If checked, linked pads will be in readonly mode and the folder will be in the archived folders list unless it's bookmarked",
          "REMOVE_SUCCESS": "Ordner wurde erfolgreich entfernt",
          "REMOVE_SURE": "Sind Sie sicher, dass Sie diesen Ordner löschen wollen? WARNUNG: Diese Aktion ist irreversibel, der Ordner und seine Pads werden für JEDEN gelöscht, der Zugriff darauf hat.",
          "RESIGN": "Sind Sie sicher, dass Sie von diesem Ordner verlassen wollen?",

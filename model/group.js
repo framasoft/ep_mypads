@@ -55,7 +55,8 @@ module.exports = (function () {
   *   password: 'secret',
   *   readonly: false,
   *   tags: ['important', 'domain1'],
-  *   allowUsersToCreatePads: false
+  *   allowUsersToCreatePads: false,
+  *   archived: false
   * };
   *
   */
@@ -482,6 +483,7 @@ module.exports = (function () {
     g.password = ld.isString(p.password) ? p.password : null;
     g.readonly = ld.isBoolean(p.readonly) ? p.readonly : false;
     g.allowUsersToCreatePads = ld.isBoolean(p.allowUsersToCreatePads) ? p.allowUsersToCreatePads : false;
+    g.archived = ld.isBoolean(p.archived) ? p.archived : false;
     g.tags = ld.isArray(p.tags) ? p.tags : [];
     return g;
   };

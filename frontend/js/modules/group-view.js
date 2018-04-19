@@ -496,9 +496,6 @@ module.exports = (function () {
       buttonsArray.push(m('button.cancel.btn.btn-warning', { onclick: c.quit },
           [ m('i.glyphicon glyphicon-fire'), ' '+conf.LANG.GROUP.QUIT_GROUP ]));
     }
-    h2Elements.push(
-      m('.btn-group.pull-right', {role:'group'}, buttonsArray)
-    );
     var showPass = (!c.isAdmin && !c.isUser && (c.group.visibility === 'private') &&
       !c.sendPass());
     if (showPass) {
@@ -508,6 +505,7 @@ module.exports = (function () {
       ]);
     } else {
       return m('section', [
+        m('.btn-group.pull-right', {role:'group'}, buttonsArray),
         m('h2', h2Elements),
         m('section.description', [  ]),
         m('section.panel.panel-primary.props', [

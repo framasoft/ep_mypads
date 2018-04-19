@@ -191,6 +191,7 @@
          "NAME": "Le nom du dossier est nécessaire"
       },
       "FIELD": {
+         "ARCHIVED": "Archivé",
          "DESCRIPTION": "Description",
          "GROUP_PARAMS": "Paramètres du dossier ?",
          "NAME": "Nom",
@@ -211,6 +212,7 @@
       "HELP": "Les dossiers peuvent contenir des pads. Vous trouverez ici vos dossiers, c'est à dire ceux que vous avez créés et ceux auxquels vous avez été explicitement invités",
       "INFO": {
          "ADD_SUCCESS": "Le dossier a été ajouté avec succès",
+         "ARCHIVED": "Si sélectionné, le dossier apparaîtra dans la liste des dossiers archivés même s'il est mis en marque page",
          "CHAT_HISTORY_REMOVE_SUCCESS": "L’historique du chat du pad a été supprimé avec succès",
          "CHAT_HISTORY_REMOVE_SURE": "Voulez-vous vraiment supprimer l’historique du chat de ce pad ?",
          "DESCRIPTION": "Un texte facultatif pour décrire votre dossier",
@@ -225,7 +227,7 @@
          "PAD_REMOVE_SUCCESS": "Le pad a été supprimé avec succès",
          "PAD_REMOVE_SURE": "Voulez-vous vraiment supprimer ce pad ?",
          "PASSWORD": "Requis pour le mode privé",
-         "READONLY": "Si sélectionné les pads liés seront en lecture seule",
+         "READONLY": "Si sélectionné, les pads liés seront en lecture seule et le dossier apparaîtra dans la liste des dossiers archivés sauf s'il est mis en marque page",
          "REMOVE_SUCCESS": "Le dossier a été supprimé avec succès",
          "REMOVE_SURE": "Voulez-vous vraiment supprimer ce dossier ?",
          "RESIGN": "Voulez-vous vraiment quitter ce dossier ?",

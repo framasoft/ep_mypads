@@ -191,6 +191,7 @@
          "NAME": "Der Name des Ordners ist erforderlich."
       },
       "FIELD": {
+         "ARCHIVED": "Archived",
          "DESCRIPTION": "Beschreibung",
          "GROUP_PARAMS": "Ordner-Parameter?",
          "NAME": "Name",
@@ -211,6 +212,7 @@
       "HELP": "Ordner können Pads enthalten. Hier sind Ihre Ordner: die, die Sie erstellt haben und jene, zu denen Sie eingeladen wurden.",
       "INFO": {
          "ADD_SUCCESS": "Ordner wurde erfolgreich erstellt.",
+         "ARCHIVED": "If checked, folder will appear in the archived folders list even if it's bookmarked",
          "CHAT_HISTORY_REMOVE_SUCCESS": "Der Chat-Verlauf des Pads wurde erfolgreich entfernt.",
          "CHAT_HISTORY_REMOVE_SURE": "Sind Sie sicher, dass Sie den Chatverlauf dieses Pads entfernen möchten?",
          "DESCRIPTION": "Eine optimale Beschreibung zu diesem Ordner.",

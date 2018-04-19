@@ -232,9 +232,9 @@ module.exports = (function () {
             if (!c.filters[k](g)) { return memo; }
           }
         }
-        if (ld.includes(userGroups, g._id)) {
+        if (ld.includes(userGroups, g._id) && !g.archived) {
           memo.bookmarked.push(g);
-        } else if (g.readonly) {
+        } else if (g.readonly || g.archived) {
           memo.archived.push(g);
         } else {
           memo.normal.push(g);
@@ -566,7 +566,9 @@ module.exports = (function () {
               m('th', {scope: 'col'}, conf.LANG.GROUP.TAGS.TITLE),
             ])
           ),
-          view.archived(c)
+          m('tbody', [
+            view.archived(c)
+          ])
         ])
       ])
     ]);

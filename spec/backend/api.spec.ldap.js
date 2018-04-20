@@ -2141,6 +2141,8 @@
       var uotherid;
       var gid;
       var gotherid;
+      var gsharedid;
+      var gsharedallowcreationid;
       var pid;
       var potherid;
       var ppublicid;
@@ -2186,7 +2188,21 @@
                               function (err, resp, b) {
                                 if (!err && resp.statusCode === 200) {
                                   token = b.token;
-                                  done();
+                                  group.set({ name: 'sharedgroup', admin: uotherid, users: [uid] }, function (err, g) {
+                                    if (err) { console.log(err); }
+                                    gsharedid = g._id;
+                                    group.set(
+                                      {
+                                        name: 'sharedgroup',
+                                        admin: uotherid,
+                                        users: [uid], allowUsersToCreatePads: true
+                                      }, function (err, g) {
+                                        if (err) { console.log(err); }
+                                        gsharedallowcreationid = g._id;
+                                        done();
+                                      }
+                                    );
+                                  });
                                 }
                               }
                             );
@@ -2273,9 +2289,31 @@
 
       describe('pad.set/add POST and value as params', function () {
 
-        it('should return error when arguments are not as expected',
+        it('should return an error if no user is given',
+          function (done) {
+            var b = { body: { } };
+            rq.post(padRoute, b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(401);
+              expect(body.error).toMatch('AUTHENTICATION.NOT_AUTH');
+              done();
+            });
+          }
+        );
+
+        it('should return an error if no group is given',
           function (done) {
             var b = { body: { auth_token: token } };
+            rq.post(padRoute, b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(400);
+              expect(body.error).toMatch('PARAM_STR');
+              done();
+            });
+          }
+        );
+
+        it('should return error when arguments are not as expected',
+          function (done) {
+            var b = { body: { auth_token: token, group: gid } };
             rq.post(padRoute, b, function (err, resp, body) {
               expect(resp.statusCode).toBe(400);
               expect(body.error).toMatch('PARAM_STR');
@@ -2333,7 +2371,25 @@
           }
         );
 
-        it('should create a new pad otherwise', function (done) {
+        it('should return an error if creator is not in group admins',
+          function (done) {
+            var b = { body:
+              {
+                name: 'pad1',
+                group: gsharedid,
+                visibility: 'restricted',
+                auth_token: token
+              }
+            };
+            rq.post(padRoute, b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(401);
+              expect(body.error).toMatch('AUTHENTICATION.DENIED');
+              done();
+            });
+          }
+        );
+
+        it('should create a new pad if creator is in group admins', function (done) {
           var b = {
             body: {
               name: 'padOk',
@@ -2366,6 +2422,42 @@
             );
           });
         });
+
+        it('should create a new pad if creator is in group users and allowUsersToCreatePads is true',
+          function (done) {
+            var b = { body:
+              {
+                name: 'padOk2',
+                group: gsharedallowcreationid,
+                visibility: 'restricted',
+                auth_token: token
+              }
+            };
+            rq.post(padRoute, b, function (err, resp, body) {
+              expect(err).toBeNull();
+              expect(resp.statusCode).toBe(200);
+              expect(body.success).toBeTruthy();
+              expect(body.key).toBeDefined();
+              var key = body.key;
+              expect(body.value.name).toBe('padOk2');
+              b = { body: { auth_token: token } };
+              rq.get(padRoute + '/' + key, b,
+                function (err, resp, body) {
+                  expect(err).toBeNull();
+                  expect(resp.statusCode).toBe(200);
+                  expect(body.key).toBe(key);
+                  expect(body.value._id).toBe(key);
+                  expect(body.value.name).toBe('padOk2');
+                  expect(body.value.visibility).toBe('restricted');
+                  expect(ld.isArray(body.value.users)).toBeTruthy();
+                  expect(body.value.password).toBeNull();
+                  expect(body.value.readonly).toBeNull();
+                  done();
+                }
+              );
+            });
+          }
+        );
 
       });
 

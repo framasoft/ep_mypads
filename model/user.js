@@ -188,7 +188,7 @@ module.exports = (function () {
 
   user.fn.assignProps = function (params) {
     var p = params;
-    var u = ld.reduce(['firstname', 'lastname', 'organization', 'color'],
+    var u = ld.reduce(['firstname', 'lastname', 'organization', 'color', 'padNickname'],
       function (res, v) {
         res[v] = ld.isString(p[v]) ? p[v] : '';
         return res;
@@ -457,6 +457,7 @@ module.exports = (function () {
   *   - required `email` string, used for communication
   *   - optional `firstname` string
   *   - optional `lastname` string
+  *   - optional `padNickname` string
   *   - optional `organization` string
   *   - optional `color` string
   *   - optional `useLoginAndColorInPads` boolean
@@ -587,7 +588,7 @@ module.exports = (function () {
             if (err) { return callback(err); }
             results = ld.transform(results, function (memo, v, k) {
               memo[k] = ld.pick(v, '_id', 'login', 'firstname', 'lastname',
-                'email');
+                'email', 'padNickname');
             });
             u.userlists = ld.reduce(u.userlists, function (memo, ul, k) {
               ul.users = ld.map(ul.uids, function (uid) {

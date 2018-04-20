@@ -6,6 +6,7 @@
       "SAVE": "Speichern"
    },
    "ADMIN": {
+      "AUTHENTICATION": "Authentication settings",
       "ERR": {
          "LANGUAGE_DEFAULT": "A default language must be selected",
          "PASSWORD_MAX": "Maximum password size is mandatory",
@@ -19,6 +20,12 @@
       "FIELD": {
          "ALLOW_ETHERPADS": "Anonymous pads",
          "APPLY": "Apply",
+         "AUTHENTICATION_METHOD": "Authentication method",
+         "AUTH_LDAP_SETTINGS": "LDAP settings",
+         "AUTH_METHODS": {
+            "internal": "internal",
+            "ldap": "LDAP"
+         },
          "CHECKMAILS": "Check user mails",
          "HIDE_HELP_BLOCKS": "Hide help blocks",
          "HTMLEXTRA_HEAD": "Extra HTML for <head>",
@@ -50,6 +57,8 @@
       "HELP_USER_EDIT": "<p>Here you can update all data associated to an existing user.</p><p>Please note that by default, leaving password empty means keeping the current password. If you want to change it, you have to fill password field and its confirmation.</p>",
       "INFO": {
          "ALLOW_ETHERPADS": "Allow classic anonymous pads from on the Etherpad instance, created from the root URL of the server",
+         "AUTHENTICATION_METHOD": "You can choose between multiple authentication methods. The default is \"internal\". You can't mix authentication methods.",
+         "AUTH_LDAP_SETTINGS": "See details on the <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-ldap-authentication\">dedicated wiki page</a>.<br>Beside properties and defaultLang, all the settings ldapauth-fork (the module used for the LDAP authentication) settings. You can add other settings to it, just go on <a href=\"https://www.npmjs.com/package/ldapauth-fork#ldapauth-config-options\">the module page</a> to see which.",
          "CHECKMAILS": "Check user mail given at subscription",
          "HIDE_HELP_BLOCKS": "Help blocks shows in multiple MyPads pages, you can hide them with this setting",
          "HTMLEXTRA_HEAD": "Custom HTML Code appended to tag <head>",
@@ -144,6 +153,7 @@
             "SUBJECT_STR": "subject muss eine Zeichenkette (string) sein.",
             "TO_MAIL": "to muss eine Mail-Adresse sein.",
             "TYPE_PADSORGROUPS": "Typ muss entweder eines der Pads oder eine der Ordner sein.",
+            "UNABLE_TO_USE_EP_SETTINGS": "Unable to use Etherpad settings.json",
             "USERLIST_CRUD": "crud muss add, set or del sein.",
             "USERLIST_ID": "In den Modi set und del, ist ulistid verpflichtend.",
             "USERLIST_NAME": "Im Modus add, ist name der userlist verpflichtend.",

@@ -122,6 +122,14 @@ module.exports = (function () {
   };
 
   /**
+  * ##### padNickname icon
+  */
+
+  user.view.icon.padNickname = function (c) {
+    return form.icon(c, 'padNickname', conf.LANG.USER.INFO.PAD_NICKNAME);
+  };
+
+  /**
   * ### Fields
   *
   * Each `field` is a view returning three vdom elements :
@@ -317,6 +325,20 @@ module.exports = (function () {
     ld.assign(fields.input.attrs, {
         type: 'text',
         placeholder: conf.LANG.USER.LASTNAME
+    });
+    return fields;
+  };
+
+  /**
+  * #### padNickname field
+  */
+
+  user.view.field.padNickname = function (c) {
+    var fields = form.field(c, 'padNickname', conf.LANG.USER.PAD_NICKNAME,
+      user.view.icon.padNickname(c));
+    ld.assign(fields.input.attrs, {
+        type: 'text',
+        placeholder: conf.LANG.USER.PAD_NICKNAME
     });
     return fields;
   };

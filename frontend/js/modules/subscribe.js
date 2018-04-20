@@ -66,7 +66,7 @@ module.exports = (function () {
       c.fields = ['organization', 'lang', 'color'];
     } else {
       c.fields = ['login', 'password', 'passwordConfirm', 'email', 'firstname',
-        'lastname', 'organization', 'lang', 'color'];
+        'lastname', 'padNickname', 'organization', 'lang', 'color'];
     }
     if (c.profileView()) {
       c.fields.push('passwordCurrent', 'useLoginAndColorInPads');
@@ -175,11 +175,12 @@ module.exports = (function () {
         if (!conf.SERVER.useLdap) {
           passwordUpdate();
         } else {
-          c.data.login     = auth.userInfo().login;
-          c.data.email     = auth.userInfo().email;
-          c.data.firstname = auth.userInfo().firstname;
-          c.data.lastname  = auth.userInfo().lastname;
-          c.data.password  = c.data.passwordCurrent;
+          c.data.login       = auth.userInfo().login;
+          c.data.email       = auth.userInfo().email;
+          c.data.firstname   = auth.userInfo().firstname;
+          c.data.lastname    = auth.userInfo().lastname;
+          c.data.padNickname = auth.userInfo().padNickname;
+          c.data.password    = c.data.passwordCurrent;
         }
         m.request({
           method: 'PUT',
@@ -358,6 +359,7 @@ module.exports = (function () {
     } else {
       fields.firstname.label.attrs.class = 'col-sm-4';
       fields.lastname.label.attrs.class = 'col-sm-4';
+      fields.padNickname.label.attrs.class = 'col-sm-4';
       fields.organization.label.attrs.class = 'col-sm-4';
       fields.color.label.attrs.class = 'col-sm-4';
       optionalFields = [
@@ -369,6 +371,10 @@ module.exports = (function () {
           m('.form-group', [
             fields.lastname.label,
             m('.col-sm-7', fields.lastname.input)
+          ]),
+          m('.form-group', [
+            fields.padNickname.label,
+            m('.col-sm-7', fields.padNickname.input)
           ]),
           m('.form-group', [
             fields.organization.label,

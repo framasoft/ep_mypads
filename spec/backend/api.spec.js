@@ -593,7 +593,9 @@
         var params = {
           login: 'shelly',
           password: 'lovesKubiak',
-          email: 'shelly@lewis.me'
+          email: 'shelly@lewis.me',
+          firstname: 'Shelly',
+          lastname: 'Lewis'
         };
         user.set(params, done);
       });
@@ -620,6 +622,7 @@
 
     describe('user API', function () {
       var userRoute = route + 'user';
+      var allUsersRoute = route + 'all-users';
       var userlistRoute = route + 'userlist';
       var token;
 
@@ -944,6 +947,32 @@
           }
         );
 
+      });
+
+      describe('list all users (GET)', function () {
+        it('should NOT return the list of all users if not admin',
+          function (done) {
+            rq.get(allUsersRoute, {}, function (err, resp, body) {
+              expect(resp.statusCode).toBe(401);
+              expect(body.error).toMatch('AUTHENTICATION.ADMIN');
+              done();
+            });
+          }
+        );
+
+        it('should return the list of all users if admin',
+          function (done) {
+            var b = { body: { auth_token: admToken } };
+
+            rq.get(allUsersRoute, b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(200);
+              expect(body.usersCount).toBe(5);
+              expect(body.users.parker.email).toBe('parker@lewis.me');
+              expect(body.users.parker.firstname).toBe('Parker');
+              done();
+            });
+          }
+        );
       });
 
       describe('userlist testing', function () {

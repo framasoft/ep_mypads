@@ -29,6 +29,7 @@
          "PASSWORD_MIN": "Minimale Länge",
          "ROOTURL": "Root Web URL",
          "SEARCH": "Suche",
+         "SHOW_ALL_USERS": "Show all users",
          "SMTP_EMAILFROM": "E-Mail-Absender",
          "SMTP_HOST": "SMTP Host",
          "SMTP_PASS": "Passwort",
@@ -80,6 +81,7 @@
       "SETTINGS_GENERAL": "Allgemeine Einstellungen",
       "SETTINGS_MAIL": "E-Mail Einstellungen",
       "SETTINGS_PASSWORD": "Passwort Einstellungen",
+      "USERS_COUNT": "Number of users:",
       "USERS_SEARCH_LOGIN": "Suche nach Loginname"
    },
    "BACKEND": {

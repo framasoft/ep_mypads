@@ -53,7 +53,7 @@ module.exports = (function () {
     document.title = conf.LANG.ADMIN.FORM_USERS_SEARCH + ' - ' +
       conf.SERVER.title;
 
-    var c = { user: m.prop(false) };
+    var c = { user: m.prop(null), users: m.prop(false), usersCount: m.prop(false) };
 
     c.fields = ['login'];
     form.initFields(c, c.fields);
@@ -67,6 +67,8 @@ module.exports = (function () {
 
     c.search = function (e) {
       e.preventDefault();
+      c.users(false);
+      c.usersCount(false);
       m.request({
         method: 'GET',
         url: conf.URLS.USER + '/' + c.data.login(),
@@ -76,6 +78,25 @@ module.exports = (function () {
         notif.info({ body: conf.LANG.ADMIN.INFO.USER_FOUND });
       }, function (err) {
         c.user(false);
+        notif.error({ body: ld.result(conf.LANG, err.error) });
+      });
+    };
+
+    c.loadAllUsers = function (e) {
+      e.preventDefault();
+      c.user(null);
+      c.data.login(null);
+      m.request({
+        method: 'GET',
+        url: conf.URLS.ALL_USERS,
+        data: { auth_token: auth.admToken() }
+      }).then(function (resp) {
+        c.users(resp.users);
+        c.usersCount(resp.usersCount);
+        notif.info({ body: conf.LANG.ADMIN.INFO.USER_FOUND });
+      }, function (err) {
+        c.users(false);
+        c.usersCount(false);
         notif.error({ body: ld.result(conf.LANG, err.error) });
       });
     };
@@ -102,42 +123,84 @@ module.exports = (function () {
         m('div.form-group', [ login.label, login.input ])
       ]),
       view.user(c),
+      view.users(c),
       m('input.block.send', {
         form: 'users-form',
         type: 'submit',
         class: 'btn btn-default',
         value: conf.LANG.ADMIN.FIELD.SEARCH
-      })
+      }),
+      m('span', ' '),
+      m('button.btn.btn-info', {
+        onclick: c.loadAllUsers
+      }, conf.LANG.ADMIN.FIELD.SHOW_ALL_USERS)
     ]);
   };
 
   view.user = function (c) {
     var u = c.user();
-    if (!u) {
-      return m('p.admin-users', conf.LANG.ADMIN.INFO.USER_NONE);
-    } else {
-      var route = '/admin/users';
-      var actions = [
-        m('a', {
-          href: route + '/' + u.login + '/edit',
-          config: m.route,
-          title: conf.LANG.GROUP.EDIT
-        }, [ m('i.glyphicon glyphicon-pencil') ]),
-        m('a', {
-          href: route + '/' + u.login + '/remove',
-          config: m.route,
-          title: conf.LANG.GROUP.REMOVE,
-        }, [ m('i.glyphicon glyphicon-trash') ])
-      ];
-      var name = u.login;
-      if (u.firstname) {
-        name = [name, '(', u.firstname, u.lastname, ')'].join(' ');
+    if (u !== null) {
+      if (!u) {
+        return m('p.admin-users', conf.LANG.ADMIN.INFO.USER_NONE);
+      } else {
+        var route = '/admin/users';
+        var actions = [
+          m('a', {
+            href: route + '/' + u.login + '/edit',
+            config: m.route,
+            title: conf.LANG.GROUP.EDIT
+          }, [ m('i.glyphicon glyphicon-pencil') ]),
+          m('a', {
+            href: route + '/' + u.login + '/remove',
+            config: m.route,
+            title: conf.LANG.GROUP.REMOVE,
+          }, [ m('i.glyphicon glyphicon-trash') ])
+        ];
+        var name = u.login;
+        if (u.firstname) {
+          name = [name, '(', u.firstname, u.lastname, ') '].join(' ');
+        }
+        return m('ul.admin-users', [
+          m('li.block-group', [
+            m('span.block.name', name),
+            m('span.block.actions', actions)
+          ])
+        ]);
       }
-      return m('ul.admin-users', [
-        m('li.block-group', [
+    }
+  };
+
+  view.users = function (c) {
+    var u = c.users();
+    if (u) {
+      var route = '/admin/users';
+      var items = [];
+      ld.forEach(ld.sortBy(ld.keys(u)), function (login) {
+        var n = u[login];
+        var actions = [
+          m('a', {
+            href: route + '/' + login + '/edit',
+            config: m.route,
+            title: conf.LANG.GROUP.EDIT
+          }, [ m('i.glyphicon glyphicon-pencil') ]),
+          m('a', {
+            href: route + '/' + login + '/remove',
+            config: m.route,
+            title: conf.LANG.GROUP.REMOVE,
+          }, [ m('i.glyphicon glyphicon-trash') ])
+        ];
+        var name = login;
+        if (n.firstname || n.lastname) {
+          name = [name, '(', n.firstname, n.lastname, ' - ', n.email, ') '].join(' ');
+        }
+        items.push(m('li.block-group', [
           m('span.block.name', name),
           m('span.block.actions', actions)
-        ])
+        ]));
+      });
+      return m('div', [
+        m('b', [ conf.LANG.ADMIN.USERS_COUNT+' ', c.usersCount() ]),
+        m('ul.admin-users', items)
       ]);
     }
   };

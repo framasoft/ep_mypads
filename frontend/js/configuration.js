@@ -42,6 +42,7 @@ module.exports = (function () {
   config.URLS.LOGOUT = config.URLS.AUTH + '/logout';
   config.URLS.CHECK = config.URLS.AUTH + '/check';
   config.URLS.USER = config.URLS.BASE + '/user';
+  config.URLS.ALL_USERS = config.URLS.BASE + '/all-users';
   config.URLS.USERMARK = config.URLS.USER + 'mark';
   config.URLS.GROUP = config.URLS.BASE + '/group';
   config.URLS.PAD = config.URLS.BASE + '/pad';

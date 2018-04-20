@@ -29,6 +29,7 @@
          "PASSWORD_MIN": "Taille minimum",
          "ROOTURL": "Adresse Web",
          "SEARCH": "Rechercher",
+         "SHOW_ALL_USERS": "Afficher tous les utilisateurs",
          "SMTP_EMAILFROM": "Email d'envoi",
          "SMTP_HOST": "Hôte SMTP",
          "SMTP_PASS": "Mot de passe",
@@ -80,6 +81,7 @@
       "SETTINGS_GENERAL": "Paramètres généraux",
       "SETTINGS_MAIL": "Paramètres mails",
       "SETTINGS_PASSWORD": "Paramètres mot de passe",
+      "USERS_COUNT": "Nombre d’utilisateurs :",
       "USERS_SEARCH_LOGIN": "Rechercher par identifiant"
    },
    "BACKEND": {
@@ -225,7 +227,7 @@
          "PAD_REMOVE_SUCCESS": "Le pad a été supprimé avec succès",
          "PAD_REMOVE_SURE": "Voulez-vous vraiment supprimer ce pad ?",
          "PASSWORD": "Requis pour le mode privé",
-         "READONLY": "Si sélectionné les pads liés seront en lecture seule",
+         "READONLY": "Si sélectionné, les pads liés seront en lecture seule",
          "REMOVE_SUCCESS": "Le dossier a été supprimé avec succès",
          "REMOVE_SURE": "Voulez-vous vraiment supprimer ce dossier ?",
          "RESIGN": "Voulez-vous vraiment quitter ce dossier ?",

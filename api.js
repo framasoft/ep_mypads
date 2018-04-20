@@ -431,13 +431,12 @@ module.exports = (function () {
     */
 
     app.get(confRoute, function (req, res) {
-      var u = auth.fn.getUser(req.query.auth_token);
+      var u       = auth.fn.getUser(req.query.auth_token);
       var isAdmin = fn.isAdmin(req);
-      var action = isAdmin ? 'all' : 'public';
-      var value = conf[action]();
-      value.useLdap = !!(settings.ep_mypads && settings.ep_mypads.ldap);
-      var resp = { value: value };
-      resp.auth = (isAdmin ? true : !!u);
+      var action  = isAdmin ? 'all' : 'public';
+      var value   = conf[action]();
+      var resp    = { value: value };
+      resp.auth   = (isAdmin ? true : !!u);
       if (u) { resp.user = u; }
       res.send(resp);
     });
@@ -651,10 +650,8 @@ module.exports = (function () {
       var value = req.body;
       var stop;
       if (req.method === 'POST') {
-        if (settings.ep_mypads && settings.ep_mypads.ldap) {
-          stop = true;
-          res.status(400).send({ error: 'BACKEND.ERROR.AUTHENTICATION.NO_REGISTRATION' });
-        } else if (!conf.get('openRegistration')) {
+        if (conf.get('authMethod') === 'ldap' ||
+           !conf.get('openRegistration')) {
           stop = true;
           res.status(400).send({ error: 'BACKEND.ERROR.AUTHENTICATION.NO_REGISTRATION' });
         } else {
@@ -782,7 +779,7 @@ module.exports = (function () {
     app.post(api.initialRoute + 'passrecover', function (req, res) {
       var email = req.body.email;
       var err;
-      if (settings.ep_mypads && settings.ep_mypads.ldap) {
+      if (conf.get('authMethod') === 'ldap') {
         err = 'BACKEND.ERROR.AUTHENTICATION.NO_RECOVER';
         return res.status(400).send({ error: err });
       }
@@ -831,7 +828,7 @@ module.exports = (function () {
       var err;
       var badLogin = (!val || !val.login || !user.logins[val.login]);
       var badAction = (!val || !val.action || (val.action !== 'passrecover'));
-      if (settings.ep_mypads && settings.ep_mypads.ldap) {
+      if (conf.get('authMethod') === 'ldap') {
         err = 'BACKEND.ERROR.AUTHENTICATION.NO_RECOVER';
         return res.status(400).send({ error: err });
       }
@@ -870,7 +867,7 @@ module.exports = (function () {
     app.post(api.initialRoute + 'accountconfirm', function (req, res) {
       var val = mail.tokens[req.body.token];
       var err;
-      if (settings.ep_mypads && settings.ep_mypads.ldap) {
+      if (conf.get('authMethod') === 'ldap') {
         err = 'BACKEND.ERROR.AUTHENTICATION.NO_RECOVER';
         return res.status(400).send({ error: err });
       }

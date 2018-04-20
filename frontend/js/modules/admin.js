@@ -32,6 +32,7 @@ module.exports = (function () {
   // Global dependencies
   var m = require('mithril');
   var ld = require('lodash');
+  var beautify = require('json-beautify');
   // Local dependencies
   var conf = require('../configuration.js');
   var auth = require('../auth.js');
@@ -67,7 +68,7 @@ module.exports = (function () {
           'tokenDuration', 'SMTPHost', 'SMTPPort', 'SMTPSSL', 'SMTPTLS',
           'SMTPUser', 'SMTPPass', 'SMTPEmailFrom', 'HTMLExtraHead',
           'openRegistration', 'hideHelpBlocks', 'useFirstLastNameInPads',
-          'insensitiveMailMatch'
+          'insensitiveMailMatch', 'authMethod', 'authLdapSettings'
         ]);
         c.currentConf = resp.value;
         ld.forIn(resp.value, function (v, k) {
@@ -245,6 +246,7 @@ module.exports = (function () {
         });
         var textarea = m('textarea.form-control', {
           name: 'HTMLExtraHead',
+          class: 'monospace',
           value: c.data.HTMLExtraHead(),
           onchange: m.withAttr('value', c.data.HTMLExtraHead)
         }, c.data.HTMLExtraHead());
@@ -375,8 +377,51 @@ module.exports = (function () {
           checked: c.data.openRegistration(),
           onchange: m.withAttr('checked', c.data.openRegistration)
         });
-        var l = m('label', [ f, A.FIELD.OPEN_REGISTRATION, icon ]);
+        var lopts = {};
+        if (c.data.authMethod() !== 'internal') {
+          lopts.class = 'hidden';
+        }
+        var l = m('label', lopts, [ f, A.FIELD.OPEN_REGISTRATION, icon ]);
         return l;
+      })(),
+      authMethod: (function() {
+        var icon = m('i', {
+          class: 'mp-tooltip glyphicon glyphicon-info-sign',
+          'data-msg': A.INFO.AUTHENTICATION_METHOD
+        });
+        var label = m('label', { for: 'defaultLanguage' }, [
+          A.FIELD.AUTHENTICATION_METHOD,
+          icon
+        ]);
+        var select = m('select.form-control', {
+          name: 'authMethod',
+          required: true,
+          value: c.data.authMethod(),
+          onchange: m.withAttr('value', c.data.authMethod)
+        }, ld.reduce(c.data.availableAuthMethods(), function (memo, v) {
+          memo.push(m('option', { value: v }, A.FIELD.AUTH_METHODS[v]));
+          return memo;
+          }, [])
+        );
+        return { label: label, icon: icon, select: select };
+      })(),
+      authLdapSettings: (function () {
+        var label = m('label', { for: 'authLdapSettings' },
+          A.FIELD.AUTH_LDAP_SETTINGS);
+        var help = m.trust('<p>' + A.INFO.AUTH_LDAP_SETTINGS + '</p>');
+        var ldapSettings = c.data.authLdapSettings();
+        delete ldapSettings.attrs;
+        var textarea = m('textarea.form-control', {
+          name: 'authLdapSettings',
+          rows: 18,
+          class: 'monospace',
+          value: beautify(ldapSettings, null, 4),
+          onchange: m.withAttr('value', function(value) {
+            value = JSON.parse(value);
+            c.data.authLdapSettings(value);
+          })
+        }, c.data.authLdapSettings());
+        return { label: label, help: help, textarea: textarea };
       })(),
       checkMails: (function () {
         var icon = form.icon(c, 'checkMails', A.INFO.CHECKMAILS);
@@ -477,11 +522,20 @@ module.exports = (function () {
           m('div.form-group', [ f.rootUrl.label, f.rootUrl.input ]),
           m('div.form-group', [ f.defaultLanguage.label, f.defaultLanguage.select ]),
           m('div.checkbox',   [ f.allowEtherPads ]),
-          m('div.checkbox',   [ f.openRegistration ]),
           m('div.checkbox',   [ f.hideHelpBlocks ]),
           m('div.checkbox',   [ f.useFirstLastNameInPads ]),
           m('div.checkbox',   [ f.insensitiveMailMatch ]),
           m('div.form-group', [ f.HTMLExtraHead.label, f.HTMLExtraHead.icon, f.HTMLExtraHead.textarea ])
+        ])
+      ]),
+      m('fieldset', [
+        m('legend', conf.LANG.ADMIN.AUTHENTICATION),
+        m('div', [
+          m('div.checkbox',   [ f.openRegistration ]),
+          m('div.form-group', [ f.authMethod.label, f.authMethod.select ]),
+          m('div.form-group', (c.data.authMethod() !== 'ldap') ? { class: 'hidden' } : undefined,
+            [ f.authLdapSettings.label, f.authLdapSettings.help, f.authLdapSettings.textarea ]
+          ),
         ])
       ]),
       m('fieldset', [

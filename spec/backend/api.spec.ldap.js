@@ -602,6 +602,7 @@
 
     describe('user API', function () {
       var userRoute = route + 'user';
+      var allUsersRoute = route + 'all-users';
       var userlistRoute = route + 'userlist';
       var token;
 
@@ -942,6 +943,34 @@
         );
 
       });
+
+      describe('list all users (GET)', function () {
+        it('should NOT return the list of all users if not admin',
+          function (done) {
+            rq.get(allUsersRoute, {}, function (err, resp, body) {
+              expect(resp.statusCode).toBe(401);
+              expect(body.error).toMatch('AUTHENTICATION.ADMIN');
+              done();
+            });
+          }
+        );
+
+        it('should return the list of all users if admin',
+          function (done) {
+            var b = { body: { auth_token: admToken } };
+
+            rq.get(allUsersRoute, b, function (err, resp, body) {
+              expect(resp.statusCode).toBe(200);
+              expect(body.usersCount).toBe(4);
+              expect(body.users.fry.email).toBe('guest@phantomatic.weird');
+              expect(body.users.fry.firstname).toBe('Philip');
+              expect(body.users.fry.lastname).toBe('Fry');
+              done();
+            });
+          }
+        );
+      });
+
 
       describe('userlist testing', function () {
         var ulists;

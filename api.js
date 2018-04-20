@@ -517,6 +517,7 @@ module.exports = (function () {
 
   userAPI = function (app) {
     var userRoute = api.initialRoute + 'user';
+    var allUsersRoute = api.initialRoute + 'all-users';
     var userlistRoute = api.initialRoute + 'userlist';
 
     /**
@@ -646,6 +647,42 @@ module.exports = (function () {
 
     app.get(userRoute + '/:key', fn.ensureAdminOrSelf,
       ld.partial(fn.get, user));
+
+    /**
+    * GET method : get all users from cache
+    *
+    * exemple: {
+    *   usersCount: 1,
+    *   users: {
+    *     foo: {
+    *       email: foo@bar.org,
+    *       firstname: Foo,
+    *       lastname: Bar
+    *     }
+    *   }
+    * }
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/all-users
+    */
+
+    app.get(allUsersRoute, fn.ensureAdmin,
+      function (req, res) {
+        var emails = ld.reduce(user.emails, function (result, n, key) {
+          result[n] = key;
+          return result;
+        }, {});
+        var users = ld.reduce(user.logins, function (result, n, key) {
+          result[key] = {
+            email: emails[n],
+            firstname: user.firstname[n],
+            lastname: user.lastname[n]
+          };
+          return result;
+        }, {});
+        res.send({ users: users, usersCount: ld.size(users) });
+      }
+    );
 
     // `set` for POST and PUT, see below
     var _set = function (req, res) {

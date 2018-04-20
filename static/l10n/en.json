@@ -191,6 +191,7 @@
          "NAME": "The name of the folder is required"
       },
       "FIELD": {
+         "ALLOW_USERS_TO_CREATE_PADS": "Allow simple users of the folder to create pads?",
          "DESCRIPTION": "Description",
          "GROUP_PARAMS": "Folder parameters ?",
          "NAME": "Name",
@@ -211,6 +212,7 @@
       "HELP": "Folders can contain pads. Here are your folders : those you have created, those you have been explicitly invited",
       "INFO": {
          "ADD_SUCCESS": "Folder has been successfully created",
+         "ALLOW_USERS_TO_CREATE_PADS": "This allows users of the folder that don't have administrator rights to create pads in the folder",
          "CHAT_HISTORY_REMOVE_SUCCESS": "The chat history of the pad has been successfully removed",
          "CHAT_HISTORY_REMOVE_SURE": "Are you sure you want to remove the chat history of this pad?",
          "DESCRIPTION": "An optional long text to describe your folder",

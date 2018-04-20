@@ -167,7 +167,11 @@ module.exports = (function () {
         var lastname  = (u.lastname)  ? u.lastname  : '';
         n = '&userName=' + firstname + ' ' + lastname;
       } else if (u.useLoginAndColorInPads) {
-        n = '&userName=' + u.login;
+        if (u.padNickname) {
+          n = '&userName=' + u.padNickname;
+        } else {
+          n = '&userName=' + u.login;
+        }
       }
     }
     var link = conf.URLS.RAWBASE.replace('mypads/', '') + 'p/' + c.pad._id + '?' + p + a + co + n;

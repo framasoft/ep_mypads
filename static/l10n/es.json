@@ -191,6 +191,7 @@
          "NAME": "Se necesita un nombre para la carpeta"
       },
       "FIELD": {
+         "ALLOW_USERS_TO_CREATE_PADS": "Allow simple users of the folder to create pads?",
          "DESCRIPTION": "Descripción ",
          "GROUP_PARAMS": "Opciones de carpetas?",
          "NAME": "Nombre",
@@ -211,6 +212,7 @@
       "HELP": "Las carpetas pueden contener pads. Aquí tienes tus carpetas : las que has creado, las que has sido invitadas explícitamente",
       "INFO": {
          "ADD_SUCCESS": "La carpeta ha sido creada con éxito",
+         "ALLOW_USERS_TO_CREATE_PADS": "This allows users of the folder that don't have administrator rights to create pads in the folder",
          "CHAT_HISTORY_REMOVE_SUCCESS": "El historial de chat del pad ha sido eliminado con éxito",
          "CHAT_HISTORY_REMOVE_SURE": "¿Estás segura de que quieres eliminar el historial de chat de este pad?",
          "DESCRIPTION": "Un largo texto explicativo opcional para describir su carpeta",

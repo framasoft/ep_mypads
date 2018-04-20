@@ -62,7 +62,7 @@ module.exports = (function () {
       document.title = (c.addView() ? conf.LANG.GROUP.ADD :
         conf.LANG.GROUP.EDIT_GROUP);
       document.title += ' - ' + conf.SERVER.title;
-      c.fields = ['name', 'description', 'visibility', 'password', 'readonly'];
+      c.fields = ['name', 'description', 'visibility', 'password', 'readonly', 'allowUsersToCreatePads'];
       form.initFields(c, c.fields);
       c.data.visibility('restricted');
       var tagsCurrent;
@@ -160,6 +160,9 @@ module.exports = (function () {
   view.icon.readonly = function () {
     return view.icon.common(conf.LANG.GROUP.INFO.READONLY);
   };
+  view.icon.allowUsersToCreatePads = function () {
+    return view.icon.common(conf.LANG.GROUP.INFO.ALLOW_USERS_TO_CREATE_PADS);
+  };
 
   /**
   * ### Fields
@@ -252,6 +255,20 @@ module.exports = (function () {
     return { label: label, icon: icon };
   };
 
+  view.field.allowUsersToCreatePads = function (c) {
+    var icon = view.icon.allowUsersToCreatePads();
+    var label = m('label', [
+        m('input', {
+          name: 'allowUsersToCreatePads',
+          type: 'checkbox',
+          checked: c.data.allowUsersToCreatePads(),
+          onchange: m.withAttr('checked', c.data.allowUsersToCreatePads)
+        }),
+        [ conf.LANG.GROUP.FIELD.ALLOW_USERS_TO_CREATE_PADS, icon ]
+      ]);
+    return { label: label, icon: icon };
+  };
+
   view.field.tag = function (c) { return tag.view(c.tag); };
 
   /**
@@ -288,15 +305,22 @@ module.exports = (function () {
       );
     }
     if (!c.addView()) {
-      fields.push(
+      fields.push([
         m('.form-group',
           m('.col-sm-7 .col-sm-offset-4',
             m('.checkbox', [
               _f.readonly.label,
             ])
           )
+        ),
+        m('.form-group',
+          m('.col-sm-7 .col-sm-offset-4',
+            m('.checkbox', [
+              _f.allowUsersToCreatePads.label,
+            ])
+          )
         )
-      );
+      ]);
     }
     fields.push(view.field.tag(c));
     return m('form.form-horizontal', {

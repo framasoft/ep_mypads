@@ -1263,7 +1263,32 @@ module.exports = (function () {
       if (!isAdmin && !u) {
         return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.NOT_AUTH');
       }
-      _set(req, res);
+      if (isAdmin) {
+        _set(req, res);
+      } else {
+        if (req.body.group) {
+          group.get(req.body.group, function (err, g) {
+            if (err) {
+              if (ld.isEqual(err, new Error('BACKEND.ERROR.CONFIGURATION.KEY_NOT_FOUND'))) {
+                err = 'BACKEND.ERROR.PAD.ITEMS_NOT_FOUND';
+              }
+              return res.status(400).send({ success: false, error: err });
+            }
+            if (typeof(g) === 'undefined') {
+              return res.status(400).send({ success: false, error: 'BACKEND.ERROR.PAD.ITEMS_NOT_FOUND'});
+            } else {
+              if (ld.indexOf(g.admins, u._id) !== -1 ||
+                (g.allowUsersToCreatePads && ld.indexOf(g.users, u._id) !== -1)) {
+                _set(req, res);
+              } else {
+                return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.DENIED');
+              }
+            }
+          });
+        } else {
+          return res.status(400).send({ success: false, error: 'BACKEND.ERROR.TYPE.PARAM_STR'});
+        }
+      }
     });
 
     /**

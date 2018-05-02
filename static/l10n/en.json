@@ -223,11 +223,11 @@
          "PAD_MOVE_NOGROUP": "Sorry but no other folder is available. You should create one before.",
          "PAD_MOVE_SUCCESS": "All pads have been successfully moved",
          "PAD_REMOVE_SUCCESS": "Pad has been successfully removed",
-         "PAD_REMOVE_SURE": "Are you sure you want to remove this pad ?",
+         "PAD_REMOVE_SURE": "Are you sure you want to remove this pad ? WARNING: this action is irreversible, the pad will be deleted for EVERYONE that has access to it.",
          "PASSWORD": "Required in private mode",
          "READONLY": "If checked, linked pads will be in readonly mode",
          "REMOVE_SUCCESS": "Folder has been successfully removed",
-         "REMOVE_SURE": "Are you sure you want to remove this folder ?",
+         "REMOVE_SURE": "Are you sure you want to remove this folder ? WARNING: this action is irreversible, the folder and its pads will be deleted for EVERYONE that has access to it.",
          "RESIGN": "Are you sure you want to resign from this folder ?",
          "RESIGN_SUCCESS": "You have left the folder successfully",
          "VISIBILITY": "Required, restricted by default to invited users or admins"

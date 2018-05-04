@@ -51,6 +51,15 @@ test_node_9:
    - npm run test
    - npm run test-ldap
 
+test_node_10:
+  stage: test
+  image: node:10-stretch
+  script:
+   - npm install
+   - npm run lint
+   - npm run test
+   - npm run test-ldap
+
 # Push new translations strings to https://trad.framasoft.org
 trads:
   stage: test

@@ -192,6 +192,7 @@
       },
       "FIELD": {
          "ALLOW_USERS_TO_CREATE_PADS": "Allow simple users of the folder to create pads?",
+         "ARCHIVED": "Archived",
          "DESCRIPTION": "Description",
          "GROUP_PARAMS": "Folder parameters ?",
          "NAME": "Name",
@@ -213,6 +214,7 @@
       "INFO": {
          "ADD_SUCCESS": "Folder has been successfully created",
          "ALLOW_USERS_TO_CREATE_PADS": "This allows users of the folder that don't have administrator rights to create pads in the folder",
+         "ARCHIVED": "If checked, folder will appear in the archived folders list even if it's bookmarked",
          "CHAT_HISTORY_REMOVE_SUCCESS": "The chat history of the pad has been successfully removed",
          "CHAT_HISTORY_REMOVE_SURE": "Are you sure you want to remove the chat history of this pad?",
          "DESCRIPTION": "An optional long text to describe your folder",
@@ -227,7 +229,7 @@
          "PAD_REMOVE_SUCCESS": "Pad has been successfully removed",
          "PAD_REMOVE_SURE": "Are you sure you want to remove this pad ? WARNING: this action is irreversible, the pad will be deleted for EVERYONE that has access to it.",
          "PASSWORD": "Required in private mode",
-         "READONLY": "If checked, linked pads will be in readonly mode",
+         "READONLY": "If checked, linked pads will be in readonly mode and the folder will be in the archived folders list unless it's bookmarked",
          "REMOVE_SUCCESS": "Folder has been successfully removed",
          "REMOVE_SURE": "Are you sure you want to remove this folder ? WARNING: this action is irreversible, the folder and its pads will be deleted for EVERYONE that has access to it.",
          "RESIGN": "Are you sure you want to resign from this folder ?",

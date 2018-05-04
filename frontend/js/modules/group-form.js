@@ -62,7 +62,7 @@ module.exports = (function () {
       document.title = (c.addView() ? conf.LANG.GROUP.ADD :
         conf.LANG.GROUP.EDIT_GROUP);
       document.title += ' - ' + conf.SERVER.title;
-      c.fields = ['name', 'description', 'visibility', 'password', 'readonly', 'allowUsersToCreatePads'];
+      c.fields = ['name', 'description', 'visibility', 'password', 'readonly', 'allowUsersToCreatePads', 'archived'];
       form.initFields(c, c.fields);
       c.data.visibility('restricted');
       var tagsCurrent;
@@ -162,6 +162,9 @@ module.exports = (function () {
   };
   view.icon.allowUsersToCreatePads = function () {
     return view.icon.common(conf.LANG.GROUP.INFO.ALLOW_USERS_TO_CREATE_PADS);
+  };
+  view.icon.archived = function () {
+    return view.icon.common(conf.LANG.GROUP.INFO.ARCHIVED);
   };
 
   /**
@@ -269,6 +272,20 @@ module.exports = (function () {
     return { label: label, icon: icon };
   };
 
+  view.field.archived = function (c) {
+    var icon = view.icon.archived();
+    var label = m('label', [
+        m('input', {
+          name: 'archived',
+          type: 'checkbox',
+          checked: c.data.archived(),
+          onchange: m.withAttr('checked', c.data.archived)
+        }),
+        [ conf.LANG.GROUP.FIELD.ARCHIVED, icon ]
+      ]);
+    return { label: label, icon: icon };
+  };
+
   view.field.tag = function (c) { return tag.view(c.tag); };
 
   /**
@@ -310,6 +327,13 @@ module.exports = (function () {
           m('.col-sm-7 .col-sm-offset-4',
             m('.checkbox', [
               _f.readonly.label,
+            ])
+          )
+        ),
+        m('.form-group',
+          m('.col-sm-7 .col-sm-offset-4',
+            m('.checkbox', [
+              _f.archived.label,
             ])
           )
         ),

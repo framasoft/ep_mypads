@@ -191,6 +191,7 @@
          "NAME": "Der Name des Ordners ist erforderlich."
       },
       "FIELD": {
+         "ALLOW_USERS_TO_CREATE_PADS": "Allow simple users of the folder to create pads?",
          "DESCRIPTION": "Beschreibung",
          "GROUP_PARAMS": "Ordner-Parameter?",
          "NAME": "Name",
@@ -211,6 +212,7 @@
       "HELP": "Ordner können Pads enthalten. Hier sind Ihre Ordner: die, die Sie erstellt haben und jene, zu denen Sie eingeladen wurden.",
       "INFO": {
          "ADD_SUCCESS": "Ordner wurde erfolgreich erstellt.",
+         "ALLOW_USERS_TO_CREATE_PADS": "This allows users of the folder that don't have administrator rights to create pads in the folder",
          "CHAT_HISTORY_REMOVE_SUCCESS": "Der Chat-Verlauf des Pads wurde erfolgreich entfernt.",
          "CHAT_HISTORY_REMOVE_SURE": "Sind Sie sicher, dass Sie den Chatverlauf dieses Pads entfernen möchten?",
          "DESCRIPTION": "Eine optimale Beschreibung zu diesem Ordner.",

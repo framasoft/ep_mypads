@@ -359,7 +359,7 @@ module.exports = (function () {
       }
     })();
     var padBlocks = [];
-    if (c.isAdmin) { padBlocks.push(addView);}
+    if (c.isAdmin || (c.group.allowUsersToCreatePads && !c.isGuest)) { padBlocks.push(addView);}
     padBlocks.push(filterView, sortView, padView);
     if (c.isAdmin) { padBlocks.push(moveView);}
     return m('section.panel-body', padBlocks);

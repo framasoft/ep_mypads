@@ -105,7 +105,7 @@ module.exports = (function () {
     try {
       mail.server = emailjs.server.connect(opts);
     }
-    catch (e) { console.log(e); }
+    catch (e) { console.error(e); }
   };
 
   /**

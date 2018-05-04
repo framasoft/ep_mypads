@@ -54,7 +54,8 @@ module.exports = (function () {
   *   visibility: 'restricted' || 'public' || 'private',
   *   password: 'secret',
   *   readonly: false,
-  *   tags: ['important', 'domain1']
+  *   tags: ['important', 'domain1'],
+  *   allowUsersToCreatePads: false
   * };
   *
   */
@@ -480,6 +481,7 @@ module.exports = (function () {
     g.visibility = (ld.isString(v) && ld.includes(vVal, v)) ? v : 'restricted';
     g.password = ld.isString(p.password) ? p.password : null;
     g.readonly = ld.isBoolean(p.readonly) ? p.readonly : false;
+    g.allowUsersToCreatePads = ld.isBoolean(p.allowUsersToCreatePads) ? p.allowUsersToCreatePads : false;
     g.tags = ld.isArray(p.tags) ? p.tags : [];
     return g;
   };

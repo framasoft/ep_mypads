@@ -51,7 +51,7 @@ module.exports = (function () {
     // coherent default configuration with eptherpad-lite one.
     var ueberDB = require('ueberDB');
     storage.db = new ueberDB.database('dirty', { filename: './test.db' });
-    storage.db.init(function (err) { if (err) { console.log(err); } });
+    storage.db.init(function (err) { if (err) { console.error(err); } });
   }
 
   /**

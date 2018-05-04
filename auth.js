@@ -182,7 +182,7 @@ module.exports = (function () {
       var lauth = new LdapAuth(settings.ep_mypads.ldap);
       lauth.authenticate(login, pass, function(err, ldapuser) {
         lauth.close(function(error) {
-          if (error) { console.log(error); }
+          if (error) { console.error(error); }
         });
         if (err) {
           var emsg = err;
@@ -366,7 +366,7 @@ module.exports = (function () {
       } else {
         lauth.authenticate(u.login, password, function(err) {
           lauth.close(function(error) {
-            if (error) { console.log(error); }
+            if (error) { console.error(error); }
           });
           if (err) {
             if (err.lde_message === 'Invalid Credentials') {

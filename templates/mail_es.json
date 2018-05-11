@@ -1,0 +1,6 @@
+{
+  "ACCOUNT_CONFIRMATION_SUBJECT": "Account confirmation on <%= title %>",
+  "ACCOUNT_CONFIRMATION": "<%= login %>, you have subscribed on <%= title %>. This etherpad instance requires an email confirmation to activate your account. To proceed, thanks to go to this Web address : <%= url %>. This url will only be valid for <%= duration %> minutes. After that, you have to contact an administrator.",
+  "PASSRECOVER_SUBJECT": "Password recovery on <%= title %>",
+  "PASSRECOVER": "<%= login %>, a password change request on <%= title %> has been initiated for your login. If you want to confirm your password change, please go to this Web address : <%= url %> . If this request does not come from you, simply ignore this email. Address will become invalid in <%= duration %> minutes."
+}

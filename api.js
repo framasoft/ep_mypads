@@ -119,7 +119,9 @@ module.exports = (function () {
     var rFSOpts = { encoding: 'utf8' };
     api.l10n = {
       mail: {
+        de: JSON.parse(rFS(__dirname + '/templates/mail_de.json', rFSOpts)),
         en: JSON.parse(rFS(__dirname + '/templates/mail_en.json', rFSOpts)),
+        es: JSON.parse(rFS(__dirname + '/templates/mail_es.json', rFSOpts)),
         fr: JSON.parse(rFS(__dirname + '/templates/mail_fr.json', rFSOpts)),
       }
     };

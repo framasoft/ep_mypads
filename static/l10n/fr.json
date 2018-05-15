@@ -18,6 +18,7 @@
       "ETHERPAD_ACCOUNT": "Compte Etherpad",
       "FIELD": {
          "ALLOW_ETHERPADS": "Pads anonymes",
+         "ALL_PADS_PUBLICS_AUTHENTIFIED_ONLY": "Rendre tous les pads publics mais toujours demander à être authentifié pour y accéder.",
          "APPLY": "Appliquer",
          "CHECKMAILS": "Vérifier les mails",
          "HIDE_HELP_BLOCKS": "Cacher les blocs d’aide",
@@ -51,6 +52,7 @@
       "HELP_USER_EDIT": "<p>Vous pourrez ici mettre à jour toutes les données associées à un utilisateur existant.</p><p>Veuillez noter que par défaut, laisser le mot de passe vide signifie conserver le mot de passe utilisateur actuel. Si vous voulez changer ce mot de passe, vous devez remplir le champ correspondant ainsi que celui de confirmation.</p>",
       "INFO": {
          "ALLOW_ETHERPADS": "Autoriser les pads anonymes classiques sur l’instance Etherpad, pads créés à partir de l’adresse racine du serveur",
+         "ALL_PADS_PUBLICS_AUTHENTIFIED_ONLY": "Cette option supprime les notions de pads restreints ou privés, les rendant tous publics mais ils ne seront accessibles qu'aux utilisateurs authentifiés.",
          "CHECKMAILS": "Vérification des adresses mails données par les utilisateurs lors de leur inscription",
          "HIDE_HELP_BLOCKS": "Des blocs d’aide sont affichés dans de multiples pages de MyPads, vous pouvez les cacher avec ce paramètre de configuration",
          "HTMLEXTRA_HEAD": "Code HTML personnalisé qui sera ajouté à la balise <head>",

@@ -71,7 +71,8 @@ module.exports = (function() {
       SMTPTLS: true,
       tokenDuration: 60, // in minutes
       useFirstLastNameInPads: false,
-      insensitiveMailMatch: false
+      insensitiveMailMatch: false,
+      allPadsPublicsAuthentifiedOnly: false
     },
 
     /**
@@ -235,7 +236,9 @@ module.exports = (function() {
     public: function () {
       var all = configuration.all();
       return ld.pick(all, 'title', 'passwordMin', 'passwordMax', 'languages',
-        'HTMLExtraHead', 'openRegistration', 'hideHelpBlocks', 'useFirstLastNameInPads');
+        'HTMLExtraHead', 'openRegistration', 'hideHelpBlocks', 'useFirstLastNameInPads',
+        'allPadsPublicsAuthentifiedOnly'
+      );
     }
   };
 

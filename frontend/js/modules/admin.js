@@ -69,7 +69,7 @@ module.exports = (function () {
           'SMTPUser', 'SMTPPass', 'SMTPEmailFrom', 'HTMLExtraHead',
           'openRegistration', 'hideHelpBlocks', 'useFirstLastNameInPads',
           'insensitiveMailMatch', 'authMethod', 'authLdapSettings',
-          'authCasSettings'
+          'authCasSettings', 'allPadsPublicsAuthentifiedOnly'
         ]);
         c.currentConf = resp.value;
         ld.forIn(resp.value, function (v, k) {
@@ -364,6 +364,23 @@ module.exports = (function () {
         var l = m('label', [ f, A.FIELD.INSENSITIVE_MAIL_MATCH, icon ]);
         return l;
       })(),
+      allPadsPublicsAuthentifiedOnly: (function () {
+        var icon = form.icon(c, 'allPadsPublicsAuthentifiedOnly', A.INFO.ALL_PADS_PUBLICS_AUTHENTIFIED_ONLY);
+        var opts = {
+          name: 'allPadsPublicsAuthentifiedOnly',
+        };
+        if (c.data.allPadsPublicsAuthentifiedOnly) {
+          opts.checked = 'checked';
+        }
+        var f = m('input[type="checkbox"]', opts);
+        ld.assign(f.attrs, {
+          type: 'checkbox',
+          checked: c.data.allPadsPublicsAuthentifiedOnly(),
+          onchange: m.withAttr('checked', c.data.allPadsPublicsAuthentifiedOnly)
+        });
+        var l = m('label', [ f, A.FIELD.ALL_PADS_PUBLICS_AUTHENTIFIED_ONLY, icon ]);
+        return l;
+      })(),
       openRegistration: (function () {
         var icon = form.icon(c, 'openRegistration', A.INFO.OPEN_REGISTRATION);
         var opts = {
@@ -552,6 +569,7 @@ module.exports = (function () {
           m('div.checkbox',   [ f.hideHelpBlocks ]),
           m('div.checkbox',   [ f.useFirstLastNameInPads ]),
           m('div.checkbox',   [ f.insensitiveMailMatch ]),
+          m('div.checkbox',   [ f.allPadsPublicsAuthentifiedOnly ]),
           m('div.form-group', [ f.HTMLExtraHead.label, f.HTMLExtraHead.icon, f.HTMLExtraHead.textarea ])
         ])
       ]),

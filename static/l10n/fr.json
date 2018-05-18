@@ -6,6 +6,7 @@
       "SAVE": "Sauvegarder"
    },
    "ADMIN": {
+      "AUTHENTICATION": "Authentication settings",
       "ERR": {
          "LANGUAGE_DEFAULT": "Une langue par défaut doit être choisie",
          "PASSWORD_MAX": "La taille maximum est obligatoire",
@@ -13,12 +14,19 @@
          "PASSWORD_SIZE": "La taille minimum ne peut être plus élevée que la maximum. Merci de vérifier vos saisies.",
          "ROOTURL": "Doit être une URL valide",
          "SMTP_EMAILFROM": "Doit être une adresse mail valide",
-         "TITLE": "Le titre est obligatoire"
+         "TITLE": "Le titre est obligatoire",
+         "PARSE_LDAP": "Unable to parse the LDAP configuration."
       },
       "ETHERPAD_ACCOUNT": "Compte Etherpad",
       "FIELD": {
          "ALLOW_ETHERPADS": "Pads anonymes",
          "APPLY": "Appliquer",
+         "AUTHENTICATION_METHOD": "Authentication method",
+         "AUTH_LDAP_SETTINGS": "LDAP settings",
+         "AUTH_METHODS": {
+            "internal": "internal",
+            "ldap": "LDAP"
+         },
          "CHECKMAILS": "Vérifier les mails",
          "HIDE_HELP_BLOCKS": "Cacher les blocs d’aide",
          "HTMLEXTRA_HEAD": "HTML pour <head>",
@@ -51,6 +59,8 @@
       "HELP_USER_EDIT": "<p>Vous pourrez ici mettre à jour toutes les données associées à un utilisateur existant.</p><p>Veuillez noter que par défaut, laisser le mot de passe vide signifie conserver le mot de passe utilisateur actuel. Si vous voulez changer ce mot de passe, vous devez remplir le champ correspondant ainsi que celui de confirmation.</p>",
       "INFO": {
          "ALLOW_ETHERPADS": "Autoriser les pads anonymes classiques sur l’instance Etherpad, pads créés à partir de l’adresse racine du serveur",
+         "AUTHENTICATION_METHOD": "You can choose between multiple authentication methods. The default is \"internal\". You can't mix authentication methods.",
+         "AUTH_LDAP_SETTINGS": "See details on the <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-ldap-authentication\">dedicated wiki page</a>.<br>Beside properties and defaultLang, all the settings ldapauth-fork (the module used for the LDAP authentication) settings. You can add other settings to it, just go on <a href=\"https://www.npmjs.com/package/ldapauth-fork#ldapauth-config-options\">the module page</a> to see which.",
          "CHECKMAILS": "Vérification des adresses mails données par les utilisateurs lors de leur inscription",
          "HIDE_HELP_BLOCKS": "Des blocs d’aide sont affichés dans de multiples pages de MyPads, vous pouvez les cacher avec ce paramètre de configuration",
          "HTMLEXTRA_HEAD": "Code HTML personnalisé qui sera ajouté à la balise <head>",
@@ -97,6 +107,7 @@
             "NO_RECOVER": "Désolé, vous ne pouvez pas récupérer votre mot de passe à partir d’ici",
             "NO_REGISTRATION": "Désolé, la création de comptes est désactivée",
             "PASSWORD_INCORRECT": "Le mot de passe n’est pas correct",
+            "PLEASE_CHANGE_YOUR_PASSWORD": "Your password is the one registered when using external authentification. This server use internal authentication and as a safety mesure, this password is not allowed. Please click on the \"Lost your password?\" link to change it and be able to login.",
             "TOKEN_INCORRECT": "Votre jeton de sécurité est invalide"
          },
          "CONFIGURATION": {
@@ -104,7 +115,8 @@
             "KEY_NOT_FOUND": "L’enregistrement n’a pas été trouvé",
             "LANG_PROBLEM": "Le changement de langue n’a pu être fait. La langue par défaut sera utilisée.",
             "MAIL_NOT_CONFIGURED": "Le paramétrage des envois de mail n’a pas été fait sur ce serveur. Merci de contacter son administrateur.",
-            "ROOTURL_NOT_CONFIGURED": "Le paramétrage de l’adresse Web racine n’a pas été fait sur ce serveur. Merci de contacter son administrateur."
+            "ROOTURL_NOT_CONFIGURED": "Le paramétrage de l’adresse Web racine n’a pas été fait sur ce serveur. Merci de contacter son administrateur.",
+            "UNABLE_TO_BIND_TO_LDAP": "Unable to bind to LDAP server with this settings. Please check your LDAP settings"
          },
          "GROUP": {
             "CASCADE_REMOVAL_PROBLEM": "Quelque chose s’est mal déroulé avec la suppression en cascade des pads",
@@ -146,6 +158,7 @@
             "SUBJECT_STR": "subject doit être une chaîne de caractères",
             "TO_MAIL": "to doit être une adresse mail valide",
             "TYPE_PADSORGROUPS": "Type doit être soit pads, soit groups",
+            "UNABLE_TO_USE_EP_SETTINGS": "Unable to use Etherpad settings.json",
             "USERLIST_CRUD": "crud doit être add, set ou del",
             "USERLIST_ID": "Dans les modes set et del, ulistid est obligatoire",
             "USERLIST_NAME": "Dans le mode création, le nom de la liste utilisateur est obligatoire",

@@ -179,7 +179,7 @@ module.exports = (function () {
       required: (!c.profileView || !c.profileView()),
       oninput: form.handleField.bind(null, c, extraValid)
     };
-    if (!conf.SERVER.useLdap) {
+    if (conf.SERVER.authMethod !== 'ldap') {
       options.minlength = passMin;
       options.maxlength = passMax;
       options.pattern   = '.{' + passMin + ',' + passMax + '}';

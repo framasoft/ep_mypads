@@ -248,9 +248,11 @@ module.exports = (function() {
         throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
       }
       if (key === 'authLdapSettings') {
+        delete value.attrs;
+
         /* Test LDAP settings before registering them */
-        var ldapErr      = 'BACKEND.ERROR.CONFIGURATION.UNABLE_TO_BIND_TO_LDAP';
-        var ldapSettings = value;
+        var ldapErr      = new Error('BACKEND.ERROR.CONFIGURATION.UNABLE_TO_BIND_TO_LDAP');
+        var ldapSettings = ld.cloneDeep(value);
 
         /* Not passed to ldapjs, we don't want to autobind
          * https://github.com/mcavage/node-ldapjs/blob/v1.0.1/lib/client/client.js#L343-L356 */
@@ -259,7 +261,9 @@ module.exports = (function() {
 
         var client = ldap.createClient(ldapSettings);
         client.on('error', function (err) {
+          console.error('LDAP settings change: error. See below for details.');
           console.error(err);
+          return callback(ldapErr);
         });
         client.bind(value.bindDN, value.bindCredentials, function(err) {
           if (err) {
@@ -267,15 +271,17 @@ module.exports = (function() {
             return callback(ldapErr);
           }
           client.unbind(function(err) {
+            client.destroy();
             if (err) {
               console.error(err);
-              return callback(ldapErr);
+            } else {
+              /* Now, we can register new LDAP settings */
+              db.set(DBPREFIX + key, value, function (err) {
+                if (err) { return callback(ldapErr); }
+                configuration.cache[key] = value;
+                return callback();
+              });
             }
-            db.set(DBPREFIX + key, value, function (err) {
-              if (err) { return callback(ldapErr); }
-              configuration.cache[key] = value;
-              callback();
-            });
           });
         });
       } else {

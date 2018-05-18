@@ -180,7 +180,8 @@ module.exports = (function () {
 
   auth.fn.checkMyPadsUser = function (login, pass, callback) {
     if (conf.get('authMethod') === 'ldap') {
-      var ldapConf = conf.get('authLdapSettings');
+      // ld.cloneDeep because LdapAuth would otherwise modify authLdapSettings conf
+      var ldapConf = ld.cloneDeep(conf.get('authLdapSettings'));
       var lauth    = new LdapAuth(ldapConf);
       lauth.authenticate(login, pass, function(err, ldapuser) {
         lauth.close(function(error) {
@@ -211,6 +212,7 @@ module.exports = (function () {
             // We have to create the user in mypads database
             var mail;
             var props = ldapConf.properties;
+            ldapConf  = conf.get('authLdapSettings');
             if (Array.isArray(ldapuser[props.email])) {
               mail = ldapuser[props.email][0];
             } else {
@@ -365,7 +367,8 @@ module.exports = (function () {
     }
     // if u.visibility is defined, u is a group, which we shouldn't authenticate against LDAP
     if (conf.get('authMethod') === 'ldap' && ld.isUndefined(u.visibility)) {
-      var lauth = new LdapAuth(conf.get('authLdapSettings'));
+      // ld.cloneDeep because LdapAuth would otherwise modify authLdapSettings conf
+      var lauth = new LdapAuth(ld.cloneDeep(conf.get('authLdapSettings')));
       if (ld.isUndefined(u) || ld.isNull(u) || ld.isUndefined(u.login) || ld.isNull(u.login)) {
         return callback(null, false);
       } else {

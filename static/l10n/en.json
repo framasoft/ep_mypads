@@ -6,6 +6,7 @@
       "SAVE": "Save"
    },
    "ADMIN": {
+      "AUTHENTICATION": "Authentication settings",
       "ERR": {
          "LANGUAGE_DEFAULT": "A default language must be selected",
          "PASSWORD_MAX": "Maximum password size is mandatory",
@@ -19,6 +20,12 @@
       "FIELD": {
          "ALLOW_ETHERPADS": "Anonymous pads",
          "APPLY": "Apply",
+         "AUTHENTICATION_METHOD": "Authentication method",
+         "AUTH_LDAP_SETTINGS": "LDAP settings",
+         "AUTH_METHODS": {
+            "internal": "internal",
+            "ldap": "LDAP"
+         },
          "CHECKMAILS": "Check user mails",
          "HIDE_HELP_BLOCKS": "Hide help blocks",
          "HTMLEXTRA_HEAD": "Extra HTML for <head>",
@@ -51,6 +58,8 @@
       "HELP_USER_EDIT": "<p>Here you can update all data associated to an existing user.</p><p>Please note that by default, leaving password empty means keeping the current password. If you want to change it, you have to fill password field and its confirmation.</p>",
       "INFO": {
          "ALLOW_ETHERPADS": "Allow classic anonymous pads from on the Etherpad instance, created from the root URL of the server",
+         "AUTHENTICATION_METHOD": "You can choose between multiple authentication methods. The default is \"internal\". You can't mix authentication methods.",
+         "AUTH_LDAP_SETTINGS": "See details on the <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-ldap-authentication\">dedicated wiki page</a>.<br>Beside properties and defaultLang, all the settings are ldapauth-fork (the module used for the LDAP authentication) settings. You can add other settings to it, just go on <a href=\"https://www.npmjs.com/package/ldapauth-fork#ldapauth-config-options\">the module page</a> to see which.",
          "CHECKMAILS": "Check user mail given at subscription",
          "HIDE_HELP_BLOCKS": "Help blocks shows in multiple MyPads pages, you can hide them with this setting",
          "HTMLEXTRA_HEAD": "Custom HTML Code appended to tag <head>",
@@ -104,7 +113,8 @@
             "KEY_NOT_FOUND": "The record has not been found",
             "LANG_PROBLEM": "Language update cannot be done. The default language will be used.",
             "MAIL_NOT_CONFIGURED": "Mail settings have not been done on this server. Please contact its administrator.",
-            "ROOTURL_NOT_CONFIGURED": "Root Url setting has not been entered on this server. Please contact its administrator."
+            "ROOTURL_NOT_CONFIGURED": "Root Url setting has not been entered on this server. Please contact its administrator.",
+            "UNABLE_TO_BIND_TO_LDAP": "Unable to bind to LDAP server with this settings. Please check your LDAP settings"
          },
          "GROUP": {
             "CASCADE_REMOVAL_PROBLEM": "Something goes wrong with cascade pads removal",
@@ -146,6 +156,7 @@
             "SUBJECT_STR": "subject must be a string",
             "TO_MAIL": "to must be an email address",
             "TYPE_PADSORGROUPS": "Type must be either pads or folders",
+            "UNABLE_TO_USE_EP_SETTINGS": "Unable to use Etherpad settings.json",
             "USERLIST_CRUD": "crud must be add, set or del",
             "USERLIST_ID": "In set and del modes, ulistid is mandatory",
             "USERLIST_NAME": "In add mode, name of the userlist is mandatory",

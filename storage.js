@@ -140,15 +140,46 @@ module.exports = (function () {
   storage.fn.setKeys = function (kv, callback) {
     var done;
     var pairs = ld.pairs(kv);
-    var set = function (k, v) { storage.db.set(k, v, done); };
+    var setK = function (k, v) { storage.db.set(k, v, done); };
     done = function (err) {
       if (err) { return callback(err); }
       if (pairs.length) {
         var pair = pairs.pop();
-        set(pair[0], pair[1]);
+        setK(pair[0], pair[1]);
       } else {
         return callback(null);
       }
+    };
+    done();
+  };
+
+  /**
+  * `setKeysIfNotExists` is a function for multiple asynchronous sets if the
+  *  key does not exists in database, taking :
+  s
+  * - a `kv` object, wich contains a list a keys and values to set
+  * - a `callback` function, called if error or when finished with null
+  * FIXME: TCO ?
+  */
+
+  storage.fn.setKeysIfNotExists = function (kv, callback) {
+    var done;
+    var pairs = ld.pairs(kv);
+    var setK = function (k, v) { storage.db.set(k, v, done); };
+    done = function (err) {
+      if (err) { return callback(err); }
+      if (pairs.length) {
+        var pair = pairs.pop();
+        storage.db.get(pair[0], function(err, res) {
+          if (err) { return callback(err); }
+          if (ld.isUndefined(res) || ld.isNull(res)) { 
+            setK(pair[0], pair[1]);
+          } else {
+            done();
+          }
+        });
+      }
+      return callback(null);
     };
     done();
   };

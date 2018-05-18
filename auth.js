@@ -88,6 +88,7 @@ var cuid = require('cuid');
 
 // Local dependencies
 var user = require('./model/user.js');
+var conf = require('./configuration.js');
 
 module.exports = (function () {
   'use strict';
@@ -178,8 +179,10 @@ module.exports = (function () {
   */
 
   auth.fn.checkMyPadsUser = function (login, pass, callback) {
-    if (settings.ep_mypads && settings.ep_mypads.ldap) {
-      var lauth = new LdapAuth(settings.ep_mypads.ldap);
+    if (conf.get('authMethod') === 'ldap') {
+      // ld.cloneDeep because LdapAuth would otherwise modify authLdapSettings conf
+      var ldapConf = ld.cloneDeep(conf.get('authLdapSettings'));
+      var lauth    = new LdapAuth(ldapConf);
       lauth.authenticate(login, pass, function(err, ldapuser) {
         lauth.close(function(error) {
           if (error) { console.error(error); }
@@ -187,14 +190,14 @@ module.exports = (function () {
         if (err) {
           var emsg = err;
           // openldap error message || active directory error message
-          if (typeof(err.lde_message) === 'string' &&
+          if (ld.isString(err.lde_message) &&
               (err.lde_message === 'Invalid Credentials' ||
                 err.lde_message.match(/data 52e,/))
           ) {
             emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
           } else if (
-              (typeof(err) === 'string' && err.match(/no such user/)) ||
-              (typeof(err.lde_message) === 'string' &&
+              (ld.isString(err) && err.match(/no such user/)) ||
+              (ld.isString(err.lde_message) &&
                 (err.lde_message.match(/no such user/) ||
                   err.lde_message.match(/data 525,/)))
           ) {
@@ -208,7 +211,8 @@ module.exports = (function () {
           if (err) {
             // We have to create the user in mypads database
             var mail;
-            var props = settings.ep_mypads.ldap.properties;
+            var props = ldapConf.properties;
+            ldapConf  = conf.get('authLdapSettings');
             if (Array.isArray(ldapuser[props.email])) {
               mail = ldapuser[props.email][0];
             } else {
@@ -220,7 +224,7 @@ module.exports = (function () {
                 firstname: ldapuser[props.firstname],
                 lastname: ldapuser[props.lastname],
                 email: mail,
-                lang: (settings.ep_mypads.ldap.defaultLang) ? settings.ep_mypads.ldap.defaultLang : 'en'
+                lang: ldapConf.defaultLang || 'en'
               }, callback);
           } else {
             return callback(null, u);
@@ -228,6 +232,13 @@ module.exports = (function () {
         });
       });
     } else {
+      /* Prevents to use default external auth password if configuration has been changed
+       * and now use internal authentification
+       */
+      if (pass === 'soooooo_useless') {
+        var emsg = 'BACKEND.ERROR.AUTHENTICATION.PLEASE_CHANGE_YOUR_PASSWORD';
+        return callback(new Error(emsg), false);
+      }
       user.get(login, function (err, u) {
         if (err) { return callback(err); }
         auth.fn.isPasswordValid(u, pass, function (err, isValid) {
@@ -359,9 +370,10 @@ module.exports = (function () {
       return callback(new TypeError('BACKEND.ERROR.TYPE.PASSWORD_MISSING'));
     }
     // if u.visibility is defined, u is a group, which we shouldn't authenticate against LDAP
-    if (settings.ep_mypads && settings.ep_mypads.ldap && typeof(u.visibility) === 'undefined') {
-      var lauth = new LdapAuth(settings.ep_mypads.ldap);
-      if (typeof(u) === 'undefined' || u === null || typeof(u.login) === 'undefined' || u.login === null) {
+    if (conf.get('authMethod') === 'ldap' && ld.isUndefined(u.visibility)) {
+      // ld.cloneDeep because LdapAuth would otherwise modify authLdapSettings conf
+      var lauth = new LdapAuth(ld.cloneDeep(conf.get('authLdapSettings')));
+      if (ld.isUndefined(u) || ld.isNull(u) || ld.isUndefined(u.login) || ld.isNull(u.login)) {
         return callback(null, false);
       } else {
         lauth.authenticate(u.login, password, function(err) {

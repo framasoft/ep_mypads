@@ -116,3 +116,7 @@ section.pad iframe {
 label[for="pad-filter-form"] {
   padding-right: 10px;
 }
+
+.monospace {
+  font-family: monospace;
+}

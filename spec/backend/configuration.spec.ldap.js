@@ -49,32 +49,29 @@
         }
       );
 
-      it('will not set the authMethod to \'ldap\' as there is no Etherpad\'s settings.json',
+      it('will set the authMethod to \'ldap\' because of Etherpad\'s settings.json (ep_mypads.ldap)',
         function () {
           var res = conf.get('authMethod');
-          expect(res).toBe('internal');
+          expect(res).toBe('ldap');
         }
       );
 
-      it('will set default authLdapSettings',
+      it('will fetch and set authLdapSettings from Etherpad\'s settings.json (ep_mypads.ldap)',
         function (done) {
           var res = conf.get('authLdapSettings');
           expect(res).toEqual({
-            url:             'ldaps://ldap.example.org',
-            bindDN:          'uid=ldap,ou=users,dc=example,dc=org',
-            bindCredentials: 'S3cr3t',
-            searchBase:      'ou=users,dc=example,dc=org',
+            url:             'ldap://rroemhild-test-openldap',
+            bindDN:          'cn=admin,dc=planetexpress,dc=com',
+            bindCredentials: 'GoodNewsEveryone',
+            searchBase:      'ou=people,dc=planetexpress,dc=com',
             searchFilter:    '(uid={{username}})',
-            tlsOptions: {
-              rejectUnauthorized: true
-            },
             properties: {
               login:     'uid',
               email:     'mail',
               firstname: 'givenName',
               lastname:  'sn'
             },
-            defaultLang: 'en'
+            defaultLang: 'fr'
           });
           done();
         }

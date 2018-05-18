@@ -6,6 +6,7 @@
       "SAVE": "Speichern"
    },
    "ADMIN": {
+      "AUTHENTICATION": "Authentication settings",
       "ERR": {
          "LANGUAGE_DEFAULT": "Eine Standardsprache muss ausgewählt sein",
          "PASSWORD_MAX": "Maximale Passwortlänge ist obligatoriasch",
@@ -13,12 +14,19 @@
          "PASSWORD_SIZE": "Die minimale Größe kann nicht höher als die maximale Größe sein. Bitte überprüfen Sie Ihre Zahlen.",
          "ROOTURL": "Muss eine gültige URL sein",
          "SMTP_EMAILFROM": "Muss eine gültige E-Mail-Adfresse sein",
-         "TITLE": "Titel ist mandatory"
+         "TITLE": "Titel ist mandatory",
+         "PARSE_LDAP": "Unable to parse the LDAP configuration."
       },
       "ETHERPAD_ACCOUNT": "Etherpad-Account",
       "FIELD": {
          "ALLOW_ETHERPADS": "Anonymous pads",
          "APPLY": "Anwenden",
+         "AUTHENTICATION_METHOD": "Authentication method",
+         "AUTH_LDAP_SETTINGS": "LDAP settings",
+         "AUTH_METHODS": {
+            "internal": "internal",
+            "ldap": "LDAP"
+         },
          "CHECKMAILS": "Überprüfe Benutzer E-Mail-Adressen",
          "HIDE_HELP_BLOCKS": "Hilfe ausblenden",
          "HTMLEXTRA_HEAD": "Zusätzliches HTML in <head>",
@@ -51,6 +59,8 @@
       "HELP_USER_EDIT": "<p>Hier können Sie alle Daten zu einem bestehenden Benutzer aktualisieren.</p><p>Bitte beachten Sie, dass ein leeres Passwort standardmäßig bedeutet, das aktuelle Passwort beizubehalten. Wenn Sie es ändern möchten, müssen Sie das Passwort und dessen Bestätigung ausfüllen.</p>",
       "INFO": {
          "ALLOW_ETHERPADS": "Klassische anonyme Pads aus der Etherpad-Instanz zulassen, die aus der Root-URL des Servers erstellt wurden.",
+         "AUTHENTICATION_METHOD": "You can choose between multiple authentication methods. The default is \"internal\". You can't mix authentication methods.",
+         "AUTH_LDAP_SETTINGS": "See details on the <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-ldap-authentication\">dedicated wiki page</a>.<br>Beside properties and defaultLang, all the settings ldapauth-fork (the module used for the LDAP authentication) settings. You can add other settings to it, just go on <a href=\"https://www.npmjs.com/package/ldapauth-fork#ldapauth-config-options\">the module page</a> to see which.",
          "CHECKMAILS": "Überprüfen die Benutzer-E-Mail-Adresse, die bei der Anmeldung angegeben wurde.",
          "HIDE_HELP_BLOCKS": "Hilfeblöcke werden in mehreren MyPads-Seiten angezeigt, Sie können sie mit dieser Einstellung ausblenden.",
          "HTMLEXTRA_HEAD": "Eigenen HTML-Code im <head> einfügen",
@@ -97,6 +107,7 @@
             "NO_RECOVER": "Sorry, Sie können Ihr Passwort hier nicht wiederherstellen",
             "NO_REGISTRATION": "Leider ist die Registrierung deaktiviert.",
             "PASSWORD_INCORRECT": "Das Passwor ist nicht korrekt.",
+            "PLEASE_CHANGE_YOUR_PASSWORD": "Your password is the one registered when using external authentification. This server use internal authentication and as a safety mesure, this password is not allowed. Please click on the \"Lost your password?\" link to change it and be able to login.",
             "TOKEN_INCORRECT": "Dein Sicherheitstoken ist ungültig."
          },
          "CONFIGURATION": {
@@ -146,6 +157,7 @@
             "SUBJECT_STR": "subject muss eine Zeichenkette (string) sein.",
             "TO_MAIL": "to muss eine Mail-Adresse sein.",
             "TYPE_PADSORGROUPS": "Typ muss entweder eines der Pads oder eine der Ordner sein.",
+            "UNABLE_TO_USE_EP_SETTINGS": "Unable to use Etherpad settings.json",
             "USERLIST_CRUD": "crud muss add, set or del sein.",
             "USERLIST_ID": "In den Modi set und del, ist ulistid verpflichtend.",
             "USERLIST_NAME": "Im Modus add, ist name der userlist verpflichtend.",

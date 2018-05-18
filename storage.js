@@ -49,7 +49,7 @@ module.exports = (function () {
   catch (e) {
     // Testing case : we need to mock the database connection, using ueberDB and
     // coherent default configuration with eptherpad-lite one.
-    var ueberDB = require('ueberDB');
+    var ueberDB = require('ueberdb2');
     storage.db = new ueberDB.database('dirty', { filename: './test.db' });
     storage.db.init(function (err) { if (err) { console.error(err); } });
   }

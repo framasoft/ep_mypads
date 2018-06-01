@@ -24,6 +24,7 @@
          "AUTHENTICATION_METHOD": "Authentication method",
          "AUTH_LDAP_SETTINGS": "LDAP settings",
          "AUTH_METHODS": {
+            "cas": "Central Authentication Service",
             "internal": "internal",
             "ldap": "LDAP"
          },

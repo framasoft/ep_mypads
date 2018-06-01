@@ -102,7 +102,7 @@ module.exports = (function() {
       useFirstLastNameInPads: false,
       insensitiveMailMatch: false,
       authMethod: 'internal',
-      availableAuthMethods: [ 'internal', 'ldap' ],
+      availableAuthMethods: [ 'internal', 'ldap', 'cas' ],
       authLdapSettings: {
         url:             'ldaps://ldap.example.org',
         bindDN:          'uid=ldap,ou=users,dc=example,dc=org',
@@ -119,7 +119,9 @@ module.exports = (function() {
           lastname:  'sn'
         },
         defaultLang: 'en'
-      }
+      },
+      authCasSettings: {
+      },
     },
 
     /**
@@ -329,7 +331,7 @@ module.exports = (function() {
       var all = configuration.all();
       return ld.pick(all, 'title', 'passwordMin', 'passwordMax', 'languages',
         'HTMLExtraHead', 'openRegistration', 'hideHelpBlocks', 'useFirstLastNameInPads',
-        'authMethod'
+        'authMethod', 'authCasSettings'
       );
     }
   };

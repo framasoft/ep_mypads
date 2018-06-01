@@ -36,6 +36,7 @@ var ld = require('lodash');
 var jwt = require('jsonwebtoken');
 var ExtractJwt = require('passport-jwt').ExtractJwt;
 var LdapAuth = require('ldapauth-fork');
+var CasAuth = require('@noveogroup/cas');
 var settings;
 try {
   // Normal case : when installed as a plugin
@@ -181,78 +182,92 @@ module.exports = (function () {
   */
 
   auth.fn.checkMyPadsUser = function (login, pass, callback) {
-    if (conf.get('authMethod') === 'ldap') {
-      // ld.cloneDeep because LdapAuth would otherwise modify authLdapSettings conf
-      var ldapConf = ld.cloneDeep(conf.get('authLdapSettings'));
-      var lauth    = new LdapAuth(ldapConf);
-      lauth.authenticate(login, pass, function(err, ldapuser) {
-        lauth.close(function(error) {
-          if (error) { console.error(error); }
-        });
-        if (err) {
-          var emsg = err;
-          // openldap error message || active directory error message
-          if (ld.isString(err.lde_message) &&
-              (err.lde_message === 'Invalid Credentials' ||
-                err.lde_message.match(/data 52e,/))
-          ) {
-            emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
-          } else if (
-              (ld.isString(err) && err.match(/no such user/)) ||
-              (ld.isString(err.lde_message) &&
-                (err.lde_message.match(/no such user/) ||
-                  err.lde_message.match(/data 525,/)))
-          ) {
-            emsg = 'BACKEND.ERROR.USER.NOT_FOUND';
-          } else {
-            console.error('LdapAuth error: ', err);
-          }
-          return callback(new Error(emsg), false);
-        }
-        user.get(login, function(err, u) {
+    switch (conf.get('authMethod')) {
+      case 'ldap':
+        // ld.cloneDeep because LdapAuth would otherwise modify authLdapSettings conf
+        var ldapConf = ld.cloneDeep(conf.get('authLdapSettings'));
+        var lauth    = new LdapAuth(ldapConf);
+        lauth.authenticate(login, pass, function(err, ldapuser) {
+          lauth.close(function(error) {
+            if (error) { console.error(error); }
+          });
           if (err) {
-            // We have to create the user in mypads database
-            var mail;
-            var props = ldapConf.properties;
-            ldapConf  = conf.get('authLdapSettings');
-            if (Array.isArray(ldapuser[props.email])) {
-              mail = ldapuser[props.email][0];
+            var emsg = err;
+            // openldap error message || active directory error message
+            if (ld.isString(err.lde_message) &&
+                (err.lde_message === 'Invalid Credentials' ||
+                  err.lde_message.match(/data 52e,/))
+            ) {
+              emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
+            } else if (
+                (ld.isString(err) && err.match(/no such user/)) ||
+                (ld.isString(err.lde_message) &&
+                  (err.lde_message.match(/no such user/) ||
+                    err.lde_message.match(/data 525,/)))
+            ) {
+              emsg = 'BACKEND.ERROR.USER.NOT_FOUND';
             } else {
-              mail = ldapuser[props.email];
+              console.error('LdapAuth error: ', err);
             }
-            user.set({
-                login: ldapuser[props.login],
-                password: notInternalAuthPwd,
-                firstname: ldapuser[props.firstname],
-                lastname: ldapuser[props.lastname],
-                email: mail,
-                lang: ldapConf.defaultLang || 'en'
-              }, callback);
+            return callback(new Error(emsg), false);
+          }
+          user.get(login, function(err, u) {
+            if (err) {
+              // We have to create the user in mypads database
+              var mail;
+              var props = ldapConf.properties;
+              ldapConf  = conf.get('authLdapSettings');
+              if (Array.isArray(ldapuser[props.email])) {
+                mail = ldapuser[props.email][0];
+              } else {
+                mail = ldapuser[props.email];
+              }
+              user.set({
+                  login: ldapuser[props.login],
+                  password: notInternalAuthPwd,
+                  firstname: ldapuser[props.firstname],
+                  lastname: ldapuser[props.lastname],
+                  email: mail,
+                  lang: ldapConf.defaultLang || 'en'
+                }, callback);
+            } else {
+              return callback(null, u);
+            }
+          });
+        });
+        break;
+      case 'cas':
+        // In this case, login is a hash, see casAuth function
+        console.log(login);
+        user.get(login.login, function(err, u) {
+          if (err) {
+            login.lang = conf.get('authCasSettings').defaultLang || 'en';
+            user.set(login, callback);
           } else {
             return callback(null, u);
           }
         });
-      });
-    } else {
-      /* Prevents to use default external auth password if configuration has been changed
-       * and now use internal authentification
-       */
-      if (pass === notInternalAuthPwd) {
-        var emsg = 'BACKEND.ERROR.AUTHENTICATION.PLEASE_CHANGE_YOUR_PASSWORD';
-        return callback(new Error(emsg), false);
-      }
-      user.get(login, function (err, u) {
-        if (err) { return callback(err); }
-        auth.fn.isPasswordValid(u, pass, function (err, isValid) {
+        break;
+      default:
+        /* Prevents to use default external auth password if configuration has been changed
+         * and now use internal authentification
+         */
+        if (pass === notInternalAuthPwd) {
+          var emsg = 'BACKEND.ERROR.AUTHENTICATION.PLEASE_CHANGE_YOUR_PASSWORD';
+          return callback(new Error(emsg), false);
+        }
+        user.get(login, function (err, u) {
           if (err) { return callback(err); }
-          if (!isValid) {
-            var emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
-            return callback(new Error(emsg), false);
-          }
-          return callback(null, u);
+          auth.fn.isPasswordValid(u, pass, function (err, isValid) {
+            if (err) { return callback(err); }
+            if (!isValid) {
+              var emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
+              return callback(new Error(emsg), false);
+            }
+            return callback(null, u);
+          });
         });
-      });
-    }
+      }
   };
 
   /**
@@ -281,6 +296,38 @@ module.exports = (function () {
     return callback(null, u);
   };
 
+  /*
+   * ### casAuth
+   *
+   */
+  auth.fn.casAuth = function (req, res, callback) {
+    var ticket = req.query.ticket;
+    if (ticket) {
+      var cas = new CasAuth(
+        {
+          base_url: 'http://vm:8080/cas',
+          service: 'mypads',
+          version: 2.0
+        }
+      );
+      cas.validate(ticket, function(err, success, username, info) {
+        if (err) { return callback(err); }
+        if (success) {
+          return callback(null, {
+            login: info.username,
+            password: notInternalAuthPwd,
+            firstname: 'FirstName',
+            lastname: 'LastName',
+            email: 'luc@didry.org',
+          });
+        } else {
+          callback(new Error('BACKEND.ERROR.CAS.NO_TICKET'));
+        }
+      });
+    } else {
+      callback(new Error('BACKEND.ERROR.CAS.NO_TICKET'));
+    }
+  };
 
   /**
   * ### JWTFn
@@ -291,7 +338,7 @@ module.exports = (function () {
   * - the `req` Express request object, automatically populated from the
   *   strategy
   * - the JWT decoded token `jwt_payload` object
-  * - a `password` string
+  * - a `admin` boolean
   * - a `callback` function, returning
   *   - *Error* if there is a problem
   *   - *null*, *false* and an object for auth error
@@ -303,7 +350,7 @@ module.exports = (function () {
   auth.fn.JWTFn = function (req, jwt_payload, admin, callback) {
     var checkFn = (admin ? auth.fn.checkAdminUser : auth.fn.checkMyPadsUser);
     var ns = (admin ? 'adminTokens' : 'tokens');
-    var login = jwt_payload.login;
+    var login = (conf.get('authMethod') !== 'cas') ? jwt_payload.login : jwt_payload;
     var token = auth[ns][login];
     if (!token || !jwt_payload.key) {
       var pass = jwt_payload.password;

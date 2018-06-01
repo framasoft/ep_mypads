@@ -68,7 +68,8 @@ module.exports = (function () {
           'tokenDuration', 'SMTPHost', 'SMTPPort', 'SMTPSSL', 'SMTPTLS',
           'SMTPUser', 'SMTPPass', 'SMTPEmailFrom', 'HTMLExtraHead',
           'openRegistration', 'hideHelpBlocks', 'useFirstLastNameInPads',
-          'insensitiveMailMatch', 'authMethod', 'authLdapSettings'
+          'insensitiveMailMatch', 'authMethod', 'authLdapSettings',
+          'authCasSettings'
         ]);
         c.currentConf = resp.value;
         ld.forIn(resp.value, function (v, k) {
@@ -427,6 +428,28 @@ module.exports = (function () {
         }, c.data.authLdapSettings());
         return { label: label, help: help, textarea: textarea };
       })(),
+      authCasSettings: (function () {
+        var label = m('label', { for: 'authCasSettings' },
+          A.FIELD.AUTH_CAS_SETTINGS);
+        var help = m.trust('<p>' + A.INFO.AUTH_CAS_SETTINGS + '</p>');
+        var casSettings = c.data.authCasSettings();
+        delete casSettings.attrs;
+        var textarea = m('textarea.form-control', {
+          name: 'authCasSettings',
+          rows: 18,
+          class: 'monospace',
+          value: beautify(casSettings, null, 4),
+          onchange: m.withAttr('value', function(value) {
+            try {
+              value = JSON.parse(value);
+              c.data.authCasSettings(value);
+            } catch (e) {
+              notif.error({ body: conf.LANG.ADMIN.ERR.PARSE_CAS });
+            }
+          })
+        }, c.data.authCasSettings());
+        return { label: label, help: help, textarea: textarea };
+      })(),
       checkMails: (function () {
         var icon = form.icon(c, 'checkMails', A.INFO.CHECKMAILS);
         var opts = {
@@ -535,10 +558,14 @@ module.exports = (function () {
       m('fieldset', [
         m('legend', conf.LANG.ADMIN.AUTHENTICATION),
         m('div', [
-          m('div.checkbox',   [ f.openRegistration ]),
+          m('div.checkbox',   (c.data.authMethod() !== 'internal') ? { class: 'hidden' } : undefined
+            [ f.openRegistration ]),
           m('div.form-group', [ f.authMethod.label, f.authMethod.select ]),
           m('div.form-group', (c.data.authMethod() !== 'ldap') ? { class: 'hidden' } : undefined,
             [ f.authLdapSettings.label, f.authLdapSettings.help, f.authLdapSettings.textarea ]
+          ),
+          m('div.form-group', (c.data.authMethod() !== 'cas') ? { class: 'hidden' } : undefined,
+            [ f.authCasSettings.label, f.authCasSettings.help, f.authCasSettings.textarea ]
           ),
         ])
       ]),

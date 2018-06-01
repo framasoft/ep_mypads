@@ -131,7 +131,7 @@ module.exports = (function () {
     login.label.attrs.class = 'col-sm-4';
     var password = user.view.field.password(c);
     var passwordBlock = [ password.input ];
-    if (conf.SERVER.authMethod !== 'ldap') {
+    if (conf.SERVER.authMethod === 'internal') {
       passwordBlock.push(
         m('p.help-block', [
           m('a', {
@@ -169,7 +169,7 @@ module.exports = (function () {
 
   view.main = function (c) {
     var children = [ m('span', conf.LANG.USER.FORM) ];
-    if (conf.SERVER.openRegistration && conf.SERVER.authMethod !== 'ldap') {
+    if (conf.SERVER.openRegistration && conf.SERVER.authMethod === 'internal') {
       children.push(m('a.small',
         { href: '/subscribe', config: m.route },
         conf.LANG.USER.ORSUB)
@@ -182,7 +182,13 @@ module.exports = (function () {
   };
 
   login.view = function (c) {
-    return layout.view(view.main(c), user.view.aside.common(c));
+    switch (conf.SERVER.authMethod) {
+      case 'cas':
+        window.location = 'http://vm:8080/cas/login?service=http%3A%2F%2Fvm%3A9001%2Fmypads%2Fapi%2Fauth%2Flogin%2fcas';
+        break;
+      default:
+        return layout.view(view.main(c), user.view.aside.common(c));
+    }
   };
   return login;
 }).call(this);

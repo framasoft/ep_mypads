@@ -102,7 +102,7 @@ module.exports = (function() {
       useFirstLastNameInPads: false,
       insensitiveMailMatch: false,
       authMethod: 'internal',
-      availableAuthMethods: [ 'internal', 'ldap' ],
+      availableAuthMethods: [ 'internal', 'ldap', 'cas' ],
       authLdapSettings: {
         url:             'ldaps://ldap.example.org',
         bindDN:          'uid=ldap,ou=users,dc=example,dc=org',
@@ -119,7 +119,19 @@ module.exports = (function() {
           lastname:  'sn'
         },
         defaultLang: 'en'
-      }
+      },
+      authCasSettings: {
+        base_url:    'https://cas.example.org/cas',
+        service:     'MyPads',
+        version:     2.0,
+        properties: {
+          login:     'login',
+          email:     'email',
+          firstname: 'firstname',
+          lastname:  'lastname'
+        },
+        defaultLang: 'en'
+      },
     },
 
     /**
@@ -251,9 +263,11 @@ module.exports = (function() {
           callback();
         });
       };
-      if (key === 'authLdapSettings') {
+      if (key === 'authLdapSettings' || key === 'authCasSettings') {
         delete value.attrs;
+      }
 
+      if (key === 'authLdapSettings') {
         /* Test LDAP settings before registering them */
         var ldapErr      = new Error('BACKEND.ERROR.CONFIGURATION.UNABLE_TO_BIND_TO_LDAP');
         var ldapSettings = ld.cloneDeep(value);
@@ -329,7 +343,7 @@ module.exports = (function() {
       var all = configuration.all();
       return ld.pick(all, 'title', 'passwordMin', 'passwordMax', 'languages',
         'HTMLExtraHead', 'openRegistration', 'hideHelpBlocks', 'useFirstLastNameInPads',
-        'authMethod'
+        'authMethod', 'authCasSettings'
       );
     }
   };

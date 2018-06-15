@@ -76,40 +76,8 @@ module.exports = (function () {
         method: 'POST',
         url: conf.URLS.LOGIN,
         data: c.data
-      }).then(function (resp) {
-        auth.userInfo(resp.user);
-        localStorage.setItem('token', resp.token);
-
-        /*
-         * Fix pad authorship mixup
-         * See https://framagit.org/framasoft/ep_mypads/issues/148
-         */
-        var myPadsAuthorCookie  = cookies.get('token-' + resp.user.login);
-        if (myPadsAuthorCookie) {
-          // 60 days
-          cookies.set('token', myPadsAuthorCookie, { expires: 60 });
-        } else {
-          var browserAuthorCookie = cookies('token');
-          if (browserAuthorCookie) {
-            // 365 days
-            cookies.set('token-' + resp.user.login, browserAuthorCookie, { expires: 365 });
-          }
-        }
-
-        var lang = auth.userInfo().lang;
-        if (lang !== conf.USERLANG) {
-          conf.updateLang(lang);
-        }
-        document.title = ' - ' + conf.LANG.USER.AUTH.WELCOME + ' ' +
-          resp.user.login + conf.SERVER.title;
-        notif.success({ body: conf.LANG.USER.AUTH.SUCCESS });
-        var unauthUrl = conf.unauthUrl();
-        if (!ld.isEmpty(unauthUrl)) {
-          window.location = unauthUrl;
-        } else {
-          m.route('/');
-        }
-      }, function (err) {
+      }).then(login.getLogged,
+      function (err) {
         notif.error({ body: ld.result(conf.LANG, err.error) });
       });
     };
@@ -131,7 +99,7 @@ module.exports = (function () {
     login.label.attrs.class = 'col-sm-4';
     var password = user.view.field.password(c);
     var passwordBlock = [ password.input ];
-    if (conf.SERVER.authMethod !== 'ldap') {
+    if (conf.SERVER.authMethod === 'internal') {
       passwordBlock.push(
         m('p.help-block', [
           m('a', {
@@ -169,7 +137,7 @@ module.exports = (function () {
 
   view.main = function (c) {
     var children = [ m('span', conf.LANG.USER.FORM) ];
-    if (conf.SERVER.openRegistration && conf.SERVER.authMethod !== 'ldap') {
+    if (conf.SERVER.openRegistration && conf.SERVER.authMethod === 'internal') {
       children.push(m('a.small',
         { href: '/subscribe', config: m.route },
         conf.LANG.USER.ORSUB)
@@ -182,7 +150,66 @@ module.exports = (function () {
   };
 
   login.view = function (c) {
-    return layout.view(view.main(c), user.view.aside.common(c));
+    switch (conf.SERVER.authMethod) {
+      case 'cas':
+        if (typeof auth.userInfo() === 'undefined') {
+          var params = window.location.search.substring(1);
+          var ticket = params.match(new RegExp('.*&ticket=([^&]*).*'));
+          console.log(ticket);
+          if (!ld.isNull(ticket)) {
+            m.request({
+              method: 'POST',
+              url: conf.URLS.CASLOGIN,
+              data: {ticket: ticket[1]}
+            }).then(login.getLogged,
+            function (err) {
+              notif.error({ body: ld.result(conf.LANG, err.error) });
+            });
+          } else {
+            var loc = window.location;
+            var service = encodeURIComponent(loc.origin+loc.pathname+'?/login');
+            window.location = conf.SERVER.authCasSettings.base_url+'/login?service='+service;
+          }
+          break;
+        }
+      default:
+        return layout.view(view.main(c), user.view.aside.common(c));
+    }
+  };
+
+  login.getLogged = function (resp) {
+    auth.userInfo(resp.user);
+    localStorage.setItem('token', resp.token);
+
+    /*
+     * Fix pad authorship mixup
+     * See https://framagit.org/framasoft/ep_mypads/issues/148
+     */
+    var myPadsAuthorCookie  = cookies.get('token-' + resp.user.login);
+    if (myPadsAuthorCookie) {
+      // 60 days
+      cookies.set('token', myPadsAuthorCookie, { expires: 60 });
+    } else {
+      var browserAuthorCookie = cookies('token');
+      if (browserAuthorCookie) {
+        // 365 days
+        cookies.set('token-' + resp.user.login, browserAuthorCookie, { expires: 365 });
+      }
+    }
+
+    var lang = auth.userInfo().lang;
+    if (lang !== conf.USERLANG) {
+      conf.updateLang(lang);
+    }
+    document.title = ' - ' + conf.LANG.USER.AUTH.WELCOME + ' ' +
+      resp.user.login + conf.SERVER.title;
+    notif.success({ body: conf.LANG.USER.AUTH.SUCCESS });
+    var unauthUrl = conf.unauthUrl();
+    if (!ld.isEmpty(unauthUrl)) {
+      window.location = unauthUrl;
+    } else {
+      m.route('/');
+    }
   };
   return login;
 }).call(this);

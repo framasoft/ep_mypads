@@ -15,6 +15,7 @@
          "ROOTURL": "Must be a valid URL",
          "SMTP_EMAILFROM": "Must be a valid email",
          "TITLE": "Title is mandatory",
+         "PARSE_CAS": "Unable to parse the CAS configuration.",
          "PARSE_LDAP": "Unable to parse the LDAP configuration."
       },
       "ETHERPAD_ACCOUNT": "Etherpad account",
@@ -22,8 +23,10 @@
          "ALLOW_ETHERPADS": "Anonymous pads",
          "APPLY": "Apply",
          "AUTHENTICATION_METHOD": "Authentication method",
+         "AUTH_CAS_SETTINGS": "CAS settings",
          "AUTH_LDAP_SETTINGS": "LDAP settings",
          "AUTH_METHODS": {
+            "cas": "Central Authentication Service",
             "internal": "internal",
             "ldap": "LDAP"
          },
@@ -60,6 +63,7 @@
       "INFO": {
          "ALLOW_ETHERPADS": "Allow classic anonymous pads from on the Etherpad instance, created from the root URL of the server",
          "AUTHENTICATION_METHOD": "You can choose between multiple authentication methods. The default is \"internal\". You can't mix authentication methods.",
+         "AUTH_CAS_SETTINGS": "See details on the <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-cas-authentication\">dedicated wiki page</a>.<br>Beside properties and defaultLang, all the settings are @noveogroup/cas (the module used for the CAS authentication) settings. The `base_url` should not end with a trailing slash.",
          "AUTH_LDAP_SETTINGS": "See details on the <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-ldap-authentication\">dedicated wiki page</a>.<br>Beside properties and defaultLang, all the settings are ldapauth-fork (the module used for the LDAP authentication) settings. You can add other settings to it, just go on <a href=\"https://www.npmjs.com/package/ldapauth-fork#ldapauth-config-options\">the module page</a> to see which.",
          "CHECKMAILS": "Check user mail given at subscription",
          "HIDE_HELP_BLOCKS": "Help blocks shows in multiple MyPads pages, you can hide them with this setting",

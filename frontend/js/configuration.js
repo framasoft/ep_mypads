@@ -40,6 +40,7 @@ module.exports = (function () {
   config.URLS.AUTH = config.URLS.BASE + '/auth';
   config.URLS.LOGIN = config.URLS.AUTH + '/login';
   config.URLS.LOGOUT = config.URLS.AUTH + '/logout';
+  config.URLS.CASLOGIN = config.URLS.AUTH + '/login/cas';
   config.URLS.CHECK = config.URLS.AUTH + '/check';
   config.URLS.USER = config.URLS.BASE + '/user';
   config.URLS.ALL_USERS = config.URLS.BASE + '/all-users';

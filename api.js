@@ -340,6 +340,39 @@ module.exports = (function () {
     );
 
     /**
+    * GET method : login/cas, method redirecting to home if auth
+    * is a success, plus fixes a `login` session.
+    * Only used with CAS authentication
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/auth/login/cas
+    */
+
+    app.post(authRoute + '/login/cas', function (req, res) {
+      auth.fn.casAuth(req, res, function(err, infos) {
+        if (err) { return res.status(400).send({ error: err.message }); }
+        auth.fn.JWTFn(req, infos, false, function (err, u, info) {
+          if (err) { return res.status(400).send({ error: err.message }); }
+          if (!u) { return res.status(400).send({ error: info.message }); }
+          if (u.active) {
+            var token = {
+              login: u.login,
+              key: auth.tokens[u.login].key
+            };
+            return res.status(200).send({
+              success: true,
+              user: ld.omit(u, 'password'),
+              token: jwt.sign(token, auth.secret)
+            });
+          } else {
+            var msg = 'BACKEND.ERROR.AUTHENTICATION.ACTIVATION_NEEDED';
+            return fn.denied(res, msg);
+          }
+        });
+      });
+    });
+
+    /**
     * POST method : login, method returning user object minus password if auth
     * is a success, plus fixes a `login` session.
     *
@@ -689,7 +722,7 @@ module.exports = (function () {
       var value = req.body;
       var stop;
       if (req.method === 'POST') {
-        if (conf.get('authMethod') === 'ldap' || !conf.get('openRegistration')) {
+        if (conf.get('authMethod') !== 'internal' || !conf.get('openRegistration')) {
           stop = true;
           res.status(400).send({ error: 'BACKEND.ERROR.AUTHENTICATION.NO_REGISTRATION' });
         } else {
@@ -817,7 +850,7 @@ module.exports = (function () {
     app.post(api.initialRoute + 'passrecover', function (req, res) {
       var email = req.body.email;
       var err;
-      if (conf.get('authMethod') === 'ldap') {
+      if (conf.get('authMethod') !== 'internal') {
         err = 'BACKEND.ERROR.AUTHENTICATION.NO_RECOVER';
         return res.status(400).send({ error: err });
       }
@@ -866,7 +899,7 @@ module.exports = (function () {
       var err;
       var badLogin = (!val || !val.login || !user.logins[val.login]);
       var badAction = (!val || !val.action || (val.action !== 'passrecover'));
-      if (conf.get('authMethod') === 'ldap') {
+      if (conf.get('authMethod') !== 'internal') {
         err = 'BACKEND.ERROR.AUTHENTICATION.NO_RECOVER';
         return res.status(400).send({ error: err });
       }
@@ -905,7 +938,7 @@ module.exports = (function () {
     app.post(api.initialRoute + 'accountconfirm', function (req, res) {
       var val = mail.tokens[req.body.token];
       var err;
-      if (conf.get('authMethod') === 'ldap') {
+      if (conf.get('authMethod') !== 'internal') {
         err = 'BACKEND.ERROR.AUTHENTICATION.NO_RECOVER';
         return res.status(400).send({ error: err });
       }

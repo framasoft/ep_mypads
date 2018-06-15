@@ -66,8 +66,12 @@ module.exports = (function () {
         localStorage.removeItem('token');
         model.init();
         document.title = conf.SERVER.title;
-        notif.success({ body: conf.LANG.USER.AUTH.SUCCESS_OUT });
-        m.route('/');
+        if (conf.SERVER.authMethod === 'cas') {
+          window.location = conf.SERVER.authCasSettings.serverUrl+'/logout';
+        } else {
+          notif.success({ body: conf.LANG.USER.AUTH.SUCCESS_OUT });
+          m.route('/');
+        }
       }, function (err) {
         notif.error({ body: ld.result(conf.LANG, err.error) });
         m.route('/');

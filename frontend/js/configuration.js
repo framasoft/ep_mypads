@@ -40,6 +40,7 @@ module.exports = (function () {
   config.URLS.AUTH = config.URLS.BASE + '/auth';
   config.URLS.LOGIN = config.URLS.AUTH + '/login';
   config.URLS.LOGOUT = config.URLS.AUTH + '/logout';
+  config.URLS.CASLOGIN = config.URLS.AUTH + '/login/cas';
   config.URLS.CHECK = config.URLS.AUTH + '/check';
   config.URLS.USER = config.URLS.BASE + '/user';
   config.URLS.ALL_USERS = config.URLS.BASE + '/all-users';
@@ -73,7 +74,7 @@ module.exports = (function () {
     }, function (err) {
       console.log('updatel:' + err);
       config.USERLANG = USERLANG_DEFAULT;
-      var emsg = config.LANG.BACKEND.CONFIGURATION.LANG_PROBLEM +
+      var emsg = config.LANG.BACKEND.ERROR.CONFIGURATION.LANG_PROBLEM +
         ' (' + err + ')';
       var notifErr = require('./widgets/notification.js').error;
       notifErr({ body: emsg });
@@ -126,7 +127,7 @@ module.exports = (function () {
       callback();
     }, function (err) {
       console.log('confinit:' + err);
-      var emsg = config.LANG.BACKEND.CONFIGURATION.CANTGET + ' (' + err + ')';
+      var emsg = config.LANG.BACKEND.ERROR.CONFIGURATION.CANTGET + ' (' + err + ')';
       var notifErr = require('./widgets/notification.js').error;
       notifErr({ body: emsg });
     });

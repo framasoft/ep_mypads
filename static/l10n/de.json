@@ -6,25 +6,28 @@
       "SAVE": "Speichern"
    },
    "ADMIN": {
-      "AUTHENTICATION": "Authentication settings",
+      "AUTHENTICATION": "Authentifizierungseinstellungen",
       "ERR": {
          "LANGUAGE_DEFAULT": "Eine Standardsprache muss ausgewählt sein",
+         "PARSE_CAS": "Unable to parse the CAS configuration.",
+         "PARSE_LDAP": "Unable to parse the LDAP configuration.",
          "PASSWORD_MAX": "Maximale Passwortlänge ist obligatoriasch",
          "PASSWORD_MIN": "Minimale Passwortlänge ist obligatorisch ",
          "PASSWORD_SIZE": "Die minimale Größe kann nicht höher als die maximale Größe sein. Bitte überprüfen Sie Ihre Zahlen.",
          "ROOTURL": "Muss eine gültige URL sein",
          "SMTP_EMAILFROM": "Muss eine gültige E-Mail-Adfresse sein",
-         "TITLE": "Titel ist mandatory",
-         "PARSE_LDAP": "Unable to parse the LDAP configuration."
+         "TITLE": "Titel ist mandatory"
       },
       "ETHERPAD_ACCOUNT": "Etherpad-Account",
       "FIELD": {
          "ALLOW_ETHERPADS": "Anonymous pads",
          "APPLY": "Anwenden",
-         "AUTHENTICATION_METHOD": "Authentication method",
-         "AUTH_LDAP_SETTINGS": "LDAP settings",
+         "AUTHENTICATION_METHOD": "Authentifizierungsverfahren",
+         "AUTH_CAS_SETTINGS": "CAS-Einstellungen",
+         "AUTH_LDAP_SETTINGS": "LDAP-Einstellungen",
          "AUTH_METHODS": {
-            "internal": "internal",
+            "cas": "Central Authentication Service",
+            "internal": "intern",
             "ldap": "LDAP"
          },
          "CHECKMAILS": "Überprüfe Benutzer E-Mail-Adressen",
@@ -37,7 +40,7 @@
          "PASSWORD_MIN": "Minimale Länge",
          "ROOTURL": "Root Web URL",
          "SEARCH": "Suche",
-         "SHOW_ALL_USERS": "Show all users",
+         "SHOW_ALL_USERS": "Alle Benutzer anzeigen",
          "SMTP_EMAILFROM": "E-Mail-Absender",
          "SMTP_HOST": "SMTP Host",
          "SMTP_PASS": "Passwort",
@@ -59,8 +62,9 @@
       "HELP_USER_EDIT": "<p>Hier können Sie alle Daten zu einem bestehenden Benutzer aktualisieren.</p><p>Bitte beachten Sie, dass ein leeres Passwort standardmäßig bedeutet, das aktuelle Passwort beizubehalten. Wenn Sie es ändern möchten, müssen Sie das Passwort und dessen Bestätigung ausfüllen.</p>",
       "INFO": {
          "ALLOW_ETHERPADS": "Klassische anonyme Pads aus der Etherpad-Instanz zulassen, die aus der Root-URL des Servers erstellt wurden.",
-         "AUTHENTICATION_METHOD": "You can choose between multiple authentication methods. The default is \"internal\". You can't mix authentication methods.",
-         "AUTH_LDAP_SETTINGS": "See details on the <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-ldap-authentication\">dedicated wiki page</a>.<br>Beside properties and defaultLang, all the settings ldapauth-fork (the module used for the LDAP authentication) settings. You can add other settings to it, just go on <a href=\"https://www.npmjs.com/package/ldapauth-fork#ldapauth-config-options\">the module page</a> to see which.",
+         "AUTHENTICATION_METHOD": "Sie können zwischen mehreren Authentifizierungsmethoden wählen. Die Vorgabe ist \"intern\". Sie können Authentifizierungsmethoden nicht mischen.",
+         "AUTH_CAS_SETTINGS": "See details on the <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-CAS-authentication\">dedicated wiki page</a>.<br>Beside properties and defaultLang, all the settings are <a href=\"https://github.com/jsumners/simple-cas-interface/blob/HEAD/api.md#CASParameters\" hreflang=\"en\">simple-cas-interface</a> (the module used for the CAS authentication) settings. The `serverUrl` should not end with a trailing slash.",
+         "AUTH_LDAP_SETTINGS": "See details on the <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-ldap-authentication\">dedicated wiki page</a>.<br>Beside properties and defaultLang, all the settings are ldapauth-fork (the module used for the LDAP authentication) settings. You can add other settings to it, just go on <a href=\"https://www.npmjs.com/package/ldapauth-fork#ldapauth-config-options\">the module page</a> to see which.",
          "CHECKMAILS": "Überprüfen die Benutzer-E-Mail-Adresse, die bei der Anmeldung angegeben wurde.",
          "HIDE_HELP_BLOCKS": "Hilfeblöcke werden in mehreren MyPads-Seiten angezeigt, Sie können sie mit dieser Einstellung ausblenden.",
          "HTMLEXTRA_HEAD": "Eigenen HTML-Code im <head> einfügen",
@@ -91,7 +95,7 @@
       "SETTINGS_GENERAL": "Allgemeine Einstellungen",
       "SETTINGS_MAIL": "E-Mail Einstellungen",
       "SETTINGS_PASSWORD": "Passwort Einstellungen",
-      "USERS_COUNT": "Number of users:",
+      "USERS_COUNT": "Anzahl der Benutzer:",
       "USERS_SEARCH_LOGIN": "Suche nach Loginname"
    },
    "BACKEND": {
@@ -99,6 +103,7 @@
          "AUTHENTICATION": {
             "ACTIVATION_NEEDED": "Dein Account wurde nicht bestätigt.",
             "ADMIN": "Zugang verweiget. : Du musst als für die Administration der Instanz Etherpad authentifiziert sein.",
+            "CAS_NO_TICKET": "Access denied: no CAS ticket provided",
             "DENIED": "Zugang verweiget.",
             "DENIED_RECORD": "Es ist dir nicht erlaubt diesen Eintrag zu erhalten.",
             "DENIED_RECORD_EDIT": "Es ist dir nicht erlaubt diesen Eintrag zu ändern.",
@@ -115,7 +120,8 @@
             "KEY_NOT_FOUND": "Der Eintrag wurde nicht gefunden.",
             "LANG_PROBLEM": "Aktualisierung von lang kann nicht erledigt werden. Die Voreinstellung (default) wird genutzt werden.",
             "MAIL_NOT_CONFIGURED": "Einstellungen für Mail wurden auf diesem Server nicht erledigt. Bitte kontaktiere Sie seine Administration.",
-            "ROOTURL_NOT_CONFIGURED": "Einstellung der zentralen (root) URL wurde auf diesen Server nicht eingetragen. Bitte kontaktiere Sie seine Administration."
+            "ROOTURL_NOT_CONFIGURED": "Einstellung der zentralen (root) URL wurde auf diesen Server nicht eingetragen. Bitte kontaktiere Sie seine Administration.",
+            "UNABLE_TO_BIND_TO_LDAP": "Unable to bind to LDAP server with this settings. Please check your LDAP settings"
          },
          "GROUP": {
             "CASCADE_REMOVAL_PROBLEM": "Etwas geht schief mit dem Entfernen von der Pads.",
@@ -157,7 +163,7 @@
             "SUBJECT_STR": "subject muss eine Zeichenkette (string) sein.",
             "TO_MAIL": "to muss eine Mail-Adresse sein.",
             "TYPE_PADSORGROUPS": "Typ muss entweder eines der Pads oder eine der Ordner sein.",
-            "UNABLE_TO_USE_EP_SETTINGS": "Unable to use Etherpad settings.json",
+            "UNABLE_TO_USE_EP_SETTINGS": "Die Etherpad settings.json kann nicht verwendet werden.",
             "USERLIST_CRUD": "crud muss add, set or del sein.",
             "USERLIST_ID": "In den Modi set und del, ist ulistid verpflichtend.",
             "USERLIST_NAME": "Im Modus add, ist name der userlist verpflichtend.",
@@ -205,8 +211,8 @@
          "NAME": "Der Name des Ordners ist erforderlich."
       },
       "FIELD": {
-         "ALLOW_USERS_TO_CREATE_PADS": "Allow simple users of the folder to create pads?",
-         "ARCHIVED": "Archived",
+         "ALLOW_USERS_TO_CREATE_PADS": "Erlauben Sie einfachen Benutzern des Ordners, Pads zu erstellen?",
+         "ARCHIVED": "Archiviert",
          "DESCRIPTION": "Beschreibung",
          "GROUP_PARAMS": "Ordner-Parameter?",
          "NAME": "Name",
@@ -227,8 +233,8 @@
       "HELP": "Ordner können Pads enthalten. Hier sind Ihre Ordner: die, die Sie erstellt haben und jene, zu denen Sie eingeladen wurden.",
       "INFO": {
          "ADD_SUCCESS": "Ordner wurde erfolgreich erstellt.",
-         "ALLOW_USERS_TO_CREATE_PADS": "This allows users of the folder that don't have administrator rights to create pads in the folder",
-         "ARCHIVED": "If checked, folder will appear in the archived folders list even if it's bookmarked",
+         "ALLOW_USERS_TO_CREATE_PADS": "Erlaubt Benutzer des Ordners, die keine Administratorrechte haben, Pads im Ordner erstellen.",
+         "ARCHIVED": "Wenn diese Option aktiviert ist, wird der Ordner in der Liste der archivierten Ordner angezeigt, auch wenn er mit einem Lesezeichen versehen ist.",
          "CHAT_HISTORY_REMOVE_SUCCESS": "Der Chat-Verlauf des Pads wurde erfolgreich entfernt.",
          "CHAT_HISTORY_REMOVE_SURE": "Sind Sie sicher, dass Sie den Chatverlauf dieses Pads entfernen möchten?",
          "DESCRIPTION": "Eine optimale Beschreibung zu diesem Ordner.",
@@ -243,7 +249,7 @@
          "PAD_REMOVE_SUCCESS": "Pad wurde erfolgreich entfernt",
          "PAD_REMOVE_SURE": "Sind Sie sicher, dass Sie dieses Pad entfernen wollen? WARNUNG: Diese Aktion ist irreversibel, das Pad wird für JEDEN gelöscht, der Zugriff darauf hat.",
          "PASSWORD": "Erforderlich im privaten Modus",
-         "READONLY": "If checked, linked pads will be in readonly mode and the folder will be in the archived folders list unless it's bookmarked",
+         "READONLY": "Wenn diese Option aktiviert ist, befinden sich die verknüpften Pads im Nur-Lese-Modus und der Ordner befindet sich in der Liste der archivierten Ordner, sofern er nicht mit einem Lesezeichen versehen ist.",
          "REMOVE_SUCCESS": "Ordner wurde erfolgreich entfernt",
          "REMOVE_SURE": "Sind Sie sicher, dass Sie diesen Ordner löschen wollen? WARNUNG: Diese Aktion ist irreversibel, der Ordner und seine Pads werden für JEDEN gelöscht, der Zugriff darauf hat.",
          "RESIGN": "Sind Sie sicher, dass Sie von diesem Ordner verlassen wollen?",
@@ -268,11 +274,11 @@
          "ADD": "Erstelle ein neues Pad",
          "ADD_PROMPT": "Titel des neuen Pads",
          "ADMINS": "Admins",
-         "DESELECT_ALL": "Deselect all pads",
+         "DESELECT_ALL": "Alle Pads demarkieren",
          "EDIT": "Bearbeite das Pad",
          "EDIT_PROMPT": "Neuer Name des Pads",
          "EXPAND": "Erweitern",
-         "FROM_GROUP": "Ordner:",
+         "FROM_GROUP": "folder:",
          "MOVE": "Verschiebe alle Pads in einen Ordner",
          "MOVE_HELP": "<p>Bitte wählen Sie den gewünschten Ordner für Ihre Migration aus. Es werden nur die Ordner aufgelistet, in denen Sie Admin sind.</p><p>Klicken Sie nach der Auswahl auf die Schaltfläche \"Senden\" und warten Sie einen Moment.</p>",
          "MOVE_TITLE": "Pads-Migration des Ordners",
@@ -282,8 +288,8 @@
          "PADS": "Pads",
          "PUBLIC_DENIED": "Öffentlicher Zugang: Sie dürfen diese Daten nicht einsehen.",
          "REDUCE": "Reduzieren",
-         "SELECT_ALL": "Select all pads",
-         "SELECT_AT_LEAST_ONE_PAD": "Please, select at least one pad",
+         "SELECT_ALL": "Alle Pads markieren",
+         "SELECT_AT_LEAST_ONE_PAD": "Bitte wählen Sie mindestens ein Pad aus",
          "SORT_BY": "Sortiere die Pads nach",
          "SORT_BY_CREATION": "Erstellungdatum",
          "SORT_BY_NAME": "Name",
@@ -397,7 +403,7 @@
       "OPTIONAL_FIELDS": "freiwillige Angaben",
       "ORGANIZATION": "Organisation",
       "ORSUB": " (oder beitreten)",
-      "PAD_NICKNAME": "Nickname used in pads",
+      "PAD_NICKNAME": "Benutzername, der in Pads verwendet wird",
       "PASSCHECK": "Bestätigung des Passwortes",
       "PASSCURRENT": "gegenwärtiges Passwort",
       "PASSRECOVER": "Wiederherstellung des Passwortes",

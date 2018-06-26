@@ -6,25 +6,28 @@
       "SAVE": "Guardar"
    },
    "ADMIN": {
-      "AUTHENTICATION": "Authentication settings",
+      "AUTHENTICATION": "Ajustes de autenticación",
       "ERR": {
          "LANGUAGE_DEFAULT": "Debe seleccionarse un idioma predeterminado",
+         "PARSE_CAS": "No se puede analizar la configuración CAS.",
+         "PARSE_LDAP": "No se puede analizar la configuración LDAP.",
          "PASSWORD_MAX": "El tamaño máximo de la contraseña es obligatorio",
          "PASSWORD_MIN": "El tamaño mínimo de la contraseña es obligatorio",
          "PASSWORD_SIZE": "El tamaño mínimo no puede ser mayor que el tamaño máximo. Por favor, compruebe sus números.",
          "ROOTURL": "Debe ser una URL válida",
          "SMTP_EMAILFROM": "Debe ser un email válido",
-         "TITLE": "Título obligatorio",
-         "PARSE_LDAP": "Unable to parse the LDAP configuration."
+         "TITLE": "Título obligatorio"
       },
       "ETHERPAD_ACCOUNT": "Cuenta de Etherpad",
       "FIELD": {
          "ALLOW_ETHERPADS": "Pads anónimos",
          "APPLY": "Aplicar",
-         "AUTHENTICATION_METHOD": "Authentication method",
-         "AUTH_LDAP_SETTINGS": "LDAP settings",
+         "AUTHENTICATION_METHOD": "Método de autenticación",
+         "AUTH_CAS_SETTINGS": "Ajustes de CAS",
+         "AUTH_LDAP_SETTINGS": "Ajustes de LDAP",
          "AUTH_METHODS": {
-            "internal": "internal",
+            "cas": "Servicio de autenticación central (CAS)",
+            "internal": "interna",
             "ldap": "LDAP"
          },
          "CHECKMAILS": "Comprobar los mails de usuario",
@@ -37,7 +40,7 @@
          "PASSWORD_MIN": "Tamaño minimo",
          "ROOTURL": "URL de la raíz web",
          "SEARCH": "Buscar",
-         "SHOW_ALL_USERS": "Show all users",
+         "SHOW_ALL_USERS": "Ver todos las usuarias",
          "SMTP_EMAILFROM": "Email para enviar desde",
          "SMTP_HOST": "SMTP host",
          "SMTP_PASS": "Contraseña",
@@ -59,12 +62,13 @@
       "HELP_USER_EDIT": "<p>Aquí puede actualizar todos los datos asociados a una usuaria existente. </p><p>Por favor, tenga en cuenta que por defecto, dejar la contraseña vacía significa mantener la contraseña actual. Si desea cambiarla, tiene que rellenar el campo de contraseña y su confirmación.</p>",
       "INFO": {
          "ALLOW_ETHERPADS": "Permitir pads anónimos clásicos desde la instancia de Etherpad, creada desde la URL raíz del servidor",
-         "AUTHENTICATION_METHOD": "You can choose between multiple authentication methods. The default is \"internal\". You can't mix authentication methods.",
-         "AUTH_LDAP_SETTINGS": "See details on the <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-ldap-authentication\">dedicated wiki page</a>.<br>Beside properties and defaultLang, all the settings ldapauth-fork (the module used for the LDAP authentication) settings. You can add other settings to it, just go on <a href=\"https://www.npmjs.com/package/ldapauth-fork#ldapauth-config-options\">the module page</a> to see which.",
+         "AUTHENTICATION_METHOD": "Puede elegir entre distintos métodos de autenticación. El método por defecto es \"interna\". No puede combinar diferentes métodos.",
+         "AUTH_CAS_SETTINGS": "Vea los detalles en <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-CAS-authentication\">página wiki dedicada </a>.<br>Junto a las propiedades y el idioma por defecto, todos los ajustes son en <a href=\"https://github.com/jsumners/simple-cas-interface/blob/HEAD/api.md#CASParameters\" hreflang=\"es\">simple-cas-interface</a> (el módulo usado para la autenticación CAS). El `serverUrl` no debe terminar con una barra oblicua.",
+         "AUTH_LDAP_SETTINGS": "Vea los detalles en <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-ldap-authentication\">página wiki dedicada</a>.<br>Junto a las propiedades y el idioma por defecto, todos los ajustes estan en ldapauth-fork (el módulo usado para la autenticación LDAP). Puedes añadirle otros ajustes, sólo tienes que ir a <a href=\"https://www.npmjs.com/package/ldapauth-fork#ldapauth-config-options\">la página del módulo </a> para ver cuál.",
          "CHECKMAILS": "Comprobar el correo del usuario dado en la suscripción",
          "HIDE_HELP_BLOCKS": "Los bloques de ayuda se muestran en varias páginas de MyPads, puedes ocultarlos con esta configuración",
          "HTMLEXTRA_HEAD": "Código HTML personalizado añadido al tag <head>",
-         "INSENSITIVE_MAIL_MATCH": "When you share a folder to someone, using his/her email address, you have to know exactly the case (ie JaneDoe@example.org) or MyPads won't find the user. This option makes MyPads search for email address case insensitive.",
+         "INSENSITIVE_MAIL_MATCH": "Cuando compartes una carpeta con alguien, usando su dirección de correo electrónico, tienes que saber exactamente si hay mayúsculas o no (es decir, JaneDoe@example.org) o MyPads no encontrará al usuario. Esta opción hace que MyPads busque direcciones de correo electrónico sin distinguir entre mayúsculas y minúsculas.",
          "LANGUAGE_DEFAULT": "Idioma predeterminado para los usuarios invitados de MyPads",
          "LOGIN": "La configuración del etherpad.json arregló la conexión del admin",
          "NOCHANGE": "La configuración no ha cambiado, por lo que no se ha enviado ninguna actualización.",
@@ -91,7 +95,7 @@
       "SETTINGS_GENERAL": "Ajustes generales",
       "SETTINGS_MAIL": "Ajustes de correo",
       "SETTINGS_PASSWORD": "Ajustes de contraseña",
-      "USERS_COUNT": "Number of users:",
+      "USERS_COUNT": "Cantidad de usuarias:",
       "USERS_SEARCH_LOGIN": "Búsqueda por login"
    },
    "BACKEND": {
@@ -99,6 +103,7 @@
          "AUTHENTICATION": {
             "ACTIVATION_NEEDED": "Su cuenta no ha sido confirmada",
             "ADMIN": "Acceso denegado: debe ser una administradora de instancia de Etherpad autenticado.",
+            "CAS_NO_TICKET": "Acceso denegado: no se dispone de billete CAS",
             "DENIED": "Acceso denegado",
             "DENIED_RECORD": "No se te permite conseguir este registro",
             "DENIED_RECORD_EDIT": "No se te permite modificar este registro",
@@ -107,7 +112,7 @@
             "NO_RECOVER": "Lo sentimos, no puede recuperar su contraseña desde aquí",
             "NO_REGISTRATION": "Lo sentimos, el registro está deshabilitado",
             "PASSWORD_INCORRECT": "La contraseña no es correcta",
-            "PLEASE_CHANGE_YOUR_PASSWORD": "Your password is the one registered when using external authentification. This server use internal authentication and as a safety mesure, this password is not allowed. Please click on the \"Lost your password?\" link to change it and be able to login.",
+            "PLEASE_CHANGE_YOUR_PASSWORD": "Su contraseña es la que se registra cuando se utiliza la autenticación externa. Este servidor utiliza autenticación interna y como medida de seguridad, esta contraseña no está permitida. Por favor, haga clic en el enlace \"¿Ha perdido su contraseña?\" para conectarte.",
             "TOKEN_INCORRECT": "Su token de seguridad no es válido"
          },
          "CONFIGURATION": {
@@ -115,7 +120,8 @@
             "KEY_NOT_FOUND": "No se ha encontrado el registro",
             "LANG_PROBLEM": "No se puede actualizar el idioma. Se utilizará el idioma por defecto.",
             "MAIL_NOT_CONFIGURED": "La configuración de correo no se ha realizado en este servidor. Póngase en contacto con su administradora.",
-            "ROOTURL_NOT_CONFIGURED": "La configuración de la URL raíz no se ha introducido en este servidor. Póngase en contacto con su administradora."
+            "ROOTURL_NOT_CONFIGURED": "La configuración de la URL raíz no se ha introducido en este servidor. Póngase en contacto con su administradora.",
+            "UNABLE_TO_BIND_TO_LDAP": "No se puede enlazar al servidor LDAP con esta configuración.  Comprueba la configuración de LDAP "
          },
          "GROUP": {
             "CASCADE_REMOVAL_PROBLEM": "Algo va mal con la remoción de los pads en cascada",
@@ -157,7 +163,7 @@
             "SUBJECT_STR": "subject debe ser una cadena",
             "TO_MAIL": "to debe ser una dirección de correo electrónico",
             "TYPE_PADSORGROUPS": "Type debe ser pads o folders",
-            "UNABLE_TO_USE_EP_SETTINGS": "Unable to use Etherpad settings.json",
+            "UNABLE_TO_USE_EP_SETTINGS": "Imposible usar los ajustes settings.json de Etherpad",
             "USERLIST_CRUD": "crud debe ser add, set o del",
             "USERLIST_ID": "En set y del modos, ulistid es obligatorio",
             "USERLIST_NAME": "En add modo, el nombre de userlist es obligatorio",
@@ -205,8 +211,8 @@
          "NAME": "Se necesita un nombre para la carpeta"
       },
       "FIELD": {
-         "ALLOW_USERS_TO_CREATE_PADS": "Allow simple users of the folder to create pads?",
-         "ARCHIVED": "Archived",
+         "ALLOW_USERS_TO_CREATE_PADS": "¿Permitir a las usuarias simples de la carpeta a crear pads?",
+         "ARCHIVED": "Archivado",
          "DESCRIPTION": "Descripción ",
          "GROUP_PARAMS": "Opciones de carpetas?",
          "NAME": "Nombre",
@@ -227,8 +233,8 @@
       "HELP": "Las carpetas pueden contener pads. Aquí tienes tus carpetas : las que has creado, las que has sido invitadas explícitamente",
       "INFO": {
          "ADD_SUCCESS": "La carpeta ha sido creada con éxito",
-         "ALLOW_USERS_TO_CREATE_PADS": "This allows users of the folder that don't have administrator rights to create pads in the folder",
-         "ARCHIVED": "If checked, folder will appear in the archived folders list even if it's bookmarked",
+         "ALLOW_USERS_TO_CREATE_PADS": "Esto permite a las usuarias de la carpeta que no tienen derechos de administradora crear pads en la carpeta",
+         "ARCHIVED": "Si esta opción está seleccionada, la carpeta aparecerá en la lista de carpetas archivadas aunque esté marcada.",
          "CHAT_HISTORY_REMOVE_SUCCESS": "El historial de chat del pad ha sido eliminado con éxito",
          "CHAT_HISTORY_REMOVE_SURE": "¿Estás segura de que quieres eliminar el historial de chat de este pad?",
          "DESCRIPTION": "Un largo texto explicativo opcional para describir su carpeta",
@@ -243,7 +249,7 @@
          "PAD_REMOVE_SUCCESS": "El pad has sido eliminado con éxito",
          "PAD_REMOVE_SURE": "Esta segura de que quieres eliminar ese pad? ATENCIÓN: esta acción es irreversible, el pad será borrado PARA TODOS los que tengan acceso a él.",
          "PASSWORD": "Se requiere en modo privado",
-         "READONLY": "If checked, linked pads will be in readonly mode and the folder will be in the archived folders list unless it's bookmarked",
+         "READONLY": "Si esta opción está seleccionada, los pads enlazados estarán en modo sólo lectura y la carpeta estará en la lista de carpetas archivadas a menos que esté marcada.",
          "REMOVE_SUCCESS": "La carpeta se ha eliminado correctamente",
          "REMOVE_SURE": "¿Estás segura de que quieres eliminar esta carpeta? ATENCIÓN: esta acción es irreversible, la carpeta y sus pads serán borrados PARA TODOS los que tengan acceso a ella.",
          "RESIGN": "¿Estás segura de que quieres retirarse esta carpeta?",
@@ -268,7 +274,7 @@
          "ADD": "Crear un nuevo pad",
          "ADD_PROMPT": "Introduzca el nombre del nuevo pad",
          "ADMINS": "Adminstradoras",
-         "DESELECT_ALL": "Deselect all pads",
+         "DESELECT_ALL": "Deseleccionar todos los pads",
          "EDIT": "Editar un pad",
          "EDIT_PROMPT": "Introduzca el nuevo nombre del pad",
          "EXPAND": "Expender ",
@@ -282,8 +288,8 @@
          "PADS": "Pads",
          "PUBLIC_DENIED": "Acceso público: no está permitida ver estos datos.",
          "REDUCE": "Reducir",
-         "SELECT_ALL": "Select all pads",
-         "SELECT_AT_LEAST_ONE_PAD": "Please, select at least one pad",
+         "SELECT_ALL": "Seleccionar todos los pads",
+         "SELECT_AT_LEAST_ONE_PAD": "Por favor, selecciona al menos un pad",
          "SORT_BY": "Ordenar los pads por",
          "SORT_BY_CREATION": "fecha de creación",
          "SORT_BY_NAME": "nombre",
@@ -376,7 +382,7 @@
          "LANG": "La configuración predeterminada de su navegador, dependiendo de los idiomas disponibles en MyPads",
          "LOGIN": "El nombre de usuario único que usted elija cuando se haya suscrito",
          "OPTIONAL": "Campo opcional",
-         "PAD_NICKNAME": "If defined, replace your login in pads if you have checked \"Use login and color in pads?\"",
+         "PAD_NICKNAME": "Si está definido, reemplace su nombre de usuaria en los pads si ha marcado \"Usar nombre de usuaria y color en los pads?\"",
          "PASSRECOVER_SUCCESS": "Usted debe haber recibido un correo electrónico a la dirección que ha utilizado cuando se suscribió. Este correo electrónico contiene una dirección web que es válida temporalmente. Por favor, siga esta url para cambiar su contraseña.",
          "PASSWORD_BEGIN": "Debe estar entre",
          "PASSWORD_CHECK": "Para la verificación : debe ser la misma contraseña",
@@ -397,7 +403,7 @@
       "OPTIONAL_FIELDS": "Campos opcionales",
       "ORGANIZATION": "Organización",
       "ORSUB": "(o suscribirse)",
-      "PAD_NICKNAME": "Nickname used in pads",
+      "PAD_NICKNAME": "Seudónimo usado en los pads",
       "PASSCHECK": "Confirmar contraseña",
       "PASSCURRENT": "Contraseña actual",
       "PASSRECOVER": "Recuperar la contraseña",
@@ -434,7 +440,7 @@
          "NAME": "Nombre de la lista de usuarias",
          "REMOVE_SUCCESS": "Lista de usuaria ha sido eliminada con éxito",
          "REMOVE_SURE": "Esta segura que quieres eliminar esa lista de usuarias?",
-         "USER_FAILURE": "No puedes añadir usuarias que no tengan cuenta en este caso : ",
+         "USER_FAILURE": "No puedes añadir usuarias que no tengan cuenta en esa instancia : ",
          "USER_INVITE": "Seleccionando una lista de usuarias, usted invitará a todos sus usuarias al mismo tiempo",
          "USER_SUCCESS": "La adición de usuarias ha sido exitosa para "
       },

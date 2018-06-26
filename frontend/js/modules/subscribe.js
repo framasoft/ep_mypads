@@ -62,7 +62,7 @@ module.exports = (function () {
       conf.unauthUrl(true);
       return m.route('/login');
     }
-    if (conf.SERVER.authMethod === 'ldap' && c.profileView()) {
+    if (conf.SERVER.authMethod !== 'internal' && c.profileView()) {
       c.fields = ['organization', 'lang', 'color'];
     } else {
       c.fields = ['login', 'password', 'passwordConfirm', 'email', 'firstname',
@@ -172,7 +172,7 @@ module.exports = (function () {
           auth_token: auth.token()
         }
       }).then(function () {
-        if (conf.SERVER.authMethod !== 'ldap') {
+        if (conf.SERVER.authMethod === 'internal') {
           passwordUpdate();
         } else {
           c.data.login       = auth.userInfo().login;
@@ -281,7 +281,7 @@ module.exports = (function () {
       delete fields.passwordConfirm.input.attrs.required;
     }
     var requiredFields;
-    if (conf.SERVER.authMethod === 'ldap' && c.profileView()) {
+    if (conf.SERVER.authMethod !== 'internal' && c.profileView()) {
       requiredFields = [
         m('.form-group', [
           fields.lang.label, fields.lang.icon,
@@ -342,7 +342,7 @@ module.exports = (function () {
     var USER = conf.LANG.USER;
     var profOrAdm = (c.profileView() || c.adminView());
     var optionalFields;
-    if (conf.SERVER.authMethod === 'ldap' && c.profileView()) {
+    if (conf.SERVER.authMethod !== 'internal' && c.profileView()) {
       fields.organization.label.attrs.class = 'col-sm-4';
       fields.color.label.attrs.class = 'col-sm-4';
       optionalFields = [

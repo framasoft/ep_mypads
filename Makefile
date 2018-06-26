@@ -1,5 +1,7 @@
-push-locales:
+locales:
 	json2po -P -i static/l10n/en.json -t static/l10n/en.json -o po/mypads.pot
+
+push-locales: locales
 	zanata-cli -q -B push
 
 pull-locales:

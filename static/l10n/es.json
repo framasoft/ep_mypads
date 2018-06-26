@@ -6,25 +6,28 @@
       "SAVE": "Guardar"
    },
    "ADMIN": {
-      "AUTHENTICATION": "Authentication settings",
+      "AUTHENTICATION": "Ajustes de autenticación",
       "ERR": {
          "LANGUAGE_DEFAULT": "Debe seleccionarse un idioma predeterminado",
+         "PARSE_CAS": "Unable to parse the CAS configuration.",
+         "PARSE_LDAP": "Unable to parse the LDAP configuration.",
          "PASSWORD_MAX": "El tamaño máximo de la contraseña es obligatorio",
          "PASSWORD_MIN": "El tamaño mínimo de la contraseña es obligatorio",
          "PASSWORD_SIZE": "El tamaño mínimo no puede ser mayor que el tamaño máximo. Por favor, compruebe sus números.",
          "ROOTURL": "Debe ser una URL válida",
          "SMTP_EMAILFROM": "Debe ser un email válido",
-         "TITLE": "Título obligatorio",
-         "PARSE_LDAP": "Unable to parse the LDAP configuration."
+         "TITLE": "Título obligatorio"
       },
       "ETHERPAD_ACCOUNT": "Cuenta de Etherpad",
       "FIELD": {
          "ALLOW_ETHERPADS": "Pads anónimos",
          "APPLY": "Aplicar",
-         "AUTHENTICATION_METHOD": "Authentication method",
-         "AUTH_LDAP_SETTINGS": "LDAP settings",
+         "AUTHENTICATION_METHOD": "Método de autenticación",
+         "AUTH_CAS_SETTINGS": "Ajustes de CAS",
+         "AUTH_LDAP_SETTINGS": "Ajustes de LDAP",
          "AUTH_METHODS": {
-            "internal": "internal",
+            "cas": "Central Authentication Service",
+            "internal": "interna",
             "ldap": "LDAP"
          },
          "CHECKMAILS": "Comprobar los mails de usuario",
@@ -59,8 +62,9 @@
       "HELP_USER_EDIT": "<p>Aquí puede actualizar todos los datos asociados a una usuaria existente. </p><p>Por favor, tenga en cuenta que por defecto, dejar la contraseña vacía significa mantener la contraseña actual. Si desea cambiarla, tiene que rellenar el campo de contraseña y su confirmación.</p>",
       "INFO": {
          "ALLOW_ETHERPADS": "Permitir pads anónimos clásicos desde la instancia de Etherpad, creada desde la URL raíz del servidor",
-         "AUTHENTICATION_METHOD": "You can choose between multiple authentication methods. The default is \"internal\". You can't mix authentication methods.",
-         "AUTH_LDAP_SETTINGS": "See details on the <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-ldap-authentication\">dedicated wiki page</a>.<br>Beside properties and defaultLang, all the settings ldapauth-fork (the module used for the LDAP authentication) settings. You can add other settings to it, just go on <a href=\"https://www.npmjs.com/package/ldapauth-fork#ldapauth-config-options\">the module page</a> to see which.",
+         "AUTHENTICATION_METHOD": "Puede elegir entre distintos métodos de autenticación. El método por defecto es \"interna\". No puede combinar diferentes métodos.",
+         "AUTH_CAS_SETTINGS": "See details on the <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-CAS-authentication\">dedicated wiki page</a>.<br>Beside properties and defaultLang, all the settings are <a href=\"https://github.com/jsumners/simple-cas-interface/blob/HEAD/api.md#CASParameters\" hreflang=\"en\">simple-cas-interface</a> (the module used for the CAS authentication) settings. The `serverUrl` should not end with a trailing slash.",
+         "AUTH_LDAP_SETTINGS": "See details on the <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-ldap-authentication\">dedicated wiki page</a>.<br>Beside properties and defaultLang, all the settings are ldapauth-fork (the module used for the LDAP authentication) settings. You can add other settings to it, just go on <a href=\"https://www.npmjs.com/package/ldapauth-fork#ldapauth-config-options\">the module page</a> to see which.",
          "CHECKMAILS": "Comprobar el correo del usuario dado en la suscripción",
          "HIDE_HELP_BLOCKS": "Los bloques de ayuda se muestran en varias páginas de MyPads, puedes ocultarlos con esta configuración",
          "HTMLEXTRA_HEAD": "Código HTML personalizado añadido al tag <head>",
@@ -99,6 +103,7 @@
          "AUTHENTICATION": {
             "ACTIVATION_NEEDED": "Su cuenta no ha sido confirmada",
             "ADMIN": "Acceso denegado: debe ser una administradora de instancia de Etherpad autenticado.",
+            "CAS_NO_TICKET": "Access denied: no CAS ticket provided",
             "DENIED": "Acceso denegado",
             "DENIED_RECORD": "No se te permite conseguir este registro",
             "DENIED_RECORD_EDIT": "No se te permite modificar este registro",
@@ -115,7 +120,8 @@
             "KEY_NOT_FOUND": "No se ha encontrado el registro",
             "LANG_PROBLEM": "No se puede actualizar el idioma. Se utilizará el idioma por defecto.",
             "MAIL_NOT_CONFIGURED": "La configuración de correo no se ha realizado en este servidor. Póngase en contacto con su administradora.",
-            "ROOTURL_NOT_CONFIGURED": "La configuración de la URL raíz no se ha introducido en este servidor. Póngase en contacto con su administradora."
+            "ROOTURL_NOT_CONFIGURED": "La configuración de la URL raíz no se ha introducido en este servidor. Póngase en contacto con su administradora.",
+            "UNABLE_TO_BIND_TO_LDAP": "Unable to bind to LDAP server with this settings. Please check your LDAP settings"
          },
          "GROUP": {
             "CASCADE_REMOVAL_PROBLEM": "Algo va mal con la remoción de los pads en cascada",
@@ -157,7 +163,7 @@
             "SUBJECT_STR": "subject debe ser una cadena",
             "TO_MAIL": "to debe ser una dirección de correo electrónico",
             "TYPE_PADSORGROUPS": "Type debe ser pads o folders",
-            "UNABLE_TO_USE_EP_SETTINGS": "Unable to use Etherpad settings.json",
+            "UNABLE_TO_USE_EP_SETTINGS": "Imposible usar los ajustes settings.json de Etherpad",
             "USERLIST_CRUD": "crud debe ser add, set o del",
             "USERLIST_ID": "En set y del modos, ulistid es obligatorio",
             "USERLIST_NAME": "En add modo, el nombre de userlist es obligatorio",
@@ -434,7 +440,7 @@
          "NAME": "Nombre de la lista de usuarias",
          "REMOVE_SUCCESS": "Lista de usuaria ha sido eliminada con éxito",
          "REMOVE_SURE": "Esta segura que quieres eliminar esa lista de usuarias?",
-         "USER_FAILURE": "No puedes añadir usuarias que no tengan cuenta en este caso : ",
+         "USER_FAILURE": "No puedes añadir usuarias que no tengan cuenta en esa instancia : ",
          "USER_INVITE": "Seleccionando una lista de usuarias, usted invitará a todos sus usuarias al mismo tiempo",
          "USER_SUCCESS": "La adición de usuarias ha sido exitosa para "
       },

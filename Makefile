@@ -2,10 +2,10 @@ locales:
 	json2po -P -i static/l10n/en.json -t static/l10n/en.json -o po/mypads.pot
 
 push-locales: locales
-	zanata-cli -q -B push
+	zanata-cli -q -B push --errors
 
 pull-locales:
-	zanata-cli -q -B pull --min-doc-percent 50
+	zanata-cli -q -B pull --min-doc-percent 50 --errors
 	./.po2json.sh
 
 stats-locales:

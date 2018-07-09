@@ -6,25 +6,28 @@
       "SAVE": "Sauvegarder"
    },
    "ADMIN": {
-      "AUTHENTICATION": "Authentication settings",
+      "AUTHENTICATION": "Paramètres d'authentification",
       "ERR": {
          "LANGUAGE_DEFAULT": "Une langue par défaut doit être choisie",
+         "PARSE_CAS": "La configuration CAS est invalide (ce n'est pas du JSON valide)",
+         "PARSE_LDAP": "La configuration LDAP est invalide (ce n'est pas du JSON valide)",
          "PASSWORD_MAX": "La taille maximum est obligatoire",
          "PASSWORD_MIN": "La taille minimum est obligatoire",
          "PASSWORD_SIZE": "La taille minimum ne peut être plus élevée que la maximum. Merci de vérifier vos saisies.",
          "ROOTURL": "Doit être une URL valide",
          "SMTP_EMAILFROM": "Doit être une adresse mail valide",
-         "TITLE": "Le titre est obligatoire",
-         "PARSE_LDAP": "Unable to parse the LDAP configuration."
+         "TITLE": "Le titre est obligatoire"
       },
       "ETHERPAD_ACCOUNT": "Compte Etherpad",
       "FIELD": {
          "ALLOW_ETHERPADS": "Pads anonymes",
          "APPLY": "Appliquer",
-         "AUTHENTICATION_METHOD": "Authentication method",
-         "AUTH_LDAP_SETTINGS": "LDAP settings",
+         "AUTHENTICATION_METHOD": "Méthode d’authentification",
+         "AUTH_CAS_SETTINGS": "Paramètres de configuration CAS",
+         "AUTH_LDAP_SETTINGS": "Paramètres LDAP",
          "AUTH_METHODS": {
-            "internal": "internal",
+            "cas": "Service d’authentification centralisée (CAS)",
+            "internal": "interne",
             "ldap": "LDAP"
          },
          "CHECKMAILS": "Vérifier les mails",
@@ -59,8 +62,9 @@
       "HELP_USER_EDIT": "<p>Vous pourrez ici mettre à jour toutes les données associées à un utilisateur existant.</p><p>Veuillez noter que par défaut, laisser le mot de passe vide signifie conserver le mot de passe utilisateur actuel. Si vous voulez changer ce mot de passe, vous devez remplir le champ correspondant ainsi que celui de confirmation.</p>",
       "INFO": {
          "ALLOW_ETHERPADS": "Autoriser les pads anonymes classiques sur l’instance Etherpad, pads créés à partir de l’adresse racine du serveur",
-         "AUTHENTICATION_METHOD": "You can choose between multiple authentication methods. The default is \"internal\". You can't mix authentication methods.",
-         "AUTH_LDAP_SETTINGS": "See details on the <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-ldap-authentication\">dedicated wiki page</a>.<br>Beside properties and defaultLang, all the settings ldapauth-fork (the module used for the LDAP authentication) settings. You can add other settings to it, just go on <a href=\"https://www.npmjs.com/package/ldapauth-fork#ldapauth-config-options\">the module page</a> to see which.",
+         "AUTHENTICATION_METHOD": "Vous pouvez choisir entre plusieurs méthodes d’authentification. La méthode par défaut est « interne ». Vous ne pouvez utiliser plusieurs méthodes d’authentification en même temps.",
+         "AUTH_CAS_SETTINGS": "Voir les détails sur la <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-CAS-authentication\" hreflang=\"en\">page dédiée du wiki</a>.<br>À part properties et defaultLang, tous les paramètres sont des paramètres de <a href=\"https://github.com/jsumners/simple-cas-interface/blob/HEAD/api.md#CASParameters\" hreflang=\"en\">simple-cas-interface</a> (le module utilisé pour l’authentification CAS). Le paramètre `serverUrl` ne doit pas se terminer par un slash.",
+         "AUTH_LDAP_SETTINGS": "Voir les détails sur la <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-ldap-authentication\" hreflang=\"en\">page dédiée du wiki</a>.<br>À part properties et defaultLang, tous les paramètres sont des paramètres de ldapauthfork (le module utilisé pour l’authentification CAS). Vous pouvez y ajouter d’autres paramètres, consultez <a href=\"https://www.npmjs.com/package/ldapauth-fork#ldapauth-config-options\" hreflang=\"en\">la page du module</a> pour voir lesquels.",
          "CHECKMAILS": "Vérification des adresses mails données par les utilisateurs lors de leur inscription",
          "HIDE_HELP_BLOCKS": "Des blocs d’aide sont affichés dans de multiples pages de MyPads, vous pouvez les cacher avec ce paramètre de configuration",
          "HTMLEXTRA_HEAD": "Code HTML personnalisé qui sera ajouté à la balise <head>",
@@ -99,6 +103,7 @@
          "AUTHENTICATION": {
             "ACTIVATION_NEEDED": "Votre compte n’a pas été confirmé",
             "ADMIN": "Accès interdit : vous devez être un administrateur authentifié de l’instance Etherpad",
+            "CAS_NO_TICKET": "Accès interdit : ticket CAS non fourni",
             "DENIED": "Accès interdit",
             "DENIED_RECORD": "Vous n’êtes pas autorisé à voir cet enregistrement",
             "DENIED_RECORD_EDIT": "Vous n’êtes pas autorisé à modifier cet enregistrement",
@@ -107,7 +112,7 @@
             "NO_RECOVER": "Désolé, vous ne pouvez pas récupérer votre mot de passe à partir d’ici",
             "NO_REGISTRATION": "Désolé, la création de comptes est désactivée",
             "PASSWORD_INCORRECT": "Le mot de passe n’est pas correct",
-            "PLEASE_CHANGE_YOUR_PASSWORD": "Your password is the one registered when using external authentification. This server use internal authentication and as a safety mesure, this password is not allowed. Please click on the \"Lost your password?\" link to change it and be able to login.",
+            "PLEASE_CHANGE_YOUR_PASSWORD": "Votre mot de passe est celui enregistré lors de l’utilisation d’une méthode d’authentification externe. Ce serveur utilise l’authentification interne et, par mesure de sécurité, ce mot de passe n’est pas autorisé. Veuillez cliquez sur le lien « Mot de passe perdu ? » pour le modifier et pouvoir vous connecter.",
             "TOKEN_INCORRECT": "Votre jeton de sécurité est invalide"
          },
          "CONFIGURATION": {
@@ -116,7 +121,7 @@
             "LANG_PROBLEM": "Le changement de langue n’a pu être fait. La langue par défaut sera utilisée.",
             "MAIL_NOT_CONFIGURED": "Le paramétrage des envois de mail n’a pas été fait sur ce serveur. Merci de contacter son administrateur.",
             "ROOTURL_NOT_CONFIGURED": "Le paramétrage de l’adresse Web racine n’a pas été fait sur ce serveur. Merci de contacter son administrateur.",
-            "UNABLE_TO_BIND_TO_LDAP": "Unable to bind to LDAP server with this settings. Please check your LDAP settings"
+            "UNABLE_TO_BIND_TO_LDAP": "Impossible de se connecter au serveur LDAP avec ces paramètres. Veuillez vérifier votre configuration LDAP."
          },
          "GROUP": {
             "CASCADE_REMOVAL_PROBLEM": "Quelque chose s’est mal déroulé avec la suppression en cascade des pads",
@@ -158,7 +163,7 @@
             "SUBJECT_STR": "subject doit être une chaîne de caractères",
             "TO_MAIL": "to doit être une adresse mail valide",
             "TYPE_PADSORGROUPS": "Type doit être soit pads, soit groups",
-            "UNABLE_TO_USE_EP_SETTINGS": "Unable to use Etherpad settings.json",
+            "UNABLE_TO_USE_EP_SETTINGS": "Impossible d’utiliser le fichier settings.json d’Etherpad",
             "USERLIST_CRUD": "crud doit être add, set ou del",
             "USERLIST_ID": "Dans les modes set et del, ulistid est obligatoire",
             "USERLIST_NAME": "Dans le mode création, le nom de la liste utilisateur est obligatoire",

@@ -27,45 +27,9 @@ Vous pouvez installer MyPads depuis les sources. Pour cela :
 * relancez votre instance Etherpad et vous devriez voir *ep_mypads* dans votre interface d'administration et ainsi pouvoir directement le tester;
 * la page d'accueil est disponible sur http://votreinstance/mypads/index.html
 
-### Configuration
+## Configuration
 
-Vous pouvez configurer MyPads pour utiliser de l'authentication LDAP.
-Pour cela, ajoutez une section `ep_mypads`, contenant une section `ldap`, dans le fichier `settings.json` d'Etherpad :
-
-```
-"ep_mypads": {
-    "ldap": {
-        // L'URL de votre LDAP
-        "url": "ldaps://ldap.example.org",
-        // L'utilisateur LDAP servant à la connexion initiale
-        "bindDN": "uid=ldap,ou=users,dc=example,dc=org",
-        // Son mot de passe
-        "bindCredentials": "S3cr3t",
-        // Où rechercher les utilisateurs
-        "searchBase": "ou=users,dc=example,dc=org",
-        // Un filtre LDAP ({{username}} est remplacé par l'identifiant de l'utilisateur)
-        "searchFilter": "(uid={{username}})",
-        // Mappage des propriétés LDAP pour MyPads
-        "properties": {
-            // Quelle propriété LDAP sera utilisée comme login de l'utilisateur ?
-            "login": "uid",
-            // comme son adresse email
-            "email": "mail",
-            // comme son prénom
-            "firstname": "givenName",
-            // comme son nom de famille
-            "lastname": "sn"
-        },
-        // Language par défaut des utilisateurs créés par le LDAP
-        "defaultLang": "fr" // Default langage for LDAP created users
-    }
-}
-```
-
-A part `properties` et `defaultLang`, tous les paramètres de configuration de la section `ldap` sont des paramètres de configuration de `ldapauth-fork` (le module utilisé pour l'authentification LDAP.
-Vous pouvez y ajouter d'autres paramètres, il vous suffit de vous rendre sur <https://www.npmjs.com/package/ldapauth-fork#ldapauth-config-options> pour les connaître.
-
-**NB** Lorsque vous utilisez l'authentification LDAP, l'enregistrement de nouveaux comptes est désactivé.
+Configurez un utilisateur administrateur dans le fichier `settings.json` d’Etherpad et utilisez ses identifiants sur http://youretherpad/mypads/?/admin
 
 ## Feuille de route
 

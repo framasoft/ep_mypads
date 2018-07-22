@@ -35,21 +35,28 @@ module.exports = (function () {
   var auth = require('../auth.js');
   var conf = require('../configuration.js');
   var notif = require('../widgets/notification.js');
+  var model = require('../model/group.js');
 
   /**
   * ## Main function
   *
-  * Used for authentication enforcement and confirmation before removal. In all
-  * cases, redirection to parent group view. An optional `successFn` can be
-  * given, called with no argument after successfull operation.
+  * Takes a pad object and adds or removes it from the bookmarks of the
+  * current user. An optional `successFn` can be given, called with no
+  * argument after successfull operation.
   */
 
-  return function (pid, successFn) {
+  return function (pad, successFn) {
+    var pid = pad._id;
     var user = auth.userInfo();
     if (ld.includes(user.bookmarks.pads, pid)) {
       ld.pull(user.bookmarks.pads, pid);
     } else {
       user.bookmarks.pads.push(pid);
+    }
+    if (typeof(model.bookmarks().pads[pid]) !== 'undefined') {
+      delete model.bookmarks().pads[pid];
+    } else {
+      model.bookmarks().pads[pid] = pad;
     }
     m.request({
       url: conf.URLS.USERMARK,

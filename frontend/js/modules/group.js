@@ -34,48 +34,15 @@ module.exports = (function () {
   var ld = require('lodash');
   // Local dependencies
   var conf = require('../configuration.js');
-  var notif = require('../widgets/notification.js');
   var auth = require('../auth.js');
   var u = auth.userInfo;
   var layout = require('./layout.js');
   var model = require('../model/group.js');
   var padShare = require('./pad-share.js');
   var sortingPreferences = require('../helpers/sortingPreferences.js');
+  var groupMark = require('./group-mark.js');
 
   var group = {};
-
-  /**
-  * ### mark
-  *
-  * `mark` public function takes a group object and adds or removes it from the
-  * bookmarks of the current user. It also can have a `successFn` function that
-  * is called after success.
-  */
-
-  group.mark = function (gid, successFn) {
-    var user = u();
-    var errfn = function (err) {
-      return notif.error({ body: ld.result(conf.LANG, err.error) });
-    };
-    if (ld.includes(user.bookmarks.groups, gid)) {
-      ld.pull(user.bookmarks.groups, gid);
-    } else {
-      user.bookmarks.groups.push(gid);
-    }
-    m.request({
-      url: conf.URLS.USERMARK,
-      method: 'POST',
-      data: {
-        type: 'groups',
-        key: gid,
-        auth_token: auth.token()
-      }
-    }).then(function () {
-      notif.success({ body: conf.LANG.GROUP.MARK_SUCCESS });
-      if (successFn) { successFn(); }
-    }, errfn);
-  };
-
 
   /**
   * ## Controller
@@ -232,9 +199,9 @@ module.exports = (function () {
             if (!c.filters[k](g)) { return memo; }
           }
         }
-        if (ld.includes(userGroups, g._id)) {
+        if (ld.includes(userGroups, g._id) && !g.archived) {
           memo.bookmarked.push(g);
-        } else if (g.readonly) {
+        } else if (g.readonly || g.archived) {
           memo.archived.push(g);
         } else {
           memo.normal.push(g);
@@ -413,7 +380,7 @@ module.exports = (function () {
       m('th', [
         m('p.pull-right', actions),
         m('a.btn.btn-link.btn-lg', {
-          onclick: group.mark.bind(c, g._id, c.computeGroups),
+          onclick: groupMark.bind(c, g, c.computeGroups),
           href: '/mypads',
           config: m.route,
           title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK)
@@ -566,7 +533,9 @@ module.exports = (function () {
               m('th', {scope: 'col'}, conf.LANG.GROUP.TAGS.TITLE),
             ])
           ),
-          view.archived(c)
+          m('tbody', [
+            view.archived(c)
+          ])
         ])
       ])
     ]);

@@ -27,11 +27,40 @@
 *  This is the module for MyPads configuration.
 */
 
+var settings;
+try {
+  settings = require('ep_etherpad-lite/node/utils/Settings');
+}
+catch (e) {
+  if (process.env.TEST_LDAP) {
+    settings = {
+      'ep_mypads': {
+        'ldap': {
+          'url': 'ldap://rroemhild-test-openldap',
+          'bindDN': 'cn=admin,dc=planetexpress,dc=com',
+          'bindCredentials': 'GoodNewsEveryone',
+          'searchBase': 'ou=people,dc=planetexpress,dc=com',
+          'searchFilter': '(uid={{username}})',
+          'properties': {
+            'login': 'uid',
+            'email': 'mail',
+            'firstname': 'givenName',
+            'lastname': 'sn'
+          },
+          'defaultLang': 'fr'
+        }
+      }
+    };
+  } else {
+    settings = {};
+  }
+}
 module.exports = (function() {
   'use strict';
 
   // Dependencies
   var ld = require('lodash');
+  var ldap = require('ldapjs');
   var storage = require('./storage.js');
   var db = storage.db;
 
@@ -71,7 +100,37 @@ module.exports = (function() {
       SMTPTLS: true,
       tokenDuration: 60, // in minutes
       useFirstLastNameInPads: false,
-      insensitiveMailMatch: false
+      insensitiveMailMatch: false,
+      authMethod: 'internal',
+      availableAuthMethods: [ 'internal', 'ldap', 'cas' ],
+      authLdapSettings: {
+        url:             'ldaps://ldap.example.org',
+        bindDN:          'uid=ldap,ou=users,dc=example,dc=org',
+        bindCredentials: 'S3cr3t',
+        searchBase:      'ou=users,dc=example,dc=org',
+        searchFilter:    '(uid={{username}})',
+        tlsOptions: {
+          rejectUnauthorized: true
+        },
+        properties: {
+          login:     'uid',
+          email:     'mail',
+          firstname: 'givenName',
+          lastname:  'sn'
+        },
+        defaultLang: 'en'
+      },
+      authCasSettings: {
+        serverUrl:      'https://cas.example.org/cas',
+        protocolVersion: 3.0,
+        properties: {
+          login:     'login',
+          email:     'email',
+          firstname: 'firstname',
+          lastname:  'lastname'
+        },
+        defaultLang: 'en'
+      },
     },
 
     /**
@@ -81,37 +140,10 @@ module.exports = (function() {
 
     cache: {},
 
-    /*
-    * `initCache` is called at mypads launch to populate `configuration.cache`
-    * from DEFAULTS and database. The function will be returned with full
-    * results, including DBPREFIX on keys.
-    */
-
-    initCache: function (callback) {
-      if (!ld.isFunction(callback)) {
-        throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
-      }
-      configuration.cache = ld.clone(configuration.DEFAULTS, true);
-      var confKeys = ld.map(ld.keys(configuration.DEFAULTS), function (key) {
-        return DBPREFIX + key;
-      });
-      storage.fn.getKeys(confKeys, function (err, res) {
-        if (err) { throw err; }
-        res = ld.transform(res, function (memo, val, key) {
-          if (val) {
-            memo[key] = val;
-          } else {
-            var dval = configuration.DEFAULTS[key.replace(DBPREFIX, '')];
-            memo[key] = ld.clone(dval);
-          }
-        });
-        callback(null, res);
-      });
-    },
-
     /**
     * `init` is called when mypads plugin is initialized. It fixes the default
-    * data for the configuration into the database.
+    * data for the configuration into the database and populate the configuration
+    * cache.
     * It takes an optional `callback` function used after `db.set` abstraction
     * to return an eventual *error*.
     */
@@ -128,29 +160,63 @@ module.exports = (function() {
       var initFromDatabase = function () {
         storage.fn.getKeys(ld.keys(confDefaults), function (err, res) {
           if (err) { return callback(err); }
+
+          var pushLdapSettingsToDB = false;
           configuration.cache = ld.transform(res, function (memo, val, key) {
             key = key.replace(DBPREFIX, '');
-            if (key === 'languages') {
-              memo[key] = configuration.DEFAULTS.languages;
+
+            /* get ldap settings from settings.json if exists and database
+             * informations are empty */
+            if (key === 'authLdapSettings' && ld.isEqual(val, configuration.DEFAULTS.authLdapSettings) &&
+                settings.ep_mypads && settings.ep_mypads.ldap) {
+              /* json parsing of the settings from settings.json is made by Etherpad,
+               * no need to check */
+              val                  = settings.ep_mypads.ldap;
+              pushLdapSettingsToDB = true;
+            }
+
+            if (ld.isUndefined(val)) {
+              memo[key] = configuration.DEFAULTS[key];
             } else {
               memo[key] = val;
             }
           });
-          return callback(null);
+
+          if (!pushLdapSettingsToDB) {
+            return callback(null);
+          }
+
+          /* If DB's LDAP settings are the defaults and settings.json contains
+           * LDAP settings, use LDAP auth and put the settings in the database */
+          configuration.cache.authMethod = 'ldap';
+
+          var kv = {
+            authLdapSettings: configuration.cache.authLdapSettings,
+            authMethod: 'ldap'
+          };
+          var dbKv = ld.transform(kv,
+            function (memo, val, key) { memo[DBPREFIX + key] = val; });
+
+          storage.fn.setKeys(dbKv, callback);
         });
       };
 
-      var initToDatabase = function () {
-        storage.fn.setKeys(confDefaults, function (err) {
-          if (err) { return callback(err); }
-          configuration.cache = ld.clone(configuration.DEFAULTS, true);
-          return callback(null);
-        });
+      // Those settings will evolve with MyPads, thus those from MyPads should
+      // always be used
+      var force = {
+        availableAuthMethods: configuration.DEFAULTS.availableAuthMethods,
+        languages: configuration.DEFAULTS.languages
       };
+      var dbForce = ld.transform(force,
+        function (memo, val, key) { memo[DBPREFIX + key] = val; });
 
-      storage.db.get(DBPREFIX + 'title', function (err, title) {
+      storage.fn.setKeys(dbForce, function(err) {
         if (err) { return callback(err); }
-        (title ? initFromDatabase : initToDatabase)();
+        // Set the default values in database if they are not already in it
+        storage.fn.setKeysIfNotExists(confDefaults, function (err) {
+          if (err) { return callback(err); }
+          initFromDatabase();
+        });
       });
     },
 
@@ -189,11 +255,51 @@ module.exports = (function() {
       if (!ld.isFunction(callback)) {
         throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
       }
-      db.set(DBPREFIX + key, value, function (err) {
-        if (err) { return callback(err); }
-        configuration.cache[key] = value;
-        callback();
-      });
+      var dbSet = function(key, value) {
+        db.set(DBPREFIX + key, value, function (err) {
+          if (err) { return callback(err); }
+          configuration.cache[key] = value;
+          callback();
+        });
+      };
+      if (key === 'authLdapSettings' || key === 'authCasSettings') {
+        delete value.attrs;
+      }
+
+      if (key === 'authLdapSettings') {
+        /* Test LDAP settings before registering them */
+        var ldapErr      = new Error('BACKEND.ERROR.CONFIGURATION.UNABLE_TO_BIND_TO_LDAP');
+        var ldapSettings = ld.cloneDeep(value);
+
+        /* Not passed to ldapjs, we don't want to autobind
+         * https://github.com/mcavage/node-ldapjs/blob/v1.0.1/lib/client/client.js#L343-L356 */
+        delete ldapSettings.bindDN;
+        delete ldapSettings.bindCredentials;
+
+        var client = ldap.createClient(ldapSettings);
+        client.on('error', function (err) {
+          console.error('LDAP settings change: error. See below for details.');
+          console.error(err);
+          return callback(ldapErr);
+        });
+        client.bind(value.bindDN, value.bindCredentials, function(err) {
+          if (err) {
+            console.error(err);
+            return callback(ldapErr);
+          }
+          client.unbind(function(err) {
+            client.destroy();
+            if (err) {
+              console.error(err);
+            } else {
+              /* Now, we can register new LDAP settings */
+              dbSet(key, value);
+            }
+          });
+        });
+      } else {
+        dbSet(key, value);
+      }
     },
 
     /**
@@ -235,23 +341,20 @@ module.exports = (function() {
     public: function () {
       var all = configuration.all();
       return ld.pick(all, 'title', 'passwordMin', 'passwordMax', 'languages',
-        'HTMLExtraHead', 'openRegistration', 'hideHelpBlocks', 'useFirstLastNameInPads');
+        'HTMLExtraHead', 'openRegistration', 'hideHelpBlocks', 'useFirstLastNameInPads',
+        'authMethod', 'authCasSettings'
+      );
+    },
+
+    /**
+     * `isNotInternalAuth` is a synchronous function that returns true if the
+     * authentication method is not `internal`
+     */
+
+    isNotInternalAuth: function() {
+      return (configuration.get('authMethod') !== 'internal');
     }
   };
-
-  /**
-  * Classic bootstrap : get configuration values from database to cache
-  */
-
-  db.findKeys(DBPREFIX + '*', null, function (err, keys) {
-    if (err) { return console.error(err); }
-    storage.fn.getKeys(keys, function (err, results) {
-      if (err) { return console.error(err); }
-      configuration.cache = ld.transform(results, function (memo, val, key) {
-        memo[key.replace(DBPREFIX, '')] = val;
-      });
-    });
-  });
 
   return configuration;
 

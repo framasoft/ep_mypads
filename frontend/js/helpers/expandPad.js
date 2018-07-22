@@ -29,7 +29,6 @@
 
 module.exports = (function () {
   // Dependencies
-  var m = require('mithril');
   var cookie = require('js-cookie');
   var conf = require('../configuration.js');
 
@@ -39,12 +38,12 @@ module.exports = (function () {
    * Expand iframe when the cookie says to
    */
   expandPad.autoExpand = function(element, isInitialized) {
-    if (isInitialized) return;
+    if (isInitialized) { return; }
 
     if (expandPad.wantExpandedPad()) {
       expandPad.expandIframe();
     }
-  }
+  };
 
   /*
    * Read the wantExpandedPad cookie and if it says that the user wants to expand iframe
@@ -52,14 +51,14 @@ module.exports = (function () {
   expandPad.wantExpandedPad = function() {
     var wantExpandedPad = cookie.get('wantExpandedPad');
     return (typeof wantExpandedPad === 'string' && wantExpandedPad === 'true');
-  }
+  };
 
   /*
    * Check if iframe is expanded
    */
   expandPad.isExpanded = function() {
       return ((document.querySelector('a.expand-toggle').className).indexOf('expanded') > -1);
-  }
+  };
 
   /*
    * Expand the iframe

@@ -37,7 +37,6 @@ module.exports = (function () {
   var auth = require('../auth.js');
   var model = require('../model/group.js');
   var notif = require('../widgets/notification.js');
-  var ready = require('../helpers/ready.js');
 
   var logout = {
     /**
@@ -67,8 +66,13 @@ module.exports = (function () {
         localStorage.removeItem('token');
         model.init();
         document.title = conf.SERVER.title;
-        notif.success({ body: conf.LANG.USER.AUTH.SUCCESS_OUT });
-        m.route('/');
+        if (conf.SERVER.authMethod === 'cas') {
+          var cas = conf.SERVER.authCasSettings;
+          window.location = cas.logoutUrl || cas.serverUrl+'/logout';
+        } else {
+          notif.success({ body: conf.LANG.USER.AUTH.SUCCESS_OUT });
+          m.route('/');
+        }
       }, function (err) {
         notif.error({ body: ld.result(conf.LANG, err.error) });
         m.route('/');

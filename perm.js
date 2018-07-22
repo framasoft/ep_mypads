@@ -91,7 +91,7 @@ module.exports = (function () {
 
   perm.fn.getPadAndGroup = function (pid, callback) {
     pad.get(pid, function (err, p) {
-      if (err) { console.log(err); }
+      if (err) { console.error(err); }
       if (err || !p) { return callback(null, null); }
       group.get(p.group, function (err, g) {
         if (err) { return callback(err); }
@@ -257,6 +257,9 @@ module.exports = (function () {
     var u = auth.fn.getUser(token);
     if (u && u.useLoginAndColorInPads) {
       var opts = { userName: u.login };
+      if (u.padNickname) {
+        opts.userName = u.padNickname;
+      }
       if (conf.get('useFirstLastNameInPads')) {
         var firstname = (u.firstname) ? u.firstname : '';
         var lastname  = (u.lastname)  ? u.lastname  : '';

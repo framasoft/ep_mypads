@@ -122,6 +122,14 @@ module.exports = (function () {
   };
 
   /**
+  * ##### padNickname icon
+  */
+
+  user.view.icon.padNickname = function (c) {
+    return form.icon(c, 'padNickname', conf.LANG.USER.INFO.PAD_NICKNAME);
+  };
+
+  /**
   * ### Fields
   *
   * Each `field` is a view returning three vdom elements :
@@ -171,7 +179,7 @@ module.exports = (function () {
       required: (!c.profileView || !c.profileView()),
       oninput: form.handleField.bind(null, c, extraValid)
     };
-    if (!conf.SERVER.useLdap) {
+    if (conf.SERVER.authMethod !== 'ldap') {
       options.minlength = passMin;
       options.maxlength = passMax;
       options.pattern   = '.{' + passMin + ',' + passMax + '}';
@@ -270,6 +278,12 @@ module.exports = (function () {
   */
 
   user.view.field.useLoginAndColorInPads = function (c) {
+    var dataMsg  = conf.LANG.USER.INFO.USELOGINANDCOLORINPADS;
+    var labelTxt = conf.LANG.USER.USELOGINANDCOLORINPADS;
+    if (conf.SERVER.useFirstLastNameInPads) {
+      dataMsg  = conf.LANG.USER.INFO.USECOLORINPADS;
+      labelTxt = conf.LANG.USER.USECOLORINPADS;
+    }
     return {
       label: m('label', [
         m('input', {
@@ -278,10 +292,10 @@ module.exports = (function () {
           checked: c.data.useLoginAndColorInPads(),
           onchange: m.withAttr('checked', c.data.useLoginAndColorInPads)
         }),
-        ((conf.SERVER.useFirstLastNameInPads) ? conf.LANG.USER.USECOLORINPADS : conf.LANG.USER.USELOGINANDCOLORINPADS),
+        labelTxt,
         m('i',{
           class: 'mp-tooltip glyphicon glyphicon-info-sign',
-          'data-msg': ((conf.SERVER.useFirstLastNameInPads) ? conf.LANG.USER.INFO.USECOLORINPADS : conf.LANG.USER.INFO.USELOGINANDCOLORINPADS)
+          'data-msg': dataMsg
         }),
       ]),
     };
@@ -311,6 +325,20 @@ module.exports = (function () {
     ld.assign(fields.input.attrs, {
         type: 'text',
         placeholder: conf.LANG.USER.LASTNAME
+    });
+    return fields;
+  };
+
+  /**
+  * #### padNickname field
+  */
+
+  user.view.field.padNickname = function (c) {
+    var fields = form.field(c, 'padNickname', conf.LANG.USER.PAD_NICKNAME,
+      user.view.icon.padNickname(c));
+    ld.assign(fields.input.attrs, {
+        type: 'text',
+        placeholder: conf.LANG.USER.PAD_NICKNAME
     });
     return fields;
   };

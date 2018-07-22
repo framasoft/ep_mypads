@@ -54,7 +54,9 @@ module.exports = (function () {
   *   visibility: 'restricted' || 'public' || 'private',
   *   password: 'secret',
   *   readonly: false,
-  *   tags: ['important', 'domain1']
+  *   tags: ['important', 'domain1'],
+  *   allowUsersToCreatePads: false,
+  *   archived: false
   * };
   *
   */
@@ -147,6 +149,39 @@ module.exports = (function () {
         } else {
           callback(null, groups);
         }
+      }
+    );
+  };
+
+  /**
+  * ### getBookmarkedGroupsByUser
+  *
+  * `getBookmarkedGroupsByUser` is an asynchronous function that returns all
+  * bookmarked groups for a defined user, using `storage.fn.getKeys`. It takes :
+  *
+  * - a `user` object
+  * - a `callback` function, called with *error* if needed, *null* and the
+  *   results, an object with keys and groups values, otherwise.
+  *
+  */
+
+  group.getBookmarkedGroupsByUser = function (user, callback) {
+    if (!ld.isObject(user) || !ld.isArray(user.bookmarks.groups)) {
+      throw new TypeError('BACKEND.ERROR.TYPE.USER_INVALID');
+    }
+    if (!ld.isFunction(callback)) {
+      throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
+    }
+    storage.fn.getKeys(
+      ld.map(user.bookmarks.groups, function (g) { return GPREFIX + g; }),
+      function (err, groups) {
+        if (err) { return callback(err); }
+        groups = ld.reduce(groups, function (memo, val, key) {
+          key = key.substr(GPREFIX.length);
+          memo[key] = val;
+          return memo;
+        }, {});
+        callback(null, groups);
       }
     );
   };
@@ -345,8 +380,9 @@ module.exports = (function () {
           return (ld.indexOf(toRemoveFromAdmins, n) === -1);
         });
         if (ld.size(g.admins) === 0) {
-          var e = new Error('BACKEND.ERROR.GROUP.RESIGN_UNIQUE_ADMIN');
-          return callback(e);
+          return callback(
+            new Error('BACKEND.ERROR.GROUP.RESIGN_UNIQUE_ADMIN')
+          );
         }
 
         // Setting users as invited
@@ -365,8 +401,9 @@ module.exports = (function () {
         g.admins = ld.unique(ld.reject(users.uids,
           ld.partial(ld.includes, g.users)));
         if ((ld.size(g.admins)) === 0) {
-          var e = new Error('BACKEND.ERROR.GROUP.RESIGN_UNIQUE_ADMIN');
-          return callback(e);
+          return callback(
+            new Error('BACKEND.ERROR.GROUP.RESIGN_UNIQUE_ADMIN')
+          );
         }
       }
       // indexUsers with deletion for full reindexation process
@@ -478,6 +515,8 @@ module.exports = (function () {
     g.visibility = (ld.isString(v) && ld.includes(vVal, v)) ? v : 'restricted';
     g.password = ld.isString(p.password) ? p.password : null;
     g.readonly = ld.isBoolean(p.readonly) ? p.readonly : false;
+    g.allowUsersToCreatePads = ld.isBoolean(p.allowUsersToCreatePads) ? p.allowUsersToCreatePads : false;
+    g.archived = ld.isBoolean(p.archived) ? p.archived : false;
     g.tags = ld.isArray(p.tags) ? p.tags : [];
     return g;
   };
@@ -649,6 +688,21 @@ module.exports = (function () {
         return memo;
       }, { groups: groups, pads: {}, users: {} });
       callback(null, res);
+    });
+  };
+
+  /**
+   * ### count
+   *
+   * Returns the number of groups of the MyPads instance
+   * As arguments, it takes mandatory :
+   * - a `callback` function
+   */
+
+  group.count = function(callback) {
+    storage.db.findKeys(GPREFIX + '*', null, function (err, res) {
+      if (err) { return callback(err); }
+      return callback(null, ld.size(res));
     });
   };
 

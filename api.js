@@ -53,20 +53,20 @@ catch (e) {
   // Testing case : we need to mock the express dependency
   if (process.env.TEST_LDAP) {
     settings = {
-      "ep_mypads": {
-        "ldap": {
-          "url": "ldap://rroemhild-test-openldap",
-          "bindDN": "cn=admin,dc=planetexpress,dc=com",
-          "bindCredentials": "GoodNewsEveryone",
-          "searchBase": "ou=people,dc=planetexpress,dc=com",
-          "searchFilter": "(uid={{username}})",
-          "properties": {
-            "login": "uid",
-            "email": "mail",
-            "firstname": "givenName",
-            "lastname": "sn"
+      'ep_mypads': {
+        'ldap': {
+          'url': 'ldap://rroemhild-test-openldap',
+          'bindDN': 'cn=admin,dc=planetexpress,dc=com',
+          'bindCredentials': 'GoodNewsEveryone',
+          'searchBase': 'ou=people,dc=planetexpress,dc=com',
+          'searchFilter': '(uid={{username}})',
+          'properties': {
+            'login': 'uid',
+            'email': 'mail',
+            'firstname': 'givenName',
+            'lastname': 'sn'
           },
-          "defaultLang": "fr"
+          'defaultLang': 'fr'
         }
       }
     };
@@ -96,6 +96,7 @@ module.exports = (function () {
   var groupAPI;
   var padAPI;
   var cacheAPI;
+  var statsAPI;
 
   /**
   * `init` is the first function that takes an Express app as argument.
@@ -132,6 +133,7 @@ module.exports = (function () {
     groupAPI(app);
     padAPI(app);
     cacheAPI(app);
+    statsAPI(app);
     perm.init(app);
 
     /**
@@ -338,6 +340,40 @@ module.exports = (function () {
     );
 
     /**
+    * GET method : login/cas, method redirecting to home if auth
+    * is a success, plus fixes a `login` session.
+    * Only used with CAS authentication
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/auth/login/cas
+    */
+
+    app.post(authRoute + '/login/cas', function (req, res) {
+      auth.fn.casAuth(req, res, function(err, infos) {
+        if (err) { return res.status(400).send({ error: err.message }); }
+        // JWTFn false arg = non-admin authentication
+        auth.fn.JWTFn(req, infos, false, function (err, u, info) {
+          if (err) { return res.status(400).send({ error: err.message }); }
+          if (!u) { return res.status(400).send({ error: info.message }); }
+          if (u.active) {
+            var token = {
+              login: u.login,
+              key: auth.tokens[u.login].key
+            };
+            return res.status(200).send({
+              success: true,
+              user: ld.omit(u, 'password'),
+              token: jwt.sign(token, auth.secret)
+            });
+          } else {
+            var msg = 'BACKEND.ERROR.AUTHENTICATION.ACTIVATION_NEEDED';
+            return fn.denied(res, msg);
+          }
+        });
+      });
+    });
+
+    /**
     * POST method : login, method returning user object minus password if auth
     * is a success, plus fixes a `login` session.
     *
@@ -431,13 +467,12 @@ module.exports = (function () {
     */
 
     app.get(confRoute, function (req, res) {
-      var u = auth.fn.getUser(req.query.auth_token);
+      var u       = auth.fn.getUser(req.query.auth_token);
       var isAdmin = fn.isAdmin(req);
-      var action = isAdmin ? 'all' : 'public';
-      var value = conf[action]();
-      value.useLdap = !!(settings.ep_mypads && settings.ep_mypads.ldap);
-      var resp = { value: value };
-      resp.auth = (isAdmin ? true : !!u);
+      var action  = (isAdmin === true) ? 'all' : 'public';
+      var value   = conf[action]();
+      var resp    = { value: value };
+      resp.auth   = isAdmin || !!u;
       if (u) { resp.user = u; }
       res.send(resp);
     });
@@ -515,6 +550,7 @@ module.exports = (function () {
 
   userAPI = function (app) {
     var userRoute = api.initialRoute + 'user';
+    var allUsersRoute = api.initialRoute + 'all-users';
     var userlistRoute = api.initialRoute + 'userlist';
 
     /**
@@ -645,16 +681,49 @@ module.exports = (function () {
     app.get(userRoute + '/:key', fn.ensureAdminOrSelf,
       ld.partial(fn.get, user));
 
+    /**
+    * GET method : get all users from cache
+    *
+    * exemple: {
+    *   usersCount: 1,
+    *   users: {
+    *     foo: {
+    *       email: foo@bar.org,
+    *       firstname: Foo,
+    *       lastname: Bar
+    *     }
+    *   }
+    * }
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/all-users
+    */
+
+    app.get(allUsersRoute, fn.ensureAdmin,
+      function (req, res) {
+        var emails = ld.reduce(user.emails, function (result, n, key) {
+          result[n] = key;
+          return result;
+        }, {});
+        var users = ld.reduce(user.logins, function (result, n, key) {
+          result[key] = {
+            email: emails[n],
+            firstname: user.firstname[n],
+            lastname: user.lastname[n]
+          };
+          return result;
+        }, {});
+        res.send({ users: users, usersCount: ld.size(users) });
+      }
+    );
+
     // `set` for POST and PUT, see below
     var _set = function (req, res) {
       var key;
       var value = req.body;
       var stop;
       if (req.method === 'POST') {
-        if (settings.ep_mypads && settings.ep_mypads.ldap) {
-          stop = true;
-          res.status(400).send({ error: 'BACKEND.ERROR.AUTHENTICATION.NO_REGISTRATION' });
-        } else if (!conf.get('openRegistration')) {
+        if (conf.isNotInternalAuth() || !conf.get('openRegistration')) {
           stop = true;
           res.status(400).send({ error: 'BACKEND.ERROR.AUTHENTICATION.NO_REGISTRATION' });
         } else {
@@ -782,7 +851,7 @@ module.exports = (function () {
     app.post(api.initialRoute + 'passrecover', function (req, res) {
       var email = req.body.email;
       var err;
-      if (settings.ep_mypads && settings.ep_mypads.ldap) {
+      if (conf.isNotInternalAuth()) {
         err = 'BACKEND.ERROR.AUTHENTICATION.NO_RECOVER';
         return res.status(400).send({ error: err });
       }
@@ -831,7 +900,7 @@ module.exports = (function () {
       var err;
       var badLogin = (!val || !val.login || !user.logins[val.login]);
       var badAction = (!val || !val.action || (val.action !== 'passrecover'));
-      if (settings.ep_mypads && settings.ep_mypads.ldap) {
+      if (conf.isNotInternalAuth()) {
         err = 'BACKEND.ERROR.AUTHENTICATION.NO_RECOVER';
         return res.status(400).send({ error: err });
       }
@@ -870,7 +939,7 @@ module.exports = (function () {
     app.post(api.initialRoute + 'accountconfirm', function (req, res) {
       var val = mail.tokens[req.body.token];
       var err;
-      if (settings.ep_mypads && settings.ep_mypads.ldap) {
+      if (conf.isNotInternalAuth()) {
         err = 'BACKEND.ERROR.AUTHENTICATION.NO_RECOVER';
         return res.status(400).send({ error: err });
       }
@@ -944,7 +1013,32 @@ module.exports = (function () {
                     'lastname', 'email');
                 }
               );
-              res.send({ value: data });
+              data.bookmarks = { groups: {}, pads: {} };
+              group.getBookmarkedGroupsByUser(u, function (err, bookmarks) {
+                if (err) {
+                  return res.status(404).send({
+                    error: err.message
+                  });
+                }
+                data.bookmarks.groups = ld.transform(bookmarks,
+                  function (memo, val, key) {
+                    memo[key] = ld.omit(val, 'password');
+                  }
+                );
+                pad.getBookmarkedPadsByUser(u, function (err, bookmarks) {
+                  if (err) {
+                    return res.status(404).send({
+                      error: err.message
+                    });
+                  }
+                  data.bookmarks.pads = ld.transform(bookmarks,
+                    function (memo, val, key) {
+                      memo[key] = ld.omit(val, 'password');
+                    }
+                  );
+                  res.send({ value: data });
+                });
+              });
             });
           }
           catch (e) {
@@ -986,7 +1080,7 @@ module.exports = (function () {
           var isPrivate = (g.visibility === 'private');
           if (isPrivate) {
             if (req.query.password) {
-              var pwd = (typeof req.query.password === 'undefined') ? undefined : decode(req.query.password);
+              var pwd = (ld.isUndefined(req.query.password)) ? undefined : decode(req.query.password);
               auth.fn.isPasswordValid(g, pwd,
                 function (err, valid) {
                   if (!err && !valid) {
@@ -1177,7 +1271,7 @@ module.exports = (function () {
           return successFn(req, res, p);
         }
         if (!edit && (p.visibility === 'private')) {
-          var pwd = (typeof req.query.password === 'undefined') ? undefined : decode(req.query.password);
+          var pwd = (ld.isUndefined(req.query.password)) ? undefined : decode(req.query.password);
           auth.fn.isPasswordValid(p, pwd, function (err, valid) {
             if (!err && !valid) {
               err = { message: 'BACKEND.ERROR.PERMISSION.UNAUTHORIZED' };
@@ -1193,7 +1287,7 @@ module.exports = (function () {
             if (!edit && (g.visibility === 'public')) {
               return successFn(req, res, p);
             } else if (!edit && (g.visibility === 'private')) {
-              var pwd = (typeof req.query.password === 'undefined') ? undefined : decode(req.query.password);
+              var pwd = (ld.isUndefined(req.query.password)) ? undefined : decode(req.query.password);
               auth.fn.isPasswordValid(g, pwd,
                 function (err, valid) {
                   if (!err && !valid) {
@@ -1261,7 +1355,32 @@ module.exports = (function () {
       if (!isAdmin && !u) {
         return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.NOT_AUTH');
       }
-      _set(req, res);
+      if (isAdmin) {
+        _set(req, res);
+      } else {
+        if (req.body.group) {
+          group.get(req.body.group, function (err, g) {
+            if (err) {
+              if (ld.isEqual(err, new Error('BACKEND.ERROR.CONFIGURATION.KEY_NOT_FOUND'))) {
+                err = 'BACKEND.ERROR.PAD.ITEMS_NOT_FOUND';
+              }
+              return res.status(400).send({ success: false, error: err });
+            }
+            if (ld.isUndefined(g)) {
+              return res.status(400).send({ success: false, error: 'BACKEND.ERROR.PAD.ITEMS_NOT_FOUND'});
+            } else {
+              if (ld.indexOf(g.admins, u._id) !== -1 ||
+                (g.allowUsersToCreatePads && ld.indexOf(g.users, u._id) !== -1)) {
+                _set(req, res);
+              } else {
+                return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.DENIED');
+              }
+            }
+          });
+        } else {
+          return res.status(400).send({ success: false, error: 'BACKEND.ERROR.TYPE.PARAM_STR'});
+        }
+      }
     });
 
     /**
@@ -1339,7 +1458,7 @@ module.exports = (function () {
     * GET method : check, method returning information about the end of users
     * cache loading
     *
-    * exemple: { userCacheReady: true }
+    * exemple: { "userCacheReady": true }
     *
     * Sample URL:
     * http://etherpad.ndd/mypads/api/cache/check
@@ -1351,6 +1470,36 @@ module.exports = (function () {
 
   };
 
+  statsAPI = function (app) {
+    var statsRoute = api.initialRoute + 'stats';
+
+    /**
+    * GET method : stats.json, method returning some stats about MyPads
+    * instance usage
+    *
+    * exemple: { "timestamp":1524035674, "users":3, "pad":3, "groups":3 }
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/stats/stats.json
+    */
+
+    app.get(statsRoute + '/stats.json', function (req, res) {
+      var time = Math.floor(Date.now() / 1000);
+
+      pad.count(function(err, pcount) {
+        if (err) { return res.send({ timestamp: time, err: err }); }
+        group.count(function(err, gcount) {
+          if (err) { return res.send({ timestamp: time, err: err }); }
+          return res.send({
+            timestamp: time,
+            users: ld.size(user.logins),
+            pad: pcount,
+            groups: gcount
+          });
+        });
+      });
+    });
+  };
 
   return api;
 

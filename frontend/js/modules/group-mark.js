@@ -1,7 +1,5 @@
 /**
-*  vim:set sw=2 ts=2 sts=2 ft=javascript expandtab:
-*
-*  # Pad remove chat history module
+*  # Group bookmarking module
 *
 *  ## License
 *
@@ -24,7 +22,7 @@
 *
 *  ## Description
 *
-*  Short module for pad chat history removal
+*  Short module for group bookmark and unmark
 */
 
 module.exports = (function () {
@@ -35,41 +33,43 @@ module.exports = (function () {
   var auth = require('../auth.js');
   var conf = require('../configuration.js');
   var notif = require('../widgets/notification.js');
-
-  var remove = {};
+  var model = require('../model/group.js');
 
   /**
-  * ## Controller
+  * ## Main function
   *
-  * Used for authentication enforcement and confirmation before removal. In all
-  * cases, redirection to parent group view.
+  * Takes a group object and adds or removes it from the bookmarks of the
+  * current user. An optional `successFn` can be given, called with no
+  * argument after successfull operation.
   */
 
-  remove.controller = function () {
-    if (!auth.isAuthenticated()) {
-      conf.unauthUrl(true);
-      return m.route('/login');
-    }
-    var key = m.route.param('pad');
-    var gkey = m.route.param('group');
-    if (window.confirm(conf.LANG.GROUP.INFO.CHAT_HISTORY_REMOVE_SURE)) {
-      m.request({
-        method: 'DELETE',
-        url: conf.URLS.PAD + '/chathistory/' + key,
-        data: { auth_token: auth.token() }
-      }).then(function (resp) {
-        console.log(resp);
-        notif.success({ body: conf.LANG.GROUP.INFO.CHAT_HISTORY_REMOVE_SUCCESS });
-        m.route('/mypads/group/' + gkey + '/view');
-      }, function (err) {
-        notif.error({ body: ld.result(conf.LANG, err.error) });
-      });
+  return function (group, successFn) {
+    var gid  = group._id;
+    var user = auth.userInfo();
+    if (ld.includes(user.bookmarks.groups, gid)) {
+      ld.pull(user.bookmarks.groups, gid);
     } else {
-      m.route('/mypads/group/' + gkey + '/view');
+      user.bookmarks.groups.push(gid);
     }
+    if (typeof(model.bookmarks().groups[gid]) !== 'undefined') {
+      delete model.bookmarks().groups[gid];
+    } else {
+      model.bookmarks().groups[gid] = group;
+    }
+    m.request({
+      url: conf.URLS.USERMARK,
+      method: 'POST',
+      data: {
+        type: 'groups',
+        key: gid,
+        auth_token: auth.token()
+      }
+    }).then(function () {
+      notif.success({ body: conf.LANG.GROUP.MARK_SUCCESS });
+      if (successFn) { successFn(); }
+    }, function (err) {
+      return notif.error({ body: ld.result(conf.LANG, err.error) });
+    });
   };
 
-  remove.view = function () {};
-
-  return remove;
 }).call(this);

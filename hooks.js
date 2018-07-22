@@ -44,7 +44,7 @@ module.exports = (function () {
 
   hooks.init = function (name, args, callback) {
     configuration.init(function (err) {
-      if (err) { console.log(err); }
+      if (err) { console.error(err); }
       callback();
     });
   };

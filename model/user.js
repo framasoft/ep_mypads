@@ -51,7 +51,7 @@ module.exports = (function () {
   * - `emails`, which have the same purpose for emails
   */
 
-  var user = { logins: {}, emails: {}, userCacheReady: false };
+  var user = { logins: {}, emails: {}, firstname: {}, lastname: {}, userCacheReady: false };
 
   /**
   * ## Internal Functions
@@ -188,7 +188,7 @@ module.exports = (function () {
 
   user.fn.assignProps = function (params) {
     var p = params;
-    var u = ld.reduce(['firstname', 'lastname', 'organization', 'color'],
+    var u = ld.reduce(['firstname', 'lastname', 'organization', 'color', 'padNickname'],
       function (res, v) {
         res[v] = ld.isString(p[v]) ? p[v] : '';
         return res;
@@ -350,6 +350,8 @@ module.exports = (function () {
       cb = function (err, u) {
         delete user.logins[u.login];
         delete user.emails[u.email];
+        delete user.firstname[u._id];
+        delete user.lastname[u._id];
         if (u.groups.length) {
           var GPREFIX = storage.DBPREFIX.GROUP;
           storage.fn.getKeys(
@@ -396,8 +398,10 @@ module.exports = (function () {
   user.fn.set = function (u, callback) {
     storage.db.set(UPREFIX + u._id, u, function (err) {
       if (err) { return callback(err); }
-      user.logins[u.login] = u._id;
-      user.emails[u.email] = u._id;
+      user.logins[u.login]    = u._id;
+      user.emails[u.email]    = u._id;
+      user.firstname[u._id] = u.firstname;
+      user.lastname[u._id]  = u.lastname;
       if (!auth) { auth = require('../auth.js'); }
       ld.assign(auth.tokens[u.login], u);
       return callback(null, u);
@@ -432,9 +436,11 @@ module.exports = (function () {
               memo.logins[val.login] = k;
               var email = (conf.get('insensitiveMailMatch')) ? val.email.toLowerCase() : val.email;
               memo.emails[email] = k;
+              memo.firstname[k] = val.firstname;
+              memo.lastname[k] = val.lastname;
             }
             return memo;
-          }, { logins: {}, emails: {} });
+          }, { logins: {}, emails: {}, firstname: {}, lastname: {} });
           memo.userCacheReady = true;
           ld.assign(user, memo);
         }
@@ -457,6 +463,7 @@ module.exports = (function () {
   *   - required `email` string, used for communication
   *   - optional `firstname` string
   *   - optional `lastname` string
+  *   - optional `padNickname` string
   *   - optional `organization` string
   *   - optional `color` string
   *   - optional `useLoginAndColorInPads` boolean
@@ -587,7 +594,7 @@ module.exports = (function () {
             if (err) { return callback(err); }
             results = ld.transform(results, function (memo, v, k) {
               memo[k] = ld.pick(v, '_id', 'login', 'firstname', 'lastname',
-                'email');
+                'email', 'padNickname');
             });
             u.userlists = ld.reduce(u.userlists, function (memo, ul, k) {
               ul.users = ld.map(ul.uids, function (uid) {

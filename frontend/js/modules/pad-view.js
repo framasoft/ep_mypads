@@ -167,7 +167,11 @@ module.exports = (function () {
         var lastname  = (u.lastname)  ? u.lastname  : '';
         n = '&userName=' + firstname + ' ' + lastname;
       } else if (u.useLoginAndColorInPads) {
-        n = '&userName=' + u.login;
+        if (u.padNickname) {
+          n = '&userName=' + u.padNickname;
+        } else {
+          n = '&userName=' + u.login;
+        }
       }
     }
     var link = conf.URLS.RAWBASE.replace('mypads/', '') + 'p/' + c.pad._id + '?' + p + a + co + n;
@@ -265,11 +269,11 @@ module.exports = (function () {
       ]),
       m('h2', [
         (function () {
-          if (!c.isGuest) {
+          if (auth.isAuthenticated()) {
             var isBookmarked = ld.includes(c.bookmarks, c.pad._id);
             return m('button.btn.btn-link.btn-lg', {
               title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK),
-              onclick: function () { padMark(c.pad._id); }
+              onclick: function () { padMark(c.pad); }
             }, [
               m('i',
                 { class: 'glyphicon glyphicon-star' +
@@ -312,14 +316,7 @@ module.exports = (function () {
   };
 
   pad.view = function (c) {
-    var tryAutoExpand = false;
-    if (c.pad && c.pad.visibility) {
-      tryAutoExpand = (c.pad.visibility === 'public');
-    }
-    if (auth.isAuthenticated()) {
-      tryAutoExpand = true;
-    }
-    return layout.view(view.main(c), view.aside(), tryAutoExpand);
+    return layout.view(view.main(c), view.aside());
   };
 
   return pad;

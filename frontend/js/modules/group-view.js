@@ -43,7 +43,9 @@ module.exports = (function () {
   var ready = require('../helpers/ready.js');
   var sortingPreferences = require('../helpers/sortingPreferences.js');
   var filterPads = require('../helpers/filterPads.js');
+  var groupMark = require('./group-mark.js');
 
+  var u = auth.userInfo;
   var group = {};
 
   /**
@@ -78,7 +80,9 @@ module.exports = (function () {
           c.isUser  = ld.includes(c.group.users,  auth.userInfo()._id);
           var pads = model.pads();
           var users = model.users();
-          c.pads = ld.sortBy(ld.map(c.group.pads, function (x) { return pads[x]; }), sortingPreferences.padByField());
+          c.pads = ld.sortBy(ld.map(c.group.pads, function (x) {
+              return pads[x];
+            }), sortingPreferences.padByField());
           c.users = ld.map(c.group.users, function (x) { return users[x]; });
           c.admins = ld.map(c.group.admins, function (x) { return users[x]; });
         } else {
@@ -357,7 +361,7 @@ module.exports = (function () {
       }
     })();
     var padBlocks = [];
-    if (c.isAdmin) { padBlocks.push(addView);}
+    if (c.isAdmin || (c.group.allowUsersToCreatePads && !c.isGuest)) { padBlocks.push(addView);}
     padBlocks.push(filterView, sortView, padView);
     if (c.isAdmin) { padBlocks.push(moveView);}
     return m('section.panel-body', padBlocks);
@@ -457,7 +461,22 @@ module.exports = (function () {
   */
 
   view.main = function (c) {
-    var h2Elements = [ m('span', conf.LANG.GROUP.GROUP + ' ' + c.group.name) ];
+    var isBookmarked = (auth.isAuthenticated()) ? (ld.includes(u().bookmarks.groups, c.group._id)) : false;
+    var h2Elements = [ m('span', [
+      m('button.btn.btn-link.btn-lg', {
+          onclick: function (e) {
+            e.preventDefault();
+            groupMark(c.group);
+          },
+          title: (isBookmarked ? conf.LANG.GROUP.UNMARK : conf.LANG.GROUP.BOOKMARK)
+        }, [
+          m('i',
+            { class: 'glyphicon glyphicon-star' +
+              (isBookmarked ? '' : '-empty') })
+        ]
+      ),
+      conf.LANG.GROUP.GROUP + ' ' + c.group.name
+    ])];
     var shareBtn = '';
     if (c.group.visibility !== 'restricted') {
       shareBtn = m('button.btn.btn-default', {
@@ -494,9 +513,6 @@ module.exports = (function () {
       buttonsArray.push(m('button.cancel.btn.btn-warning', { onclick: c.quit },
           [ m('i.glyphicon glyphicon-fire'), ' '+conf.LANG.GROUP.QUIT_GROUP ]));
     }
-    h2Elements.push(
-      m('.btn-group.pull-right', {role:'group'}, buttonsArray)
-    );
     var showPass = (!c.isAdmin && !c.isUser && (c.group.visibility === 'private') &&
       !c.sendPass());
     if (showPass) {
@@ -506,6 +522,7 @@ module.exports = (function () {
       ]);
     } else {
       return m('section', [
+        m('.btn-group.pull-right', {role:'group'}, buttonsArray),
         m('h2', h2Elements),
         m('section.description', [  ]),
         m('section.panel.panel-primary.props', [

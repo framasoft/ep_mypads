@@ -36,6 +36,7 @@ var ld = require('lodash');
 var jwt = require('jsonwebtoken');
 var ExtractJwt = require('passport-jwt').ExtractJwt;
 var LdapAuth = require('ldapauth-fork');
+var CasAuth = require('simple-cas-interface');
 var settings;
 try {
   // Normal case : when installed as a plugin
@@ -44,30 +45,30 @@ try {
 catch (e) {
   if (process.env.TEST_LDAP) {
     settings = {
-      "users": {
-        "admin": {
-          "password": 'admin',
-          "is_admin": true
+      'users': {
+        'admin': {
+          'password': 'admin',
+          'is_admin': true
         },
-        "parker": {
-          "password": 'lovesKubiak',
-          "is_admin": false
+        'parker': {
+          'password': 'lovesKubiak',
+          'is_admin': false
         }
       },
-      "ep_mypads": {
-        "ldap": {
-          "url": "ldap://rroemhild-test-openldap",
-          "bindDN": "cn=admin,dc=planetexpress,dc=com",
-          "bindCredentials": "GoodNewsEveryone",
-          "searchBase": "ou=people,dc=planetexpress,dc=com",
-          "searchFilter": "(uid={{username}})",
-          "properties": {
-            "login": "uid",
-            "email": "mail",
-            "firstname": "givenName",
-            "lastname": "sn"
+      'ep_mypads': {
+        'ldap': {
+          'url': 'ldap://rroemhild-test-openldap',
+          'bindDN': 'cn=admin,dc=planetexpress,dc=com',
+          'bindCredentials': 'GoodNewsEveryone',
+          'searchBase': 'ou=people,dc=planetexpress,dc=com',
+          'searchFilter': '(uid={{username}})',
+          'properties': {
+            'login': 'uid',
+            'email': 'mail',
+            'firstname': 'givenName',
+            'lastname': 'sn'
           },
-          "defaultLang": "fr"
+          'defaultLang': 'fr'
         }
       }
     };
@@ -88,6 +89,9 @@ var cuid = require('cuid');
 
 // Local dependencies
 var user = require('./model/user.js');
+var conf = require('./configuration.js');
+
+var NOT_INTERNAL_AUTH_PWD = 'soooooo_useless';
 
 module.exports = (function () {
   'use strict';
@@ -178,61 +182,90 @@ module.exports = (function () {
   */
 
   auth.fn.checkMyPadsUser = function (login, pass, callback) {
-    if (settings.ep_mypads && settings.ep_mypads.ldap) {
-      var lauth = new LdapAuth(settings.ep_mypads.ldap);
-      lauth.authenticate(login, pass, function(err, ldapuser) {
-        lauth.close(function(error) { });
-        if (err) {
-          var emsg = err;
-          // openldap error message || active directory error message
-          if (typeof(err.lde_message) === 'string' && (err.lde_message === 'Invalid Credentials' || err.lde_message.match(/data 52e,/))) {
-            emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
-          } else if (
-              (typeof(err) === 'string' && err.match(/no such user/)) ||
-              (typeof(err.lde_message) === 'string' && (err.lde_message.match(/no such user/) || err.lde_message.match(/data 525,/)))
-          ) {
-            emsg = 'BACKEND.ERROR.USER.NOT_FOUND';
-          } else {
-            console.error('LdapAuth error: ', err);
-          }
-          return callback(new Error(emsg), false);
-        }
-        user.get(login, function(err, u) {
+    switch (conf.get('authMethod')) {
+      case 'ldap':
+        // ld.cloneDeep because LdapAuth would otherwise modify authLdapSettings conf
+        var ldapConf = ld.cloneDeep(conf.get('authLdapSettings'));
+        var lauth    = new LdapAuth(ldapConf);
+        lauth.authenticate(login, pass, function(err, ldapuser) {
+          lauth.close(function(error) {
+            if (error) { console.error(error); }
+          });
           if (err) {
-            // We have to create the user in mypads database
-            var mail;
-            var props = settings.ep_mypads.ldap.properties;
-            if (Array.isArray(ldapuser[props.email])) {
-              mail = ldapuser[props.email][0];
+            var emsg = err;
+            // openldap error message || active directory error message
+            if (ld.isString(err.lde_message) &&
+                (err.lde_message === 'Invalid Credentials' ||
+                  err.lde_message.match(/data 52e,/))
+            ) {
+              emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
+            } else if (
+                (ld.isString(err) && err.match(/no such user/)) ||
+                (ld.isString(err.lde_message) &&
+                  (err.lde_message.match(/no such user/) ||
+                    err.lde_message.match(/data 525,/)))
+            ) {
+              emsg = 'BACKEND.ERROR.USER.NOT_FOUND';
             } else {
-              mail = ldapuser[props.email];
+              console.error('LdapAuth error: ', err);
             }
-            user.set({
-                login: ldapuser[props.login],
-                password: 'soooooo_useless',
-                firstname: ldapuser[props.firstname],
-                lastname: ldapuser[props.lastname],
-                email: mail,
-                lang: (settings.ep_mypads.ldap.defaultLang) ? settings.ep_mypads.ldap.defaultLang : 'en'
-              }, callback);
+            return callback(new Error(emsg), false);
+          }
+          user.get(login, function(err, u) {
+            if (err) {
+              // We have to create the user in mypads database
+              var mail;
+              var props = ldapConf.properties;
+              ldapConf  = conf.get('authLdapSettings');
+              if (Array.isArray(ldapuser[props.email])) {
+                mail = ldapuser[props.email][0];
+              } else {
+                mail = ldapuser[props.email];
+              }
+              user.set({
+                  login: ldapuser[props.login],
+                  password: NOT_INTERNAL_AUTH_PWD,
+                  firstname: ldapuser[props.firstname],
+                  lastname: ldapuser[props.lastname],
+                  email: mail,
+                  lang: ldapConf.defaultLang || 'en'
+                }, callback);
+            } else {
+              return callback(null, u);
+            }
+          });
+        });
+        break;
+      case 'cas':
+        user.get(login.login, function(err, u) {
+          // If the user does not exist, we create the user
+          if (err) {
+            user.set(login, callback);
           } else {
             return callback(null, u);
           }
         });
-      });
-    } else {
-      user.get(login, function (err, u) {
-        if (err) { return callback(err); }
-        auth.fn.isPasswordValid(u, pass, function (err, isValid) {
+        break;
+      default:
+        /* Prevents to use default external auth password if configuration has been changed
+         * and now use internal authentification
+         */
+        if (pass === NOT_INTERNAL_AUTH_PWD) {
+          var emsg = 'BACKEND.ERROR.AUTHENTICATION.PLEASE_CHANGE_YOUR_PASSWORD';
+          return callback(new Error(emsg), false);
+        }
+        user.get(login, function (err, u) {
           if (err) { return callback(err); }
-          if (!isValid) {
-            var emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
-            return callback(new Error(emsg), false);
-          }
-          return callback(null, u);
+          auth.fn.isPasswordValid(u, pass, function (err, isValid) {
+            if (err) { return callback(err); }
+            if (!isValid) {
+              var emsg = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
+              return callback(new Error(emsg), false);
+            }
+            return callback(null, u);
+          });
         });
-      });
-    }
+      }
   };
 
   /**
@@ -261,6 +294,43 @@ module.exports = (function () {
     return callback(null, u);
   };
 
+  /*
+   * ### casAuth
+   *
+   * `casAuth` checks that the given CAS ticket is valid. It uses the last
+   * argument, `callback` function, to return an *error* or *null* and the *user*
+   * object.
+   */
+  var rgx = new RegExp('api/auth/login/cas$');
+  auth.fn.casAuth = function (req, res, callback) {
+    var ticket = req.body.ticket;
+    if (ticket) {
+      var acs         = ld.cloneDeep(conf.get('authCasSettings'));
+      var props       = acs.properties;
+      var defaultLang = acs.defaultLang;
+      delete acs.properties;
+      delete acs.defaultLang;
+      acs.serviceUrl = req.protocol+'://'+req.host+req.path.replace(rgx, '?/login');
+      var cas = new CasAuth(acs);
+      cas.validateServiceTicket(ticket)
+        .then(function(info) {
+          return callback(null, {
+            login: info.attributes[props.login] || info[props.login],
+            password: NOT_INTERNAL_AUTH_PWD,
+            firstname: info.attributes[props.firstname],
+            lastname: info.attributes[props.lastname],
+            email: info.attributes[props.email],
+            lang: defaultLang || 'en'
+          });
+        })
+        .catch(function(err) {
+          console.error(err);
+          return callback(new Error(err));
+        });
+    } else {
+      callback(new Error('BACKEND.ERROR.AUTHENTICATION.CAS_NO_TICKET'));
+    }
+  };
 
   /**
   * ### JWTFn
@@ -271,7 +341,7 @@ module.exports = (function () {
   * - the `req` Express request object, automatically populated from the
   *   strategy
   * - the JWT decoded token `jwt_payload` object
-  * - a `password` string
+  * - a `admin` boolean
   * - a `callback` function, returning
   *   - *Error* if there is a problem
   *   - *null*, *false* and an object for auth error
@@ -289,6 +359,9 @@ module.exports = (function () {
       var pass = jwt_payload.password;
       if (!ld.isString(pass)) {
         return callback(new Error('BACKEND.ERROR.TYPE.PASSWORD_STR'));
+      }
+      if (conf.get('authMethod') === 'cas' && !admin) {
+        login = jwt_payload;
       }
       checkFn(login, pass, function (err, u) {
         if (err) { return callback(err, u); }
@@ -352,15 +425,17 @@ module.exports = (function () {
       return callback(new TypeError('BACKEND.ERROR.TYPE.PASSWORD_MISSING'));
     }
     // if u.visibility is defined, u is a group, which we shouldn't authenticate against LDAP
-    if (settings.ep_mypads && settings.ep_mypads.ldap && typeof(u.visibility) === 'undefined') {
-      var lauth = new LdapAuth(settings.ep_mypads.ldap);
-      if (typeof(u) === 'undefined' || u === null || typeof(u.login) === 'undefined' || u.login === null) {
+    if (conf.get('authMethod') === 'ldap' && ld.isUndefined(u.visibility)) {
+      // ld.cloneDeep because LdapAuth would otherwise modify authLdapSettings conf
+      var lauth = new LdapAuth(ld.cloneDeep(conf.get('authLdapSettings')));
+      if (ld.isUndefined(u) || ld.isNull(u) || ld.isUndefined(u.login) || ld.isNull(u.login)) {
         return callback(null, false);
       } else {
-        lauth.authenticate(u.login, password, function(err, ldapuser) {
-          lauth.close(function(error) { });
+        lauth.authenticate(u.login, password, function(err) {
+          lauth.close(function(error) {
+            if (error) { console.error(error); }
+          });
           if (err) {
-            var emsg = err;
             if (err.lde_message === 'Invalid Credentials') {
               err = 'BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT';
             } else if (err.match(/no such user/)) {

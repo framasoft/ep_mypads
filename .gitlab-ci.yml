@@ -1,62 +1,67 @@
-# This folder is cached between builds
-# http://docs.gitlab.com/ce/ci/yaml/README.html#cache
-# If tests start to fail between different versions, try to disable the cache
-# See https://framagit.org/framasoft/ep_mypads/merge_requests/10#note_172404 for details
-cache:
-  paths:
-  - node_modules/
+### Stages
+##
+#
+stages:
+  - test
+  - trads
 
-test_node_latest:
+### Jobs template
+##
+#
+.test_template: &test_definition
   stage: test
-  image: node:latest
   script:
    - npm install
+   - npm run lint
    - npm run test
    - npm run test-ldap
+
+### Services
+##
+# Bring in any services we need
+# http://docs.gitlab.com/ee/ci/docker/using_docker_images.html#what-is-a-service
+services:
+  - rroemhild/test-openldap
+
+### Jobs
+##
+#
+
+## Tests
+#
+test_node_latest:
+  image: node:latest
+  <<: *test_definition
 
 test_node_4:
-  stage: test
   image: node:4-stretch
-  script:
-   - npm install
-   - npm run test
-   - npm run test-ldap
+  <<: *test_definition
 
 test_node_6:
-  stage: test
   image: node:6-stretch
-  script:
-   - npm install
-   - npm run test
-   - npm run test-ldap
+  <<: *test_definition
 
 test_node_8:
-  stage: test
   image: node:8-stretch
-  script:
-   - npm install
-   - npm run test
-   - npm run test-ldap
+  <<: *test_definition
 
 test_node_9:
-  stage: test
   image: node:9-stretch
-  script:
-   - npm install
-   - npm run test
-   - npm run test-ldap
+  <<: *test_definition
 
+test_node_10:
+  image: node:10-stretch
+  <<: *test_definition
+
+## Trads
 # Push new translations strings to https://trad.framasoft.org
 trads:
   stage: test
   image: framasoft/push-trad:latest
   script:
+  - sed -e "s@<project-version>.*</project-version>@<project-version>$CI_COMMIT_REF_SLUG</project-version>@" -i zanata.xml
   - if [ ! -z ${ZANATA_CONFIG_FRAMABOT+x} ]; then mkdir -p ${HOME}/.config; echo -e "${ZANATA_CONFIG_FRAMABOT}" > ${HOME}/.config/zanata.ini; fi
   - if [ ! -z ${ZANATA_CONFIG_FRAMABOT+x} ]; then make push-locales; fi
   only:
     - development
-
-# Bring in any services we need http://docs.gitlab.com/ee/ci/docker/using_docker_images.html#what-is-a-service
-# See http://docs.gitlab.com/ce/ci/services/README.html for examples.
-services:
-  - rroemhild/test-openldap
+    - master

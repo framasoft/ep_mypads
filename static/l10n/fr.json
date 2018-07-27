@@ -21,6 +21,7 @@
       "ETHERPAD_ACCOUNT": "Compte Etherpad",
       "FIELD": {
          "ALLOW_ETHERPADS": "Pads anonymes",
+         "ALL_PADS_PUBLICS_AUTHENTIFIED_ONLY": "Rendre tous les pads publics mais toujours demander à être authentifié pour y accéder.",
          "APPLY": "Appliquer",
          "AUTHENTICATION_METHOD": "Méthode d’authentification",
          "AUTH_CAS_SETTINGS": "Paramètres de configuration CAS",
@@ -62,6 +63,7 @@
       "HELP_USER_EDIT": "<p>Vous pourrez ici mettre à jour toutes les données associées à un utilisateur existant.</p><p>Veuillez noter que par défaut, laisser le mot de passe vide signifie conserver le mot de passe utilisateur actuel. Si vous voulez changer ce mot de passe, vous devez remplir le champ correspondant ainsi que celui de confirmation.</p>",
       "INFO": {
          "ALLOW_ETHERPADS": "Autoriser les pads anonymes classiques sur l’instance Etherpad, pads créés à partir de l’adresse racine du serveur",
+         "ALL_PADS_PUBLICS_AUTHENTIFIED_ONLY": "Cette option supprime les notions de pads restreints ou privés, les rendant tous publics mais ils ne seront accessibles qu'aux utilisateurs authentifiés.",
          "AUTHENTICATION_METHOD": "Vous pouvez choisir entre plusieurs méthodes d’authentification. La méthode par défaut est « interne ». Vous ne pouvez utiliser plusieurs méthodes d’authentification en même temps.",
          "AUTH_CAS_SETTINGS": "Voir les détails sur la <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-CAS-authentication\" hreflang=\"en\">page dédiée du wiki</a>.<br>À part properties et defaultLang, tous les paramètres sont des paramètres de <a href=\"https://github.com/jsumners/simple-cas-interface/blob/HEAD/api.md#CASParameters\" hreflang=\"en\">simple-cas-interface</a> (le module utilisé pour l’authentification CAS). Le paramètre `serverUrl` ne doit pas se terminer par un slash.",
          "AUTH_LDAP_SETTINGS": "Voir les détails sur la <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-ldap-authentication\" hreflang=\"en\">page dédiée du wiki</a>.<br>À part properties et defaultLang, tous les paramètres sont des paramètres de ldapauthfork (le module utilisé pour l’authentification CAS). Vous pouvez y ajouter d’autres paramètres, consultez <a href=\"https://www.npmjs.com/package/ldapauth-fork#ldapauth-config-options\" hreflang=\"en\">la page du module</a> pour voir lesquels.",

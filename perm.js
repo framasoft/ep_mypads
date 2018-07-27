@@ -140,6 +140,16 @@ module.exports = (function () {
     // If admin of the group or pad or group publics, ok
     // If pad or group is private, check password
     if (ld.includes(g.admins, uid)) { return callback(); }
+
+    // allPadsPublicsAuthentifiedOnly feature
+    if (conf.get('allPadsPublicsAuthentifiedOnly')) {
+      if (u) {
+        return callback();
+      } else {
+        return params.refuse();
+      }
+    }
+
     switch (p.visibility) {
       case 'public':
         return callback();

@@ -340,7 +340,7 @@ module.exports = (function () {
                 var isBookmarked = ld.includes(c.bookmarks, p._id);
                 return m('button.btn.btn-link.btn-lg', {
                   title: (isBookmarked ? GROUP.UNMARK : GROUP.BOOKMARK),
-                  onclick: function () { padMark(p._id); }
+                  onclick: function () { padMark(p); }
                 }, [
                   m('i',
                     { class: 'glyphicon glyphicon-star' +

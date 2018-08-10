@@ -131,6 +131,7 @@ module.exports = (function() {
         },
         defaultLang: 'en'
       },
+      allPadsPublicsAuthentifiedOnly: false,
     },
 
     /**
@@ -342,7 +343,7 @@ module.exports = (function() {
       var all = configuration.all();
       return ld.pick(all, 'title', 'passwordMin', 'passwordMax', 'languages',
         'HTMLExtraHead', 'openRegistration', 'hideHelpBlocks', 'useFirstLastNameInPads',
-        'authMethod', 'authCasSettings'
+        'authMethod', 'authCasSettings', 'allPadsPublicsAuthentifiedOnly'
       );
     },
 

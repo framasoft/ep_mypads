@@ -21,7 +21,7 @@
       "ETHERPAD_ACCOUNT": "Cuenta de Etherpad",
       "FIELD": {
          "ALLOW_ETHERPADS": "Pads anónimos",
-         "ALL_PADS_PUBLICS_AUTHENTIFIED_ONLY": "Make all pads public, but always ask to be authentified",
+         "ALL_PADS_PUBLICS_AUTHENTIFIED_ONLY": "Haga públicos todos los pads, pero siempre pida ser autentificada",
          "APPLY": "Aplicar",
          "AUTHENTICATION_METHOD": "Método de autenticación",
          "AUTH_CAS_SETTINGS": "Ajustes de CAS",
@@ -63,7 +63,7 @@
       "HELP_USER_EDIT": "<p>Aquí puede actualizar todos los datos asociados a una usuaria existente. </p><p>Por favor, tenga en cuenta que por defecto, dejar la contraseña vacía significa mantener la contraseña actual. Si desea cambiarla, tiene que rellenar el campo de contraseña y su confirmación.</p>",
       "INFO": {
          "ALLOW_ETHERPADS": "Permitir pads anónimos clásicos desde la instancia de Etherpad, creada desde la URL raíz del servidor",
-         "ALL_PADS_PUBLICS_AUTHENTIFIED_ONLY": "This option removes the notion of restreint or private pads, making all of them public but they will be accessible to authentified users only.",
+         "ALL_PADS_PUBLICS_AUTHENTIFIED_ONLY": "Esta opción elimina la noción de pads privados o restrictos, haciéndolos todos públicos, pero sólo serán accesibles a usuarias autentificadas.",
          "AUTHENTICATION_METHOD": "Puede elegir entre distintos métodos de autenticación. El método por defecto es \"interna\". No puede combinar diferentes métodos.",
          "AUTH_CAS_SETTINGS": "Vea los detalles en <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-CAS-authentication\">página wiki dedicada </a>.<br>Junto a las propiedades y el idioma por defecto, todos los ajustes son en <a href=\"https://github.com/jsumners/simple-cas-interface/blob/HEAD/api.md#CASParameters\" hreflang=\"es\">simple-cas-interface</a> (el módulo usado para la autenticación CAS). El `serverUrl` no debe terminar con una barra oblicua.",
          "AUTH_LDAP_SETTINGS": "Vea los detalles en <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-ldap-authentication\">página wiki dedicada</a>.<br>Junto a las propiedades y el idioma por defecto, todos los ajustes estan en ldapauth-fork (el módulo usado para la autenticación LDAP). Puedes añadirle otros ajustes, sólo tienes que ir a <a href=\"https://www.npmjs.com/package/ldapauth-fork#ldapauth-config-options\">la página del módulo </a> para ver cuál.",

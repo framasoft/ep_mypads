@@ -4,10 +4,13 @@ use warnings;
 
 use JSON;
 use Hash::Merge::Simple qw(merge);
+use Getopt::Long;
+
+my $en_file = 'po/mypads.default.json';
+GetOptions ("file|f=s" => \$en_file);
 
 my $json = JSON->new->utf8->space_before(0)->space_after(1)->indent(1)->canonical(1);
 
-my $en_file = 'po/default.json';
 my $en;
 {
   open my $fh, '<', $en_file or die;

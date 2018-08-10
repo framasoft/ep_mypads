@@ -21,6 +21,7 @@
       "ETHERPAD_ACCOUNT": "Etherpad-Account",
       "FIELD": {
          "ALLOW_ETHERPADS": "Anonymous pads",
+         "ALL_PADS_PUBLICS_AUTHENTIFIED_ONLY": "Make all pads public, but always ask to be authentified",
          "APPLY": "Anwenden",
          "AUTHENTICATION_METHOD": "Authentifizierungsverfahren",
          "AUTH_CAS_SETTINGS": "CAS-Einstellungen",
@@ -62,6 +63,7 @@
       "HELP_USER_EDIT": "<p>Hier können Sie alle Daten zu einem bestehenden Benutzer aktualisieren.</p><p>Bitte beachten Sie, dass ein leeres Passwort standardmäßig bedeutet, das aktuelle Passwort beizubehalten. Wenn Sie es ändern möchten, müssen Sie das Passwort und dessen Bestätigung ausfüllen.</p>",
       "INFO": {
          "ALLOW_ETHERPADS": "Klassische anonyme Pads aus der Etherpad-Instanz zulassen, die aus der Root-URL des Servers erstellt wurden.",
+         "ALL_PADS_PUBLICS_AUTHENTIFIED_ONLY": "This option removes the notion of restreint or private pads, making all of them public but they will be accessible to authentified users only.",
          "AUTHENTICATION_METHOD": "Sie können zwischen mehreren Authentifizierungsmethoden wählen. Die Vorgabe ist \"intern\". Sie können Authentifizierungsmethoden nicht mischen.",
          "AUTH_CAS_SETTINGS": "See details on the <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-CAS-authentication\">dedicated wiki page</a>.<br>Beside properties and defaultLang, all the settings are <a href=\"https://github.com/jsumners/simple-cas-interface/blob/HEAD/api.md#CASParameters\" hreflang=\"en\">simple-cas-interface</a> (the module used for the CAS authentication) settings. The `serverUrl` should not end with a trailing slash.",
          "AUTH_LDAP_SETTINGS": "Weitere Informationen unter <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-ldap-authentication\">dedicated wiki page</a>.<br> Neben den Eigenschaften und der Sprache, sind alle Einstellungen ldapauth-fork (das Modul für die LDAP-Authentifizierung). Sie können weitere Einstellungen hinzufügen, gehen Sie einfach auf <a href=\"https://www.npmjs.com/package/ldapauth-fork#ldapauth-config-options\">die Modulseite</a> um zu sehen, welche.",

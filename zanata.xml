@@ -6,4 +6,7 @@
   <project-type>gettext</project-type>
   <src-dir>po</src-dir>
   <trans-dir>po</trans-dir>
+  <rules>
+      <rule pattern="**/*.pot">{filename}.{locale_with_underscore}.po</rule>
+  </rules>
 </config>

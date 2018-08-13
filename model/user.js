@@ -28,13 +28,15 @@ module.exports = (function () {
 
   // Dependencies
   require('../helpers.js'); // Helpers auto-init
-  var crypto = require('crypto');
   var ld = require('lodash');
   var cuid = require('cuid');
   var slugg = require('slugg');
+  var asyncMod = require('async');
   var conf = require('../configuration.js');
   var storage = require('../storage.js');
   var common = require('./common.js');
+  var userCache = require ('./user-cache.js');
+  var deleteGroup = require('./group.js').del;
   var UPREFIX = storage.DBPREFIX.USER;
   var CPREFIX = storage.DBPREFIX.CONF;
   var auth;
@@ -51,7 +53,7 @@ module.exports = (function () {
   * - `emails`, which have the same purpose for emails
   */
 
-  var user = { logins: {}, emails: {}, firstname: {}, lastname: {}, userCacheReady: false };
+  var user = {};
 
   /**
   * ## Internal Functions
@@ -128,7 +130,7 @@ module.exports = (function () {
       err = user.fn.checkPasswordLength(u.password, res);
       if (err) { return callback(err); }
       var newPass = function () {
-        user.fn.hashPassword(null, u.password, function (err, pass) {
+        common.hashPassword(null, u.password, function (err, pass) {
           if (err) { return callback(err); }
           u.password = pass;
           callback(null, u);
@@ -136,7 +138,7 @@ module.exports = (function () {
       };
       if (old) {
         var oldp = old.password;
-        user.fn.hashPassword(oldp.salt, u.password, function (err, p) {
+        common.hashPassword(oldp.salt, u.password, function (err, p) {
           if (err) { return callback(err); }
           if (p.hash === oldp.hash) {
             u.password = oldp;
@@ -148,32 +150,6 @@ module.exports = (function () {
       } else {
         newPass();
       }
-    });
-  };
-
-  /**
-  * ### hashPassword
-  *
-  * `hashPassword` is an asynchronous function that use `crypto.randomBytes` to
-  * generate a strong `salt` if needed and return a `sha512` `hash` composed of
-  * the `salt` and the given `password`. It takes
-  *
-  * - an optional `salt` string
-  * - the mandatory `password` string
-  * - a `callback` function which returns an object with `hash`ed password and
-  *   the `salt`.
-  */
-
-  user.fn.hashPassword = function (salt, password, callback) {
-    crypto.randomBytes(40, function (ex, buf) {
-      if (ex) { return callback(ex); }
-      salt = salt || buf.toString('hex');
-      var sha512 = crypto.createHash('sha512');
-      sha512.update(salt);
-      callback(null, {
-        salt: salt,
-        hash: sha512.update(password).digest('hex')
-      });
     });
   };
 
@@ -234,8 +210,8 @@ module.exports = (function () {
 
   user.fn.checkLogin = function (_id, u, callback) {
     if (!_id) {
-      var exists = (!ld.isUndefined(user.logins[u.login]) ||
-        (ld.includes(ld.values(user.logins), u._id)));
+      var exists = (!ld.isUndefined(userCache.logins[u.login]) ||
+        (ld.includes(ld.values(userCache.logins), u._id)));
       if (exists) {
         var e = new Error('BACKEND.ERROR.USER.ALREADY_EXISTS');
         return callback(e);
@@ -243,11 +219,11 @@ module.exports = (function () {
       return callback(null);
     } else {
       // u.login has changed for existing user
-      if (ld.isUndefined(user.logins[u.login])) {
-        var key = ld.findKey(user.logins, function (uid) {
+      if (ld.isUndefined(userCache.logins[u.login])) {
+        var key = ld.findKey(userCache.logins, function (uid) {
           return uid === _id;
         });
-        delete user.logins[key];
+        delete userCache.logins[key];
       }
       return callback(null);
     }
@@ -271,56 +247,24 @@ module.exports = (function () {
 
   user.fn.checkEmail = function (_id, u, callback) {
     if (!_id) {
-      var exists = (!ld.isUndefined(user.emails[u.email]) ||
-        (ld.includes(ld.values(user.emails), u._id)));
+      var exists = (!ld.isUndefined(userCache.emails[u.email]) ||
+        (ld.includes(ld.values(userCache.emails), u._id)));
       if (exists) {
         var e = new Error('BACKEND.ERROR.USER.EMAIL_ALREADY_EXISTS');
         return callback(e);
       }
       return callback(null);
     } else {
-      if (ld.isUndefined(user.emails[u.email])) {
-        var key = ld.findKey(user.emails, function (uid) {
+      if (ld.isUndefined(userCache.emails[u.email])) {
+        var key = ld.findKey(userCache.emails, function (uid) {
           return uid === _id;
         });
-        delete user.emails[key];
+        delete userCache.emails[key];
       }
       return callback(null);
     }
   };
 
-
-  /**
-  * ### getIdsFromLoginsOrEmails
-  *
-  * `getIdsFromLoginsOrEmails` is a private synchronous function that checks
-  * if given data, users or admins logins or emails, are correct and transforms
-  * it to expected values : unique identifiers, before saving it to database.
-  *
-  * It takes an array of users `logins` and `emails`.
-  * It returns an object with :
-  *
-  * - `uids` for found users
-  * - `present` users logins or emails
-  * - `absent` users logins or emails
-  */
-
-  user.fn.getIdsFromLoginsOrEmails = function (loginsMails) {
-    if (!ld.isArray(loginsMails)) {
-      throw new TypeError('BACKEND.ERROR.TYPE.LOGINS_ARR');
-    }
-    return ld.reduce(loginsMails, function (memo, lm) {
-      var email = (conf.get('insensitiveMailMatch')) ? lm.toLowerCase() : lm;
-      var uid = user.logins[lm] || user.emails[email];
-      if (uid) {
-        memo.uids.push(uid);
-        memo.present.push(lm);
-      } else {
-        memo.absent.push(lm);
-      }
-      return memo;
-    }, { uids: [], present: [], absent: [] });
-  };
 
   /**
   * ### getDel
@@ -341,17 +285,17 @@ module.exports = (function () {
     if (!ld.isString(loginOrEmail) || ld.isEmpty(loginOrEmail)) {
       throw new TypeError('BACKEND.ERROR.TYPE.LOGIN_STR');
     }
-    var uid = user.logins[loginOrEmail] || user.emails[loginOrEmail];
+    var uid = userCache.logins[loginOrEmail] || userCache.emails[loginOrEmail];
     if (ld.isUndefined(uid)) {
       return callback(new Error('BACKEND.ERROR.USER.NOT_FOUND'));
     }
     var cb = callback;
     if (del) {
       cb = function (err, u) {
-        delete user.logins[u.login];
-        delete user.emails[u.email];
-        delete user.firstname[u._id];
-        delete user.lastname[u._id];
+        delete userCache.logins[u.login];
+        delete userCache.emails[u.email];
+        delete userCache.firstname[u._id];
+        delete userCache.lastname[u._id];
         if (u.groups.length) {
           var GPREFIX = storage.DBPREFIX.GROUP;
           storage.fn.getKeys(
@@ -360,7 +304,7 @@ module.exports = (function () {
               if (err) { return callback(err); }
               groups = ld.reduce(groups, function (memo, g) {
                 if (g.admins.length === 1) {
-                  memo.del.push(GPREFIX + g._id);
+                  memo.del.push(g._id);
                 } else {
                   ld.pull(g.users, u._id);
                   ld.pull(g.admins, u._id);
@@ -370,7 +314,7 @@ module.exports = (function () {
               }, { set: {}, del: [] });
               storage.fn.setKeys(groups.set, function (err) {
                 if (err) { return callback(err); }
-                storage.fn.delKeys(groups.del, function (err) {
+                asyncMod.map(groups.del, deleteGroup, function(err) {
                   if (err) { return callback(err); }
                   callback(null, u);
                 });
@@ -398,54 +342,13 @@ module.exports = (function () {
   user.fn.set = function (u, callback) {
     storage.db.set(UPREFIX + u._id, u, function (err) {
       if (err) { return callback(err); }
-      user.logins[u.login]    = u._id;
-      user.emails[u.email]    = u._id;
-      user.firstname[u._id] = u.firstname;
-      user.lastname[u._id]  = u.lastname;
+      userCache.logins[u.login]    = u._id;
+      userCache.emails[u.email]    = u._id;
+      userCache.firstname[u._id] = u.firstname;
+      userCache.lastname[u._id]  = u.lastname;
       if (!auth) { auth = require('../auth.js'); }
       ld.assign(auth.tokens[u.login], u);
       return callback(null, u);
-    });
-  };
-
-  /**
-  * ## Public Functions
-  *
-  * ### init
-  *
-  * `init` is a function that is called once at the initialization of mypads
-  * and loops over all users to map their *login* to their *_id* and then
-  * ensures uniqueness.
-  *
-  * It takes a callback function which is returned with *null* when finished.
-  */
-
-  user.init = function (callback) {
-    storage.db.findKeys(UPREFIX + '*', null, function (err, keys) {
-      if (err) { return callback(err); }
-      // If you want to delay the user cache readyness (to test #141 for example),
-      // put storage.fn.getKeys function below in
-      // setTimeout(function() { }, 30000);
-      // (NB: won't work with mockupserver since it waits for cache to be
-      // ready before providing the web interface)
-      storage.fn.getKeys(keys, function (err, results) {
-        if (results) {
-          var memo = ld.reduce(results, function (memo, val, key) {
-            if (val) {
-              var k = key.replace(UPREFIX, '');
-              memo.logins[val.login] = k;
-              var email = (conf.get('insensitiveMailMatch')) ? val.email.toLowerCase() : val.email;
-              memo.emails[email] = k;
-              memo.firstname[k] = val.firstname;
-              memo.lastname[k] = val.lastname;
-            }
-            return memo;
-          }, { logins: {}, emails: {}, firstname: {}, lastname: {} });
-          memo.userCacheReady = true;
-          ld.assign(user, memo);
-        }
-        callback(null);
-      });
     });
   };
 
@@ -471,7 +374,7 @@ module.exports = (function () {
   * - a classic `callback` function returning *Error* if error, *null* otherwise
   *   and the user object
   *
-  * It takes care of updating correcly the `user.logins` and `user.emails`
+  * It takes care of updating correcly the `userCache.logins` and `userCache.emails`
   * in-memory indexes. `groups` array and `bookmarks` object can't be fixed
   * here but will be retrieved from database in case of update.
   */
@@ -580,7 +483,7 @@ module.exports = (function () {
     user.get(opts.login, function (err, u) {
       if (err) { return callback(err); }
       var setUids = function () {
-        var allUids = ld.values(user.logins);
+        var allUids = ld.values(userCache.logins);
         var uids = ld.filter(opts.uids, ld.partial(ld.includes, allUids));
         u.userlists[opts.ulistid].uids = uids;
       };

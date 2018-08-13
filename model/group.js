@@ -34,7 +34,7 @@ module.exports = (function () {
   var storage = require('../storage.js');
   var common = require('./common.js');
   var commonGroupPad = require ('./common-group-pad.js');
-  var user = require('./user.js');
+  var userCache = require('./user-cache.js');
   var deletePad = require('./pad.js').del;
   var GPREFIX = storage.DBPREFIX.GROUP;
   var UPREFIX = storage.DBPREFIX.USER;
@@ -374,7 +374,7 @@ module.exports = (function () {
     if (!ld.isFunction(callback)) {
       throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
     }
-    var users = user.fn.getIdsFromLoginsOrEmails(loginsOrEmails);
+    var users = userCache.fn.getIdsFromLoginsOrEmails(loginsOrEmails);
     group.get(gid, function (err, g) {
       if (err) { return callback(err); }
       var removed;
@@ -566,15 +566,18 @@ module.exports = (function () {
     storage.fn.getKeys(usersKeys, function (err, users) {
       if (err) { return callback(err); }
       ld.forIn(users, function (u, k) {
-        if (del) {
-          ld.pull(u.groups, gid);
-          ld.pull(u.bookmarks.groups, gid);
-        } else {
-          if (!ld.includes(u.groups, gid)) {
+        // When deleting the user, storage.fn.getKeys(usersKeys)
+        // returns undefined because the user record has already
+        // been deleted
+        if (typeof(u) !== 'undefined') {
+          if (del) {
+            ld.pull(u.groups, gid);
+            ld.pull(u.bookmarks.groups, gid);
+          } else if (!ld.includes(u.groups, gid)) {
             u.groups.push(gid);
           }
+          users[k] = u;
         }
-        users[k] = u;
       });
       storage.fn.setKeys(users, function (err) {
         if (err) { return callback(err); }

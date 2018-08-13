@@ -28,7 +28,7 @@ module.exports = (function () {
 
   // Dependencies
   var ld = require('lodash');
-  var hashPassword = require('./user.js').fn.hashPassword;
+  var hashPassword = require('./common.js').hashPassword;
 
   /**
   * ## Description
@@ -43,7 +43,7 @@ module.exports = (function () {
   *
   * `handlePassword` is a function that ensures if `visibility` is *private*, a
   * password has been filled. Also, it encrypts the given password with a salt,
-  * using `user.fn.hashPassword`. It takes :
+  * using `common.hashPassword`. It takes :
   *
   * - `params` group object
   * - `callback` function, called with *null* if `visibility` isn't *private* or

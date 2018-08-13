@@ -46,7 +46,7 @@ module.exports = (function () {
   var slugg = require('slugg');
   var common = require('./common.js');
   var storage = require('../storage.js');
-  var group = require('./group.js');
+  var commonGroupPad = require ('./common-group-pad.js');
   var PPREFIX = storage.DBPREFIX.PAD;
   var UPREFIX = storage.DBPREFIX.USER;
   var GPREFIX = storage.DBPREFIX.GROUP;
@@ -262,7 +262,7 @@ module.exports = (function () {
     common.addSetInit(params, callback, ['name', 'group']);
     var p = pad.fn.assignProps(params);
     var check = function () {
-      group.fn.handlePassword(p, function (err, password) {
+      commonGroupPad.handlePassword(p, function (err, password) {
         if (err) { return callback(err); }
         if (password) { p.password = password; }
         pad.fn.checkSet(p, callback);

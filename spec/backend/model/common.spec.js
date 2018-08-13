@@ -55,6 +55,41 @@
       });
     });
 
+    describe('hashPassword', function () {
+
+      it('should hash any given string password', function (done) {
+        common.hashPassword(null, 'pass', function (err, pass) {
+          expect(err).toBeNull();
+          expect(ld.isObject(pass)).toBeTruthy();
+          expect(ld.isString(pass.hash)).toBeTruthy();
+          expect(ld.isEmpty(pass.hash)).toBeFalsy();
+          expect(ld.isString(pass.salt)).toBeTruthy();
+          expect(ld.isEmpty(pass.salt)).toBeFalsy();
+          done();
+        });
+      });
+      it('should hash any given string password with given salt',
+        function (done) {
+          common.hashPassword('salt', 'pass', function (err, pass) {
+            expect(err).toBeNull();
+            expect(ld.isObject(pass)).toBeTruthy();
+            expect(ld.isString(pass.hash)).toBeTruthy();
+            expect(ld.isEmpty(pass.hash)).toBeFalsy();
+            expect(ld.isString(pass.salt)).toBeTruthy();
+            expect(ld.isEmpty(pass.salt)).toBeFalsy();
+            var _pass = pass;
+            common.hashPassword('salt', 'pass', function (err, pass) {
+              expect(err).toBeNull();
+              expect(ld.isObject(pass)).toBeTruthy();
+              expect(pass.salt).toBe(_pass.salt);
+              expect(pass.hash).toBe(_pass.hash);
+              done();
+            });
+          });
+        }
+      );
+    });
+
     describe('checkExistence', function () {
       var key = 'test:john';
 

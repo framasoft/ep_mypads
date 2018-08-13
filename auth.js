@@ -88,6 +88,7 @@ var JWTStrategy = require('passport-jwt').Strategy;
 var cuid = require('cuid');
 
 // Local dependencies
+var common = require('./model/common.js');
 var user = require('./model/user.js');
 var conf = require('./configuration.js');
 
@@ -448,7 +449,7 @@ module.exports = (function () {
         });
       }
     } else {
-      user.fn.hashPassword(u.password.salt, password, function (err, res) {
+      common.hashPassword(u.password.salt, password, function (err, res) {
         if (err) { return callback(err); }
         callback(null, (res.hash === u.password.hash));
       });

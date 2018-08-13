@@ -23,6 +23,7 @@
   'use strict';
   var ld = require('lodash');
   var specCommon = require('./common.js');
+  var common = require('../../model/common.js');
   var user = require('../../model/user.js');
   var auth = require('../../auth.js');
 
@@ -33,7 +34,7 @@
     describe('isPasswordValid', function () {
       var params;
       beforeAll(function (done) {
-        user.fn.hashPassword(null, 'password', function (err, res) {
+        common.hashPassword(null, 'password', function (err, res) {
           if (err) { console.log(err); }
           params = { password: res };
           done();

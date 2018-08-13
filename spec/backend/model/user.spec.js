@@ -24,12 +24,14 @@
   var specCommon = require('../common.js');
   var storage = require('../../../storage.js');
   var conf = require('../../../configuration.js');
+  var common = require('../../../model/common.js');
   var group = require('../../../model/group.js');
   var user = require('../../../model/user.js');
+  var userCache = require('../../../model/user-cache.js');
   var UPREFIX = storage.DBPREFIX.USER;
   var CPREFIX = storage.DBPREFIX.CONF;
 
-  describe('user', function () {
+  describe('userCache', function () {
     beforeAll(specCommon.reInitDatabase);
     afterAll(specCommon.reInitDatabase);
 
@@ -46,17 +48,17 @@
       });
       afterAll(specCommon.reInitDatabase);
 
-      it('should populate the user.logins and user.emails fields',
+      it('should populate the userCache.logins and userCache.emails fields',
         function (done) {
-          user.init(function (err) {
+          userCache.init(function (err) {
             expect(err).toBeNull();
-            expect(ld.isObject(user.logins)).toBeTruthy();
-            expect(ld.size(user.logins)).toBe(2);
-            expect(ld.includes(ld.keys(user.logins), 'parker')).toBeTruthy();
-            expect(ld.includes(ld.keys(user.logins), 'kubiak')).toBeTruthy();
-            expect(ld.isObject(user.emails)).toBeTruthy();
-            expect(ld.size(user.emails)).toBe(2);
-            var ldimails = ld.partial(ld.includes, ld.keys(user.emails));
+            expect(ld.isObject(userCache.logins)).toBeTruthy();
+            expect(ld.size(userCache.logins)).toBe(2);
+            expect(ld.includes(ld.keys(userCache.logins), 'parker')).toBeTruthy();
+            expect(ld.includes(ld.keys(userCache.logins), 'kubiak')).toBeTruthy();
+            expect(ld.isObject(userCache.emails)).toBeTruthy();
+            expect(ld.size(userCache.emails)).toBe(2);
+            var ldimails = ld.partial(ld.includes, ld.keys(userCache.emails));
             expect(ldimails('parker@lewis.me')).toBeTruthy();
             expect(ldimails('kubiak@lawrence.me')).toBeTruthy();
             done();
@@ -65,6 +67,11 @@
       );
 
     });
+  });
+
+  describe('user', function () {
+    beforeAll(specCommon.reInitDatabase);
+    afterAll(specCommon.reInitDatabase);
 
     describe('creation', function () {
       beforeAll(function (done) {
@@ -126,10 +133,10 @@
             expect(ld.isArray(u.bookmarks.pads)).toBeTruthy();
             var okUls = (ld.isObject(u.userlists) && ld.isEmpty(u.userlists));
             expect(okUls).toBeTruthy();
-            expect(ld.includes(ld.values(user.logins), u._id)).toBeTruthy();
-            expect((user.logins[u.login])).toBe(u._id);
-            expect(ld.includes(ld.values(user.emails), u._id)).toBeTruthy();
-            expect((user.emails[u.email])).toBe(u._id);
+            expect(ld.includes(ld.values(userCache.logins), u._id)).toBeTruthy();
+            expect((userCache.logins[u.login])).toBe(u._id);
+            expect(ld.includes(ld.values(userCache.emails), u._id)).toBeTruthy();
+            expect((userCache.emails[u.email])).toBe(u._id);
             done();
           });
         }
@@ -151,9 +158,9 @@
             expect((ld.isArray(u.groups) && ld.isEmpty(u.groups))).toBeTruthy();
             var okUls = (ld.isObject(u.userlists) && ld.isEmpty(u.userlists));
             expect(okUls).toBeTruthy();
-            expect(ld.includes(ld.values(user.logins), u._id)).toBeTruthy();
-            expect((user.logins[u.login])).toBe(u._id);
-            expect((user.emails[u.email])).toBe(u._id);
+            expect(ld.includes(ld.values(userCache.logins), u._id)).toBeTruthy();
+            expect((userCache.logins[u.login])).toBe(u._id);
+            expect((userCache.emails[u.email])).toBe(u._id);
             done();
           });
         }
@@ -386,8 +393,8 @@
           expect(err).toBeNull();
           expect(_u).toBeDefined();
           expect(_u.login).toBe('parker');
-          expect(user.logins.parker).toBeUndefined();
-          expect(user.emails['parker@lewis.me']).toBeUndefined();
+          expect(userCache.logins.parker).toBeUndefined();
+          expect(userCache.emails['parker@lewis.me']).toBeUndefined();
           user.get('parker', function (err, u) {
             expect(ld.isError(err)).toBeTruthy();
             expect(u).toBeUndefined();
@@ -619,7 +626,7 @@
         crud: 'set',
         login: 'parker',
         ulistid: ulistid,
-        uids: [ user.logins.mikey, user.logins.jerry, 'fakeOne' ]
+        uids: [ userCache.logins.mikey, userCache.logins.jerry, 'fakeOne' ]
       };
       user.userlist(opts, function (err, u) {
         expect(err).toBeNull();
@@ -629,8 +636,8 @@
         expect(ul.name).toBe('Good friends');
         expect(ld.isArray(ul.uids)).toBeTruthy();
         expect(ld.size(ul.uids)).toBe(2);
-        expect(ul.uids[0]).toBe(user.logins.mikey);
-        expect(ul.uids[1]).toBe(user.logins.jerry);
+        expect(ul.uids[0]).toBe(userCache.logins.mikey);
+        expect(ul.uids[1]).toBe(userCache.logins.jerry);
         expect(ld.size(ul.users)).toBe(2);
         expect(ul.users[0].login).toBe('mikey');
         parker = u;
@@ -710,41 +717,6 @@
       });
     });
 
-    describe('hashPassword', function () {
-
-      it('should hash any given string password', function (done) {
-        user.fn.hashPassword(null, 'pass', function (err, pass) {
-          expect(err).toBeNull();
-          expect(ld.isObject(pass)).toBeTruthy();
-          expect(ld.isString(pass.hash)).toBeTruthy();
-          expect(ld.isEmpty(pass.hash)).toBeFalsy();
-          expect(ld.isString(pass.salt)).toBeTruthy();
-          expect(ld.isEmpty(pass.salt)).toBeFalsy();
-          done();
-        });
-      });
-      it('should hash any given string password with given salt',
-        function (done) {
-          user.fn.hashPassword('salt', 'pass', function (err, pass) {
-            expect(err).toBeNull();
-            expect(ld.isObject(pass)).toBeTruthy();
-            expect(ld.isString(pass.hash)).toBeTruthy();
-            expect(ld.isEmpty(pass.hash)).toBeFalsy();
-            expect(ld.isString(pass.salt)).toBeTruthy();
-            expect(ld.isEmpty(pass.salt)).toBeFalsy();
-            var _pass = pass;
-            user.fn.hashPassword('salt', 'pass', function (err, pass) {
-              expect(err).toBeNull();
-              expect(ld.isObject(pass)).toBeTruthy();
-              expect(pass.salt).toBe(_pass.salt);
-              expect(pass.hash).toBe(_pass.hash);
-              done();
-            });
-          });
-        }
-      );
-    });
-
     describe('genPassword', function () {
 
       it('should check and returns an updated user object for user creation',
@@ -770,7 +742,7 @@
 
       it('should keep the password object for update with the same pass',
         function (done) {
-          user.fn.hashPassword(null, 'verySecret', function (err, pass) {
+          common.hashPassword(null, 'verySecret', function (err, pass) {
             var old = {
               login: 'brian',
               password: pass,
@@ -795,7 +767,7 @@
 
       it('should check and update the password object for update with new pass',
         function (done) {
-          user.fn.hashPassword(null, 'verySecret', function (err, pass) {
+          common.hashPassword(null, 'verySecret', function (err, pass) {
             var old = {
               login: 'brian',
               password: pass,
@@ -860,12 +832,12 @@
 
     describe('checkLogin', function () {
       beforeAll(function () {
-        user.logins = {
+        userCache.logins = {
           'parker': '087654321',
           'jerry': 'azertyuiop'
         };
       });
-      afterAll(function (done) { user.init(done); });
+      afterAll(function (done) { userCache.init(done); });
 
       it('should return an error if add and existing login or id',
         function (done) {
@@ -891,7 +863,7 @@
             u = { login: 'park', _id: '087654321' };
             user.fn.checkLogin('087654321', u, function (err) {
               expect(err).toBeNull();
-              expect(user.logins.parker).toBeUndefined();
+              expect(userCache.logins.parker).toBeUndefined();
               done();
             });
           });
@@ -902,12 +874,12 @@
 
     describe('checkEmail', function () {
       beforeAll(function () {
-        user.emails = {
+        userCache.emails = {
           'parker@lewis.me': '087654321',
           'jerry@tremolo.lol': 'azertyuiop'
         };
       });
-      afterAll(function (done) { user.init(done); });
+      afterAll(function (done) { userCache.init(done); });
 
       it('should return an error if add and existing email', function (done) {
         var u = { _id: 'azertyuiop', email: 'jerry@tremolo.lol' };
@@ -928,11 +900,11 @@
           var u = { _id: '087654321', email: 'parker@lewis.me' };
           user.fn.checkEmail('087654321', u, function (err) {
             expect(err).toBeNull();
-            expect(user.emails['parker@lewis.me']).toBeDefined();
+            expect(userCache.emails['parker@lewis.me']).toBeDefined();
             u.email = 'parker@lewis.biz';
             user.fn.checkEmail('087654321', u, function (err) {
               expect(err).toBeNull();
-              expect(user.emails['parker@lewis.me']).toBeUndefined();
+              expect(userCache.emails['parker@lewis.me']).toBeUndefined();
               done();
             });
           });
@@ -941,11 +913,11 @@
 
     });
 
-    describe('user getIdsFromLoginsOrEmails', function () {
+    describe('userCache getIdsFromLoginsOrEmails', function () {
 
       it('should throw errors if arguments are not provided as expected',
         function () {
-          var getIds = user.fn.getIdsFromLoginsOrEmails;
+          var getIds = userCache.fn.getIdsFromLoginsOrEmails;
           expect(getIds).toThrow();
           expect(ld.partial(getIds, 'notArray')).toThrow();
         }
@@ -961,7 +933,7 @@
           user.set(u, function (err, u) {
             expect(err).toBeNull();
             var users = ['shelly', 'inexistent'];
-            var res = user.fn.getIdsFromLoginsOrEmails(users);
+            var res = userCache.fn.getIdsFromLoginsOrEmails(users);
             expect(ld.isObject(res)).toBeTruthy();
             expect(ld.size(res.uids)).toBe(1);
             expect(ld.first(res.uids)).toBe(u._id);
@@ -970,7 +942,7 @@
             expect(ld.size(res.absent)).toBe(1);
             expect(ld.first(res.absent)).toBe('inexistent');
             users[0] = 'shelly@lewis.me';
-            res = user.fn.getIdsFromLoginsOrEmails(users);
+            res = userCache.fn.getIdsFromLoginsOrEmails(users);
             expect(ld.size(res.present)).toBe(1);
             expect(ld.first(res.present)).toBe('shelly@lewis.me');
             expect(ld.size(res.absent)).toBe(1);

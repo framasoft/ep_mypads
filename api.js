@@ -80,6 +80,7 @@ var decode = require('js-base64').Base64.decode;
 var conf = require('./configuration.js');
 var mail = require('./mail.js');
 var user = require('./model/user.js');
+var userCache = require('./model/user-cache.js');
 var group = require('./model/group.js');
 var pad = require('./model/pad.js');
 var auth = require('./auth.js');
@@ -619,7 +620,7 @@ module.exports = (function () {
         try {
           var users = { absent: [], present: [] };
           var lm = req.body.loginsOrEmails;
-          if (lm) { users = user.fn.getIdsFromLoginsOrEmails(lm); }
+          if (lm) { users = userCache.fn.getIdsFromLoginsOrEmails(lm); }
           var opts = {
             crud: 'add',
             login: req.mypadsLogin,
@@ -655,7 +656,7 @@ module.exports = (function () {
         try {
           var users = { absent: [], present: [] };
           var lm = req.body.loginsOrEmails;
-          if (lm) { users = user.fn.getIdsFromLoginsOrEmails(lm); }
+          if (lm) { users = userCache.fn.getIdsFromLoginsOrEmails(lm); }
           var opts = {
             crud: 'set',
             login: req.mypadsLogin,
@@ -734,15 +735,15 @@ module.exports = (function () {
 
     app.get(allUsersRoute, fn.ensureAdmin,
       function (req, res) {
-        var emails = ld.reduce(user.emails, function (result, n, key) {
+        var emails = ld.reduce(userCache.emails, function (result, n, key) {
           result[n] = key;
           return result;
         }, {});
-        var users = ld.reduce(user.logins, function (result, n, key) {
+        var users = ld.reduce(userCache.logins, function (result, n, key) {
           result[key] = {
             email: emails[n],
-            firstname: user.firstname[n],
-            lastname: user.lastname[n]
+            firstname: userCache.firstname[n],
+            lastname: userCache.lastname[n]
           };
           return result;
         }, {});
@@ -792,7 +793,7 @@ module.exports = (function () {
       } else {
         key = req.params.key;
         value.login = req.body.login || key;
-        value._id = user.logins[key];
+        value._id = userCache.logins[key];
       }
       // Update needed session values
       if (!stop) {
@@ -892,7 +893,7 @@ module.exports = (function () {
         err = 'BACKEND.ERROR.TYPE.MAIL';
         return res.status(400).send({ error: err });
       }
-      if (!user.emails[email]) {
+      if (!userCache.emails[email]) {
         err = 'BACKEND.ERROR.USER.NOT_FOUND';
         return res.status(404).send({ error: err });
       }
@@ -931,7 +932,7 @@ module.exports = (function () {
     app.put(api.initialRoute + 'passrecover/:token', function (req, res) {
       var val = mail.tokens[req.params.token];
       var err;
-      var badLogin = (!val || !val.login || !user.logins[val.login]);
+      var badLogin = (!val || !val.login || !userCache.logins[val.login]);
       var badAction = (!val || !val.action || (val.action !== 'passrecover'));
       if (conf.isNotInternalAuth()) {
         err = 'BACKEND.ERROR.AUTHENTICATION.NO_RECOVER';
@@ -1519,7 +1520,7 @@ module.exports = (function () {
     */
 
     app.get(cacheRoute + '/check', function (req, res) {
-      return res.send({ userCacheReady: user.userCacheReady });
+      return res.send({ userCacheReady: userCache.userCacheReady });
     });
 
   };
@@ -1546,7 +1547,7 @@ module.exports = (function () {
           if (err) { return res.send({ timestamp: time, err: err }); }
           return res.send({
             timestamp: time,
-            users: ld.size(user.logins),
+            users: ld.size(userCache.logins),
             pad: pcount,
             groups: gcount
           });

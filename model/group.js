@@ -30,13 +30,15 @@ module.exports = (function () {
   var ld = require('lodash');
   var cuid = require('cuid');
   var slugg = require('slugg');
+  var asyncMod = require('async');
   var storage = require('../storage.js');
   var common = require('./common.js');
-  var user = require('./user.js');
+  var commonGroupPad = require ('./common-group-pad.js');
+  var userCache = require('./user-cache.js');
+  var deletePad = require('./pad.js').del;
   var GPREFIX = storage.DBPREFIX.GROUP;
   var UPREFIX = storage.DBPREFIX.USER;
   var PPREFIX = storage.DBPREFIX.PAD;
-  var hashPassword = require('./user.js').fn.hashPassword;
 
   /**
   * ## Description
@@ -228,7 +230,7 @@ module.exports = (function () {
     common.addSetInit(params, callback, ['name', 'admin']);
     var g = group.fn.assignProps(params);
     var check = function () {
-      group.fn.handlePassword(g, function (err, password) {
+      commonGroupPad.handlePassword(g, function (err, password) {
         if (err) { return callback(err); }
         if (password) { g.password = password; }
         group.fn.checkSet(g, callback);
@@ -274,12 +276,15 @@ module.exports = (function () {
     if (!ld.isFunction(callback)) {
       throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
     }
-    common.getDel(true, GPREFIX, key, function (err, g) {
+    common.getDel(false, GPREFIX, key, function (err, gr) {
       if (err) { return callback(err); }
-      var uids = ld.union(g.admins, g.users);
-      group.fn.indexUsers(true, g._id, uids, function (err) {
+      group.fn.cascadePads(gr, function(err) {
         if (err) { return callback(err); }
-        group.fn.cascadePads(g, callback);
+        common.getDel(true, GPREFIX, key, function (err, g) {
+          if (err) { return callback(err); }
+          var uids = ld.union(g.admins, g.users);
+          group.fn.indexUsers(true, g._id, uids, callback);
+        });
       });
     });
   };
@@ -369,7 +374,7 @@ module.exports = (function () {
     if (!ld.isFunction(callback)) {
       throw new TypeError('BACKEND.ERROR.TYPE.CALLBACK_FN');
     }
-    var users = user.fn.getIdsFromLoginsOrEmails(loginsOrEmails);
+    var users = userCache.fn.getIdsFromLoginsOrEmails(loginsOrEmails);
     group.get(gid, function (err, g) {
       if (err) { return callback(err); }
       var removed;
@@ -522,33 +527,6 @@ module.exports = (function () {
   };
 
   /**
-  * ### handlePassword
-  *
-  * `handlePassword` is a function that ensures if `visibility` is *private*, a
-  * password has been filled. Also, it encrypts the given password with a salt,
-  * using `user.fn.hashPassword`. It takes :
-  *
-  * - `params` group object
-  * - `callback` function, called with an error or *null* and the *password*
-  *   object
-  */
-
-  group.fn.handlePassword = function (params, callback) {
-    if ((params.visibility !== 'private') || ld.isObject(params.password)) {
-      return callback(null);
-    }
-    if (!ld.isString(params.password) || ld.isEmpty(params.password)) {
-      var err = new Error('BACKEND.ERROR.AUTHENTICATION.PASSWORD_INCORRECT');
-      return callback(err);
-    }
-    hashPassword(undefined, params.password, function (err, res) {
-      if (err) { return callback(err); }
-      callback(null, res);
-    });
-  };
-
-
-  /**
   * ### cascadePads
   *
   * `cascadePads` is an asynchronous function which handle cascade removals
@@ -560,8 +538,7 @@ module.exports = (function () {
 
   group.fn.cascadePads = function (group, callback) {
     if (!ld.isEmpty(group.pads)) {
-      var padsKeys = ld.map(group.pads, function (p) { return PPREFIX + p; });
-      storage.fn.delKeys(padsKeys, function (err, res) {
+      asyncMod.map(group.pads, deletePad, function(err, res) {
         if (err) { return callback(err); }
         var e = new Error('BACKEND.ERROR.GROUP.CASCADE_REMOVAL_PROBLEM');
         if (!res) { return callback(e); }
@@ -589,15 +566,18 @@ module.exports = (function () {
     storage.fn.getKeys(usersKeys, function (err, users) {
       if (err) { return callback(err); }
       ld.forIn(users, function (u, k) {
-        if (del) {
-          ld.pull(u.groups, gid);
-          ld.pull(u.bookmarks.groups, gid);
-        } else {
-          if (!ld.includes(u.groups, gid)) {
+        // When deleting the user, storage.fn.getKeys(usersKeys)
+        // returns undefined because the user record has already
+        // been deleted
+        if (typeof(u) !== 'undefined') {
+          if (del) {
+            ld.pull(u.groups, gid);
+            ld.pull(u.bookmarks.groups, gid);
+          } else if (!ld.includes(u.groups, gid)) {
             u.groups.push(gid);
           }
+          users[k] = u;
         }
-        users[k] = u;
       });
       storage.fn.setKeys(users, function (err) {
         if (err) { return callback(err); }

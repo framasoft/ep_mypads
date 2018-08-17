@@ -56,15 +56,15 @@ module.exports = (function () {
 
   /**
   * `init` function for initial configuration cache init and in memory
-  * secondary indexes. At the moment only user / logins.
+  * secondary indexes. At the moment only user / logins / firstname / lastname.
   */
 
   storage.init = function (callback) {
     var configuration = require('./configuration.js');
     configuration.init(function (err) {
       if (err) { return callback(err); }
-      var user = require('./model/user.js');
-      user.init(callback);
+      var userCache = require('./model/user-cache.js');
+      userCache.init(callback);
     });
   };
 

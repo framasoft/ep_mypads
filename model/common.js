@@ -28,6 +28,7 @@ module.exports = (function() {
 
   // Dependencies
   var ld = require('lodash');
+  var crypto = require('crypto');
   var storage = require('../storage.js');
 
   /**
@@ -37,6 +38,32 @@ module.exports = (function() {
   */
 
   var common = {};
+
+  /**
+  * ### hashPassword
+  *
+  * `hashPassword` is an asynchronous function that use `crypto.randomBytes` to
+  * generate a strong `salt` if needed and return a `sha512` `hash` composed of
+  * the `salt` and the given `password`. It takes
+  *
+  * - an optional `salt` string
+  * - the mandatory `password` string
+  * - a `callback` function which returns an object with `hash`ed password and
+  *   the `salt`.
+  */
+
+  common.hashPassword = function (salt, password, callback) {
+    crypto.randomBytes(40, function (ex, buf) {
+      if (ex) { return callback(ex); }
+      salt = salt || buf.toString('hex');
+      var sha512 = crypto.createHash('sha512');
+      sha512.update(salt);
+      callback(null, {
+        salt: salt,
+        hash: sha512.update(password).digest('hex')
+      });
+    });
+  };
 
   /**
   * ### addSetInit

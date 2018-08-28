@@ -120,3 +120,15 @@ label[for="pad-filter-form"] {
 .monospace {
   font-family: monospace;
 }
+
+/*** Button pad/tchat remove ***/
+.btn-group .caret {
+  margin-left: 0.3rem;
+}
+
+/* Toggle dropdown-menu
+ * avoid bootstrap dropdown.js requirement */
+.btn-group button:focus + .dropdown-menu {
+  display: block;
+}
+

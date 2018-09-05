@@ -18,6 +18,7 @@ var ueberDB      = require('ueberdb2'),
 program
   .version('0.1.0')
   .option('-s, --settings <file>', '[MANDATORY] the path to your Etherpad\'s settings.json file')
+  .option('-n, --dryrun',          '(optional) just count the number of pads that would have been normally deleted')
   .parse(process.argv);
 
 // Check that we have the mandatory arguments
@@ -50,17 +51,15 @@ var db = new ueberDB.database(settings.dbType, settings.dbSettings);
  * Functions
  */
 function exitIfErr(err) {
-  if(err) {
-    console.log('=====================');
-    console.error(err);
-    return db.close(function() { process.exit(1); });
-  }
+  console.log('=====================');
+  console.error(err);
+  return db.close(function() { process.exit(1); });
 }
 
 // Remove record from DB
 function removeRecord(key, callback) {
   db.remove(key, function(err) {
-    exitIfErr(err);
+    if (err) { return exitIfErr(err); }
     callback();
   });
 }
@@ -69,10 +68,10 @@ function removeRecord(key, callback) {
  * Start searching
  */
 db.init(function(err) {
-  exitIfErr(err);
+  if (err) { return exitIfErr(err); }
 
   db.get('mypads:conf:allowEtherPads', function(err, val) {
-    exitIfErr(err);
+    if (err) { return exitIfErr(err); }
 
     // Yeah, we don't want to remove anonymous pads
     if (val !== false) {
@@ -108,14 +107,16 @@ db.init(function(err) {
 
     // readonly2pad:* records are leftovers of deleted pads before #197 was solved
     db.findKeys('readonly2pad:*', null, function(err, keys) {
-      exitIfErr(err);
+      if (err) { return exitIfErr(err); }
+
+      var candidatesForDeletion = 0;
 
       if (keys.length === 0) {
         console.log('No pads to check.');
         process.exit(0);
       }
 
-      console.log(keys.length+' pads to check.');
+      console.log(keys.length+' pad(s) to check.');
 
       // I love progress bars, it's cool
       var bar = new _cliProgress.Bar({
@@ -133,41 +134,46 @@ db.init(function(err) {
 
         // First, get the padId
         db.get(readonly2pad, function(err, padId) {
-          exitIfErr(err);
+          if (err) { return exitIfErr(err); }
 
           // Then, check if the pad exists in MyPads
           db.get('mypads:pad:'+padId, function(err, val) {
-            exitIfErr(err);
+            if (err) { return exitIfErr(err); }
 
             // Launch a delete process if the pad doesn't exist
             if (val === null) {
+              if (program.dryrun) {
+                bar.increment();
+                candidatesForDeletion++;
+                next();
+              }
               // Cascade deletion process
               // 1. Delete the readonly2pad record
               db.remove(readonly2pad, function(err) {
-                exitIfErr(err);
+                if (err) { return exitIfErr(err); }
 
                 // 2. Delete the pad2readonly:padId record
                 db.remove('pad2readonly:'+padId, function(err) {
-                  exitIfErr(err);
+                  if (err) { return exitIfErr(err); }
 
                   // 3. Delete the pad:padId record
                   db.remove('pad:'+padId, function(err) {
-                    exitIfErr(err);
+                    if (err) { return exitIfErr(err); }
 
                     // 4. Check for revs records
                     db.findKeys('pad:'+padId+':revs:*', null, function(err, keys) {
-                      exitIfErr(err);
+                      if (err) { return exitIfErr(err); }
 
                       // 5. Delete the revs records
                       eachSeries(keys, removeRecord, function(err) {
-                        exitIfErr(err);
+                        if (err) { return exitIfErr(err); }
                         // 6. Check for chat records
                         db.findKeys('pad:'+padId+':chat:*', null, function(err, keys) {
-                          exitIfErr(err);
+                          if (err) { return exitIfErr(err); }
 
                           // 7. Delete the chat records
                           eachSeries(keys, removeRecord, function(err){
-                            exitIfErr(err);
+                            if (err) { return exitIfErr(err); }
                             bar.increment();
                             next();
                           });
@@ -184,13 +190,20 @@ db.init(function(err) {
             }
           });
         });
-      });
+      }, function(err) {
+        if (err) { return exitIfErr(err); }
 
-      // Give time to progress bar to update before exiting
-      setTimeout(function() {
-        console.log(keys.length+' pads checked.');
-        process.exit(0);
-      }, 100);
+        // Give time for progress bar to update before exiting
+        setTimeout(function() {
+          console.log(keys.length+' pad(s) checked.');
+
+          if (program.dryrun) {
+            console.log(candidatesForDeletion+' pad(s) would have been deleted.');
+          }
+
+          process.exit(0);
+        }, 100);
+      });
     });
   });
 });

@@ -18,6 +18,7 @@ var ueberDB      = require('ueberdb2'),
 program
   .version('0.1.0')
   .option('-s, --settings <file>', '[MANDATORY] the path to your Etherpad\'s settings.json file')
+  .option('-n, --dryrun',          '(optional) just count the number of pads that would have been normally deleted')
   .parse(process.argv);
 
 // Check that we have the mandatory arguments
@@ -110,12 +111,14 @@ db.init(function(err) {
     db.findKeys('readonly2pad:*', null, function(err, keys) {
       exitIfErr(err);
 
+      var deleteWannabe = 0;
+
       if (keys.length === 0) {
         console.log('No pads to check.');
         process.exit(0);
       }
 
-      console.log(keys.length+' pads to check.');
+      console.log(keys.length+' pad(s) to check.');
 
       // I love progress bars, it's cool
       var bar = new _cliProgress.Bar({
@@ -141,6 +144,11 @@ db.init(function(err) {
 
             // Launch a delete process if the pad doesn't exist
             if (val === null) {
+              if (program.dryrun) {
+                bar.increment();
+                deleteWannabe++;
+                next();
+              }
               // Cascade deletion process
               // 1. Delete the readonly2pad record
               db.remove(readonly2pad, function(err) {
@@ -184,13 +192,20 @@ db.init(function(err) {
             }
           });
         });
-      });
+      }, function(err) {
+        exitIfErr(err);
 
-      // Give time to progress bar to update before exiting
-      setTimeout(function() {
-        console.log(keys.length+' pads checked.');
-        process.exit(0);
-      }, 100);
+        // Give time to progress bar to update before exiting
+        setTimeout(function() {
+          console.log(keys.length+' pad(s) checked.');
+
+          if (program.dryrun) {
+            console.log(deleteWannabe+' pad(s) would have been deleted.');
+          }
+
+          process.exit(0);
+        }, 100);
+      });
     });
   });
 });

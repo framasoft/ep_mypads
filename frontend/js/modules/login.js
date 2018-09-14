@@ -188,7 +188,7 @@ module.exports = (function () {
      * Fix pad authorship mixup
      * See https://framagit.org/framasoft/ep_mypads/issues/148
      */
-    var myPadsAuthorCookie  = cookies.get('token-' + resp.user.login);
+    var myPadsAuthorCookie = resp.user.eplAuthorToken;
     if (myPadsAuthorCookie) {
       // 60 days
       cookies.set('token', myPadsAuthorCookie, { expires: 60 });

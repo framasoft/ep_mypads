@@ -75,6 +75,7 @@ catch (e) {
   }
 }
 var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
 var decode = require('js-base64').Base64.decode;
 // Local dependencies
 var conf = require('./configuration.js');
@@ -113,6 +114,7 @@ module.exports = (function () {
   api.init = function (app, callback) {
     // Use this for .JSON storage
     app.use(bodyParser.json());
+    app.use(cookieParser());
     app.use('/mypads', express.static(__dirname + '/static'));
     if (testMode) {
       // Only allow functional testing in testing mode
@@ -387,6 +389,12 @@ module.exports = (function () {
     */
 
     app.post(authRoute + '/login', function (req, res) {
+      var eplAuthorToken;
+      if (typeof(req.body.login) !== 'undefined' && typeof(req.cookies['token-'+req.body.login]) !== 'undefined') {
+        eplAuthorToken = req.cookies['token-'+req.body.login];
+      } else if (typeof(req.cookies.token) !== 'undefined') {
+        eplAuthorToken = req.cookies.token;
+      }
       auth.fn.JWTFn(req, req.body, false, function (err, u, info) {
         if (err) { return res.status(400).send({ error: err.message }); }
         if (!u) { return res.status(400).send({ error: info.message }); }
@@ -395,11 +403,25 @@ module.exports = (function () {
             login: u.login,
             key: auth.tokens[u.login].key
           };
-          return res.status(200).send({
-            success: true,
-            user: ld.omit(u, 'password'),
-            token: jwt.sign(token, auth.secret)
-          });
+          if (!u.eplAuthorToken && typeof(eplAuthorToken) !== 'undefined') {
+            u.eplAuthorToken   = eplAuthorToken;
+            var uToUpdate      = ld.cloneDeep(u);
+            uToUpdate.password = req.body.password;
+            user.set(uToUpdate, function (err) {
+              if (err) { return res.status(400).send({ error: err.message }); }
+              return res.status(200).send({
+                success: true,
+                user: ld.omit(u, 'password'),
+                token: jwt.sign(token, auth.secret)
+              });
+            });
+          } else {
+            return res.status(200).send({
+              success: true,
+              user: ld.omit(u, 'password'),
+              token: jwt.sign(token, auth.secret)
+            });
+          }
         } else {
           var msg = 'BACKEND.ERROR.AUTHENTICATION.ACTIVATION_NEEDED';
           return fn.denied(res, msg);

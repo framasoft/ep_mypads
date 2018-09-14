@@ -164,7 +164,7 @@ module.exports = (function () {
 
   user.fn.assignProps = function (params) {
     var p = params;
-    var u = ld.reduce(['firstname', 'lastname', 'organization', 'color', 'padNickname'],
+    var u = ld.reduce(['firstname', 'lastname', 'organization', 'color', 'padNickname', 'eplAuthorToken'],
       function (res, v) {
         res[v] = ld.isString(p[v]) ? p[v] : '';
         return res;
@@ -369,6 +369,7 @@ module.exports = (function () {
   *   - optional `padNickname` string
   *   - optional `organization` string
   *   - optional `color` string
+  *   - optional `eplAuthorToken` string
   *   - optional `useLoginAndColorInPads` boolean
   *
   * - a classic `callback` function returning *Error* if error, *null* otherwise
@@ -477,7 +478,7 @@ module.exports = (function () {
       throw new TypeError('BACKEND.ERROR.TYPE.USERLIST_NAME');
     }
     if ((opts.crud === 'set') && 
-      (ld.every([opts.name, opts.uids], ld.isUndefined))) {
+       (ld.every([opts.name, opts.uids], ld.isUndefined))) {
         return callback(new Error('BACKEND.ERROR.USER.USERLIST_SET_PARAMS'));
     }
     user.get(opts.login, function (err, u) {
@@ -497,7 +498,7 @@ module.exports = (function () {
             if (err) { return callback(err); }
             results = ld.transform(results, function (memo, v, k) {
               memo[k] = ld.pick(v, '_id', 'login', 'firstname', 'lastname',
-                'email', 'padNickname');
+                'email', 'padNickname', 'eplAuthorToken');
             });
             u.userlists = ld.reduce(u.userlists, function (memo, ul, k) {
               ul.users = ld.map(ul.uids, function (uid) {

@@ -62,6 +62,9 @@ module.exports = (function () {
           cookies.remove('token');
         }
 
+        if (!conf.SERVER.hideHelpBlocks && auth.userInfo().hideHelp) {
+          document.getElementsByTagName('body')[0].classList.remove('hidehelpblocks');
+        }
         auth.userInfo(null);
         localStorage.removeItem('token');
         model.init();

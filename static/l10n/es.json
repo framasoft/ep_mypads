@@ -281,7 +281,7 @@
          "EDIT_PROMPT": "Introduzca el nuevo nombre del pad",
          "EXPAND": "Expender ",
          "FROM_GROUP": "carpeta:",
-         "MOVE": "Mover todos los pads a otra carpeta",
+         "MOVE": "Mover los pads a otra carpeta",
          "MOVE_HELP": "<p>Por favor seleccione la carpeta deseada para su migración. Sólo se listan las carpetas en las que usted es administradora.</p><p>Una vez elegida, haga clic en el botón de enviar y espere un momento.</p>",
          "MOVE_TITLE": "Migración de los pads de la carpeta ",
          "NONE": "No hay pads enlazados",

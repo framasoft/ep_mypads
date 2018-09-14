@@ -281,7 +281,7 @@
          "EDIT_PROMPT": "Enter the new name of the pad",
          "EXPAND": "Expand",
          "FROM_GROUP": "folder:",
-         "MOVE": "Move all pads to another folder",
+         "MOVE": "Move pads to another folder",
          "MOVE_HELP": "<p>Please select the wanted folder for your migration. Only folders on which you are admin are listed.</p><p>Once chosen, click on the submit button and wait for a moment.</p>",
          "MOVE_TITLE": "Pads migration of the folder ",
          "NONE": "No pad linked",

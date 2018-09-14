@@ -114,6 +114,7 @@ module.exports = (function () {
         notif.warning({ body: conf.LANG.USER.ERR.PASSWORD_MISMATCH });
         document.querySelector('input[name="passwordConfirm"]').focus();
       } else {
+        c.data.login(c.data.login().replace(/^ +/, '').replace(/ +$/, ''));
         m.request({
           method: 'POST',
           url: conf.URLS.USER,

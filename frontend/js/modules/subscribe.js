@@ -69,7 +69,7 @@ module.exports = (function () {
         'lastname', 'padNickname', 'organization', 'lang', 'color'];
     }
     if (c.profileView()) {
-      c.fields.push('passwordCurrent', 'useLoginAndColorInPads');
+      c.fields.push('passwordCurrent', 'useLoginAndColorInPads', 'hideHelp');
     }
     form.initFields(c, c.fields);
     if (c.profileView()) {
@@ -188,6 +188,13 @@ module.exports = (function () {
           url: conf.URLS.USER + '/' + auth.userInfo().login,
           data: ld.assign(c.data, { auth_token: auth.token() })
         }).then(function (resp) {
+          if (!conf.SERVER.hideHelpBlocks) {
+            if (resp.value.hideHelp) {
+              document.getElementsByTagName('body')[0].classList.add('hidehelpblocks');
+            } else {
+              document.getElementsByTagName('body')[0].classList.remove('hidehelpblocks');
+            }
+          }
           auth.userInfo(resp.value);
           notif.success({ body: conf.LANG.USER.AUTH.PROFILE_SUCCESS });
         }, errfn);
@@ -355,6 +362,13 @@ module.exports = (function () {
           m('.form-group', [
             fields.color.label,
             m('.col-sm-7', fields.color.input)
+          ]),
+          m('.form-group', { class: (conf.SERVER.hideHelpBlocks) ? 'hidden' : '' }, [
+            m('.col-sm-7.col-sm-offset-4', [
+              m('.checkbox', [
+                fields.hideHelp.label,
+              ])
+            ])
           ])
       ];
     } else {
@@ -384,6 +398,10 @@ module.exports = (function () {
           m('.form-group', [
             fields.color.label,
             m('.col-sm-7', fields.color.input)
+          ]),
+          m('.form-group', [
+            fields.hideHelp.label,
+            m('.col-sm-7', fields.hideHelp.input)
           ])
       ];
     }

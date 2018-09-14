@@ -178,6 +178,11 @@ module.exports = (function () {
     } else {
       u.useLoginAndColorInPads = true;
     }
+    if (ld.isBoolean(p.hideHelp)) {
+      u.hideHelp = p.hideHelp;
+    } else {
+      u.hideHelp = false;
+    }
     var langs = ld.keys(conf.cache.languages);
     var defaultLang = conf.get('defaultLanguage');
     u.lang = (ld.includes(langs, p.lang) ? p.lang : defaultLang);

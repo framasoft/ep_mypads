@@ -66,7 +66,7 @@ module.exports = (function () {
           return (isAdmin && (g._id !== gid));
         })
         .value();
-      c.noSelectedPads = m.prop(false);
+      c.noSelectedPads = m.prop(true);
       c.group = model.groups()[gid];
     };
 
@@ -167,7 +167,7 @@ module.exports = (function () {
         pads.push(m('.checkbox', [
           m('label', [
             m('input.pad-to-move[type="checkbox"]', {
-              name: p._id, checked: 'checked',
+              name: p._id,
               onchange: function() {
                 c.noSelectedPads(document.querySelectorAll('input.pad-to-move:checked').length === 0);
               }

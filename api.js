@@ -85,6 +85,7 @@ var group = require('./model/group.js');
 var pad = require('./model/pad.js');
 var auth = require('./auth.js');
 var perm = require('./perm.js');
+var common = require('./model/common.js');
 
 module.exports = (function () {
   'use strict';
@@ -801,16 +802,28 @@ module.exports = (function () {
         if (u) {
           auth.tokens[u.login].color = req.body.color || u.color;
           if (!ld.isUndefined(req.body.useLoginAndColorInPads)) {
-            auth.tokens[u.login].useLoginAndColorInPads =
-              req.body.useLoginAndColorInPads;
+            auth.tokens[u.login].useLoginAndColorInPads = req.body.useLoginAndColorInPads;
           }
         }
         if (fn.isAdmin(req)) {
+          delete value.auth_token;
+          delete value.passwordConfirm;
           user.get(value.login, function (err, u) {
             if (err) { return res.status(400).send({ error: err.message }); }
-            ld.assign(u, value);
-            var setFn = ld.partial(user.fn.set, u);
-            fn.set(setFn, key, u, req, res);
+            if (value.password) {
+              common.hashPassword(null, value.password, function (err, pass) {
+                if (err) { return res.status(400).send({ error: err }); }
+
+                value.password = pass;
+                ld.assign(u, value);
+                var setFn = ld.partial(user.fn.set, u);
+                fn.set(setFn, key, u, req, res);
+              });
+            } else {
+              ld.assign(u, value);
+              var setFn = ld.partial(user.fn.set, u);
+              fn.set(setFn, key, u, req, res);
+            }
           });
         } else {
           var setFn = ld.partial(user.set, value);

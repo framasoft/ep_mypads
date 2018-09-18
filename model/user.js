@@ -342,8 +342,9 @@ module.exports = (function () {
   user.fn.set = function (u, callback) {
     storage.db.set(UPREFIX + u._id, u, function (err) {
       if (err) { return callback(err); }
-      userCache.logins[u.login]    = u._id;
-      userCache.emails[u.email]    = u._id;
+      var email = (conf.get('insensitiveMailMatch')) ? u.email.toLowerCase() : u.email;
+      userCache.logins[u.login]  = u._id;
+      userCache.emails[email]    = u._id;
       userCache.firstname[u._id] = u.firstname;
       userCache.lastname[u._id]  = u.lastname;
       if (!auth) { auth = require('../auth.js'); }

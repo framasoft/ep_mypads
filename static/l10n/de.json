@@ -281,7 +281,7 @@
          "EDIT_PROMPT": "Neuer Name des Pads",
          "EXPAND": "Erweitern",
          "FROM_GROUP": "Ordner:",
-         "MOVE": "Verschiebe alle Pads in einen Ordner",
+         "MOVE": "Pads in einen anderen Ordner verschieben",
          "MOVE_HELP": "<p>Bitte wählen Sie den gewünschten Ordner für Ihre Migration aus. Es werden nur die Ordner aufgelistet, in denen Sie Admin sind.</p><p>Klicken Sie nach der Auswahl auf die Schaltfläche \"Senden\" und warten Sie einen Moment.</p>",
          "MOVE_TITLE": "Pads-Migration des Ordners",
          "NONE": "Kein Pad verlinkt",

@@ -38,8 +38,8 @@ module.exports = (function () {
   * Used to give the MyPads URL
   */
   return function (gid, pid) {
-    var l = window.location;
-    var url = l.protocol + '//' + l.host + l.pathname + '?/mypads/group/' + gid;
+    var l      = window.location;
+    var url    = l.protocol + '//' + l.host + l.pathname + '?/mypads/group/' + gid;
     var suffix = (pid ? '/pad/view/' + pid : '/view');
     window.prompt(conf.LANG.GROUP.SHARE_LINK, url + suffix);
   };

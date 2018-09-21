@@ -29,11 +29,12 @@
 
 module.exports = (function () {
   // Global dependencies
-  var m = require('mithril');
+  var m  = require('mithril');
   var ld = require('lodash');
+
   // Local dependencies
-  var conf = require('../configuration.js');
-  var auth = require('../auth.js');
+  var conf  = require('../configuration.js');
+  var auth  = require('../auth.js');
   var notif = require('../widgets/notification.js');
 
   var remove = {};

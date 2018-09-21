@@ -59,10 +59,10 @@ module.exports = (function() {
   'use strict';
 
   // Dependencies
-  var ld = require('lodash');
-  var ldap = require('ldapjs');
+  var ld      = require('lodash');
+  var ldap    = require('ldapjs');
   var storage = require('./storage.js');
-  var db = storage.db;
+  var db      = storage.db;
 
   var DBPREFIX = storage.DBPREFIX.CONF;
 
@@ -163,7 +163,7 @@ module.exports = (function() {
           if (err) { return callback(err); }
 
           var pushLdapSettingsToDB = false;
-          configuration.cache = ld.transform(res, function (memo, val, key) {
+          configuration.cache      = ld.transform(res, function (memo, val, key) {
             key = key.replace(DBPREFIX, '');
 
             /* get ldap settings from settings.json if exists and database
@@ -191,7 +191,7 @@ module.exports = (function() {
            * LDAP settings, use LDAP auth and put the settings in the database */
           configuration.cache.authMethod = 'ldap';
 
-          var kv = {
+          var kv   = {
             authLdapSettings: configuration.cache.authLdapSettings,
             authMethod: 'ldap'
           };
@@ -204,7 +204,7 @@ module.exports = (function() {
 
       // Those settings will evolve with MyPads, thus those from MyPads should
       // always be used
-      var force = {
+      var force   = {
         availableAuthMethods: configuration.DEFAULTS.availableAuthMethods,
         languages: configuration.DEFAULTS.languages
       };

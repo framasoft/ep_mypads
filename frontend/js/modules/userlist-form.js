@@ -30,16 +30,17 @@
 module.exports = (function () {
   'use strict';
   // Global dependencies
-  var m = require('mithril');
+  var m  = require('mithril');
   var ld = require('lodash');
+
   // Local dependencies
-  var conf = require('../configuration.js');
-  var auth = require('../auth.js');
-  var layout = require('./layout.js');
-  var notif = require('../widgets/notification.js');
-  var tag = require('../widgets/tag.js');
-  var form = require('../helpers/form.js');
-  var model = require('../model/group.js');
+  var conf       = require('../configuration.js');
+  var auth       = require('../auth.js');
+  var layout     = require('./layout.js');
+  var notif      = require('../widgets/notification.js');
+  var tag        = require('../widgets/tag.js');
+  var form       = require('../helpers/form.js');
+  var model      = require('../model/group.js');
   var cleanupXss = require('../helpers/cleanupXss.js');
 
   var ulistform = {};
@@ -58,7 +59,7 @@ module.exports = (function () {
       return m.route('/login');
     }
 
-    var c = {};
+    var c     = {};
     c.addView = m.prop(m.route() === '/myuserlists/add');
 
     c.fields = ['name'];
@@ -72,12 +73,12 @@ module.exports = (function () {
     */
 
     var init = function () {
-      var uInfo = auth.userInfo();
+      var uInfo   = auth.userInfo();
       var current = [];
       if (!c.addView()) {
-        c.key = m.route.param('key');
+        c.key      = m.route.param('key');
         c.userlist = uInfo.userlists[c.key];
-        current = ld.pluck(c.userlist.users, 'login');
+        current    = ld.pluck(c.userlist.users, 'login');
         c.data.name(c.userlist.name);
       }
       var tags = ld.reduce(uInfo.userlists, function (memo, ul) {
@@ -128,7 +129,7 @@ module.exports = (function () {
         successMsg = conf.LANG.USERLIST.INFO.EDIT_SUCCESS;
       }
       m.request(opts).then(function (resp) {
-        var u = auth.userInfo();
+        var u       = auth.userInfo();
         u.userlists = resp.value;
         auth.userInfo(u);
         notif.success({ body: successMsg });
@@ -232,9 +233,9 @@ module.exports = (function () {
   */
 
   view.form = function (c) {
-    var name = view.field.name(c);
+    var name               = view.field.name(c);
     name.label.attrs.class = 'col-sm-4';
-    var fields = [
+    var fields             = [
       m('.form-group', [
         name.label,
         m('.col-sm-7', name.input)

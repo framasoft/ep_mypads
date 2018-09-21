@@ -30,15 +30,15 @@
 module.exports = (function () {
   'use strict';
   // Dependencies
-  var m = require('mithril');
-  var ld = require('lodash');
-  var auth = require('../auth.js');
+  var m      = require('mithril');
+  var ld     = require('lodash');
+  var auth   = require('../auth.js');
   var layout = require('./layout.js');
-  var form = require('../helpers/form.js');
-  var group = require('./group-form.js');
-  var conf = require('../configuration.js');
-  var model = require('../model/group.js');
-  var notif = require('../widgets/notification.js');
+  var form   = require('../helpers/form.js');
+  var group  = require('./group-form.js');
+  var conf   = require('../configuration.js');
+  var model  = require('../model/group.js');
+  var notif  = require('../widgets/notification.js');
 
   var pf = {};
 
@@ -56,14 +56,15 @@ module.exports = (function () {
     }
     var c = { groupParams: m.prop(true) };
 
-    var key = m.route.param('pad');
+    var key  = m.route.param('pad');
     var gkey = m.route.param('group');
 
     var init = function () {
-      c.addView = m.prop(!key);
+      c.addView      = m.prop(!key);
       document.title = (c.addView() ? conf.LANG.GROUP.PAD.ADD :
         conf.LANG.GROUP.PAD.EDIT);
       document.title += ' - ' + conf.SERVER.title;
+
       c.fields = ['name', 'visibility', 'password', 'readonly'];
       form.initFields(c, c.fields);
       c.group = model.groups()[gkey];
@@ -72,8 +73,8 @@ module.exports = (function () {
         ld.map(ld.keys(c.pad), function (f) {
             c.data[f] = m.prop(c.pad[f]);
         });
-        var ownFields = [ c.data.visibility(), c.data.readonly() ];
-        c.groupParams = m.prop(ld.every(ownFields, ld.isNull));
+        var ownFields   = [ c.data.visibility(), c.data.readonly() ];
+        c.groupParams   = m.prop(ld.every(ownFields, ld.isNull));
         c.data.password = m.prop('');
       }
     };
@@ -108,7 +109,7 @@ module.exports = (function () {
         url: opts.url,
         data: ld.assign(c.data, { auth_token: auth.token() })
       }).then(function (resp) {
-        var pads = model.pads();
+        var pads       = model.pads();
         pads[resp.key] = resp.value;
         model.pads(pads);
         if (c.addView()) {
@@ -167,10 +168,10 @@ module.exports = (function () {
     var name = group.views.field.name(c);
     ld.assign(name.input.attrs, { config: form.focusOnInit });
     var isGroupRestricted = (c.group.visibility === 'restricted');
-    var visibility = group.views.field.visibility(c, isGroupRestricted);
+    var visibility        = group.views.field.visibility(c, isGroupRestricted);
     ld.assign(visibility.label.attrs, { style: 'clear: left;' });
-    var password = group.views.field.password(c);
-    var readonly = group.views.field.readonly(c);
+    var password    = group.views.field.password(c);
+    var readonly    = group.views.field.readonly(c);
     var groupParams = view.groupParams(c);
 
     var fields = [

@@ -30,18 +30,19 @@
 module.exports = (function () {
   'use strict';
   // Global dependencies
-  var m = require('mithril');
-  var ld = require('lodash');
+  var m      = require('mithril');
+  var ld     = require('lodash');
   var encode = require('js-base64').Base64.encode;
+
   // Local dependencies
-  var conf = require('../configuration.js');
-  var auth = require('../auth.js');
-  var layout = require('./layout.js');
-  var model = require('../model/group.js');
-  var padMark = require('./pad-mark.js');
-  var padShare = require('./pad-share.js');
+  var conf      = require('../configuration.js');
+  var auth      = require('../auth.js');
+  var layout    = require('./layout.js');
+  var model     = require('../model/group.js');
+  var padMark   = require('./pad-mark.js');
+  var padShare  = require('./pad-share.js');
   var expandPad = require('../helpers/expandPad.js');
-  var ready = require('../helpers/ready.js');
+  var ready     = require('../helpers/ready.js');
 
   var pad = {};
 
@@ -59,8 +60,8 @@ module.exports = (function () {
       showIframe: m.prop(true)
     };
 
-    c.isAuth = auth.isAuthenticated();
-    c.isGuest = !c.isAuth;
+    c.isAuth    = auth.isAuthenticated();
+    c.isGuest   = !c.isAuth;
     c.bookmarks = (c.isAuth ? auth.userInfo().bookmarks.pads : []);
 
     c.gid = m.route.param('group');
@@ -77,8 +78,8 @@ module.exports = (function () {
       if (err) { return m.route('/mypads'); }
       var _init = function () {
         var data = c.isGuest ? model.tmp() : model;
-        c.group = data.groups()[c.gid] || {};
-        c.pad = data.pads()[c.pid];
+        c.group  = data.groups()[c.gid] || {};
+        c.pad    = data.pads()[c.pid];
         if (!c.pad) { return m.route('/mypads'); }
         document.title = conf.LANG.GROUP.PAD.PAD + ' ' + c.pad.name;
         document.title += ' - ' + conf.SERVER.title;
@@ -114,8 +115,8 @@ module.exports = (function () {
         function (err) {
           if (err) { return c.sendPass(false); }
           var data = c.isGuest ? model.tmp() : model;
-          c.group = data.groups()[c.gid];
-          c.pad = data.pads()[c.pid];
+          c.group  = data.groups()[c.gid];
+          c.pad    = data.pads()[c.pid];
           c.sendPass(true);
         }
       );
@@ -165,6 +166,7 @@ module.exports = (function () {
       if (conf.SERVER.useFirstLastNameInPads) {
         var firstname = (u.firstname) ? u.firstname : '';
         var lastname  = (u.lastname)  ? u.lastname  : '';
+
         n = '&userName=' + firstname + ' ' + lastname;
       } else if (u.useLoginAndColorInPads) {
         if (u.padNickname) {

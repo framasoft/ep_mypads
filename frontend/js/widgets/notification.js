@@ -55,9 +55,9 @@ module.exports = (function () {
   * after a delay a notification.
   */
   notif.controller = function () {
-    var c = {};
+    var c     = {};
     c.toClose = {};
-    c.close = function (id, from) {
+    c.close   = function (id, from) {
       // with from false, no clear because notimeout
       if ((from) && (from !== 'timeout')) {
         window.clearTimeout(c.toClose[id]);
@@ -124,30 +124,30 @@ module.exports = (function () {
 
   notif.success = function (options, callback) {
     options.title = options.title || conf.LANG.NOTIFICATION.SUCCESS;
-    options.cls = 'alert alert-success';
-    options.icon = 'ok';
+    options.cls   = 'alert alert-success';
+    options.icon  = 'ok';
     notif.send(options, callback);
   };
 
   notif.info = function (options, callback) {
     options.title = options.title || conf.LANG.NOTIFICATION.INFO;
-    options.cls = 'alert alert-info';
-    options.icon = 'info-sign';
+    options.cls   = 'alert alert-info';
+    options.icon  = 'info-sign';
     notif.send(options, callback);
   };
 
   notif.warning = function (options, callback) {
-    options.title = conf.LANG.NOTIFICATION.WARNING;
-    options.cls = 'alert alert-warning';
-    options.icon = 'warning-sign';
+    options.title   = conf.LANG.NOTIFICATION.WARNING;
+    options.cls     = 'alert alert-warning';
+    options.icon    = 'warning-sign';
     options.timeout = 15;
     notif.send(options, callback);
   };
 
   notif.error = function (options, callback) {
-    options.title = conf.LANG.NOTIFICATION.ERROR;
-    options.cls = 'alert alert-danger';
-    options.icon = 'exclamation-sign';
+    options.title   = conf.LANG.NOTIFICATION.ERROR;
+    options.cls     = 'alert alert-danger';
+    options.icon    = 'exclamation-sign';
     options.timeout = 15;
     notif.send(options, callback);
   };

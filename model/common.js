@@ -27,8 +27,8 @@ module.exports = (function() {
   'use strict';
 
   // Dependencies
-  var ld = require('lodash');
-  var crypto = require('crypto');
+  var ld      = require('lodash');
+  var crypto  = require('crypto');
   var storage = require('../storage.js');
 
   /**
@@ -55,7 +55,7 @@ module.exports = (function() {
   common.hashPassword = function (salt, password, callback) {
     crypto.randomBytes(40, function (ex, buf) {
       if (ex) { return callback(ex); }
-      salt = salt || buf.toString('hex');
+      salt       = salt || buf.toString('hex');
       var sha512 = crypto.createHash('sha512');
       sha512.update(salt);
       callback(null, {

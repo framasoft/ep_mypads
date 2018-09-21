@@ -30,14 +30,15 @@
 
 module.exports = (function () {
   // Global dependencies
-  var m = require('mithril');
+  var m  = require('mithril');
   var ld = require('lodash');
+
   // Local dependencies
-  var conf = require('../configuration.js');
-  var auth = require('../auth.js');
-  var notif = require('../widgets/notification.js');
-  var layout = require('./layout.js');
-  var form = require('../helpers/form.js');
+  var conf      = require('../configuration.js');
+  var auth      = require('../auth.js');
+  var notif     = require('../widgets/notification.js');
+  var layout    = require('./layout.js');
+  var form      = require('../helpers/form.js');
   var subscribe = require('./subscribe.js');
 
   var admin = {};
@@ -51,6 +52,7 @@ module.exports = (function () {
   admin.controller = function () {
     if (!auth.isAdmin()) { return m.route('/admin'); }
     document.title = conf.LANG.ADMIN.FORM_USER_EDIT + ' - ' + conf.SERVER.title;
+
     var c = {
       adminView: m.prop(true),
       profileView: m.prop(false),

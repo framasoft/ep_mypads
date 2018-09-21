@@ -30,17 +30,18 @@
 module.exports = (function () {
   'use strict';
   // Global dependencies
-  var m = require('mithril');
+  var m  = require('mithril');
   var ld = require('lodash');
+
   // Local dependencies
-  var conf = require('../configuration.js');
-  var auth = require('../auth.js');
-  var u = auth.userInfo;
-  var layout = require('./layout.js');
-  var model = require('../model/group.js');
-  var padShare = require('./pad-share.js');
+  var conf               = require('../configuration.js');
+  var auth               = require('../auth.js');
+  var u                  = auth.userInfo;
+  var layout             = require('./layout.js');
+  var model              = require('../model/group.js');
+  var padShare           = require('./pad-share.js');
   var sortingPreferences = require('../helpers/sortingPreferences.js');
-  var groupMark = require('./group-mark.js');
+  var groupMark          = require('./group-mark.js');
 
   var group = {};
 
@@ -56,7 +57,7 @@ module.exports = (function () {
       return m.route('/login');
     }
     document.title = conf.LANG.GROUP.MYGROUPS + ' - ' + conf.SERVER.title;
-    var c = { groups: {} };
+    var c          = { groups: {} };
 
     /**
     * ### filters
@@ -120,9 +121,9 @@ module.exports = (function () {
     c.filterVisibility = function (visibility) {
       if (c.filterVisibVal === visibility) {
         c.filters.visibility = false;
-        c.filterVisibVal = false;
+        c.filterVisibVal     = false;
       } else {
-        c.filterVisibVal = visibility;
+        c.filterVisibVal     = visibility;
         c.filters.visibility = function (g) {
           return (g.visibility === visibility);
         };
@@ -138,7 +139,7 @@ module.exports = (function () {
     * characters or more.
     */
 
-    c.search = m.prop('');
+    c.search       = m.prop('');
     c.filterSearch = function () {
       if (c.search().length > 2) {
         c.filters.search = function (g) {
@@ -161,12 +162,12 @@ module.exports = (function () {
 
     window.c = c;
     c.sortField = m.prop(sortingPreferences.groupByField());
-    c.sortAsc = m.prop(sortingPreferences.groupAsc());
-    c.sortBy = function (field) {
+    c.sortAsc   = m.prop(sortingPreferences.groupAsc());
+    c.sortBy    = function (field) {
       if (c.sortField() === field) { c.sortAsc(!c.sortAsc()); }
       c.sortField(field);
       var direction = c.sortAsc() ? 'asc' : 'desc';
-      c.groups = ld.transform(c.groups, function (memo, groups, type) {
+      c.groups      = ld.transform(c.groups, function (memo, groups, type) {
         memo[type] = ld.sortByOrder(groups, field, direction);
       });
       sortingPreferences.updateValues({
@@ -350,11 +351,11 @@ module.exports = (function () {
   };
 
   view.group = function (c, g) {
-    var padRoute = '/mypads/group/' + g._id;
+    var padRoute     = '/mypads/group/' + g._id;
     var isBookmarked = (ld.includes(u().bookmarks.groups, g._id));
-    var GROUP = conf.LANG.GROUP;
-    var isAdmin = ld.includes(g.admins, u()._id);
-    var actions = [
+    var GROUP        = conf.LANG.GROUP;
+    var isAdmin      = ld.includes(g.admins, u()._id);
+    var actions      = [
       (function () {
         if (g.visibility !== 'restricted' || conf.SERVER.allPadsPublicsAuthentifiedOnly) {
           return m('button.btn.btn-default.btn-xs', {
@@ -456,9 +457,9 @@ module.exports = (function () {
   view._groups = function (c, type) {
     return ld.map(c.groups[type], ld.partial(view.group, c));
   };
-  view.groups = ld.partialRight(view._groups, 'normal');
+  view.groups     = ld.partialRight(view._groups, 'normal');
   view.bookmarked = ld.partialRight(view._groups, 'bookmarked');
-  view.archived = ld.partialRight(view._groups, 'archived');
+  view.archived   = ld.partialRight(view._groups, 'archived');
 
   view.main = function (c) {
     return m('section', [

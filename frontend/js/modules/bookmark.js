@@ -31,16 +31,17 @@
 module.exports = (function () {
   'use strict';
   // Global dependencies
-  var m = require('mithril');
+  var m  = require('mithril');
   var ld = require('lodash');
+
   // Local dependencies
-  var conf = require('../configuration.js');
-  var auth = require('../auth.js');
-  var u = auth.userInfo;
-  var layout = require('./layout.js');
+  var conf      = require('../configuration.js');
+  var auth      = require('../auth.js');
+  var u         = auth.userInfo;
+  var layout    = require('./layout.js');
   var groupMark = require('./group-mark.js');
-  var padMark = require('./pad-mark.js');
-  var model = require('../model/group.js');
+  var padMark   = require('./pad-mark.js');
+  var model     = require('../model/group.js');
 
   var bookmark = {};
 
@@ -68,7 +69,7 @@ module.exports = (function () {
 
     c.computeBookmarks = function () {
       var uMarks = u().bookmarks;
-      var items = function (data, marks) {
+      var items  = function (data, marks) {
         return  ld(data)
           .values()
           .filter(function (v) { return ld.includes(marks, v._id); })
@@ -137,7 +138,7 @@ module.exports = (function () {
   };
 
   view.groups = ld.partialRight(view._items, 'groups', conf.LANG.GROUP.NONE);
-  view.pads = ld.partialRight(view._items, 'pads', conf.LANG.GROUP.PAD.NONE);
+  view.pads   = ld.partialRight(view._items, 'pads', conf.LANG.GROUP.PAD.NONE);
 
   view.aside = function () {
     return m('section.user-aside', [

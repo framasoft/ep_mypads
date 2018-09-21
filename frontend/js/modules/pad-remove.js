@@ -30,10 +30,10 @@
 module.exports = (function () {
   'use strict';
   // Dependencies
-  var m = require('mithril');
-  var ld = require('lodash');
-  var auth = require('../auth.js');
-  var conf = require('../configuration.js');
+  var m     = require('mithril');
+  var ld    = require('lodash');
+  var auth  = require('../auth.js');
+  var conf  = require('../configuration.js');
   var model = require('../model/group.js');
   var notif = require('../widgets/notification.js');
 
@@ -51,7 +51,7 @@ module.exports = (function () {
       conf.unauthUrl(true);
       return m.route('/login');
     }
-    var key = m.route.param('pad');
+    var key  = m.route.param('pad');
     var gkey = m.route.param('group');
     if (window.confirm(conf.LANG.GROUP.INFO.PAD_REMOVE_SURE)) {
       m.request({

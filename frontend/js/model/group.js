@@ -30,14 +30,14 @@
 module.exports = (function () {
   'use strict';
   // Global dependencies
-  var m = require('mithril');
-  var ld = require('lodash');
-  var conf = require('../configuration.js');
-  var auth = require('../auth.js');
-  var notif = require('../widgets/notification.js');
+  var m      = require('mithril');
+  var ld     = require('lodash');
+  var conf   = require('../configuration.js');
+  var auth   = require('../auth.js');
+  var notif  = require('../widgets/notification.js');
   var encode = require('js-base64').Base64.encode;
 
-  var model = {};
+  var model  = {};
   model.init = function () {
     ld.assign(model, {
       groups: m.prop({}),
@@ -66,7 +66,7 @@ module.exports = (function () {
       if (callback) { callback(err); }
     };
     var isAuth = auth.isAuthenticated();
-    var data = (isAuth ?  { auth_token: auth.token() } : undefined);
+    var data   = (isAuth ?  { auth_token: auth.token() } : undefined);
     m.request({
       url: conf.URLS.GROUP,
       method: 'GET',
@@ -76,7 +76,7 @@ module.exports = (function () {
         model.groups(resp.value.groups); 
         model.pads(resp.value.pads);
         model.bookmarks(resp.value.bookmarks);
-        var u = auth.userInfo();
+        var u                   = auth.userInfo();
         resp.value.users[u._id] = u;
         model.users(resp.value.users);
         var tags = ld(resp.value.groups)
@@ -126,17 +126,17 @@ module.exports = (function () {
       if (auth.isAuthenticated()) { opts.url += '&auth_token=' + auth.token(); }
       m.request(opts).then(
         function (resp) {
-          var data = model.tmp();
-          var pads = data.pads();
+          var data       = model.tmp();
+          var pads       = data.pads();
           pads[resp.key] = resp.value;
           data.pads(pads);
           model.tmp(data);
           if (callback) { callback(null, resp); }
         }, function (err) {
           if (err.error === 'BACKEND.ERROR.TYPE.PASSWORD_MISSING') {
-            var value = { _id: keys.pad, visibility: 'private' };
-            var data = model.tmp();
-            var pads = data.pads();
+            var value      = { _id: keys.pad, visibility: 'private' };
+            var data       = model.tmp();
+            var pads       = data.pads();
             pads[keys.pad] = value;
             data.pads(pads);
             model.tmp(data);
@@ -162,8 +162,8 @@ module.exports = (function () {
       if (auth.isAuthenticated()) { opts.url += '&auth_token=' + auth.token(); }
       m.request(opts).then(
         function (resp) {
-          var data = model.tmp();
-          var groups = data.groups();
+          var data         = model.tmp();
+          var groups       = data.groups();
           groups[resp.key] = resp.value;
           data.groups(groups);
           data.pads(ld.merge(data.pads(), resp.pads));

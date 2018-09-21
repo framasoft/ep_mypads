@@ -1,4 +1,6 @@
 /**
+*  vim:set sw=2 ts=2 sts=2 ft=javascript expandtab:
+*
 *  # FilterPads helpers functions
 *
 *  ## License
@@ -43,7 +45,7 @@ module.exports = (function () {
       });
     } else {
       var rgx = new RegExp(keyword, 'i');
-      pads = document.querySelectorAll('li.list-group-item.group-pad-item');
+      pads    = document.querySelectorAll('li.list-group-item.group-pad-item');
       [].forEach.call(pads, function(element) {
         if (element.getAttribute('data-padname').match(rgx)) {
           element.classList.remove('hidden');

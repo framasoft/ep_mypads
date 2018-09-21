@@ -47,10 +47,9 @@ module.exports = (function () {
   var common         = require('./common.js');
   var storage        = require('../storage.js');
   var commonGroupPad = require ('./common-group-pad.js');
-
-  var PPREFIX = storage.DBPREFIX.PAD;
-  var UPREFIX = storage.DBPREFIX.USER;
-  var GPREFIX = storage.DBPREFIX.GROUP;
+  var PPREFIX        = storage.DBPREFIX.PAD;
+  var UPREFIX        = storage.DBPREFIX.USER;
+  var GPREFIX        = storage.DBPREFIX.GROUP;
 
   /**
   * ## Description
@@ -109,10 +108,11 @@ module.exports = (function () {
       u.users = [];
     }
     var vVal = ['restricted', 'private', 'public'];
-    var v = p.visibility;
+    var v    = p.visibility;
+
     u.visibility = (ld.isString(v) && ld.includes(vVal, v)) ? v : null;
-    u.password = ld.isString(p.password) ? p.password : null;
-    u.readonly = ld.isBoolean(p.readonly) ? p.readonly : null;
+    u.password   = ld.isString(p.password) ? p.password : null;
+    u.readonly   = ld.isBoolean(p.readonly) ? p.readonly : null;
     return u;
   };
 
@@ -157,7 +157,7 @@ module.exports = (function () {
       });
     };
     var removeFromBookmarks = function (g) {
-      var uids = ld.union(g.admins, g.users);
+      var uids  = ld.union(g.admins, g.users);
       var ukeys = ld.map(uids, function (u) { return UPREFIX + u; });
       storage.fn.getKeys(ukeys, function (err, users) {
         if (err) { return callback(err); }
@@ -261,7 +261,7 @@ module.exports = (function () {
 
   pad.set = function (params, callback) {
     common.addSetInit(params, callback, ['name', 'group']);
-    var p = pad.fn.assignProps(params);
+    var p     = pad.fn.assignProps(params);
     var check = function () {
       commonGroupPad.handlePassword(p, function (err, password) {
         if (err) { return callback(err); }
@@ -284,7 +284,7 @@ module.exports = (function () {
         check();
       });
     } else {
-      p._id = (slugg(p.name) + '-' + cuid.slug());
+      p._id   = (slugg(p.name) + '-' + cuid.slug());
       p.ctime = Date.now();
       check();
     }
@@ -346,7 +346,7 @@ module.exports = (function () {
       function (err, pads) {
         if (err) { return callback(err); }
         pads = ld.reduce(pads, function (memo, val, key) {
-          key = key.substr(PPREFIX.length);
+          key       = key.substr(PPREFIX.length);
           memo[key] = val;
           return memo;
         }, {});

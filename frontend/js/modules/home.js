@@ -30,8 +30,9 @@
 module.exports = (function () {
   // Global dependencies
   var m = require('mithril');
+
   // Local dependencies
-  var auth = require('../auth.js');
+  var auth   = require('../auth.js');
   var layout = require('./layout.js');
 
   var home = {

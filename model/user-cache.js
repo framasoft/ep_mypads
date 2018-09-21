@@ -28,8 +28,8 @@ module.exports = (function () {
 
   // Dependencies
   require('../helpers.js'); // Helpers auto-init
-  var ld = require('lodash');
-  var conf = require('../configuration.js');
+  var ld      = require('lodash');
+  var conf    = require('../configuration.js');
   var storage = require('../storage.js');
   var UPREFIX = storage.DBPREFIX.USER;
 
@@ -49,7 +49,7 @@ module.exports = (function () {
 
   var userCache = { logins: {}, emails: {}, firstname: {}, lastname: {}, userCacheReady: false };
 
-  userCache.fn = {};
+  userCache.fn  = {};
 
   /**
   * ## Public Functions
@@ -75,12 +75,12 @@ module.exports = (function () {
         if (results) {
           var memo = ld.reduce(results, function (memo, val, key) {
             if (val) {
-              var k = key.replace(UPREFIX, '');
+              var k                  = key.replace(UPREFIX, '');
               memo.logins[val.login] = k;
-              var email = (conf.get('insensitiveMailMatch')) ? val.email.toLowerCase() : val.email;
-              memo.emails[email] = k;
-              memo.firstname[k] = val.firstname;
-              memo.lastname[k] = val.lastname;
+              var email              = (conf.get('insensitiveMailMatch')) ? val.email.toLowerCase() : val.email;
+              memo.emails[email]     = k;
+              memo.firstname[k]      = val.firstname;
+              memo.lastname[k]       = val.lastname;
             }
             return memo;
           }, { logins: {}, emails: {}, firstname: {}, lastname: {} });
@@ -113,7 +113,7 @@ module.exports = (function () {
     }
     return ld.reduce(loginsMails, function (memo, lm) {
       var email = (conf.get('insensitiveMailMatch')) ? lm.toLowerCase() : lm;
-      var uid = userCache.logins[lm] || userCache.emails[email];
+      var uid   = userCache.logins[lm] || userCache.emails[email];
       if (uid) {
         memo.uids.push(uid);
         memo.present.push(lm);

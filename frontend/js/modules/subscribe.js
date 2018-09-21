@@ -30,16 +30,17 @@
 module.exports = (function () {
   // Dependencies
   var ld = require('lodash');
-  var m = require('mithril');
+  var m  = require('mithril');
+
   // Local Dependencies
-  var conf = require('../configuration.js');
-  var form = require('../helpers/form.js');
-  var model = require('../model/group.js');
-  var notif = require('../widgets/notification.js');
-  var auth = require('../auth.js');
+  var conf   = require('../configuration.js');
+  var form   = require('../helpers/form.js');
+  var model  = require('../model/group.js');
+  var notif  = require('../widgets/notification.js');
+  var auth   = require('../auth.js');
   var layout = require('./layout.js');
-  var user = require('./user.js');
-  var ready = require('../helpers/ready.js');
+  var user   = require('./user.js');
+  var ready  = require('../helpers/ready.js');
 
   var subscribe = {};
 
@@ -53,8 +54,8 @@ module.exports = (function () {
   */
 
   subscribe.controller = function () {
-    var c = { adminView: m.prop(false) };
-    c.profileView = m.prop((m.route() === '/myprofile'));
+    var c          = { adminView: m.prop(false) };
+    c.profileView  = m.prop((m.route() === '/myprofile'));
     document.title = (c.profileView() ? conf.LANG.USER.PROFILE :
       conf.LANG.USER.SUBSCRIBE);
     document.title += ' - ' + conf.SERVER.title;
@@ -298,7 +299,7 @@ module.exports = (function () {
       ];
     } else {
       fields.email.label.attrs.class = 'col-sm-4';
-      requiredFields = [
+      requiredFields                 = [
         m('.form-group', [
           fields.email.label,
           m('.col-sm-7', fields.email.input)
@@ -318,7 +319,7 @@ module.exports = (function () {
       ];
     }
     if (c.profileView()) {
-      var passC = user.view.field.passwordCurrent(c);
+      var passC                = user.view.field.passwordCurrent(c);
       passC.input.attrs.config = form.focusOnInit;
       requiredFields.splice(1, 0,
         m('.form-group', [
@@ -336,10 +337,10 @@ module.exports = (function () {
         ])
       );
     } else if (!c.adminView()) {
-      var log = fields.login;
-      log.input.attrs.config = form.focusOnInit;
+      var log                   = fields.login;
+      log.input.attrs.config    = form.focusOnInit;
       log.input.attrs.maxlength = 40;
-      log.label.attrs.class = 'col-sm-4';
+      log.label.attrs.class     = 'col-sm-4';
       requiredFields.splice(0, 0,
         m('.form-group', [
           log.label,
@@ -347,13 +348,13 @@ module.exports = (function () {
         ])
       );
     }
-    var USER = conf.LANG.USER;
+    var USER      = conf.LANG.USER;
     var profOrAdm = (c.profileView() || c.adminView());
     var optionalFields;
     if (conf.SERVER.authMethod !== 'internal' && c.profileView()) {
       fields.organization.label.attrs.class = 'col-sm-4';
-      fields.color.label.attrs.class = 'col-sm-4';
-      optionalFields = [
+      fields.color.label.attrs.class        = 'col-sm-4';
+      optionalFields                        = [
         m('legend.opt', conf.LANG.USER.OPTIONAL_FIELDS),
           m('.form-group', [
             fields.organization.label,
@@ -372,11 +373,11 @@ module.exports = (function () {
           ])
       ];
     } else {
-      fields.firstname.label.attrs.class = 'col-sm-4';
-      fields.lastname.label.attrs.class = 'col-sm-4';
-      fields.padNickname.label.attrs.class = 'col-sm-4';
+      fields.firstname.label.attrs.class    = 'col-sm-4';
+      fields.lastname.label.attrs.class     = 'col-sm-4';
+      fields.padNickname.label.attrs.class  = 'col-sm-4';
       fields.organization.label.attrs.class = 'col-sm-4';
-      fields.color.label.attrs.class = 'col-sm-4';
+      fields.color.label.attrs.class        = 'col-sm-4';
       optionalFields = [
         m('legend.opt', conf.LANG.USER.OPTIONAL_FIELDS),
           m('.form-group', [

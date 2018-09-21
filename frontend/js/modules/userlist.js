@@ -31,13 +31,14 @@
 module.exports = (function () {
   'use strict';
   // Global dependencies
-  var m = require('mithril');
+  var m  = require('mithril');
   var ld = require('lodash');
+
   // Local dependencies
-  var conf = require('../configuration.js');
-  var auth = require('../auth.js');
+  var conf   = require('../configuration.js');
+  var auth   = require('../auth.js');
   var layout = require('./layout.js');
-  var model = require('../model/group.js');
+  var model  = require('../model/group.js');
 
   var userlist = {};
 
@@ -72,7 +73,7 @@ module.exports = (function () {
 
   view.userlist = function (c, ul, key) {
     var ulistRoute = '/myuserlists/' + key;
-    var actions = [
+    var actions    = [
       m('a.btn.btn-default.btn-xs', {
         href: ulistRoute + '/edit',
         config: m.route,

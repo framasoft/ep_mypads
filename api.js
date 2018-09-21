@@ -145,8 +145,7 @@ module.exports = (function () {
     */
     var idxTpl = ld.template(rFS(__dirname + '/templates/index.html', rFSOpts));
     var idxHandle = function (req, res) {
-      var cssTag = (conf.get('hideHelpBlocks')) ? '<link href="css/mypads-hide-help-blocks.css" rel="stylesheet">' : '';
-      return res.send(idxTpl({ HTMLExtraHead: conf.get('HTMLExtraHead'), hideHelpBlocks: cssTag }));
+      return res.send(idxTpl({ HTMLExtraHead: conf.get('HTMLExtraHead'), hideHelpBlocks: conf.get('hideHelpBlocks') }));
     };
     app.get('/mypads/index.html', idxHandle);
     app.get('/mypads/', idxHandle);

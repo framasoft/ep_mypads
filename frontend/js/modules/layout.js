@@ -130,6 +130,9 @@ module.exports = (function () {
       ]);
     };
     if (auth.isAuthenticated()) {
+      if (!conf.SERVER.hideHelpBlocks && auth.userInfo().hideHelp) {
+        document.getElementsByTagName('body')[0].classList.add('hidehelpblocks');
+      }
       return ld.map(_routes.auth, activeRoute);
     } else if (auth.isAdmin()) {
       return ld.map(_routes.admin, activeRoute);

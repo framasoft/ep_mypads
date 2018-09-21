@@ -374,6 +374,30 @@ module.exports = (function () {
   };
 
   /**
+  * #### hideHelp field
+  */
+
+  user.view.field.hideHelp = function (c) {
+    var labelTxt = conf.LANG.ADMIN.FIELD.HIDE_HELP_BLOCKS;
+    var dataMsg  = conf.LANG.ADMIN.INFO.HIDE_HELP_BLOCKS;
+    return {
+      label: m('label', [
+        m('input', {
+          type: 'checkbox',
+          name: 'hideHelp',
+          checked: c.data.hideHelp(),
+          onchange: m.withAttr('checked', c.data.hideHelp)
+        }),
+        labelTxt,
+        m('i',{
+          class: 'mp-tooltip glyphicon glyphicon-info-sign',
+          'data-msg': dataMsg
+        })
+      ]),
+    };
+  };
+
+  /**
   * ### aside view
   *
   * `aisde` views :

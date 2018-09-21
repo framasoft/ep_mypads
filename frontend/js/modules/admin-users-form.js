@@ -59,7 +59,7 @@ module.exports = (function () {
 
     var init = function () {
       c.fields = ['login', 'password', 'passwordConfirm', 'email', 'firstname',
-        'lastname', 'organization', 'lang', 'color'];
+        'lastname', 'organization', 'padNickname', 'lang', 'color'];
       form.initFields(c, c.fields);
       var u = c.user();
       ld.forEach(c.fields, function (f) {

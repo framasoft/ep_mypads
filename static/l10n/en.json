@@ -189,8 +189,8 @@
    },
    "GLOBAL": {
       "AND": "and",
-      "DESCRIPTION": "MyPads is an <a href='http://etherpad.org/'>Etherpad</a> plugin which have been founded in 2014 on Ulule by <a href='http://ulule.com/etherpad-framapad/supporters/'>413 backers</a> and organized by the non-profit organization <a href='http://framasoft.org'>Framasoft</a>. It handles:<ul><li>users and their authentication; </li><li>folders of pads per user, unlimited, sharable;</li><li>attached pads, with choice between invite known users to use them, making them private with password or letting them public.</li></ul>",
-      "FOOTER": "Powered by <a href='https://git.framasoft.org/framasoft/ep_mypads'>MyPads</a><br>Published under Apache License 2.0",
+      "DESCRIPTION": "MyPads is an <a href=\"http://etherpad.org/\">Etherpad</a> plugin which have been founded in 2014 on Ulule by <a href=\"http://ulule.com/etherpad-framapad/supporters/\">413 backers</a> and organized by the non-profit organization <a href=\"http://framasoft.org\">Framasoft</a>. It handles:<ul><li>users and their authentication; </li><li>folders of pads per user, unlimited, sharable;</li><li>attached pads, with choice between invite known users to use them, making them private with password or letting them public.</li></ul>",
+      "FOOTER": "Powered by <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads\">MyPads</a><br>Published under Apache License 2.0",
       "LANG": "English",
       "NO": "no",
       "OR": "or",

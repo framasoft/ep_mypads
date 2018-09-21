@@ -32,11 +32,11 @@
 */
 
 // External dependencies
-var ld = require('lodash');
-var jwt = require('jsonwebtoken');
+var ld         = require('lodash');
+var jwt        = require('jsonwebtoken');
 var ExtractJwt = require('passport-jwt').ExtractJwt;
-var LdapAuth = require('ldapauth-fork');
-var CasAuth = require('simple-cas-interface');
+var LdapAuth   = require('ldapauth-fork');
+var CasAuth    = require('simple-cas-interface');
 var settings;
 try {
   // Normal case : when installed as a plugin
@@ -83,14 +83,14 @@ catch (e) {
     };
   }
 }
-var passport = require('passport');
+var passport    = require('passport');
 var JWTStrategy = require('passport-jwt').Strategy;
-var cuid = require('cuid');
+var cuid        = require('cuid');
 
 // Local dependencies
 var common = require('./model/common.js');
-var user = require('./model/user.js');
-var conf = require('./configuration.js');
+var user   = require('./model/user.js');
+var conf   = require('./configuration.js');
 
 var NOT_INTERNAL_AUTH_PWD = 'soooooo_useless';
 
@@ -135,7 +135,7 @@ module.exports = (function () {
   auth.fn.getUser = function (token) {
     var jwt_payload = jwt.decode(token, auth.secret);
     if (!jwt_payload) { return false; }
-    var login = jwt_payload.login;
+    var login    = jwt_payload.login;
     var userAuth = (login && auth.tokens[login]);
     if (userAuth && (auth.tokens[login].key === jwt_payload.key)) {
       return auth.tokens[login];
@@ -281,7 +281,7 @@ module.exports = (function () {
     if (!settings || !settings.users || !settings.users[login]) {
       return callback(new Error('BACKEND.ERROR.USER.NOT_FOUND'), null);
     }
-    var u = settings.users[login];
+    var u   = settings.users[login];
     u.login = login;
     var emsg;
     if (pass !== u.password) {
@@ -353,9 +353,9 @@ module.exports = (function () {
 
   auth.fn.JWTFn = function (req, jwt_payload, admin, callback) {
     var checkFn = (admin ? auth.fn.checkAdminUser : auth.fn.checkMyPadsUser);
-    var ns = (admin ? 'adminTokens' : 'tokens');
-    var login = jwt_payload.login;
-    var token = auth[ns][login];
+    var ns      = (admin ? 'adminTokens' : 'tokens');
+    var login   = jwt_payload.login;
+    var token   = auth[ns][login];
     if (!token || !jwt_payload.key) {
       var pass = jwt_payload.password;
       if (!ld.isString(pass)) {
@@ -366,7 +366,7 @@ module.exports = (function () {
       }
       checkFn(login, pass, function (err, u) {
         if (err) { return callback(err, u); }
-        auth[ns][u.login] = u;
+        auth[ns][u.login]     = u;
         auth[ns][u.login].key = cuid();
         return callback(null, u);
       });

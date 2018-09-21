@@ -30,7 +30,7 @@
 module.exports = (function () {
   // Dependencies
   var cookie = require('js-cookie');
-  var conf = require('../configuration.js');
+  var conf   = require('../configuration.js');
 
   var expandPad = {};
 
@@ -64,9 +64,9 @@ module.exports = (function () {
    * Expand the iframe
    */
   expandPad.expandIframe = function() {
-    var iframe        = document.querySelector('section.pad iframe');
-    var aExpandI      = document.querySelector('a.expand-toggle i');
-    var aExpand       = document.querySelector('a.expand-toggle');
+    var iframe   = document.querySelector('section.pad iframe');
+    var aExpandI = document.querySelector('a.expand-toggle i');
+    var aExpand  = document.querySelector('a.expand-toggle');
 
     if (iframe) {
       iframe.style.height = '80vh';
@@ -92,9 +92,9 @@ module.exports = (function () {
     if (typeof(remember) === 'undefined') {
       remember = true;
     }
-    var iframe        = document.querySelector('section.pad iframe');
-    var aExpandI      = document.querySelector('a.expand-toggle i');
-    var aExpand       = document.querySelector('a.expand-toggle');
+    var iframe   = document.querySelector('section.pad iframe');
+    var aExpandI = document.querySelector('a.expand-toggle i');
+    var aExpand  = document.querySelector('a.expand-toggle');
 
     if (iframe) {
       iframe.style.height = null;

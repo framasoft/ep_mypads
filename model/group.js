@@ -27,18 +27,18 @@ module.exports = (function () {
   'use strict';
 
   // Dependencies
-  var ld = require('lodash');
-  var cuid = require('cuid');
-  var slugg = require('slugg');
-  var asyncMod = require('async');
-  var storage = require('../storage.js');
-  var common = require('./common.js');
+  var ld             = require('lodash');
+  var cuid           = require('cuid');
+  var slugg          = require('slugg');
+  var asyncMod       = require('async');
+  var storage        = require('../storage.js');
+  var common         = require('./common.js');
   var commonGroupPad = require ('./common-group-pad.js');
-  var userCache = require('./user-cache.js');
-  var deletePad = require('./pad.js').del;
-  var GPREFIX = storage.DBPREFIX.GROUP;
-  var UPREFIX = storage.DBPREFIX.USER;
-  var PPREFIX = storage.DBPREFIX.PAD;
+  var userCache      = require('./user-cache.js');
+  var deletePad      = require('./pad.js').del;
+  var GPREFIX        = storage.DBPREFIX.GROUP;
+  var UPREFIX        = storage.DBPREFIX.USER;
+  var PPREFIX        = storage.DBPREFIX.PAD;
 
   /**
   * ## Description
@@ -104,7 +104,7 @@ module.exports = (function () {
       storage.fn.getKeys(padsKeys, function (err, pads) {
         if (err) { return callback(err); }
         pads = ld.reduce(pads, function (memo, val, key) {
-          key = key.substr(PPREFIX.length);
+          key       = key.substr(PPREFIX.length);
           memo[key] = val;
           return memo;
         }, {});
@@ -142,7 +142,7 @@ module.exports = (function () {
       function (err, groups) {
         if (err) { return callback(err); }
         groups = ld.reduce(groups, function (memo, val, key) {
-          key = key.substr(GPREFIX.length);
+          key       = key.substr(GPREFIX.length);
           memo[key] = val;
           return memo;
         }, {});
@@ -179,7 +179,7 @@ module.exports = (function () {
       function (err, groups) {
         if (err) { return callback(err); }
         groups = ld.reduce(groups, function (memo, val, key) {
-          key = key.substr(GPREFIX.length);
+          key       = key.substr(GPREFIX.length);
           memo[key] = val;
           return memo;
         }, {});
@@ -228,7 +228,7 @@ module.exports = (function () {
 
   group.set = function (params, callback) {
     common.addSetInit(params, callback, ['name', 'admin']);
-    var g = group.fn.assignProps(params);
+    var g     = group.fn.assignProps(params);
     var check = function () {
       commonGroupPad.handlePassword(g, function (err, password) {
         if (err) { return callback(err); }
@@ -251,8 +251,8 @@ module.exports = (function () {
         check();
       });
     } else {
-      g._id = (slugg(g.name) + '-' + cuid.slug());
-      g.pads = [];
+      g._id   = (slugg(g.name) + '-' + cuid.slug());
+      g.pads  = [];
       g.ctime = Date.now();
       check();
     }
@@ -381,7 +381,7 @@ module.exports = (function () {
       if (invite) {
         // Remove users from admin before setting them as invited
         var toRemoveFromAdmins = ld.intersection(g.admins, users.uids);
-        g.admins = ld.filter(g.admins, function(n) {
+        g.admins               = ld.filter(g.admins, function(n) {
           return (ld.indexOf(toRemoveFromAdmins, n) === -1);
         });
         if (ld.size(g.admins) === 0) {
@@ -397,12 +397,12 @@ module.exports = (function () {
       } else {
         // Remove users from invite before setting them as admins
         var toRemoveFromUsers = ld.intersection(g.users, users.uids);
-        g.users = ld.filter(g.users, function(n) {
+        g.users               = ld.filter(g.users, function(n) {
           return (ld.indexOf(toRemoveFromUsers, n) === -1);
         });
 
         // Setting users as admins
-        removed = ld.difference(g.admins, users.uids);
+        removed  = ld.difference(g.admins, users.uids);
         g.admins = ld.unique(ld.reject(users.uids,
           ld.partial(ld.includes, g.users)));
         if ((ld.size(g.admins)) === 0) {
@@ -442,9 +442,9 @@ module.exports = (function () {
   *  - `add`, a string for only one addition, an array for multiple adds.
   */
 
-  group.helper.linkPads = ld.noop;
+  group.helper.linkPads    = ld.noop;
 
-  group.helper.unlinkPads = ld.noop;
+  group.helper.unlinkPads  = ld.noop;
 
   /**
   * ### inviteUsers
@@ -458,7 +458,7 @@ module.exports = (function () {
   * string or array
   */
 
-  group.helper.setAdmins = ld.noop;
+  group.helper.setAdmins   = ld.noop;
 
   /**
   * ### setPassword
@@ -472,14 +472,14 @@ module.exports = (function () {
   * boolean
   */
 
-  group.helper.setPublic = ld.noop;
+  group.helper.setPublic   = ld.noop;
 
   /**
   * ### archive
   * boolean
   */
 
-  group.helper.archive = ld.noop;
+  group.helper.archive     = ld.noop;
 
   /**
   *  ## Internal Functions
@@ -511,18 +511,21 @@ module.exports = (function () {
   group.fn.assignProps = function (params) {
     var p = params;
     var g = { name: p.name };
-    g.description = (ld.isString(p.description) ? p.description : '');
-    p.admins = ld.isArray(p.admins) ? ld.filter(p.admins, ld.isString) : [];
-    g.admins = ld.union([ p.admin ], p.admins);
-    g.users = ld.uniq(p.users);
-    var v = p.visibility;
+
+    g.description = (ld.isString(p.description) ? p.description                    : '');
+    p.admins      = ld.isArray(p.admins)        ? ld.filter(p.admins, ld.isString) : [];
+    g.admins      = ld.union([ p.admin ], p.admins);
+    g.users       = ld.uniq(p.users);
+
+    var v    = p.visibility;
     var vVal = ['restricted', 'private', 'public'];
-    g.visibility = (ld.isString(v) && ld.includes(vVal, v)) ? v : 'restricted';
-    g.password = ld.isString(p.password) ? p.password : null;
-    g.readonly = ld.isBoolean(p.readonly) ? p.readonly : false;
-    g.allowUsersToCreatePads = ld.isBoolean(p.allowUsersToCreatePads) ? p.allowUsersToCreatePads : false;
-    g.archived = ld.isBoolean(p.archived) ? p.archived : false;
-    g.tags = ld.isArray(p.tags) ? p.tags : [];
+
+    g.visibility             = (ld.isString(v) && ld.includes(vVal, v)) ? v                        : 'restricted';
+    g.password               = ld.isString(p.password)                  ? p.password               : null;
+    g.readonly               = ld.isBoolean(p.readonly)                 ? p.readonly               : false;
+    g.allowUsersToCreatePads = ld.isBoolean(p.allowUsersToCreatePads)   ? p.allowUsersToCreatePads : false;
+    g.archived               = ld.isBoolean(p.archived)                 ? p.archived               : false;
+    g.tags                   = ld.isArray(p.tags)                       ? p.tags                   : [];
     return g;
   };
 
@@ -622,10 +625,10 @@ module.exports = (function () {
   */
 
   group.fn.checkSet = function (g, callback) {
-    var pre = ld.curry(function (pre, val) { return pre + val; });
-    var admins = ld.map(g.admins, pre(UPREFIX));
-    var users = ld.map(g.users, pre(UPREFIX));
-    var pads = ld.map(g.pads, pre(PPREFIX));
+    var pre     = ld.curry(function (pre, val) { return pre + val; });
+    var admins  = ld.map(g.admins, pre(UPREFIX));
+    var users   = ld.map(g.users, pre(UPREFIX));
+    var pads    = ld.map(g.pads, pre(PPREFIX));
     var allKeys = ld.union(admins, users, pads);
     common.checkMultiExist(allKeys, function (err, res) {
       if (err) { return callback(err); }
@@ -646,12 +649,12 @@ module.exports = (function () {
   */
 
   group.fn.getPadsAndUsersByGroups = function (groups, callback) {
-    var defs = { pads: PPREFIX, users: UPREFIX };
+    var defs   = { pads: PPREFIX, users: UPREFIX };
     var addPfx = function (pfx, values) {
       return ld.map(values, function (v) { return pfx + v; });
     };
     var keys = ld.reduce(groups, function (memo, val) {
-      memo.pads = ld.union(memo.pads, addPfx(PPREFIX, val.pads));
+      memo.pads  = ld.union(memo.pads, addPfx(PPREFIX, val.pads));
       memo.users = ld.union(memo.users, addPfx(UPREFIX, val.users),
         addPfx(UPREFIX, val.admins));
       return memo;
@@ -663,7 +666,7 @@ module.exports = (function () {
         ld.forIn(keys, function (vals, f) {
           if (ld.includes(vals, key)) { field = f; }
         });
-        key = key.substr(defs[field].length);
+        key              = key.substr(defs[field].length);
         memo[field][key] = val;
         return memo;
       }, { groups: groups, pads: {}, users: {} });

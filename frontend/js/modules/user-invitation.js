@@ -30,16 +30,17 @@
 module.exports = (function () {
   'use strict';
   // Global dependencies
-  var m = require('mithril');
+  var m  = require('mithril');
   var ld = require('lodash');
+
   // Local dependencies
-  var conf = require('../configuration.js');
-  var auth = require('../auth.js');
-  var model = require('../model/group.js');
-  var layout = require('./layout.js');
-  var notif = require('../widgets/notification.js');
-  var tag = require('../widgets/tag.js');
-  var form = require('../helpers/form.js');
+  var conf       = require('../configuration.js');
+  var auth       = require('../auth.js');
+  var model      = require('../model/group.js');
+  var layout     = require('./layout.js');
+  var notif      = require('../widgets/notification.js');
+  var tag        = require('../widgets/tag.js');
+  var form       = require('../helpers/form.js');
   var cleanupXss = require('../helpers/cleanupXss.js');
 
   var invite = {};
@@ -100,21 +101,21 @@ module.exports = (function () {
       return m.route('/login');
     }
 
-    var uInfo = auth.userInfo();
-    var c = {};
+    var uInfo  = auth.userInfo();
+    var c      = {};
     c.isInvite = (m.route.param('action') === 'invite');
 
     var init = function () {
       var group = m.route.param('group');
-      c.group = model.groups()[group];
+      c.group   = model.groups()[group];
       var users = model.users();
-      users = ld.reduce(users, function (memo, val) {
-        memo.byId[val._id] = val;
+      users     = ld.reduce(users, function (memo, val) {
+        memo.byId[val._id]      = val;
         memo.byLogin[val.login] = val;
         memo.byEmail[val.email] = val;
         return memo;
       }, { byId: {}, byLogin: {}, byEmail: {} });
-      c.users = ld.merge(users.byLogin, users.byEmail);
+      c.users     = ld.merge(users.byLogin, users.byEmail);
       var current = ld(users.byId)
         .pick(c.isInvite ? c.group.users : c.group.admins)
         .values()
@@ -138,7 +139,7 @@ module.exports = (function () {
     */
 
     c.userlistAdd = function (ulid) {
-      var ul = uInfo.userlists[ulid];
+      var ul        = uInfo.userlists[ulid];
       c.tag.current = ld.union(c.tag.current, ld.pluck(ul.users, 'login'));
     };
 
@@ -194,7 +195,7 @@ module.exports = (function () {
   };
 
   view.userField = function (c) {
-    var tagInput = tag.views.input(c);
+    var tagInput          = tag.views.input(c);
     tagInput.attrs.config = form.focusOnInit;
     return m('div.tag', [
       m('.form-group', [
@@ -239,7 +240,7 @@ module.exports = (function () {
   };
 
   view.form = function (c) {
-    var GROUP = conf.LANG.GROUP;
+    var GROUP  = conf.LANG.GROUP;
     var fields = [
       m('fieldset', [
         m('legend', (GROUP.INVITE_USERLIST)),

@@ -29,7 +29,7 @@
 
 module.exports = (function () {
   // Dependencies
-  var conf = require('../configuration.js');
+  var conf   = require('../configuration.js');
   var cookie = require('js-cookie');
 
   var sortingPreferences = {};

@@ -30,8 +30,9 @@
 
 module.exports = (function () {
   // Global dependencies
+  var m  = require('mithril');
   var ld = require('lodash');
-  var m = require('mithril');
+
   // Local dependencies
   var conf = require('../configuration.js');
   var form = require('../helpers/form.js');
@@ -64,8 +65,8 @@ module.exports = (function () {
       'data-msg': conf.LANG.USER.INFO.OPTIONAL
     });
   };
-  user.view.icon.firstname = user.view.icon.optional;
-  user.view.icon.lastname = user.view.icon.optional;
+  user.view.icon.firstname    = user.view.icon.optional;
+  user.view.icon.lastname     = user.view.icon.optional;
   user.view.icon.organization = user.view.icon.optional;
 
   /**
@@ -259,7 +260,7 @@ module.exports = (function () {
       class: 'mp-tooltip glyphicon glyphicon-info-sign',
       'data-msg': conf.LANG.USER.INFO.LANG
     });
-    var label = m('label.col-sm-4', { for: 'lang' }, [ conf.LANG.USER.LANG, icon ]);
+    var label  = m('label.col-sm-4', { for: 'lang' }, [ conf.LANG.USER.LANG, icon ]);
     var select = m('select.form-control', {
         name: 'lang',
         required: true,

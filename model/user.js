@@ -28,17 +28,17 @@ module.exports = (function () {
 
   // Dependencies
   require('../helpers.js'); // Helpers auto-init
-  var ld = require('lodash');
-  var cuid = require('cuid');
-  var slugg = require('slugg');
-  var asyncMod = require('async');
-  var conf = require('../configuration.js');
-  var storage = require('../storage.js');
-  var common = require('./common.js');
-  var userCache = require ('./user-cache.js');
+  var ld          = require('lodash');
+  var cuid        = require('cuid');
+  var slugg       = require('slugg');
+  var asyncMod    = require('async');
+  var conf        = require('../configuration.js');
+  var storage     = require('../storage.js');
+  var common      = require('./common.js');
+  var userCache   = require ('./user-cache.js');
   var deleteGroup = require('./group.js').del;
-  var UPREFIX = storage.DBPREFIX.USER;
-  var CPREFIX = storage.DBPREFIX.CONF;
+  var UPREFIX     = storage.DBPREFIX.USER;
+  var CPREFIX     = storage.DBPREFIX.CONF;
   var auth;
 
   /**
@@ -99,8 +99,8 @@ module.exports = (function () {
 
   user.fn.checkPasswordLength = function (password, params) {
     var pass = password;
-    var min = params[CPREFIX + 'passwordMin'];
-    var max = params[CPREFIX + 'passwordMax'];
+    var min  = params[CPREFIX + 'passwordMin'];
+    var max  = params[CPREFIX + 'passwordMax'];
     if (pass.length < min || pass.length > max) {
       return new TypeError('BACKEND.ERROR.TYPE.PASSWORD_SIZE');
     }
@@ -169,7 +169,7 @@ module.exports = (function () {
         res[v] = ld.isString(p[v]) ? p[v] : '';
         return res;
     }, {});
-    u.groups = [];
+    u.groups    = [];
     u.bookmarks = { groups: [], pads: [] };
     u.userlists = {};
     if (!p._id) { u.active = !conf.get('checkMails'); }
@@ -183,9 +183,9 @@ module.exports = (function () {
     } else {
       u.hideHelp = false;
     }
-    var langs = ld.keys(conf.cache.languages);
+    var langs       = ld.keys(conf.cache.languages);
     var defaultLang = conf.get('defaultLanguage');
-    u.lang = (ld.includes(langs, p.lang) ? p.lang : defaultLang);
+    u.lang          = (ld.includes(langs, p.lang) ? p.lang : defaultLang);
     return ld.assign({
       _id: p._id,
       login: p.login,
@@ -409,7 +409,7 @@ module.exports = (function () {
             });
           });
         } else {
-          u._id = (slugg(u.login) + '-' + cuid.slug());
+          u._id   = (slugg(u.login) + '-' + cuid.slug());
           u.ctime = Date.now();
           user.fn.genPassword(null, u, function (err, u) {
             if (err) { return callback(err); }
@@ -490,8 +490,8 @@ module.exports = (function () {
     user.get(opts.login, function (err, u) {
       if (err) { return callback(err); }
       var setUids = function () {
-        var allUids = ld.values(userCache.logins);
-        var uids = ld.filter(opts.uids, ld.partial(ld.includes, allUids));
+        var allUids                    = ld.values(userCache.logins);
+        var uids                       = ld.filter(opts.uids, ld.partial(ld.includes, allUids));
         u.userlists[opts.ulistid].uids = uids;
       };
       switch (opts.crud) {

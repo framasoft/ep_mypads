@@ -48,8 +48,8 @@ module.exports = (function () {
 
   form.icon = function (c, name, info, err) {
     var icls = 'glyphicon mp-tooltip glyphicon-';
-    icls += (c.valid[name]() ? 'info-sign' : 'exclamation-sign');
-    var msg = c.valid[name]() ? info : err;
+    icls    += (c.valid[name]() ? 'info-sign' : 'exclamation-sign');
+    var msg  = c.valid[name]() ? info : err;
     return m('i', {
       class: icls,
       'data-msg': msg
@@ -92,10 +92,10 @@ module.exports = (function () {
   */
 
   form.initFields = function (c, names) {
-    c.data = {};
+    c.data  = {};
     c.valid = {};
     names.forEach(function (n) {
-      c.data[n] = m.prop();
+      c.data[n]  = m.prop();
       c.valid[n] = m.prop(true);
     });
   };
@@ -112,10 +112,10 @@ module.exports = (function () {
 
   form.handleField = function (c, extra, e) {
     if (!e) {
-      e = extra;
+      e     = extra;
       extra = undefined;
     }
-    var field = e.target.getAttribute('name');
+    var field   = e.target.getAttribute('name');
     var isValid = function () {
       if (extra) {
         return (e.target.checkValidity() && extra(c, e));

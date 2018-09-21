@@ -34,24 +34,24 @@ var getPadID;
 var getPadHTML;
 try {
   // Normal case : when installed as a plugin
-  getPad = require('ep_etherpad-lite/node/db/PadManager').getPad;
-  getPadID = require('ep_etherpad-lite/node/db/API').getPadID;
+  getPad     = require('ep_etherpad-lite/node/db/PadManager').getPad;
+  getPadID   = require('ep_etherpad-lite/node/db/API').getPadID;
   getPadHTML = require('ep_etherpad-lite/node/utils/ExportHtml').getPadHTML;
 }
 catch (e) {
   // Testing case : noop functions
-    getPad = function (padId, callback) { callback(null); };
-    getPadID = function (padId, callback) { callback(null); };
+    getPad     = function (padId, callback) { callback(null); };
+    getPadID   = function (padId, callback) { callback(null); };
     getPadHTML = function (pad, rev, callback) {
       callback(null, '<p>Testing only</p>');
     };
 }
-var ld = require('lodash');
+var ld     = require('lodash');
 var decode = require('js-base64').Base64.decode;
-var conf = require('./configuration.js');
-var auth = require('./auth.js');
-var pad = require('./model/pad.js');
-var group = require('./model/group.js');
+var conf   = require('./configuration.js');
+var auth   = require('./auth.js');
+var pad    = require('./model/pad.js');
+var group  = require('./model/group.js');
 
 module.exports = (function () {
   'use strict';
@@ -75,7 +75,7 @@ module.exports = (function () {
  perm.fn.getVarFromReferer = function (varName, req) {
    var ref = req.headers.referer;
    if (!ref) { return false; }
-   var rg = new RegExp(varName + '=([^&]+)');
+   var rg     = new RegExp(varName + '=([^&]+)');
    var rgxres = rg.exec(ref);
    return (rgxres ? rgxres[1] : false);
  };
@@ -108,9 +108,9 @@ module.exports = (function () {
   */
 
   perm.fn.check = function (params) {
-    var callback = ld.partial(params.callback, params);
+    var callback  = ld.partial(params.callback, params);
     var checkPass = function (el) {
-      var rq = params.req.query;
+      var rq       = params.req.query;
       var password = (rq ? rq.mypadspassword : false );
       if (!password) {
         password = perm.fn.getVarFromReferer('mypadspassword', params.req);
@@ -129,7 +129,7 @@ module.exports = (function () {
         if (rgxres) { token = rgxres[1]; }
       }
     }
-    var u = auth.fn.getUser(token);
+    var u   = auth.fn.getUser(token);
     var uid = u && u._id || false;
     // Key not found, not a MyPads pad so depends on allowEtherPads
     if (!params.pg) {
@@ -202,7 +202,7 @@ module.exports = (function () {
   */
 
   var trimRgx = new RegExp('/.*');
-  perm.check = function (req, res, next) {
+  perm.check  = function (req, res, next) {
     var params;
     var pid = req.params.pid || req.params[0];
         pid = pid.replace(trimRgx, '');
@@ -276,11 +276,11 @@ module.exports = (function () {
         opts.userName = firstname+' '+lastname;
       }
       if (u.color) {
-        opts.userColor = u.color;
+        opts.userColor      = u.color;
         req.query.userColor = opts.userColor;
       }
       perm.padAndAuthor[req.params.pid] = opts;
-      req.query.userName = opts.userName;
+      req.query.userName                = opts.userName;
     } else {
       delete perm.padAndAuthor[req.params.pid];
     }

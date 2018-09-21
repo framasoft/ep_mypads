@@ -29,15 +29,16 @@
 
 module.exports = (function () {
   // Global dependencies
-  var m = require('mithril');
+  var m  = require('mithril');
   var ld = require('lodash');
+
   // Local dependencies
-  var conf = require('../configuration.js');
-  var auth = require('../auth.js');
-  var form = require('../helpers/form.js');
-  var notif = require('../widgets/notification.js');
+  var conf   = require('../configuration.js');
+  var auth   = require('../auth.js');
+  var form   = require('../helpers/form.js');
+  var notif  = require('../widgets/notification.js');
   var layout = require('./layout.js');
-  var user = require('./user.js');
+  var user   = require('./user.js');
 
   var passrec = {};
 
@@ -117,9 +118,9 @@ module.exports = (function () {
   };
 
   view.formChange = function (c) {
-    var pass = user.view.field.password(c);
-    var passC = user.view.field.passwordConfirm(c);
-    pass.label.attrs.class = 'col-sm-4';
+    var pass                = user.view.field.password(c);
+    var passC               = user.view.field.passwordConfirm(c);
+    pass.label.attrs.class  = 'col-sm-4';
     passC.label.attrs.class = 'col-sm-4';
     return m('form.form-horizontal', {
       id: 'passchange-form',

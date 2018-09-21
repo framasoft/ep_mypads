@@ -30,16 +30,17 @@
 module.exports = (function () {
   'use strict';
   // Global dependencies
-  var m = require('mithril');
+  var m  = require('mithril');
   var ld = require('lodash');
+
   // Local dependencies
-  var conf = require('../configuration.js');
-  var auth = require('../auth.js');
+  var conf   = require('../configuration.js');
+  var auth   = require('../auth.js');
   var layout = require('./layout.js');
-  var form = require('../helpers/form.js');
-  var notif = require('../widgets/notification.js');
-  var tag = require('../widgets/tag.js');
-  var model = require('../model/group.js');
+  var form   = require('../helpers/form.js');
+  var notif  = require('../widgets/notification.js');
+  var tag    = require('../widgets/tag.js');
+  var model  = require('../model/group.js');
 
   var gf = {};
 
@@ -56,9 +57,9 @@ module.exports = (function () {
       conf.unauthUrl(true);
       return m.route('/login');
     }
-    var c = {};
+    var c    = {};
     var init = function () {
-      c.addView = m.prop(m.route() === '/mypads/group/add');
+      c.addView      = m.prop(m.route() === '/mypads/group/add');
       document.title = (c.addView() ? conf.LANG.GROUP.ADD :
         conf.LANG.GROUP.EDIT_GROUP);
       document.title += ' - ' + conf.SERVER.title;
@@ -73,13 +74,13 @@ module.exports = (function () {
             c.data[f] = m.prop(c.group[f]);
         });
         c.data.password = m.prop('');
-        tagsCurrent = c.group.tags;
+        tagsCurrent     = c.group.tags;
       }
       c.tag = new tag.controller({
         current: tagsCurrent || [],
         tags: model.tags()
       });
-      c.data.tags = function () { return c.tag.current; };
+      c.data.tags        = function () { return c.tag.current; };
       c.data.tags.toJSON = function () { return c.tag.current; };
     };
     if (ld.isEmpty(model.groups())) { model.fetch(init); } else { init(); }
@@ -95,19 +96,19 @@ module.exports = (function () {
         var _o = { params: {}, extra: {} };
         if (c.addView()) {
           _o.params.method = 'POST';
-          _o.params.url = conf.URLS.GROUP;
-          _o.extra.msg = conf.LANG.GROUP.INFO.ADD_SUCCESS;
+          _o.params.url    = conf.URLS.GROUP;
+          _o.extra.msg     = conf.LANG.GROUP.INFO.ADD_SUCCESS;
         } else {
           _o.params.method = 'PUT';
-          _o.params.url = conf.URLS.GROUP + '/' + c.group._id;
-          _o.extra.msg = conf.LANG.GROUP.INFO.EDIT_SUCCESS;
+          _o.params.url    = conf.URLS.GROUP + '/' + c.group._id;
+          _o.extra.msg     = conf.LANG.GROUP.INFO.EDIT_SUCCESS;
         }
         return _o;
       })();
-      opts.params.data = ld.assign(c.data, { admin: auth.userInfo()._id });
+      opts.params.data            = ld.assign(c.data, { admin: auth.userInfo()._id });
       opts.params.data.auth_token = auth.token();
       m.request(opts.params).then(function (resp) {
-        var data = model.groups();
+        var data       = model.groups();
         data[resp.key] = resp.value;
         model.groups(data);
         model.tags(ld.union(model.tags(), resp.value.tags));
@@ -193,7 +194,7 @@ module.exports = (function () {
   };
 
   view.field.description = function (c) {
-    var icon = view.icon.description(c);
+    var icon  = view.icon.description(c);
     var label = m('label.col-sm-4', { for: 'description' },
       [ conf.LANG.GROUP.FIELD.DESCRIPTION, icon ]);
     var textarea = m('textarea.form-control', {
@@ -206,8 +207,8 @@ module.exports = (function () {
 
   view.field.visibility = function (c, restricted) {
     restricted = ld.isUndefined(restricted) ? true : restricted;
-    var icon = view.icon.visibility();
-    var label = m('label.col-sm-4', { for: 'visibility' },
+    var icon   = view.icon.visibility();
+    var label  = m('label.col-sm-4', { for: 'visibility' },
       [ conf.LANG.GROUP.FIELD.VISIBILITY, icon ]);
     var select = m('select.form-control', {
       name: 'visibility',
@@ -230,7 +231,7 @@ module.exports = (function () {
   };
 
   view.field.password = function (c) {
-    var icon = view.icon.password();
+    var icon  = view.icon.password();
     var label = m('label.col-sm-4', { for: 'password' },
       [ conf.LANG.USER.PASSWORD, icon ]);
     var input = m('input.form-control', {
@@ -245,7 +246,7 @@ module.exports = (function () {
   };
 
   view.field.readonly = function (c) {
-    var icon = view.icon.readonly();
+    var icon  = view.icon.readonly();
     var label = m('label', [
         m('input', {
           name: 'readonly',
@@ -259,7 +260,7 @@ module.exports = (function () {
   };
 
   view.field.allowUsersToCreatePads = function (c) {
-    var icon = view.icon.allowUsersToCreatePads();
+    var icon  = view.icon.allowUsersToCreatePads();
     var label = m('label', [
         m('input', {
           name: 'allowUsersToCreatePads',
@@ -273,7 +274,7 @@ module.exports = (function () {
   };
 
   view.field.archived = function (c) {
-    var icon = view.icon.archived();
+    var icon  = view.icon.archived();
     var label = m('label', [
         m('input', {
           name: 'archived',

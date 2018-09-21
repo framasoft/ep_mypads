@@ -29,7 +29,7 @@
 
 module.exports = (function () {
   // Dependencies
-  var m = require('mithril');
+  var m    = require('mithril');
   var conf = require('../configuration.js');
 
   var ready = {};

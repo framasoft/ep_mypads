@@ -28,10 +28,10 @@
 module.exports = (function () {
   'use strict';
   // Dependencies
-  var m = require('mithril');
-  var ld = require('lodash');
-  var auth = require('../auth.js');
-  var conf = require('../configuration.js');
+  var m     = require('mithril');
+  var ld    = require('lodash');
+  var auth  = require('../auth.js');
+  var conf  = require('../configuration.js');
   var notif = require('../widgets/notification.js');
   var model = require('../model/group.js');
 

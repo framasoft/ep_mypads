@@ -35,12 +35,12 @@ module.exports = (function () {
   var storage = {};
 
   // Database PREFIX CONSTANTS
-  storage.DBPREFIX = { GLOBAL: 'mypads:' };
-  var DBPG = storage.DBPREFIX.GLOBAL;
-  storage.DBPREFIX.CONF = DBPG + 'conf:';
-  storage.DBPREFIX.USER = DBPG + 'user:';
+  storage.DBPREFIX       = { GLOBAL: 'mypads:' };
+  var DBPG               = storage.DBPREFIX.GLOBAL;
+  storage.DBPREFIX.CONF  = DBPG + 'conf:';
+  storage.DBPREFIX.USER  = DBPG + 'user:';
   storage.DBPREFIX.GROUP = DBPG + 'group:';
-  storage.DBPREFIX.PAD = DBPG + 'pad:';
+  storage.DBPREFIX.PAD   = DBPG + 'pad:';
 
   try {
     // Normal case : when installed as a plugin
@@ -50,7 +50,7 @@ module.exports = (function () {
     // Testing case : we need to mock the database connection, using ueberDB and
     // coherent default configuration with eptherpad-lite one.
     var ueberDB = require('ueberdb2');
-    storage.db = new ueberDB.database('dirty', { filename: './test.db' });
+    storage.db  = new ueberDB.database('dirty', { filename: './test.db' });
     storage.db.init(function (err) { if (err) { console.error(err); } });
   }
 
@@ -93,8 +93,8 @@ module.exports = (function () {
   storage.fn.getDelKeys = function (del, keys, callback) {
     var done;
     var results = del ? true : {};
-    var action = del ? 'remove' : 'get';
-    var getDel = function (k) {
+    var action  = del ? 'remove' : 'get';
+    var getDel  = function (k) {
       storage.db[action](k, function (err, res) {
         if (err) { return callback(err); }
         if (!del && !ld.isNull(res)) { results[k] = res; }
@@ -140,7 +140,7 @@ module.exports = (function () {
   storage.fn.setKeys = function (kv, callback) {
     var done;
     var pairs = ld.pairs(kv);
-    var setK = function (k, v) { storage.db.set(k, v, done); };
+    var setK  = function (k, v) { storage.db.set(k, v, done); };
     done = function (err) {
       if (err) { return callback(err); }
       if (pairs.length) {

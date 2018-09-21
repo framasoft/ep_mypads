@@ -27,7 +27,7 @@ module.exports = (function () {
   'use strict';
 
   // Dependencies
-  var ld = require('lodash');
+  var ld           = require('lodash');
   var hashPassword = require('./common.js').hashPassword;
 
   /**

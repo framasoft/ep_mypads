@@ -30,22 +30,23 @@
 module.exports = (function () {
   'use strict';
   // Global dependencies
-  var m = require('mithril');
+  var m  = require('mithril');
   var ld = require('lodash');
-  // Local dependencies
-  var conf = require('../configuration.js');
-  var auth = require('../auth.js');
-  var notif = require('../widgets/notification.js');
-  var layout = require('./layout.js');
-  var model = require('../model/group.js');
-  var padMark = require('./pad-mark.js');
-  var padShare = require('./pad-share.js');
-  var ready = require('../helpers/ready.js');
-  var sortingPreferences = require('../helpers/sortingPreferences.js');
-  var filterPads = require('../helpers/filterPads.js');
-  var groupMark = require('./group-mark.js');
 
-  var u = auth.userInfo;
+  // Local dependencies
+  var conf               = require('../configuration.js');
+  var auth               = require('../auth.js');
+  var notif              = require('../widgets/notification.js');
+  var layout             = require('./layout.js');
+  var model              = require('../model/group.js');
+  var padMark            = require('./pad-mark.js');
+  var padShare           = require('./pad-share.js');
+  var ready              = require('../helpers/ready.js');
+  var sortingPreferences = require('../helpers/sortingPreferences.js');
+  var filterPads         = require('../helpers/filterPads.js');
+  var groupMark          = require('./group-mark.js');
+
+  var u     = auth.userInfo;
   var group = {};
 
   /**
@@ -59,7 +60,7 @@ module.exports = (function () {
   group.controller = function () {
 
     var key = m.route.param('key');
-    var c = {
+    var c   = {
       group: { visibility: '', tags: [] },
       privatePassword: m.prop(''),
       sendPass: m.prop(false)
@@ -74,21 +75,21 @@ module.exports = (function () {
       var _init = function (err) {
         if (err) { return m.route('/mypads'); }
         var data = c.isGuest ? model.tmp() : model;
-        c.group = data.groups()[key];
+        c.group  = data.groups()[key];
         if (!c.isGuest) {
           c.isAdmin = ld.includes(c.group.admins, auth.userInfo()._id);
           c.isUser  = ld.includes(c.group.users,  auth.userInfo()._id);
-          var pads = model.pads();
+          var pads  = model.pads();
           var users = model.users();
-          c.pads = ld.sortBy(ld.map(c.group.pads, function (x) {
+          c.pads    = ld.sortBy(ld.map(c.group.pads, function (x) {
               return pads[x];
             }), sortingPreferences.padByField());
-          c.users = ld.map(c.group.users, function (x) { return users[x]; });
+          c.users  = ld.map(c.group.users, function (x) { return users[x]; });
           c.admins = ld.map(c.group.admins, function (x) { return users[x]; });
         } else {
           c.isAdmin = false;
           c.isUser  = false;
-          c.pads = ld.sortBy(ld.compact(ld.map(c.group.pads, function (x) {
+          c.pads    = ld.sortBy(ld.compact(ld.map(c.group.pads, function (x) {
             return data.pads()[x];
           })), sortingPreferences.padByField());
         }
@@ -123,14 +124,14 @@ module.exports = (function () {
     */
 
     c.sortField = m.prop(sortingPreferences.padByField());
-    c.sortAsc = m.prop(sortingPreferences.padAsc());
-    c.sortBy = function (field, asc) {
+    c.sortAsc   = m.prop(sortingPreferences.padAsc());
+    c.sortBy    = function (field, asc) {
       if (c.sortField() === field && typeof(asc) !== 'boolean') {
         c.sortAsc(!c.sortAsc());
       }
       c.sortField(field);
       var direction = c.sortAsc() ? 'asc' : 'desc';
-      c.pads = ld.sortByOrder(c.pads, field, direction);
+      c.pads        = ld.sortByOrder(c.pads, field, direction);
       sortingPreferences.updateValues({
         padByField: c.sortField(),
         padAsc: c.sortAsc()
@@ -176,8 +177,8 @@ module.exports = (function () {
       model.fetchObject({ group: key }, c.privatePassword(), function (err) {
         if (err) { return c.sendPass(false); }
         var data = c.isGuest ? model.tmp() : model;
-        c.group = data.groups()[key];
-        c.pads = ld.sortBy(ld.compact(ld.map(c.group.pads,
+        c.group  = data.groups()[key];
+        c.pads   = ld.sortBy(ld.compact(ld.map(c.group.pads,
           function (x) { return data.pads()[x]; })), sortingPreferences.padByField());
         c.sendPass(true);
       });
@@ -265,8 +266,8 @@ module.exports = (function () {
   */
 
   view.pads = function (c) {
-    var route = '/mypads/group/' + c.group._id;
-    var GROUP = conf.LANG.GROUP;
+    var route   = '/mypads/group/' + c.group._id;
+    var GROUP   = conf.LANG.GROUP;
     var addView = m('p.col-sm-4.text-center', [
       m('a.btn.btn-default', { href: route + '/pad/add', config: m.route }, [
         m('i.glyphicon.glyphicon-plus.text-success'),
@@ -352,7 +353,7 @@ module.exports = (function () {
           var padName = p.name;
           if (p.visibility && (p.visibility !== c.group.visibility)) {
             var visib = conf.LANG.GROUP.FIELD[p.visibility.toUpperCase()];
-            padName += ' (' + visib + ')';
+            padName  += ' (' + visib + ')';
           }
           return m('li.list-group-item.group-pad-item', {
               'data-padname': padName
@@ -419,7 +420,7 @@ module.exports = (function () {
         }));
       }
     };
-    var route = '/mypads/group/' + c.group._id;
+    var route             = '/mypads/group/' + c.group._id;
     var sectionListAdmins = [ m('h4', conf.LANG.GROUP.PAD.ADMINS) ];
     if (conf.SERVER.allPadsPublicsAuthentifiedOnly) {
       sectionListAdmins = [];
@@ -487,7 +488,7 @@ module.exports = (function () {
 
   view.main = function (c) {
     var isBookmarked = (auth.isAuthenticated()) ? (ld.includes(u().bookmarks.groups, c.group._id)) : false;
-    var h2Elements = [ m('span', [
+    var h2Elements   = [ m('span', [
       m('button.btn.btn-link.btn-lg', {
           onclick: function (e) {
             e.preventDefault();

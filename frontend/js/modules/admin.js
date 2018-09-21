@@ -30,16 +30,17 @@
 
 module.exports = (function () {
   // Global dependencies
-  var m = require('mithril');
-  var ld = require('lodash');
+  var m        = require('mithril');
+  var ld       = require('lodash');
   var beautify = require('json-beautify');
+
   // Local dependencies
-  var conf = require('../configuration.js');
-  var auth = require('../auth.js');
-  var notif = require('../widgets/notification.js');
+  var conf   = require('../configuration.js');
+  var auth   = require('../auth.js');
+  var notif  = require('../widgets/notification.js');
   var layout = require('./layout.js');
-  var user = require('./user.js');
-  var form = require('../helpers/form.js');
+  var user   = require('./user.js');
+  var form   = require('../helpers/form.js');
 
   var admin = {};
 
@@ -52,7 +53,7 @@ module.exports = (function () {
 
   admin.controller = function () {
     document.title = conf.LANG.ADMIN.FORM_LOGIN + ' - ' + conf.SERVER.title;
-    var c = {};
+    var c          = {};
     localStorage.removeItem('token');
     form.initFields(c, ['login', 'password']);
     var init = function (resp) {
@@ -86,8 +87,8 @@ module.exports = (function () {
             return val;
           };
         };
-        c.data.passwordMin = propInt(c.data.passwordMin());
-        c.data.passwordMax = propInt(c.data.passwordMax());
+        c.data.passwordMin        = propInt(c.data.passwordMin());
+        c.data.passwordMax        = propInt(c.data.passwordMax());
         c.data.passwordMin.toJSON = function () {
           return c.data.passwordMin();
         };
@@ -144,7 +145,7 @@ module.exports = (function () {
           return memo;
         }, {});
         var pairs = ld.pairs(newConf);
-        var _set = function (pair) {
+        var _set  = function (pair) {
           m.request({
             method: 'PUT',
             url: conf.URLS.CONF + '/' + pair[0],
@@ -154,7 +155,7 @@ module.exports = (function () {
               _set(pairs.pop());
             } else {
               c.currentConf[resp.key] = resp.value;
-              conf.SERVER[resp.key] = resp.value;
+              conf.SERVER[resp.key]   = resp.value;
               notif.success({ body: conf.LANG.ADMIN.INFO.SUCCESS });
             }
           }, function (err) {
@@ -186,15 +187,15 @@ module.exports = (function () {
   */
 
   view.form = function (c) {
-    var login = user.view.field.login(c);
-    login.input.attrs.config = form.focusOnInit;
-    login.icon.attrs['data-msg'] = conf.LANG.ADMIN.INFO.LOGIN;
-    var password = user.view.field.password(c);
+    var login                       = user.view.field.login(c);
+    login.input.attrs.config        = form.focusOnInit;
+    login.icon.attrs['data-msg']    = conf.LANG.ADMIN.INFO.LOGIN;
+    var password                    = user.view.field.password(c);
     password.icon.attrs['data-msg'] = conf.LANG.USER.PASSWORD;
     delete password.input.attrs.pattern;
     delete password.input.attrs.minlength;
     delete password.input.attrs.maxlength;
-    login.label.attrs.class = 'col-sm-4';
+    login.label.attrs.class    = 'col-sm-4';
     password.label.attrs.class = 'col-sm-4';
     return m('form.form-horizontal.col-sm-8.col-sm-offset-2.well', {
       id: 'login-form', onsubmit: c.login }, [
@@ -228,20 +229,20 @@ module.exports = (function () {
     var f = {
       title: (function () {
         var icon = form.icon(c, 'title', A.INFO.TITLE, A.ERR.TITLE);
-        var f = form.field(c, 'title', A.FIELD.TITLE, icon);
+        var f    = form.field(c, 'title', A.FIELD.TITLE, icon);
         ld.assign(f.input.attrs, { required: true });
         return f;
       })(),
       rootUrl: (function () {
         var icon = form.icon(c, 'rootUrl', A.INFO.ROOTURL, A.ERR.ROOTURL);
-        var f = form.field(c, 'rootUrl', A.FIELD.ROOTURL, icon);
+        var f    = form.field(c, 'rootUrl', A.FIELD.ROOTURL, icon);
         ld.assign(f.input.attrs, { type: 'url' });
         return f;
       })(),
       HTMLExtraHead: (function () {
         var label = m('label', { for: 'HTMLExtraHead' },
           conf.LANG.ADMIN.FIELD.HTMLEXTRA_HEAD);
-        var icon = m('i', {
+        var icon  = m('i', {
           class: 'mp-tooltip glyphicon glyphicon-info-sign',
           'data-msg': conf.LANG.ADMIN.INFO.HTMLEXTRA_HEAD
         });
@@ -256,7 +257,7 @@ module.exports = (function () {
       passwordMin: (function () {
         var icon = form.icon(c, 'passwordMin', A.INFO.PASSWORD_MIN,
           A.ERR.PASSWORD_MIN);
-        var f = form.field(c, 'passwordMin', A.FIELD.PASSWORD_MIN, icon);
+        var f    = form.field(c, 'passwordMin', A.FIELD.PASSWORD_MIN, icon);
         ld.assign(f.input.attrs, {
           type: 'number',
           min: '1',
@@ -267,7 +268,7 @@ module.exports = (function () {
       passwordMax: (function () {
         var icon = form.icon(c, 'passwordMax', A.INFO.PASSWORD_MAX,
           A.ERR.PASSWORD_MAX);
-        var f = form.field(c, 'passwordMax', A.FIELD.PASSWORD_MAX, icon);
+        var f    = form.field(c, 'passwordMax', A.FIELD.PASSWORD_MAX, icon);
         ld.assign(f.input.attrs, {
           type: 'number',
           min: '1',
@@ -426,7 +427,7 @@ module.exports = (function () {
       authLdapSettings: (function () {
         var label = m('label', { for: 'authLdapSettings' },
           A.FIELD.AUTH_LDAP_SETTINGS);
-        var help = m.trust('<p>' + A.INFO.AUTH_LDAP_SETTINGS + '</p>');
+        var help         = m.trust('<p>' + A.INFO.AUTH_LDAP_SETTINGS + '</p>');
         var ldapSettings = c.data.authLdapSettings();
         delete ldapSettings.attrs;
         var textarea = m('textarea.form-control', {
@@ -448,7 +449,7 @@ module.exports = (function () {
       authCasSettings: (function () {
         var label = m('label', { for: 'authCasSettings' },
           A.FIELD.AUTH_CAS_SETTINGS);
-        var help = m.trust('<p>' + A.INFO.AUTH_CAS_SETTINGS + '</p>');
+        var help        = m.trust('<p>' + A.INFO.AUTH_CAS_SETTINGS + '</p>');
         var casSettings = c.data.authCasSettings();
         delete casSettings.attrs;
         var textarea = m('textarea.form-control', {
@@ -486,7 +487,7 @@ module.exports = (function () {
       })(),
       tokenDuration: (function () {
         var icon = form.icon(c, 'tokenDuration', A.INFO.TOKEN_DURATION);
-        var f = form.field(c, 'tokenDuration', A.FIELD.TOKEN_DURATION, icon);
+        var f    = form.field(c, 'tokenDuration', A.FIELD.TOKEN_DURATION, icon);
         ld.assign(f.label.attrs, { style: 'clear: left;' });
         ld.assign(f.input.attrs, { type: 'number' });
         return f;
@@ -497,7 +498,7 @@ module.exports = (function () {
       })(),
       SMTPPort: (function () {
         var icon = form.icon(c, 'SMTPPort', A.INFO.SMTP_PORT);
-        var f = form.field(c, 'SMTPPort', A.FIELD.SMTP_PORT, icon);
+        var f    = form.field(c, 'SMTPPort', A.FIELD.SMTP_PORT, icon);
         ld.assign(f.input.attrs, { type: 'number', min: 1 });
         return f;
       })(),
@@ -537,13 +538,13 @@ module.exports = (function () {
       })(),
       SMTPUser: (function () {
         var icon = form.icon(c, 'SMTPUser', A.INFO.SMTP_USER);
-        var f = form.field(c, 'SMTPUser', A.FIELD.SMTP_USER, icon);
+        var f    = form.field(c, 'SMTPUser', A.FIELD.SMTP_USER, icon);
         ld.assign(f.label.attrs, { style: 'clear: left;' });
         return f;
       })(),
       SMTPPass: (function () {
         var icon = form.icon(c, 'SMTPPass', A.INFO.SMTP_PASS);
-        var f = form.field(c, 'SMTPPass', A.FIELD.SMTP_PASS, icon);
+        var f    = form.field(c, 'SMTPPass', A.FIELD.SMTP_PASS, icon);
         ld.assign(f.input.attrs, { type: 'password' });
         return f;
       })(),

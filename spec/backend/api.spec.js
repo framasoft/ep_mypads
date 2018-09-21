@@ -94,21 +94,21 @@
           }
         );
       });
-      it('should not include mypads-hide-help-blocks.css if hideHelpBlocks is false', function (done) {
+      it('should not have body with hidehelpblocks class if hideHelpBlocks is false', function (done) {
         rq.get('http://127.0.0.1:8042/mypads/index.html',
           function (err, resp, body) {
             expect(resp.statusCode).toBe(200);
-            expect(body).not.toMatch('css/mypads-hide-help-blocks.css');
+            expect(body).not.toMatch('body class="hidehelpblocks"');
             done();
           }
         );
       });
-      it('should include mypads-hide-help-blocks.css if hideHelpBlocks is true', function (done) {
+      it('should have body with hidehelpblocks class if hideHelpBlocks is true', function (done) {
         conf.cache.hideHelpBlocks = true;
         rq.get('http://127.0.0.1:8042/mypads/index.html',
           function (err, resp, body) {
             expect(resp.statusCode).toBe(200);
-            expect(body).toMatch('css/mypads-hide-help-blocks.css');
+            expect(body).toMatch('body class="hidehelpblocks"');
             done();
           }
         );

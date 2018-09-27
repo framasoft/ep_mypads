@@ -145,7 +145,7 @@ db.init(function(err) {
               if (program.dryrun) {
                 bar.increment();
                 candidatesForDeletion++;
-                next();
+                return next();
               }
               // Cascade deletion process
               // 1. Delete the readonly2pad record
@@ -175,7 +175,7 @@ db.init(function(err) {
                           eachSeries(keys, removeRecord, function(err){
                             if (err) { return exitIfErr(err); }
                             bar.increment();
-                            next();
+                            return next();
                           });
                         });
                       });
@@ -186,7 +186,7 @@ db.init(function(err) {
             } else {
               // No deletion needed
               bar.increment();
-              next();
+              return next();
             }
           });
         });

@@ -1,7 +1,7 @@
 /**
 *  vim:set sw=2 ts=2 sts=2 ft=javascript expandtab:
 *
-*  # Admin Users Form edition module
+*  # Admin Users Form creation module
 *
 *  ## License
 *
@@ -51,12 +51,12 @@ module.exports = (function () {
 
   admin.controller = function () {
     if (!auth.isAdmin()) { return m.route('/admin'); }
-    document.title = conf.LANG.ADMIN.FORM_USER_EDIT + ' - ' + conf.SERVER.title;
+    document.title = conf.LANG.ADMIN.FORM_USER_CREATE + ' - ' + conf.SERVER.title;
 
     var c = {
-      adminView: m.prop(true),
+      adminView:   m.prop(false),
       profileView: m.prop(false),
-      user: m.prop(false)
+      user:        m.prop(false)
     };
 
     var init = function () {
@@ -89,31 +89,24 @@ module.exports = (function () {
     };
 
     c.submit = {
-      profileSave: function (e) {
+      subscribe: function (e) {
         e.preventDefault();
         var pass = c.data.password();
         if (pass && (pass !== c.data.passwordConfirm())) {
           return notif.warning({ body: conf.LANG.USER.ERR.PASSWORD_MISMATCH });
         }
         m.request({
-          method: 'PUT',
-          url: conf.URLS.USER + '/' + c.data.login(),
+          method: 'POST',
+          url: conf.URLS.USER,
           data: ld.assign(c.data, { auth_token: auth.admToken() })
-        }).then(function (resp) {
-          auth.userInfo(resp.value);
-          notif.success({ body: conf.LANG.USER.AUTH.PROFILE_SUCCESS });
+        }).then(function () {
+          notif.success({ body: conf.LANG.ADMIN.SUBSCRIBE_SUCCESS });
+          m.route('/admin/users');
         }, errfn);
       }
     };
 
-    m.request({
-      method: 'GET',
-      url: conf.URLS.USER + '/' + m.route.param('login'),
-      data: { auth_token: auth.admToken() }
-    }).then(function (resp) {
-      c.user(resp.value);
-      init();
-    }, errfn);
+    init();
 
     return c;
   };
@@ -126,7 +119,7 @@ module.exports = (function () {
 
   view.main = function (c) {
     var elements = [
-      m('h2', conf.LANG.ADMIN.FORM_USER_EDIT + ' ' + c.user().login),
+      m('h2', conf.LANG.ADMIN.FORM_USER_CREATE),
       subscribe.views.form(c)
     ];
     return m('section', { class: 'user' }, elements);
@@ -135,7 +128,7 @@ module.exports = (function () {
   view.aside = function () {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article.well', m.trust(conf.LANG.ADMIN.HELP_USER_EDIT))
+      m('article.well', m.trust(conf.LANG.ADMIN.HELP_USER_CREATE))
     ]);
   };
 

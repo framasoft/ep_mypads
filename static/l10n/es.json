@@ -32,6 +32,7 @@
             "ldap": "LDAP"
          },
          "CHECKMAILS": "Comprobar los mails de usuario",
+         "CREATE_USER": "Crear usuario",
          "HIDE_HELP_BLOCKS": "Esconder los bloques de ayuda",
          "HTMLEXTRA_HEAD": "Extra HTML para <head>",
          "INSENSITIVE_MAIL_MATCH": "Hacer que la búsqueda de usuario por correo electrónico sea no sensible a mayúsculas.",
@@ -56,10 +57,12 @@
       "FORM_LOGIN": "Acceso a la administración",
       "FORM_SETTINGS": "Configuración de MyPads",
       "FORM_USERS_SEARCH": "Búsqueda de usuaria",
+      "FORM_USER_CREATE": "Creación de usuarios",
       "FORM_USER_EDIT": "Edición de perfil de usuaria",
       "HELP_LOGIN": "<p>La administración de MyPads está vinculada a la administración de Etherpad. Por favor, introduzca un nombre de usuaria y contraseña autorizadas, tal y como se ha fijado en Etherpad <em>settings.json</em> para poder actualizar la configuración de MyPads.</p>",
       "HELP_SETTINGS": "<h3>Configuración</h3><p>Sólo las administradoras de Etherpad tienen acceso a esta página. Aquí puede tratar las parametrizaciones globales y aplicarlas. Los cambios entrarán en vigor directamente. </p><h3>Contraseñas</h3><p>Ten cuidado con el tamaño de las contraseñas: si tiene cuentas existentes y aumenta el tamaño mínimo o disminuye el tamaño máximo, algunas contraseñas de usuario pueden volverse inutilizables.</p><h3>Configuración de correo </h3><p>MyPads puede verificar los correos de los usuarios suscritos enviándoles un correo electrónico que utilizarán para confirmar su dirección. Además, MyPads necesita el envío de correo electrónico para recuperar la contraseña.</p><p>Ten cuidado con la configuración SMTP: los parámetros incorrectos pueden provocar un fallo de Etherpad.</p><p>Tenga en cuenta que, a diferencia de otros parámetros, la configuración de SMTP sólo se aplica después de reiniciar Etherpad.</p>.",
       "HELP_USERS": "Esta página de administración reservada le ayuda a encontrar usuarios introduciendo su nombre de usuaria. Una vez encontrado, podrá editar o eliminar user.</p><p>Por razones de simplicidad y rendimiento, no ofrecemos aquí una lista completa de las usuarias suscritas.</p>",
+      "HELP_USER_CREATE": "<p>Aquí puede crear una cuenta, incluso si los registros están deshabilitados.</p><p>Tenga en cuenta que no se envía ningún correo al usuario, incluso si la comprobación de correo electrónico está activada.</p>",
       "HELP_USER_EDIT": "<p>Aquí puede actualizar todos los datos asociados a una usuaria existente. </p><p>Por favor, tenga en cuenta que por defecto, dejar la contraseña vacía significa mantener la contraseña actual. Si desea cambiarla, tiene que rellenar el campo de contraseña y su confirmación.</p>",
       "INFO": {
          "ALLOW_ETHERPADS": "Permitir pads anónimos clásicos desde la instancia de Etherpad, creada desde la URL raíz del servidor",
@@ -97,6 +100,7 @@
       "SETTINGS_GENERAL": "Ajustes generales",
       "SETTINGS_MAIL": "Ajustes de correo",
       "SETTINGS_PASSWORD": "Ajustes de contraseña",
+      "SUBSCRIBE_SUCCESS": "Creación de usuarios con éxito!",
       "USERS_COUNT": "Cantidad de usuarias:",
       "USERS_SEARCH_LOGIN": "Búsqueda por login"
    },

@@ -778,7 +778,7 @@ module.exports = (function () {
       var key;
       var value = req.body;
       var stop;
-      if (req.method === 'POST') {
+      if (req.method === 'POST' && !fn.isAdmin(req)) {
         if (conf.isNotInternalAuth() || !conf.get('openRegistration')) {
           stop = true;
           res.status(400).send({ error: 'BACKEND.ERROR.AUTHENTICATION.NO_REGISTRATION' });
@@ -820,13 +820,13 @@ module.exports = (function () {
       // Update needed session values
       if (!stop) {
         var u = auth.fn.getUser(req.body.auth_token);
-        if (u) {
+        if (u && !fn.isAdmin(req)) {
           auth.tokens[u.login].color = req.body.color || u.color;
           if (!ld.isUndefined(req.body.useLoginAndColorInPads)) {
             auth.tokens[u.login].useLoginAndColorInPads = req.body.useLoginAndColorInPads;
           }
         }
-        if (fn.isAdmin(req)) {
+        if (fn.isAdmin(req) && req.method !== 'POST') {
           delete value.auth_token;
           delete value.passwordConfirm;
           user.get(value.login, function (err, u) {

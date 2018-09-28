@@ -64,13 +64,13 @@ module.exports = (function () {
       return m.route('/login');
     }
     if (conf.SERVER.authMethod !== 'internal' && c.profileView()) {
-      c.fields = ['organization', 'lang', 'color'];
+      c.fields = ['organization', 'lang', 'color', 'hideHelp'];
     } else {
       c.fields = ['login', 'password', 'passwordConfirm', 'email', 'firstname',
-        'lastname', 'padNickname', 'organization', 'lang', 'color'];
+        'lastname', 'padNickname', 'organization', 'lang', 'color', 'hideHelp'];
     }
     if (c.profileView()) {
-      c.fields.push('passwordCurrent', 'useLoginAndColorInPads', 'hideHelp');
+      c.fields.push('passwordCurrent', 'useLoginAndColorInPads');
     }
     form.initFields(c, c.fields);
     if (c.profileView()) {

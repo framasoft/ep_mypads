@@ -31,32 +31,34 @@
 module.exports = (function () {
   // Global dependencies
   var m = require('mithril');
+
   // Modules
-  var home = require('./modules/home.js');
-  var login = require('./modules/login.js');
-  var logout = require('./modules/logout.js');
-  var passRecover = require('./modules/passrecover.js');
-  var accountConfirm = require('./modules/accountconfirm.js');
-  var subscribe = require('./modules/subscribe.js');
-  var bookmark = require('./modules/bookmark.js');
-  var userlist = require('./modules/userlist.js');
-  var userlistForm = require('./modules/userlist-form.js');
-  var userlistRemove = require('./modules/userlist-remove.js');
-  var group = require('./modules/group.js');
-  var groupView = require('./modules/group-view.js');
-  var groupForm = require('./modules/group-form.js');
-  var groupRemove = require('./modules/group-remove.js');
-  var padForm = require('./modules/pad-form.js');
-  var padRemove = require('./modules/pad-remove.js');
+  var home                 = require('./modules/home.js');
+  var login                = require('./modules/login.js');
+  var logout               = require('./modules/logout.js');
+  var passRecover          = require('./modules/passrecover.js');
+  var accountConfirm       = require('./modules/accountconfirm.js');
+  var subscribe            = require('./modules/subscribe.js');
+  var bookmark             = require('./modules/bookmark.js');
+  var userlist             = require('./modules/userlist.js');
+  var userlistForm         = require('./modules/userlist-form.js');
+  var userlistRemove       = require('./modules/userlist-remove.js');
+  var group                = require('./modules/group.js');
+  var groupView            = require('./modules/group-view.js');
+  var groupForm            = require('./modules/group-form.js');
+  var groupRemove          = require('./modules/group-remove.js');
+  var padForm              = require('./modules/pad-form.js');
+  var padRemove            = require('./modules/pad-remove.js');
   var padRemoveChatHistory = require('./modules/pad-remove-chat-history.js');
-  var padView = require('./modules/pad-view.js');
-  var padMove = require('./modules/pad-move.js');
-  var userInvite = require('./modules/user-invitation.js');
-  var admin = require('./modules/admin.js');
-  var adminLogout = require('./modules/admin-logout.js');
-  var adminUsers = require('./modules/admin-users.js');
-  var adminUserForm = require('./modules/admin-users-form.js');
-  var adminUserRemove = require('./modules/admin-users-remove.js');
+  var padView              = require('./modules/pad-view.js');
+  var padMove              = require('./modules/pad-move.js');
+  var userInvite           = require('./modules/user-invitation.js');
+  var admin                = require('./modules/admin.js');
+  var adminLogout          = require('./modules/admin-logout.js');
+  var adminUsers           = require('./modules/admin-users.js');
+  var adminUsersCreate     = require('./modules/admin-users-create.js');
+  var adminUserForm        = require('./modules/admin-users-form.js');
+  var adminUserRemove      = require('./modules/admin-users-remove.js');
 
   var route = { model: {} };
 
@@ -97,6 +99,7 @@ module.exports = (function () {
     '/admin': admin,
     '/admin/logout': adminLogout,
     '/admin/users': adminUsers,
+    '/admin/users/create': adminUsersCreate,
     '/admin/users/:login/edit': adminUserForm,
     '/admin/users/:login/remove': adminUserRemove
   };

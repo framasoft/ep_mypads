@@ -318,6 +318,8 @@ module.exports = (function () {
         return m('p', conf.LANG.GROUP.PAD.NONE);
       } else {
         return m('ul.list-group.col-sm-12', ld.map(c.pads, function (p) {
+          if (typeof(p) === 'undefined') { return null; }
+
           var actions = [
             (function () {
               if ((c.group.visibility !== 'restricted') ||

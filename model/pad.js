@@ -31,7 +31,7 @@ module.exports = (function () {
   var getChatHead;
   try {
     // Normal case : when installed as a plugin
-    removePad = require('ep_etherpad-lite/node/db/API').deletePad;
+    removePad   = require('ep_etherpad-lite/node/db/API').deletePad;
     getChatHead = require('ep_etherpad-lite/node/db/API').getChatHead;
   }
   catch (e) {
@@ -41,12 +41,13 @@ module.exports = (function () {
     };
     getChatHead = function () {};
   }
-  var ld = require('lodash');
-  var cuid = require('cuid');
-  var slugg = require('slugg');
-  var common = require('./common.js');
-  var storage = require('../storage.js');
+  var ld             = require('lodash');
+  var cuid           = require('cuid');
+  var slugg          = require('slugg');
+  var common         = require('./common.js');
+  var storage        = require('../storage.js');
   var commonGroupPad = require ('./common-group-pad.js');
+
   var PPREFIX = storage.DBPREFIX.PAD;
   var UPREFIX = storage.DBPREFIX.USER;
   var GPREFIX = storage.DBPREFIX.GROUP;
@@ -306,9 +307,17 @@ module.exports = (function () {
     }
     common.getDel(true, PPREFIX, key, function (err, p) {
       if (err) { return callback(err); }
-      removePad(p._id, function(err) {
+      storage.db.get('pad:'+p._id, function(err, value) {
         if (err) { return callback(err); }
-        pad.fn.indexGroups(true, p, callback);
+
+        if (typeof(value) !== 'undefined' && value !== null && value.atext) {
+          removePad(p._id, function(err) {
+            if (err) { return callback(err); }
+            pad.fn.indexGroups(true, p, callback);
+          });
+        } else {
+          pad.fn.indexGroups(true, p, callback);
+        }
       });
     });
   };

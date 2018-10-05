@@ -340,16 +340,31 @@ module.exports = (function () {
                 config: m.route,
                 title: conf.LANG.MENU.CONFIG
               }, [ m('i.glyphicon.glyphicon-wrench') ]),
-              m('a.btn.btn-default.btn-xs', {
-                href: route + '/pad/remove/chat/history/' + p._id,
-                config: m.route,
-                title: conf.LANG.GROUP.REMOVE_CHAT_HISTORY
-              }, [ m('i.glyphicon.glyphicon-volume-off') ]),
-              m('a.btn.btn-default.btn-xs', {
-                href: route + '/pad/remove/' + p._id,
-                config: m.route,
-                title: conf.LANG.GROUP.REMOVE
-              }, [ m('i.glyphicon.glyphicon-trash.text-danger') ])
+              m('div.btn-group', [
+                m('button.btn.btn-default.btn-xs.dropdown-toggle', {
+                  'data-toggle': 'dropdown',
+                  'aria-haspopup': 'true',
+                  'aria-expanded': 'false'
+                }, [
+                  m('i.glyphicon.glyphicon-trash.text-danger'),
+                  m('span.caret')
+                ]),
+                m('ul.dropdown-menu.dropdown-menu-right', [
+                  m('li', [
+                    m('a', {
+                      href: route + '/pad/remove/chat/history/' + p._id,
+                      config: m.route
+                    }, [ conf.LANG.GROUP.REMOVE_CHAT_HISTORY ])
+                  ]),
+                  m('li.divider', { role: 'separator'}),
+                  m('li', [
+                    m('a', {
+                      href: route + '/pad/remove/' + p._id,
+                      config: m.route
+                    }, [ conf.LANG.GROUP.REMOVE + ' ' + p.name ])
+                  ]),
+                ])
+              ])
             );
           }
           var padName = p.name;

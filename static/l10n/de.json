@@ -32,6 +32,7 @@
             "ldap": "LDAP"
          },
          "CHECKMAILS": "Überprüfe Benutzer E-Mail-Adressen",
+         "CREATE_USER": "Benutzer anlegen",
          "HIDE_HELP_BLOCKS": "Hilfe ausblenden",
          "HTMLEXTRA_HEAD": "Zusätzliches HTML in <head>",
          "INSENSITIVE_MAIL_MATCH": "Machen Sie die Benutzersuche per E-Mail unabhängig von Groß- und Kleinschreibung.",
@@ -56,10 +57,12 @@
       "FORM_LOGIN": "Administration login",
       "FORM_SETTINGS": "MyPads Konfiguration",
       "FORM_USERS_SEARCH": "Benutzer Suche",
+      "FORM_USER_CREATE": "Benutzererstellung",
       "FORM_USER_EDIT": "Profil Benutzer-Edition",
       "HELP_LOGIN": "<p>Die MyPads-Verwaltung ist an die Etherpad-Verwaltung gebunden. Bitte geben Sie ein autorisiertes Login und Passwort ein, wie in Etherpad <em>settings.json</em> festgelegt, um die MyPads-Einstellungen aktualisieren zu können.</p>",
       "HELP_SETTINGS": "<h3>Einstellungen</h3><p>Nur Etherpad-Administratoren haben Zugriff auf diese Seite. Hier können Sie die globalen Einstellungen bearbeiten und übernehmen.  Änderungen werden direkt wirksam.</p><h3>Passwörter</h3><p>Vorsicht beim ändern der Passwortgröße: Wenn bereits Konten bestehen und die minimale Größe erhöhen oder die maximale Größe verringern, können einige Benutzerkennwörter unbrauchbar werden.</p><h3>Mail Konfiguration</h3><p>MyPads kann die Mails der abonnierten Benutzer verifizieren, indem sie ihnen eine E-Mail schicken, mit der sie ihre Adresse bestätigen. Außerdem benötigen MyPads eine E-Mail für die Passwort-Wiederherstellung.</p><p>Seien Sie vorsichtig bei der SMTP-Konfiguration: Falsche Parameter können zu einem Absturz des Etherpads führen.</p><p>Bitte beachten Sie, dass die SMTP-Einstellungen im Gegensatz zu anderen Parametern erst nach einem Neustart des Etherpads übernommen werden.</p>",
       "HELP_USERS": "<p>Diese Seite hilft Ihnen Benutzer zu finden, indem Sie ihr Loginname eingeben. Einmal gefunden, können Sie Benutzer bearbeiten.</p><p>Aus Gründen der Einfachheit und der Performance, bieten wir hier keine vollständige Auflistung der registrierten Benutzer an.</p>",
+      "HELP_USER_CREATE": "<p>Hier können Sie ein Konto erstellen, auch wenn die Registrierung deaktiviert ist.</p><p>Bitte beachten Sie, dass keine E-Mails an den Benutzer gesendet werden, auch wenn die E-Mail-Überprüfung aktiviert ist.</p>",
       "HELP_USER_EDIT": "<p>Hier können Sie alle Daten zu einem bestehenden Benutzer aktualisieren.</p><p>Bitte beachten Sie, dass ein leeres Passwort standardmäßig bedeutet, das aktuelle Passwort beizubehalten. Wenn Sie es ändern möchten, müssen Sie das Passwort und dessen Bestätigung ausfüllen.</p>",
       "INFO": {
          "ALLOW_ETHERPADS": "Klassische anonyme Pads aus der Etherpad-Instanz zulassen, die aus der Root-URL des Servers erstellt wurden.",
@@ -97,6 +100,7 @@
       "SETTINGS_GENERAL": "Allgemeine Einstellungen",
       "SETTINGS_MAIL": "E-Mail Einstellungen",
       "SETTINGS_PASSWORD": "Passwort Einstellungen",
+      "SUBSCRIBE_SUCCESS": "Erfolgreiche Benutzererstellung!",
       "USERS_COUNT": "Anzahl der Benutzer:",
       "USERS_SEARCH_LOGIN": "Suche nach Loginname"
    },
@@ -189,8 +193,8 @@
    },
    "GLOBAL": {
       "AND": "und",
-      "DESCRIPTION": "MyPads ist eine Erweiterung (plugin) für <a href='http://etherpad.org/'>Etherpad</a>, die 2014 von <a href='http://ulule.com/etherpad-framapad/supporters/'>413 Unterstützenden auf Ulule</a> gegründet und von der nicht gewinnorientierten (gemeinnützigen) Organisation <a href='http://framasoft.org'>Framasoft</a> organisiert wird. Sie kümmert sich um :<ul><li>Accounts und deren users and their Authentifikation;</li><li>Ordner von Pads je Account, unbegrenzt, teilbar;</li><li>angehängte Pads, mit der Wahl zwischen dem Einladen von bekannten Accounts, um sie zu nutzen, das Schaffen von Privatheit mit Passwort oder das Belassen als öffentlich.</li></ul>",
-      "FOOTER": "Betrieben durch <a href='https://git.framasoft.org/framasoft/ep_mypads'>MyPads</a><br>Veröffentlicht unter der Lizenz Apache 2.0",
+      "DESCRIPTION": "MyPads ist eine Erweiterung (plugin) für <a href=\"http://etherpad.org/\">Etherpad</a>, die 2014 von <a href=\"http://ulule.com/etherpad-framapad/supporters/\">413 Unterstützenden auf Ulule</a> gegründet und von der nicht gewinnorientierten (gemeinnützigen) Organisation <a href=\"http://framasoft.org\">Framasoft</a> organisiert wird. Sie kümmert sich um :<ul><li>Accounts und deren users and their Authentifikation;</li><li>Ordner von Pads je Account, unbegrenzt, teilbar;</li><li>angehängte Pads, mit der Wahl zwischen dem Einladen von bekannten Accounts, um sie zu nutzen, das Schaffen von Privatheit mit Passwort oder das Belassen als öffentlich.</li></ul>",
+      "FOOTER": "Betrieben durch <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads\">MyPads</a><br>Veröffentlicht unter der Lizenz Apache 2.0",
       "LANG": "Deutsch",
       "NO": "nein",
       "OR": "oder",
@@ -281,7 +285,7 @@
          "EDIT_PROMPT": "Neuer Name des Pads",
          "EXPAND": "Erweitern",
          "FROM_GROUP": "Ordner:",
-         "MOVE": "Verschiebe alle Pads in einen Ordner",
+         "MOVE": "Pads in einen anderen Ordner verschieben",
          "MOVE_HELP": "<p>Bitte wählen Sie den gewünschten Ordner für Ihre Migration aus. Es werden nur die Ordner aufgelistet, in denen Sie Admin sind.</p><p>Klicken Sie nach der Auswahl auf die Schaltfläche \"Senden\" und warten Sie einen Moment.</p>",
          "MOVE_TITLE": "Pads-Migration des Ordners",
          "NONE": "Kein Pad verlinkt",

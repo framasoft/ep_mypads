@@ -29,11 +29,11 @@
 
 module.exports = (function () {
   // Dependencies
-  var m = require('mithril');
-  var ld = require('lodash');
-  var conf = require('../configuration.js');
-  var auth = require('../auth.js');
-  var notif = require('../widgets/notification.js');
+  var m         = require('mithril');
+  var ld        = require('lodash');
+  var conf      = require('../configuration.js');
+  var auth      = require('../auth.js');
+  var notif     = require('../widgets/notification.js');
   var expandPad = require('../helpers/expandPad.js');
 
   var layout = {};
@@ -48,7 +48,6 @@ module.exports = (function () {
   * Returns views for auth and unauth.
   */
 
-  views = {};
   views.menuMain = function () {
     var _routes = {
       auth: [
@@ -130,6 +129,9 @@ module.exports = (function () {
       ]);
     };
     if (auth.isAuthenticated()) {
+      if (!conf.SERVER.hideHelpBlocks && auth.userInfo().hideHelp) {
+        document.getElementsByTagName('body')[0].classList.add('hidehelpblocks');
+      }
       return ld.map(_routes.auth, activeRoute);
     } else if (auth.isAdmin()) {
       return ld.map(_routes.admin, activeRoute);
@@ -148,7 +150,8 @@ module.exports = (function () {
   */
 
   var padViewRouteRegex = new RegExp('/mypads/group/[^/]*/pad/view/[^/]*');
-  var indexRouteRegex = new RegExp('/mypads$');
+  var indexRouteRegex   = new RegExp('/mypads$');
+
   layout.view = function (main, aside) {
     var header  = 'header';
     var footer  = 'footer.container.ombre';

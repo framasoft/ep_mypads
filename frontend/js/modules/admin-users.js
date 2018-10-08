@@ -30,15 +30,16 @@
 
 module.exports = (function () {
   // Global dependencies
-  var m = require('mithril');
+  var m  = require('mithril');
   var ld = require('lodash');
+
   // Local dependencies
-  var conf = require('../configuration.js');
-  var auth = require('../auth.js');
-  var notif = require('../widgets/notification.js');
+  var conf   = require('../configuration.js');
+  var auth   = require('../auth.js');
+  var notif  = require('../widgets/notification.js');
   var layout = require('./layout.js');
-  var user = require('./user.js');
-  var form = require('../helpers/form.js');
+  var user   = require('./user.js');
+  var form   = require('../helpers/form.js');
 
   var admin = {};
 
@@ -111,13 +112,10 @@ module.exports = (function () {
   var view = {};
 
   view.form = function (c) {
-    var login = user.view.field.login(c);
-    login.input.attrs.config = form.focusOnInit;
+    var login                    = user.view.field.login(c);
+    login.input.attrs.config     = form.focusOnInit;
     login.icon.attrs['data-msg'] = conf.LANG.ADMIN.INFO.USERS_SEARCH_LOGIN;
-    return m('form.block', {
-      id: 'users-form',
-      onsubmit: c.search
-    }, [
+    var tab = [
       m('fieldset.block-group', [
         m('legend', conf.LANG.ADMIN.USERS_SEARCH_LOGIN),
         m('div.form-group', [ login.label, login.input ])
@@ -134,7 +132,20 @@ module.exports = (function () {
       m('button.btn.btn-info', {
         onclick: c.loadAllUsers
       }, conf.LANG.ADMIN.FIELD.SHOW_ALL_USERS)
-    ]);
+    ];
+    if (conf.SERVER.authMethod === 'internal') {
+      tab.push(
+        m('span', ' '),
+        m('a.btn.btn-info', {
+          href: '/admin/users/create',
+          config: m.route,
+        }, conf.LANG.ADMIN.FIELD.CREATE_USER)
+      );
+    }
+    return m('form.block', {
+      id: 'users-form',
+      onsubmit: c.search
+    }, tab);
   };
 
   view.user = function (c) {
@@ -143,7 +154,7 @@ module.exports = (function () {
       if (!u) {
         return m('p.admin-users', conf.LANG.ADMIN.INFO.USER_NONE);
       } else {
-        var route = '/admin/users';
+        var route   = '/admin/users';
         var actions = [
           m('a', {
             href: route + '/' + u.login + '/edit',
@@ -176,7 +187,7 @@ module.exports = (function () {
       var route = '/admin/users';
       var items = [];
       ld.forEach(ld.sortBy(ld.keys(u)), function (login) {
-        var n = u[login];
+        var n       = u[login];
         var actions = [
           m('a', {
             href: route + '/' + login + '/edit',

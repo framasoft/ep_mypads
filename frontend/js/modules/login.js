@@ -29,17 +29,18 @@
 
 module.exports = (function () {
   // Global dependencies
-  var m = require('mithril');
-  var ld = require('lodash');
+  var m       = require('mithril');
+  var ld      = require('lodash');
   var cookies = require('js-cookie');
+
   // Local dependencies
-  var conf = require('../configuration.js');
-  var auth = require('../auth.js');
-  var form = require('../helpers/form.js');
-  var notif = require('../widgets/notification.js');
+  var conf   = require('../configuration.js');
+  var auth   = require('../auth.js');
+  var form   = require('../helpers/form.js');
+  var notif  = require('../widgets/notification.js');
   var layout = require('./layout.js');
-  var user = require('./user.js');
-  var ready = require('../helpers/ready.js');
+  var user   = require('./user.js');
+  var ready  = require('../helpers/ready.js');
 
   var login = {};
 
@@ -52,7 +53,7 @@ module.exports = (function () {
   */
 
   login.controller = function () {
-    var c = {};
+    var c          = {};
     document.title = conf.SERVER.title;
     form.initFields(c, ['login', 'password']);
 
@@ -93,12 +94,12 @@ module.exports = (function () {
   var view = {};
 
   view.form = function (c) {
-    var login = user.view.field.login(c);
-    login.input.attrs.config = form.focusOnInit;
+    var login                   = user.view.field.login(c);
+    login.input.attrs.config    = form.focusOnInit;
     login.input.attrs.maxlength = 40;
-    login.label.attrs.class = 'col-sm-4';
-    var password = user.view.field.password(c);
-    var passwordBlock = [ password.input ];
+    login.label.attrs.class     = 'col-sm-4';
+    var password                = user.view.field.password(c);
+    var passwordBlock           = [ password.input ];
     if (conf.SERVER.authMethod === 'internal') {
       passwordBlock.push(
         m('p.help-block', [

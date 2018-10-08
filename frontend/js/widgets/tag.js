@@ -31,8 +31,9 @@
 module.exports = (function () {
   'use strict';
   // Global dependencies
-  var m = require('mithril');
+  var m  = require('mithril');
   var ld = require('lodash');
+
   // Local dependencies
   var conf = require('../configuration.js');
 
@@ -52,10 +53,10 @@ module.exports = (function () {
   */
 
   tag.controller = function (config) {
-    var c = config;
-    c.label = c.label || conf.LANG.TAG.TAGS;
+    var c         = config;
+    c.label       = c.label || conf.LANG.TAG.TAGS;
     c.placeholder = c.placeholder || conf.LANG.TAG.PLACEHOLDER;
-    c.name = c.name || 'tags';
+    c.name        = c.name || 'tags';
 
     c.tags = ld.difference(c.tags, c.current);
 
@@ -71,9 +72,9 @@ module.exports = (function () {
     c.addMultiple = function (textarea) {
       var v = textarea.value;
       if (v.length !== 0) {
-        v = ld.compact(v.split('\n'));
-        c.current = ld.union(c.current, v);
-        c.tags = ld.difference(c.tags, v);
+        v              = ld.compact(v.split('\n'));
+        c.current      = ld.union(c.current, v);
+        c.tags         = ld.difference(c.tags, v);
         textarea.value = '';
       }
     };

@@ -32,6 +32,7 @@
             "ldap": "LDAP"
          },
          "CHECKMAILS": "Check user mails",
+         "CREATE_USER": "Create user",
          "HIDE_HELP_BLOCKS": "Hide help blocks",
          "HTMLEXTRA_HEAD": "Extra HTML for <head>",
          "INSENSITIVE_MAIL_MATCH": "Make the user search by mail non case-sensitive",
@@ -56,10 +57,12 @@
       "FORM_LOGIN": "Administration login",
       "FORM_SETTINGS": "MyPads configuration",
       "FORM_USERS_SEARCH": "Search user",
+      "FORM_USER_CREATE": "User creation",
       "FORM_USER_EDIT": "Profile user edition",
       "HELP_LOGIN": "<p>MyPads administration is tied to Etherpad administration. Please enter an authorized login and password, as fixed into Etherpad <em>settings.json</em> to be able to update MyPads settings.</p>",
       "HELP_SETTINGS": "<h3>Settings</h3><p>Only Etherpad admins have access this page. You can edit the global settings here and apply them. Changes will be effective directly.</p><h3>Passwords</h3><p>Be careful about password sizes: if you have existing accounts and raise minimum size or decrease maximum size, some user passwords may become unseizable.</p><h3>Mail configuration</h3><p>MyPads can verify the mails of subscribed users by sending them an email which will be used by them to confirm their address. Moreover, MyPads need email sending for password recovery.</p><p>Be cautious with SMTP configuration: bad parameters can lead to an Etherpad crash.</p><p>Please note that, unlike other parameters, SMTP settings are only applied after Etherpad reboot.</p>",
       "HELP_USERS": "<p>This admin reserved page helps you to find users by entering their login. Once found, you will be able to edit or remove user.</p><p>For simplicity and performance reasons, we don't offer here a full listing of subscribed users.</p>",
+      "HELP_USER_CREATE": "<p>Here you can create an account, even if registration is disabled.</p><p>Please note that no email is sent to the user, even if email checking is enabled.</p>",
       "HELP_USER_EDIT": "<p>Here you can update all data associated to an existing user.</p><p>Please note that by default, leaving password empty means keeping the current password. If you want to change it, you have to fill password field and its confirmation.</p>",
       "INFO": {
          "ALLOW_ETHERPADS": "Allow classic anonymous pads from on the Etherpad instance, created from the root URL of the server",
@@ -97,6 +100,7 @@
       "SETTINGS_GENERAL": "General settings",
       "SETTINGS_MAIL": "Mail settings",
       "SETTINGS_PASSWORD": "Password settings",
+      "SUBSCRIBE_SUCCESS": "Successful user creation!",
       "USERS_COUNT": "Number of users:",
       "USERS_SEARCH_LOGIN": "Search by login"
    },
@@ -189,8 +193,8 @@
    },
    "GLOBAL": {
       "AND": "and",
-      "DESCRIPTION": "MyPads is an <a href='http://etherpad.org/'>Etherpad</a> plugin which have been founded in 2014 on Ulule by <a href='http://ulule.com/etherpad-framapad/supporters/'>413 backers</a> and organized by the non-profit organization <a href='http://framasoft.org'>Framasoft</a>. It handles:<ul><li>users and their authentication; </li><li>folders of pads per user, unlimited, sharable;</li><li>attached pads, with choice between invite known users to use them, making them private with password or letting them public.</li></ul>",
-      "FOOTER": "Powered by <a href='https://git.framasoft.org/framasoft/ep_mypads'>MyPads</a><br>Published under Apache License 2.0",
+      "DESCRIPTION": "MyPads is an <a href=\"http://etherpad.org/\">Etherpad</a> plugin which have been founded in 2014 on Ulule by <a href=\"http://ulule.com/etherpad-framapad/supporters/\">413 backers</a> and organized by the non-profit organization <a href=\"http://framasoft.org\">Framasoft</a>. It handles:<ul><li>users and their authentication; </li><li>folders of pads per user, unlimited, sharable;</li><li>attached pads, with choice between invite known users to use them, making them private with password or letting them public.</li></ul>",
+      "FOOTER": "Powered by <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads\">MyPads</a><br>Published under Apache License 2.0",
       "LANG": "English",
       "NO": "no",
       "OR": "or",
@@ -281,7 +285,7 @@
          "EDIT_PROMPT": "Enter the new name of the pad",
          "EXPAND": "Expand",
          "FROM_GROUP": "folder:",
-         "MOVE": "Move all pads to another folder",
+         "MOVE": "Move pads to another folder",
          "MOVE_HELP": "<p>Please select the wanted folder for your migration. Only folders on which you are admin are listed.</p><p>Once chosen, click on the submit button and wait for a moment.</p>",
          "MOVE_TITLE": "Pads migration of the folder ",
          "NONE": "No pad linked",

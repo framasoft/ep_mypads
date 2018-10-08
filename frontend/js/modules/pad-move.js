@@ -30,12 +30,12 @@
 module.exports = (function () {
   'use strict';
   // Dependencies
-  var m = require('mithril');
-  var ld = require('lodash');
-  var auth = require('../auth.js');
-  var conf = require('../configuration.js');
-  var model = require('../model/group.js');
-  var notif = require('../widgets/notification.js');
+  var m      = require('mithril');
+  var ld     = require('lodash');
+  var auth   = require('../auth.js');
+  var conf   = require('../configuration.js');
+  var model  = require('../model/group.js');
+  var notif  = require('../widgets/notification.js');
   var layout = require('./layout.js');
 
   var move = {};
@@ -55,7 +55,7 @@ module.exports = (function () {
     }
     document.title = conf.LANG.GROUP.PAD.MOVE_TITLE + ' - ' + conf.SERVER.title;
 
-    var c = { data: { newGroup: m.prop() } };
+    var c   = { data: { newGroup: m.prop() } };
     var gid = m.route.param('group');
 
     var init = function () {
@@ -66,7 +66,7 @@ module.exports = (function () {
           return (isAdmin && (g._id !== gid));
         })
         .value();
-      c.noSelectedPads = m.prop(false);
+      c.noSelectedPads = m.prop(true);
       c.group = model.groups()[gid];
     };
 
@@ -83,7 +83,7 @@ module.exports = (function () {
     c.movePads = function (e) {
       e.preventDefault();
       var _pads = ld.clone(model.pads(), true);
-      var pads = ld.reduce(model.pads(), function (memo, p, k) {
+      var pads  = ld.reduce(model.pads(), function (memo, p, k) {
         if (p.group === gid && document.querySelectorAll('input.pad-to-move[name="'+p._id+'"]:checked').length > 0) {
           p.group = c.data.newGroup();
           _pads[k] = p;
@@ -161,13 +161,13 @@ module.exports = (function () {
 
   view.pads = function (c) {
     var pads = [];
-    var gid = m.route.param('group');
+    var gid  = m.route.param('group');
     ld.forEach(model.pads(), function(p) {
       if (p.group === gid) {
         pads.push(m('.checkbox', [
           m('label', [
             m('input.pad-to-move[type="checkbox"]', {
-              name: p._id, checked: 'checked',
+              name: p._id,
               onchange: function() {
                 c.noSelectedPads(document.querySelectorAll('input.pad-to-move:checked').length === 0);
               }

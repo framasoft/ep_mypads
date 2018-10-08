@@ -28,13 +28,13 @@
 *  Please refer to binded function when no details are given.
 */
 
-var rFS = require('fs').readFileSync;
+var rFS      = require('fs').readFileSync;
 // External dependencies
-var ld = require('lodash');
+var ld       = require('lodash');
 var passport = require('passport');
-var jwt = require('jsonwebtoken');
-var express;
+var jwt      = require('jsonwebtoken');
 var testMode = false;
+var express;
 try {
   // Normal case : when installed as a plugin
   express = require('ep_etherpad-lite/node_modules/express');
@@ -42,7 +42,7 @@ try {
 catch (e) {
   // Testing case : we need to mock the express dependency
   testMode = true;
-  express = require('express');
+  express  = require('express');
 }
 var settings;
 try {
@@ -74,23 +74,24 @@ catch (e) {
     settings = {};
   }
 }
-var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
-var decode = require('js-base64').Base64.decode;
+var bodyParser        = require('body-parser');
+var cookieParser      = require('cookie-parser');
+var decode            = require('js-base64').Base64.decode;
 // Local dependencies
-var conf = require('./configuration.js');
-var mail = require('./mail.js');
-var user = require('./model/user.js');
-var userCache = require('./model/user-cache.js');
-var group = require('./model/group.js');
-var pad = require('./model/pad.js');
-var auth = require('./auth.js');
-var perm = require('./perm.js');
+var conf              = require('./configuration.js');
+var mail              = require('./mail.js');
+var user              = require('./model/user.js');
+var userCache         = require('./model/user-cache.js');
+var group             = require('./model/group.js');
+var pad               = require('./model/pad.js');
+var auth              = require('./auth.js');
+var perm              = require('./perm.js');
+var common            = require('./model/common.js');
 
 module.exports = (function () {
   'use strict';
 
-  var api = {};
+  var api          = {};
   api.initialRoute = '/mypads/api/';
   var authAPI;
   var configurationAPI;
@@ -121,7 +122,7 @@ module.exports = (function () {
       app.use('/mypads/functest', express.static(__dirname + '/spec/frontend'));
     }
     var rFSOpts = { encoding: 'utf8' };
-    api.l10n = {
+    api.l10n    = {
       mail: {
         de: JSON.parse(rFS(__dirname + '/templates/mail_de.json', rFSOpts)),
         en: JSON.parse(rFS(__dirname + '/templates/mail_en.json', rFSOpts)),
@@ -142,10 +143,9 @@ module.exports = (function () {
     /**
     * `index.html` is a simple lodash template
     */
-    var idxTpl = ld.template(rFS(__dirname + '/templates/index.html', rFSOpts));
+    var idxTpl    = ld.template(rFS(__dirname + '/templates/index.html', rFSOpts));
     var idxHandle = function (req, res) {
-      var cssTag = (conf.get('hideHelpBlocks')) ? '<link href="css/mypads-hide-help-blocks.css" rel="stylesheet">' : '';
-      return res.send(idxTpl({ HTMLExtraHead: conf.get('HTMLExtraHead'), hideHelpBlocks: cssTag }));
+      return res.send(idxTpl({ HTMLExtraHead: conf.get('HTMLExtraHead'), hideHelpBlocks: conf.get('hideHelpBlocks') }));
     };
     app.get('/mypads/index.html', idxHandle);
     app.get('/mypads/', idxHandle);
@@ -253,7 +253,7 @@ module.exports = (function () {
 
   fn.mailMessage = function (tpl, data, lang) {
     lang = lang || conf.get('defaultLanguage');
-    tpl = ld.template(api.l10n.mail[lang][tpl]);
+    tpl  = ld.template(api.l10n.mail[lang][tpl]);
     return tpl(data);
   };
 
@@ -276,7 +276,7 @@ module.exports = (function () {
     if (!token) { return false; }
     try {
       var jwt_payload = jwt.verify(token, auth.secret);
-      var admin = auth.adminTokens[jwt_payload.login];
+      var admin       = auth.adminTokens[jwt_payload.login];
       return (admin && (admin.key === jwt_payload.key));
     }
     catch (e) { return false; }
@@ -305,10 +305,10 @@ module.exports = (function () {
   fn.ensureAdminOrSelf = function (req, res, next) {
     var isAdmin = fn.isAdmin(req);
 
-    var token = (req.body.auth_token || req.query.auth_token);
-    var login = req.params.key;
-    var u = auth.fn.getUser(token);
-    var isSelf = (u && login === u.login);
+    var token   = (req.body.auth_token || req.query.auth_token);
+    var login   = req.params.key;
+    var u       = auth.fn.getUser(token);
+    var isSelf  = (u && login === u.login);
     if (isSelf) { req.mypadsLogin = u.login; }
 
     if (!isAdmin && !isSelf) {
@@ -534,7 +534,7 @@ module.exports = (function () {
     */
 
     var _set = function (req, res) {
-      var key = (req.method === 'POST') ? req.body.key : req.params.key;
+      var key   = (req.method === 'POST') ? req.body.key : req.params.key;
       var value = req.body.value;
       var setFn = ld.partial(conf.set, key, value);
       fn.set(setFn, key, value, req, res);
@@ -579,7 +579,7 @@ module.exports = (function () {
 
     app.get(confRoute + '/public/allpadspublicsauthentifiedonly', function (req, res) {
       var confValue = conf.get('allPadsPublicsAuthentifiedOnly');
-      var data = {
+      var data      = {
         success: true,
         allpadspublicsauthentifiedonly: confValue
       };
@@ -605,7 +605,7 @@ module.exports = (function () {
   */
 
   userAPI = function (app) {
-    var userRoute = api.initialRoute + 'user';
+    var userRoute     = api.initialRoute + 'user';
     var allUsersRoute = api.initialRoute + 'all-users';
     var userlistRoute = api.initialRoute + 'userlist';
 
@@ -641,7 +641,7 @@ module.exports = (function () {
       function (req, res) {
         try {
           var users = { absent: [], present: [] };
-          var lm = req.body.loginsOrEmails;
+          var lm    = req.body.loginsOrEmails;
           if (lm) { users = userCache.fn.getIdsFromLoginsOrEmails(lm); }
           var opts = {
             crud: 'add',
@@ -677,7 +677,7 @@ module.exports = (function () {
       function (req, res) {
         try {
           var users = { absent: [], present: [] };
-          var lm = req.body.loginsOrEmails;
+          var lm    = req.body.loginsOrEmails;
           if (lm) { users = userCache.fn.getIdsFromLoginsOrEmails(lm); }
           var opts = {
             crud: 'set',
@@ -757,7 +757,7 @@ module.exports = (function () {
 
     app.get(allUsersRoute, fn.ensureAdmin,
       function (req, res) {
-        var emails = ld.reduce(userCache.emails, function (result, n, key) {
+        var emails  = ld.reduce(userCache.emails, function (result, n, key) {
           result[n] = key;
           return result;
         }, {});
@@ -778,7 +778,7 @@ module.exports = (function () {
       var key;
       var value = req.body;
       var stop;
-      if (req.method === 'POST') {
+      if (req.method === 'POST' && !fn.isAdmin(req)) {
         if (conf.isNotInternalAuth() || !conf.get('openRegistration')) {
           stop = true;
           res.status(400).send({ error: 'BACKEND.ERROR.AUTHENTICATION.NO_REGISTRATION' });
@@ -786,7 +786,7 @@ module.exports = (function () {
           key = req.body.login;
           if (conf.get('checkMails')) {
             var token = mail.genToken({ login: key, action: 'accountconfirm' });
-            var url = conf.get('rootUrl') +
+            var url   = conf.get('rootUrl') +
               '/mypads/index.html?/accountconfirm/' + token;
             console.log(url);
             var lang = (function () {
@@ -813,26 +813,38 @@ module.exports = (function () {
           }
         }
       } else {
-        key = req.params.key;
+        key         = req.params.key;
         value.login = req.body.login || key;
-        value._id = userCache.logins[key];
+        value._id   = userCache.logins[key];
       }
       // Update needed session values
       if (!stop) {
         var u = auth.fn.getUser(req.body.auth_token);
-        if (u) {
+        if (u && !fn.isAdmin(req)) {
           auth.tokens[u.login].color = req.body.color || u.color;
           if (!ld.isUndefined(req.body.useLoginAndColorInPads)) {
-            auth.tokens[u.login].useLoginAndColorInPads =
-              req.body.useLoginAndColorInPads;
+            auth.tokens[u.login].useLoginAndColorInPads = req.body.useLoginAndColorInPads;
           }
         }
-        if (fn.isAdmin(req)) {
+        if (fn.isAdmin(req) && req.method !== 'POST') {
+          delete value.auth_token;
+          delete value.passwordConfirm;
           user.get(value.login, function (err, u) {
             if (err) { return res.status(400).send({ error: err.message }); }
-            ld.assign(u, value);
-            var setFn = ld.partial(user.fn.set, u);
-            fn.set(setFn, key, u, req, res);
+            if (value.password) {
+              common.hashPassword(null, value.password, function (err, pass) {
+                if (err) { return res.status(400).send({ error: err }); }
+
+                value.password = pass;
+                ld.assign(u, value);
+                var setFn = ld.partial(user.fn.set, u);
+                fn.set(setFn, key, u, req, res);
+              });
+            } else {
+              ld.assign(u, value);
+              var setFn = ld.partial(user.fn.set, u);
+              fn.set(setFn, key, u, req, res);
+            }
           });
         } else {
           var setFn = ld.partial(user.set, value);
@@ -952,9 +964,9 @@ module.exports = (function () {
     */
 
     app.put(api.initialRoute + 'passrecover/:token', function (req, res) {
-      var val = mail.tokens[req.params.token];
       var err;
-      var badLogin = (!val || !val.login || !userCache.logins[val.login]);
+      var val       = mail.tokens[req.params.token];
+      var badLogin  = (!val || !val.login || !userCache.logins[val.login]);
       var badAction = (!val || !val.action || (val.action !== 'passrecover'));
       if (conf.isNotInternalAuth()) {
         err = 'BACKEND.ERROR.AUTHENTICATION.NO_RECOVER';
@@ -968,7 +980,7 @@ module.exports = (function () {
         err = 'BACKEND.ERROR.TOKEN.EXPIRED';
         return res.status(400).send({ error: err });
       }
-      var pass = req.body.password;
+      var pass  = req.body.password;
       var passC = req.body.passwordConfirm;
       if (!pass || (pass !== passC)) {
         err = 'USER.ERR.PASSWORD_MISMATCH';
@@ -1119,9 +1131,9 @@ module.exports = (function () {
           if (err) {
             return res.status(404).send({ key: key, error: err.message });
           }
-          var u = auth.fn.getUser(req.query.auth_token);
-          var isAdmin = fn.isAdmin(req);
-          var isUser = (u && ld.includes(ld.union(g.admins, g.users), u._id));
+          var u                  = auth.fn.getUser(req.query.auth_token);
+          var isAdmin            = fn.isAdmin(req);
+          var isUser             = (u && ld.includes(ld.union(g.admins, g.users), u._id));
           var isAllowedForPublic = (g.visibility === 'public');
 
           // allPadsPublicsAuthentifiedOnly feature
@@ -1340,7 +1352,7 @@ module.exports = (function () {
         // allPadsPublicsAuthentifiedOnly feature
         if (conf.get('allPadsPublicsAuthentifiedOnly') && req.route.method === 'get') {
           var token = req.body.auth_token || req.query.auth_token;
-          var u = auth.fn.getUser(token);
+          var u     = auth.fn.getUser(token);
           return (!u) ? fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.MUST_BE') : successFn(req, res, p);
         }
 
@@ -1379,12 +1391,12 @@ module.exports = (function () {
               );
             } else {
               var token = req.body.auth_token || req.query.auth_token;
-              var u = auth.fn.getUser(token);
+              var u     = auth.fn.getUser(token);
               if (!u) {
                 return fn.denied(res, 'BACKEND.ERROR.AUTHENTICATION.MUST_BE');
               }
-              var users = edit ? g.admins : ld.union(g.admins, g.users);
-              var uid = auth.tokens[u.login]._id;
+              var users     = edit ? g.admins : ld.union(g.admins, g.users);
+              var uid       = auth.tokens[u.login]._id;
               var isAllowed = ld.includes(users, uid);
               if (isAllowed) {
                 return successFn(req, res, p);

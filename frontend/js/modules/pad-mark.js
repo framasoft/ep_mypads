@@ -30,10 +30,10 @@
 module.exports = (function () {
   'use strict';
   // Dependencies
-  var m = require('mithril');
-  var ld = require('lodash');
-  var auth = require('../auth.js');
-  var conf = require('../configuration.js');
+  var m     = require('mithril');
+  var ld    = require('lodash');
+  var auth  = require('../auth.js');
+  var conf  = require('../configuration.js');
   var notif = require('../widgets/notification.js');
   var model = require('../model/group.js');
 
@@ -46,7 +46,7 @@ module.exports = (function () {
   */
 
   return function (pad, successFn) {
-    var pid = pad._id;
+    var pid  = pad._id;
     var user = auth.userInfo();
     if (ld.includes(user.bookmarks.pads, pid)) {
       ld.pull(user.bookmarks.pads, pid);

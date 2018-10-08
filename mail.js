@@ -29,8 +29,8 @@
 */
 
 // External dependencies
-var ld = require('lodash');
-var cuid = require('cuid');
+var ld      = require('lodash');
+var cuid    = require('cuid');
 var emailjs = require('emailjs');
 // Local dependencies
 require('./helpers.js'); // Helpers auto-init
@@ -60,9 +60,9 @@ module.exports = (function () {
       throw new TypeError('BACKEND.ERROR.TYPE.PARAMS_REQUIRED');
     }
     var duration = parseFloat(conf.get('tokenDuration')) || 60;
-    var ts = Date.now();
-    var end = ts + duration * 60 * 1000;
-    var token = cuid();
+    var ts       = Date.now();
+    var end      = ts + duration * 60 * 1000;
+    var token    = cuid();
     mail.tokens[token] = value;
     mail.ends[token] = end;
     return token;

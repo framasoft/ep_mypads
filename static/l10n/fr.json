@@ -32,6 +32,7 @@
             "ldap": "LDAP"
          },
          "CHECKMAILS": "Vérifier les mails",
+         "CREATE_USER": "Créer un utilisateur",
          "HIDE_HELP_BLOCKS": "Cacher les blocs d’aide",
          "HTMLEXTRA_HEAD": "HTML pour <head>",
          "INSENSITIVE_MAIL_MATCH": "Rendre la recherche d’utilisateur non sensible à la casse",
@@ -56,10 +57,12 @@
       "FORM_LOGIN": "Identification pour l’administration",
       "FORM_SETTINGS": "Configuration MyPads",
       "FORM_USERS_SEARCH": "Rechercher un utilisateur",
+      "FORM_USER_CREATE": "Création d’un utilisateur",
       "FORM_USER_EDIT": "Modification du profil de l’utilisateur",
       "HELP_LOGIN": "<p>L’administration de MyPads utilise celle d’Etherpad. Merci de saisir un couple identifiant mot de passe autorisé, tel que fixé dans le fichier de configuration d’Etherpad, <em>settings.json</em>, afin de pouvoir modifier la configuration de MyPads.</p>",
       "HELP_SETTINGS": "<h3>Paramètres</h3><p>Seuls les administrateurs de l’instance Etherpad ont accès à cette page. Vous pouvez y éditer les paramètres généraux et appliquer vos changements. Ceux-ci seront effectifs immédiatement.</p><h3>Mots de passe</h3><p>Attention avec les tailles de mot de passe : si vous avez déjà des utilisateurs et que vous augmentez la taille minimum ou réduisez le maximum, certains mots de passe risquent de ne plus pouvoir être saisis.</p><h3>Configuration mail</h3><p>MyPads peut vérifier les adresses mails des inscrits en leur envoyant un mail à partir duquel ils pourront confirmer que leur adresse existe bien. De plus, MyPads a besoin d’envoyer un mail pour la récupération de mot de passe.</p><p>Soyez prudents avec la configuration du serveur d’envoi SMTP : de mauvais paramètres pourraient conduire à l’arrêt de votre instance Etherpad.</p><p>Veuillez noter qu’à la différence des autres paramètres, la configuration SMTP ne sera prise en compte qu’après redémarrage de l’instance Etherpad.</p>",
       "HELP_USERS": "<p>Cette page d’administration est là afin que vous puissiez trouver un utilisateur en saisissant son identifiant. Une fois cela fait, vous serez en capacité de modifier ou supprimer cet utilisateur.</p><p>Pour des questions de simplicité et de performance, nous ne proposons pas ici une liste complète de tous les utilisateurs inscrits.</p>",
+      "HELP_USER_CREATE": "<p>Vous pouvez ici créer un compte même si les inscriptions sont désactivées.</p><p>Veuillez noter qu’aucun mail ne sera envoyé à l’utilisateur ou utilisatrice, même si la vérification des emails est activée.</p>",
       "HELP_USER_EDIT": "<p>Vous pourrez ici mettre à jour toutes les données associées à un utilisateur existant.</p><p>Veuillez noter que par défaut, laisser le mot de passe vide signifie conserver le mot de passe utilisateur actuel. Si vous voulez changer ce mot de passe, vous devez remplir le champ correspondant ainsi que celui de confirmation.</p>",
       "INFO": {
          "ALLOW_ETHERPADS": "Autoriser les pads anonymes classiques sur l’instance Etherpad, pads créés à partir de l’adresse racine du serveur",
@@ -97,6 +100,7 @@
       "SETTINGS_GENERAL": "Paramètres généraux",
       "SETTINGS_MAIL": "Paramètres mails",
       "SETTINGS_PASSWORD": "Paramètres mot de passe",
+      "SUBSCRIBE_SUCCESS": "Création d’un utilisateur terminée avec succès !",
       "USERS_COUNT": "Nombre d’utilisateurs :",
       "USERS_SEARCH_LOGIN": "Rechercher par identifiant"
    },
@@ -104,7 +108,7 @@
       "ERROR": {
          "AUTHENTICATION": {
             "ACTIVATION_NEEDED": "Votre compte n’a pas été confirmé",
-            "ADMIN": "Accès interdit : vous devez être un administrateur authentifié de l’instance Etherpad",
+            "ADMIN": "Accès interdit : vous devez être un administrateur authentifié de l’instance Etherpad.",
             "CAS_NO_TICKET": "Accès interdit : ticket CAS non fourni",
             "DENIED": "Accès interdit",
             "DENIED_RECORD": "Vous n’êtes pas autorisé à voir cet enregistrement",
@@ -189,8 +193,8 @@
    },
    "GLOBAL": {
       "AND": "et",
-      "DESCRIPTION": "MyPads est un plugin <a href='http://etherpad.org/'>Etherpad</a> qui a été financé en 2014 par <a href='http://fr.ulule.com/etherpad-framapad/supporters/'>413 contributeurs</a> sur Ulule et porté par l’association <a href='http://framasoft.org'>Framasoft</a>. Il prend en charge<ul><li>des utilisateurs et leur authentification;</li><li>des dossiers de pads par utilisateur, illimités et partageables;</li><li>les pads qui leur sont attachés, donne la possibilité d’inviter des utilisateurs connus à les utiliser, les rendre privés sous contrainte de mot de passe ou les fixer en accès public.</li></ul>",
-      "FOOTER": "Propulsé par <a href='https://git.framasoft.org/framasoft/ep_mypads'>MyPads</a><br>Publié sous la licence Apache 2.0",
+      "DESCRIPTION": "MyPads est un plugin <a href=\"http://etherpad.org/\">Etherpad</a> qui a été financé en 2014 par <a href=\"http://fr.ulule.com/etherpad-framapad/supporters/\">413 contributeurs</a> sur Ulule et porté par l’association <a href=\"http://framasoft.org\">Framasoft</a>. Il prend en charge<ul><li>des utilisateurs et leur authentification;</li><li>des dossiers de pads par utilisateur, illimités et partageables;</li><li>les pads qui leur sont attachés, donne la possibilité d’inviter des utilisateurs connus à les utiliser, les rendre privés sous contrainte de mot de passe ou les fixer en accès public.</li></ul>",
+      "FOOTER": "Propulsé par <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads\">MyPads</a><br>Publié sous la licence Apache 2.0",
       "LANG": "Français",
       "NO": "non",
       "OR": "ou",
@@ -246,7 +250,7 @@
          "PAD_ADD_SUCCESS": "Le pad a été créé avec succès",
          "PAD_EDIT_SUCCESS": "Le pad a été mis à jour avec succès",
          "PAD_MOVE": "Choisissez le dossier souhaité pour votre migration",
-         "PAD_MOVE_NOGROUP": "Désolé mais aucun autre dossier n’est disponible. Vous devriez en créer un d'abord.",
+         "PAD_MOVE_NOGROUP": "Désolé mais aucun autre dossier n’est disponible. Vous devriez en créer un d’abord.",
          "PAD_MOVE_SUCCESS": "Tous les pads ont été déplacés avec succès",
          "PAD_REMOVE_SUCCESS": "Le pad a été supprimé avec succès",
          "PAD_REMOVE_SURE": "Voulez-vous vraiment supprimer ce pad ? ATTENTION, cette action est irréversible, le pad sera supprimé pour TOUTE PERSONNE y ayant accès.",
@@ -281,8 +285,8 @@
          "EDIT_PROMPT": "Saisissez le nouveau nom du pad",
          "EXPAND": "Agrandir",
          "FROM_GROUP": "dossier :",
-         "MOVE": "Déplacer tous les pads vers un autre dossier",
-         "MOVE_HELP": "<p>Merci de sélectionner le dossier souhaité pour votre migration. Seuls les dossiers dont vous êtes administrateur apparaissent.</p><p>Une fois choisi, cliquez sur le bouton d'envoi et attendez un moment</p>",
+         "MOVE": "Déplacer des pads vers un autre dossier",
+         "MOVE_HELP": "<p>Merci de sélectionner le dossier souhaité pour votre migration. Seuls les dossiers dont vous êtes administrateur apparaissent.</p><p>Une fois choisi, cliquez sur le bouton d’envoi et attendez un moment</p>",
          "MOVE_TITLE": "Migration des pads du dossier ",
          "NONE": "Aucun pad attaché",
          "OPEN_TAB": "Ouvrir dans un nouvel onglet",
@@ -430,7 +434,7 @@
       "FIELD": {
          "NAME": "Nom",
          "USERS": "Utilisateurs",
-         "USERSAREA_HELP": "Vous pouvez ajouter autant d'emails ou d'identifiants que vous le souhaitez",
+         "USERSAREA_HELP": "Vous pouvez ajouter autant d’emails ou d’identifiants que vous le souhaitez",
          "USERSAREA_PLACEHOLDER": "Un email ou identifiant par ligne",
          "USERS_HELP": "Ajoutez autant d’utilisateurs que vous le souhaitez"
       },

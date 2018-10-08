@@ -3,14 +3,14 @@ locales:
 	json2po -P -i templates/mail_en.json -t templates/mail_en.json -o po/mail.pot
 
 push-locales: locales
-	zanata-cli --errors -q -B push
+	zanata-cli -q -B push --errors --project-version `git branch | grep \* | cut -d ' ' -f2-`
 
 pull-locales:
-	zanata-cli --errors -q -B pull
+	zanata-cli -q -B pull  --min-doc-percent 75 --errors --project-version `git branch | grep \* | cut -d ' ' -f2-`
 	./.po2json.sh
 
 stats-locales:
-	zanata-cli -q stats
+	zanata-cli -q stats  --project-version `git branch | grep \* | cut -d ' ' -f2-`
 
 contributors-locales:
 	@echo "Master version:"

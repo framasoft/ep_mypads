@@ -29,12 +29,13 @@
 
 module.exports = (function () {
   // Global dependencies
-  var m = require('mithril');
-  var ld = require('lodash');
+  var m       = require('mithril');
+  var ld      = require('lodash');
   var cookies = require('js-cookie');
+
   // Local dependencies
-  var conf = require('../configuration.js');
-  var auth = require('../auth.js');
+  var conf  = require('../configuration.js');
+  var auth  = require('../auth.js');
   var model = require('../model/group.js');
   var notif = require('../widgets/notification.js');
 
@@ -62,12 +63,15 @@ module.exports = (function () {
           cookies.remove('token');
         }
 
+        if (!conf.SERVER.hideHelpBlocks && auth.userInfo().hideHelp) {
+          document.getElementsByTagName('body')[0].classList.remove('hidehelpblocks');
+        }
         auth.userInfo(null);
         localStorage.removeItem('token');
         model.init();
         document.title = conf.SERVER.title;
         if (conf.SERVER.authMethod === 'cas') {
-          var cas = conf.SERVER.authCasSettings;
+          var cas         = conf.SERVER.authCasSettings;
           window.location = cas.logoutUrl || cas.serverUrl+'/logout';
         } else {
           notif.success({ body: conf.LANG.USER.AUTH.SUCCESS_OUT });

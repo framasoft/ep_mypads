@@ -6,11 +6,11 @@
       "SAVE": "Sauvegarder"
    },
    "ADMIN": {
-      "AUTHENTICATION": "Paramètres d'authentification",
+      "AUTHENTICATION": "Paramètres d’authentification",
       "ERR": {
          "LANGUAGE_DEFAULT": "Une langue par défaut doit être choisie",
-         "PARSE_CAS": "La configuration CAS est invalide (ce n'est pas du JSON valide)",
-         "PARSE_LDAP": "La configuration LDAP est invalide (ce n'est pas du JSON valide)",
+         "PARSE_CAS": "La configuration CAS est invalide (ce n’est pas du JSON valide)",
+         "PARSE_LDAP": "La configuration LDAP est invalide (ce n’est pas du JSON valide)",
          "PASSWORD_MAX": "La taille maximum est obligatoire",
          "PASSWORD_MIN": "La taille minimum est obligatoire",
          "PASSWORD_SIZE": "La taille minimum ne peut être plus élevée que la maximum. Merci de vérifier vos saisies.",
@@ -66,7 +66,7 @@
       "HELP_USER_EDIT": "<p>Vous pourrez ici mettre à jour toutes les données associées à un utilisateur existant.</p><p>Veuillez noter que par défaut, laisser le mot de passe vide signifie conserver le mot de passe utilisateur actuel. Si vous voulez changer ce mot de passe, vous devez remplir le champ correspondant ainsi que celui de confirmation.</p>",
       "INFO": {
          "ALLOW_ETHERPADS": "Autoriser les pads anonymes classiques sur l’instance Etherpad, pads créés à partir de l’adresse racine du serveur",
-         "ALL_PADS_PUBLICS_AUTHENTIFIED_ONLY": "Cette option supprime les notions de pads restreints ou privés, les rendant tous publics mais ils ne seront accessibles qu'aux utilisateurs authentifiés.",
+         "ALL_PADS_PUBLICS_AUTHENTIFIED_ONLY": "Cette option supprime les notions de pads restreints ou privés, les rendant tous publics mais ils ne seront accessibles qu’aux utilisateurs authentifiés.",
          "AUTHENTICATION_METHOD": "Vous pouvez choisir entre plusieurs méthodes d’authentification. La méthode par défaut est « interne ». Vous ne pouvez utiliser plusieurs méthodes d’authentification en même temps.",
          "AUTH_CAS_SETTINGS": "Voir les détails sur la <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-CAS-authentication\" hreflang=\"en\">page dédiée du wiki</a>.<br>À part properties et defaultLang, tous les paramètres sont des paramètres de <a href=\"https://github.com/jsumners/simple-cas-interface/blob/HEAD/api.md#CASParameters\" hreflang=\"en\">simple-cas-interface</a> (le module utilisé pour l’authentification CAS). Le paramètre `serverUrl` ne doit pas se terminer par un slash.",
          "AUTH_LDAP_SETTINGS": "Voir les détails sur la <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-ldap-authentication\" hreflang=\"en\">page dédiée du wiki</a>.<br>À part properties et defaultLang, tous les paramètres sont des paramètres de ldapauthfork (le module utilisé pour l’authentification CAS). Vous pouvez y ajouter d’autres paramètres, consultez <a href=\"https://www.npmjs.com/package/ldapauth-fork#ldapauth-config-options\" hreflang=\"en\">la page du module</a> pour voir lesquels.",
@@ -202,7 +202,7 @@
    },
    "GROUP": {
       "ADD": "Créer un nouveau dossier",
-      "ADD_HELP": "<h3>Accès</h3><p>Vous avez le choix entre trois niveaux de visibilité. Cela impactera tous les pads liés :<ul><li><em>restreint</em>, le choix par défaut : l’accès aux pads sera limité à une liste d’utilisateurs invités que vous aurez choisis ;</li><li><em>privé</em> : dans ce mode vous aurez à saisir un mot de passe qui sera vérifié pour autoriser l’accès ;</li><li><em>public</em> : dans ce mode, tous les pads sont publics, les utilisateurs n’ont alors besoin que de l’adresse URL pour y accéder.</li></ul></p><h3>Lecture seule</h3><p>Si vous activez la <em>lecture seule</em>, tous les pads attachés conserveront leur dernier état connu et ne pourront être édités. Notez que la visibilité fonctionnera toujours.</p><h3>Labels</h3><p>Vous pouvez associer des labels à cet élément en cliquant sur le champ correspondant et en les sélectionnant un par un.</p><p>Pour créer un nouveau label, saisissez-le et appuyez sur la touche ENTRÉE ou cliquez sur le bouton 'Ok'. Une fois le label ajouté, il sera automatiquement sélectionné sur ce formulaire.</p><p>Vous pouvez supprimer un label en cliquant sur la croix située à sa droite.</p>",
+      "ADD_HELP": "<h3>Accès</h3><p>Vous avez le choix entre trois niveaux de visibilité. Cela impactera tous les pads liés :<ul><li><em>restreint</em>, le choix par défaut : l’accès aux pads sera limité à une liste d’utilisateurs invités que vous aurez choisis ;</li><li><em>privé</em> : dans ce mode vous aurez à saisir un mot de passe qui sera vérifié pour autoriser l’accès ;</li><li><em>public</em> : dans ce mode, tous les pads sont publics, les utilisateurs n’ont alors besoin que de l’adresse URL pour y accéder.</li></ul></p><h3>Lecture seule</h3><p>Si vous activez la <em>lecture seule</em>, tous les pads attachés conserveront leur dernier état connu et ne pourront être édités. Notez que la visibilité fonctionnera toujours.</p><h3>Labels</h3><p>Vous pouvez associer des labels à cet élément en cliquant sur le champ correspondant et en les sélectionnant un par un.</p><p>Pour créer un nouveau label, saisissez-le et appuyez sur la touche ENTRÉE ou cliquez sur le bouton « Ok ». Une fois le label ajouté, il sera automatiquement sélectionné sur ce formulaire.</p><p>Vous pouvez supprimer un label en cliquant sur la croix située à sa droite.</p>",
       "ADMIN_SHARE": {
          "AS": "Partage d’administration",
          "FAILURE": "Vous ne pouvez pas partager l’administration de ce dossier avec des utilisateurs qui ne possèdent pas de compte sur cette instance : ",

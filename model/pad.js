@@ -50,6 +50,7 @@ module.exports = (function () {
   var PPREFIX        = storage.DBPREFIX.PAD;
   var UPREFIX        = storage.DBPREFIX.USER;
   var GPREFIX        = storage.DBPREFIX.GROUP;
+  var JPREFIX        = storage.DBPREFIX.JOBQ+'deletePad:';
 
   /**
   * ## Description
@@ -311,7 +312,7 @@ module.exports = (function () {
         if (err) { return callback(err); }
 
         if (typeof(value) !== 'undefined' && value !== null && value.atext) {
-          removePad(p._id, function(err) {
+          storage.db.set(JPREFIX+p._id, p._id, function(err) {
             if (err) { return callback(err); }
             pad.fn.indexGroups(true, p, callback);
           });

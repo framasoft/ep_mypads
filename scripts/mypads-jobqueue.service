@@ -1,0 +1,16 @@
+[Unit]
+# Replace by the DB you use
+Requires=postgresql.service
+After=postgresql.service
+After=systemd-user-sessions.service
+
+[Service]
+Environment=NODE_ENV=production
+User=www-data
+# Adapt to your own path
+ExecStart=/var/www/etherpad/node_modules/ep_mypads/scripts/mypads-jobqueue-minion.js -q -s /var/www/etherpad/settings.json
+Restart=always
+LimitNOFILE=100000
+
+[Install]
+WantedBy=multi-user.target

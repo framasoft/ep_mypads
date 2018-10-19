@@ -53,7 +53,7 @@ var db = new ueberDB.database(settings.dbType, settings.dbSettings);
 function exitIfErr(err) {
   console.log('=====================');
   console.error(err);
-  return db.close(function() { process.exit(1); });
+  return db.doShutdown(function() { process.exit(1); });
 }
 
 // Remove record from DB
@@ -102,7 +102,7 @@ db.init(function(err) {
       console.log('This script would delete all the anonymous pads.');
       console.log('Exiting');
       console.log('================================================');
-      process.exit(1);
+      return db.doShutdown(function() { process.exit(1); });
     }
 
     // readonly2pad:* records are leftovers of deleted pads before #197 was solved
@@ -113,7 +113,7 @@ db.init(function(err) {
 
       if (keys.length === 0) {
         console.log('No pads to check.');
-        process.exit(0);
+        return db.doShutdown(function() { process.exit(0); });
       }
 
       console.log(keys.length+' pad(s) to check.');
@@ -201,7 +201,7 @@ db.init(function(err) {
             console.log(candidatesForDeletion+' pad(s) would have been deleted.');
           }
 
-          process.exit(0);
+          return db.doShutdown(function() { process.exit(0); });
         }, 100);
       });
     });

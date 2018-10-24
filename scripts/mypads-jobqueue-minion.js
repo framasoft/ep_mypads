@@ -92,33 +92,31 @@ function deletePads(nextLoop) {
             db.remove('pad2readonly:'+padId, function(err) {
               if (err) { return exitIfErr(err); }
 
-              // 3. Delete the pad:padId record
-              db.remove('pad:'+padId, function(err) {
+              // 3. The pad:padId record has already been deleted through PadManager.removePad
+              // called from MyPads
+
+              // 4. Check for revs records
+              db.findKeys('pad:'+padId+':revs:*', null, function(err, keys) {
                 if (err) { return exitIfErr(err); }
 
-                // 4. Check for revs records
-                db.findKeys('pad:'+padId+':revs:*', null, function(err, keys) {
+                // 5. Delete the revs records
+                eachSeries(keys, removeRecord, function(err) {
                   if (err) { return exitIfErr(err); }
 
-                  // 5. Delete the revs records
-                  eachSeries(keys, removeRecord, function(err) {
+                  // 6. Check for chat records
+                  db.findKeys('pad:'+padId+':chat:*', null, function(err, keys) {
                     if (err) { return exitIfErr(err); }
 
-                    // 6. Check for chat records
-                    db.findKeys('pad:'+padId+':chat:*', null, function(err, keys) {
+                    // 7. Delete the chat records
+                    eachSeries(keys, removeRecord, function(err) {
                       if (err) { return exitIfErr(err); }
 
-                      // 7. Delete the chat records
-                      eachSeries(keys, removeRecord, function(err) {
+                      // 8. Remove the job
+                      db.remove('mypads:jobqueue:deletePad:'+padId, function(err) {
                         if (err) { return exitIfErr(err); }
 
-                        // 8. Remove the job
-                        db.remove('mypads:jobqueue:deletePad:'+padId, function(err) {
-                          if (err) { return exitIfErr(err); }
-
-                          if (!program.quiet) { console.log('End deletion of '+padId); }
-                          return next();
-                        });
+                        if (!program.quiet) { console.log('End deletion of '+padId); }
+                        return next();
                       });
                     });
                   });

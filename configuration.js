@@ -132,6 +132,7 @@ module.exports = (function() {
         defaultLang: 'en'
       },
       allPadsPublicsAuthentifiedOnly: false,
+      deleteJobQueue: false,
     },
 
     /**

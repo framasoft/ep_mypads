@@ -28,10 +28,12 @@ module.exports = (function () {
 
   // Dependencies
   var removePad;
+  var unloadPad;
   var getChatHead;
   try {
     // Normal case : when installed as a plugin
     removePad   = require('ep_etherpad-lite/node/db/API').deletePad;
+    unloadPad   = require('ep_etherpad-lite/node/db/PadManager').removePad;
     getChatHead = require('ep_etherpad-lite/node/db/API').getChatHead;
   }
   catch (e) {
@@ -39,12 +41,15 @@ module.exports = (function () {
     removePad = function (pad, callback) {
       return callback(null, {});
     };
+    unloadPad   = function () {};
     getChatHead = function () {};
   }
   var ld             = require('lodash');
   var cuid           = require('cuid');
   var slugg          = require('slugg');
+  // Local dependencies
   var common         = require('./common.js');
+  var conf           = require('../configuration.js');
   var storage        = require('../storage.js');
   var commonGroupPad = require ('./common-group-pad.js');
   var PPREFIX        = storage.DBPREFIX.PAD;
@@ -312,10 +317,18 @@ module.exports = (function () {
         if (err) { return callback(err); }
 
         if (typeof(value) !== 'undefined' && value !== null && value.atext) {
-          storage.db.set(JPREFIX+p._id, p._id, function(err) {
-            if (err) { return callback(err); }
-            pad.fn.indexGroups(true, p, callback);
-          });
+          if (conf.get('deleteJobQueue')) {
+            storage.db.set(JPREFIX+p._id, p._id, function(err) {
+              if (err) { return callback(err); }
+              unloadPad(p._id);
+              pad.fn.indexGroups(true, p, callback);
+            });
+          } else {
+            removePad(p._id, function(err) {
+              if (err) { return callback(err); }
+              pad.fn.indexGroups(true, p, callback);
+            });
+          }
         } else {
           pad.fn.indexGroups(true, p, callback);
         }

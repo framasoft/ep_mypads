@@ -87,7 +87,7 @@ module.exports = (function() {
       hideHelpBlocks: false,
       passwordMin: 8,
       passwordMax: 30,
-      languages: { en: 'English', fr: 'Français', de: 'Deutsch', es: 'Español' },
+      languages: { en: 'English', fr: 'Français', de: 'Deutsch', es: 'Español', it: 'Italiano'},
       defaultLanguage: 'en',
       HTMLExtraHead: '',
       checkMails: false,

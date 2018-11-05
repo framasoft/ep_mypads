@@ -1,6 +1,6 @@
 {
    "ACCOUNT_CONFIRMATION": "<%= login %>, ti sei registrato su <%= title %>. Questa istanza  etherpad richiede una conferma email per attivare il tuo account. Per procedere, vai a questo indirizzo web: <%= url %>. Questa url sarà valida solo per <%= duration %> minuti.  Dopo, dovrai contattare un amministratore.",
    "ACCOUNT_CONFIRMATION_SUBJECT": "Conferma dell'account su <%= title %>",
-   "PASSRECOVER": "<%= login %>, una richiesta di cambio password su <%= title %> è stata iniziata per  il tuo  login. ISe vuoi confermare la modifica della tua password, vai a questo indirizzo web : <%= url %> . Se questa richiesta non proviene da te, ignora semplicemente questa mail. L'indirizzo non sarà più valido tra <%= duration %> minuti.",
+   "PASSRECOVER": "<%= login %>, una richiesta di cambio password su <%= title %> è stata iniziata per  il tuo  login. Se vuoi confermare la modifica della tua password, vai a questo indirizzo web : <%= url %> . Se questa richiesta non proviene da te, ignora semplicemente questa mail. L'indirizzo non sarà più valido tra <%= duration %> minuti.",
    "PASSRECOVER_SUBJECT": "Recupero password su <%= title %>"
 }

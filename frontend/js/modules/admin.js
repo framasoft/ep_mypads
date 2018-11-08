@@ -70,7 +70,8 @@ module.exports = (function () {
           'SMTPUser', 'SMTPPass', 'SMTPEmailFrom', 'HTMLExtraHead',
           'openRegistration', 'hideHelpBlocks', 'useFirstLastNameInPads',
           'insensitiveMailMatch', 'authMethod', 'authLdapSettings',
-          'authCasSettings', 'allPadsPublicsAuthentifiedOnly'
+          'authCasSettings', 'allPadsPublicsAuthentifiedOnly',
+          'deleteJobQueue'
         ]);
         c.currentConf = resp.value;
         ld.forIn(resp.value, function (v, k) {
@@ -382,6 +383,23 @@ module.exports = (function () {
         var l = m('label', [ f, A.FIELD.ALL_PADS_PUBLICS_AUTHENTIFIED_ONLY, icon ]);
         return l;
       })(),
+      deleteJobQueue: (function () {
+        var icon = form.icon(c, 'deleteJobQueue', A.INFO.DELETE_JOB_QUEUE);
+        var opts = {
+          name: 'deleteJobQueue',
+        };
+        if (c.data.deleteJobQueue) {
+          opts.checked = 'checked';
+        }
+        var f = m('input[type="checkbox"]', opts);
+        ld.assign(f.attrs, {
+          type: 'checkbox',
+          checked: c.data.deleteJobQueue(),
+          onchange: m.withAttr('checked', c.data.deleteJobQueue)
+        });
+        var l = m('label', [ f, A.FIELD.DELETE_JOB_QUEUE, icon ]);
+        return l;
+      })(),
       openRegistration: (function () {
         var icon = form.icon(c, 'openRegistration', A.INFO.OPEN_REGISTRATION);
         var opts = {
@@ -571,6 +589,7 @@ module.exports = (function () {
           m('div.checkbox',   [ f.useFirstLastNameInPads ]),
           m('div.checkbox',   [ f.insensitiveMailMatch ]),
           m('div.checkbox',   [ f.allPadsPublicsAuthentifiedOnly ]),
+          m('div.checkbox',   [ f.deleteJobQueue ]),
           m('div.form-group', [ f.HTMLExtraHead.label, f.HTMLExtraHead.icon, f.HTMLExtraHead.textarea ])
         ])
       ]),

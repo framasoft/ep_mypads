@@ -32,6 +32,7 @@
 var getPad;
 var getPadID;
 var getPadHTML;
+var isWaitingforDeletion;
 try {
   // Normal case : when installed as a plugin
   getPad     = require('ep_etherpad-lite/node/db/PadManager').getPad;
@@ -40,18 +41,29 @@ try {
 }
 catch (e) {
   // Testing case : noop functions
-    getPad     = function (padId, callback) { callback(null); };
-    getPadID   = function (padId, callback) { callback(null); };
-    getPadHTML = function (pad, rev, callback) {
-      callback(null, '<p>Testing only</p>');
-    };
+  getPad     = function (padId, callback) { callback(null); };
+  getPadID   = function (padId, callback) { callback(null); };
+  getPadHTML = function (pad, rev, callback) {
+    callback(null, '<p>Testing only</p>');
+  };
+  isWaitingforDeletion = function(padId, callback) { callback(null, null); };
+
 }
-var ld     = require('lodash');
-var decode = require('js-base64').Base64.decode;
-var conf   = require('./configuration.js');
-var auth   = require('./auth.js');
-var pad    = require('./model/pad.js');
-var group  = require('./model/group.js');
+var ld      = require('lodash');
+var decode  = require('js-base64').Base64.decode;
+var conf    = require('./configuration.js');
+var auth    = require('./auth.js');
+var pad     = require('./model/pad.js');
+var group   = require('./model/group.js');
+var storage = require('./storage.js');
+
+var JOBQ_PREFIX = storage.DBPREFIX.JOBQ;
+
+if (typeof(isWaitingforDeletion) === 'undefined') {
+  isWaitingforDeletion = function(padId, callback) {
+    storage.db.get(JOBQ_PREFIX+'deletePad:'+padId, callback);
+  };
+}
 
 module.exports = (function () {
   'use strict';
@@ -133,7 +145,15 @@ module.exports = (function () {
     var uid = u && u._id || false;
     // Key not found, not a MyPads pad so depends on allowEtherPads
     if (!params.pg) {
-      return params[(conf.get('allowEtherPads') ? 'next' : 'unexpected')]();
+      return isWaitingforDeletion(params.pid, function(err, val) {
+        if (err) { return params.unexpected(err); }
+
+        if (val === null) { // not waiting for deletion
+          return params[(conf.get('allowEtherPads') ? 'next' : 'unexpected')]();
+        } else { // don't give access to a pad that is waiting for deletion
+          return params.unexpected();
+        }
+      });
     }
     var g = params.pg.group;
     var p = params.pg.pad;

@@ -41,6 +41,7 @@ module.exports = (function () {
   storage.DBPREFIX.USER  = DBPG + 'user:';
   storage.DBPREFIX.GROUP = DBPG + 'group:';
   storage.DBPREFIX.PAD   = DBPG + 'pad:';
+  storage.DBPREFIX.JOBQ  = DBPG + 'jobqueue:';
 
   try {
     // Normal case : when installed as a plugin

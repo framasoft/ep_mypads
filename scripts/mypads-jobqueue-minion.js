@@ -46,7 +46,12 @@ try {
 }
 
 // Open the database
-var db = new ueberDB.database(settings.dbType, { cache: 0, writeInterval: 0 });
+if (typeof(settings.dbSettings) === 'undefined') {
+  settings.dbSettings = {};
+}
+settings.dbSettings.cache = 0;
+settings.dbSettings.writeInterval = 0;
+var db = new ueberDB.database(settings.dbType, settings.dbSettings);
 
 /*
  * Functions

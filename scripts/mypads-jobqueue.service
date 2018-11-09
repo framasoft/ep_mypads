@@ -8,9 +8,11 @@ After=systemd-user-sessions.service
 Environment=NODE_ENV=production
 User=www-data
 # Adapt to your own path
+WorkingDirectory=/var/www/etherpad/node_modules/ep_mypads/
 ExecStart=/var/www/etherpad/node_modules/ep_mypads/scripts/mypads-jobqueue-minion.js -q -s /var/www/etherpad/settings.json
 Restart=always
 LimitNOFILE=100000
+SyslogIdentifier=mypads-jobqueue
 
 [Install]
 WantedBy=multi-user.target

@@ -344,7 +344,7 @@ module.exports = (function() {
       var all = configuration.all();
       return ld.pick(all, 'title', 'passwordMin', 'passwordMax', 'languages',
         'HTMLExtraHead', 'openRegistration', 'hideHelpBlocks', 'useFirstLastNameInPads',
-        'authMethod', 'authCasSettings', 'allPadsPublicsAuthentifiedOnly'
+        'authMethod', 'authCasSettings', 'allPadsPublicsAuthentifiedOnly', 'defaultLanguage'
       );
     },
 

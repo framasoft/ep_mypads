@@ -340,16 +340,15 @@ module.exports = (function () {
                 config: m.route,
                 title: conf.LANG.MENU.CONFIG
               }, [ m('i.glyphicon.glyphicon-wrench') ]),
-              m('div.btn-group', [
-                m('button.btn.btn-default.btn-xs.dropdown-toggle', {
-                  'data-toggle': 'dropdown',
+              m('div.btn-group.dropdown', [
+                m('button.btn.btn-default.btn-xs', {
                   'aria-haspopup': 'true',
                   'aria-expanded': 'false'
                 }, [
                   m('i.glyphicon.glyphicon-trash.text-danger'),
                   m('span.caret')
                 ]),
-                m('ul.dropdown-menu.dropdown-menu-right', [
+                m('ul.dropdown-content.dropdown-menu.dropdown-menu-right', [
                   m('li', [
                     m('a', {
                       href: route + '/pad/remove/chat/history/' + p._id,

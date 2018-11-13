@@ -605,9 +605,10 @@ module.exports = (function () {
   */
 
   userAPI = function (app) {
-    var userRoute     = api.initialRoute + 'user';
-    var allUsersRoute = api.initialRoute + 'all-users';
-    var userlistRoute = api.initialRoute + 'userlist';
+    var userRoute        = api.initialRoute + 'user';
+    var allUsersRoute    = api.initialRoute + 'all-users';
+    var searchUsersRoute = api.initialRoute + 'search-users';
+    var userlistRoute    = api.initialRoute + 'userlist';
 
     /**
     * GET method : `user.userlist` with crud fixed to *get* and current login.
@@ -767,6 +768,48 @@ module.exports = (function () {
             firstname: userCache.firstname[n],
             lastname: userCache.lastname[n]
           };
+          return result;
+        }, {});
+        res.send({ users: users, usersCount: ld.size(users) });
+      }
+    );
+
+    /**
+    * GET method : search users from their firstname, lastname, login or email
+    *
+    * exemple: {
+    *   usersCount: 1,
+    *   users: {
+    *     foo: {
+    *       email: foo@bar.org,
+    *       firstname: Foo,
+    *       lastname: Bar
+    *     }
+    *   }
+    * }
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/search-users/parker
+    */
+
+    app.get(searchUsersRoute + '/:key', fn.ensureAdmin,
+      function (req, res) {
+        var emails  = ld.reduce(userCache.emails, function (result, n, key) {
+          result[n] = key;
+          return result;
+        }, {});
+        var users = ld.reduce(userCache.logins, function (result, n, key) {
+          var search = req.params.key.toLowerCase();
+          if (userCache.firstname[n].toLowerCase() === search ||
+              userCache.lastname[n].toLowerCase()  === search ||
+              emails[n].toLowerCase()              === search ||
+              key.toLowerCase()                    === search) {
+            result[key] = {
+              email: emails[n],
+              firstname: userCache.firstname[n],
+              lastname: userCache.lastname[n]
+            };
+          }
           return result;
         }, {});
         res.send({ users: users, usersCount: ld.size(users) });

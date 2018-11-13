@@ -418,13 +418,16 @@ module.exports = (function () {
       return m('p', conf.LANG.GROUP.PAD.PUBLIC_DENIED);
     }
     var userView = function (u) {
-      var res = '';
-      if (u.firstname) {
-        res += (u.firstname + ' ' + u.lastname + ' ');
-      } else {
-        res += u.login;
+      if (c.isAdmin) {
+        var res = '';
+        if (u.firstname) {
+          res += (u.firstname + ' ' + u.lastname + ' ');
+        } else {
+          res += u.login;
+        }
+        return res + ' : ' + u.email;
       }
-      return res + ' : ' + u.email;
+      return u.login;
 
     };
     var list = function (users) {

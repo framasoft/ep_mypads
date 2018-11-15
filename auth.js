@@ -216,9 +216,17 @@ module.exports = (function () {
             var props = ldapConf.properties;
             var mail;
             if (Array.isArray(ldapuser[props.email])) {
-              mail = ldapuser[props.email][0];
-            } else {
+              if (ldapuser[props.email].length > 0) {
+                mail = ldapuser[props.email][0];
+              } else {
+                console.error('Ldap error: ldapuser[props.email] is an empty array');
+              }
+            } else if (ldapuser[props.email]) {
               mail = ldapuser[props.email];
+            }
+            if (!ld.isEmail(mail)) {
+              emsg = 'BACKEND.ERROR.AUTHENTICATION.LDAP_NO_VALID_MAIL';
+              return callback(new Error(emsg), false);
             }
             if (err) {
               // We have to create the user in mypads database

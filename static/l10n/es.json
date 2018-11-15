@@ -115,6 +115,7 @@
             "DENIED": "Acceso denegado",
             "DENIED_RECORD": "No se te permite conseguir este registro",
             "DENIED_RECORD_EDIT": "No se te permite modificar este registro",
+            "LDAP_NO_VALID_MAIL": "The email address returned by the LDAP server is not valid.",
             "MUST_BE": "Debe estar autentificado",
             "NOT_AUTH": "No autenticado",
             "NO_RECOVER": "Lo sentimos, no puede recuperar su contraseña desde aquí",

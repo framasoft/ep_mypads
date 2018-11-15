@@ -420,8 +420,8 @@ module.exports = (function () {
     var userView = function (u) {
       if (c.isAdmin) {
         var res = '';
-        if (u.firstname) {
-          res += (u.firstname + ' ' + u.lastname + ' ');
+        if (u.firstname || u.lastname) {
+          res += (u.firstname + ' ' + u.lastname);
         } else {
           res += u.login;
         }

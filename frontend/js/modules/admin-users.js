@@ -171,7 +171,7 @@ module.exports = (function () {
         ];
         var name = u.login;
         if (u.firstname || u.lastname) {
-          name = [name, '(', u.firstname, u.lastname, ' - ', u.email, ') '].join(' ');
+          name = [name, '(', u.firstname, u.lastname, ' - ', u.email, ')'].join(' ');
         } else {
           name = [name, '(', u.email, ')'].join(' ');
         }
@@ -207,7 +207,7 @@ module.exports = (function () {
         ];
         var name = login;
         if (n.firstname || n.lastname) {
-          name = [name, '(', n.firstname, n.lastname, ' - ', n.email, ') '].join(' ');
+          name = [name, '(', n.firstname, n.lastname, ' - ', n.email, ')'].join(' ');
         } else {
           name = [name, '(', n.email, ')'].join(' ');
         }

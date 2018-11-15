@@ -124,6 +124,48 @@ module.exports = (function () {
     }, { uids: [], present: [], absent: [] });
   };
 
+  /**
+  * ### searchUserInfos
+  *
+  * `searchUserInfos` is a private synchronous function that search a user
+  * in the cache.
+  *
+  * The search string can be a login, an email, a first or a last name.
+  *
+  * It returns a hash table with the login of the user as a key, and the value
+  * is a hash table containing the email, first name and last name.
+  *
+  * exemple: {
+  *   foo: {
+  *     email: foo@bar.org,
+  *     firstname: Foo,
+  *     lastname: Bar
+  *   }
+  * }
+  */
+  userCache.fn.searchUserInfos = function (search) {
+    search = search.toLowerCase();
+
+    var emails  = ld.reduce(userCache.emails, function (result, n, key) {
+      result[n] = key;
+      return result;
+    }, {});
+    var users = ld.reduce(userCache.logins, function (result, n, key) {
+      if (key.toLowerCase()                    === search ||
+          emails[n].toLowerCase()              === search ||
+          userCache.lastname[n].toLowerCase()  === search ||
+          userCache.firstname[n].toLowerCase() === search) {
+        result[key] = {
+          email: emails[n],
+          firstname: userCache.firstname[n],
+          lastname: userCache.lastname[n]
+        };
+      }
+      return result;
+    }, {});
+    return users;
+  };
+
   return userCache;
 
 }).call(this);

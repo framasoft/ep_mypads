@@ -794,24 +794,7 @@ module.exports = (function () {
 
     app.get(searchUsersRoute + '/:key', fn.ensureAdmin,
       function (req, res) {
-        var emails  = ld.reduce(userCache.emails, function (result, n, key) {
-          result[n] = key;
-          return result;
-        }, {});
-        var users = ld.reduce(userCache.logins, function (result, n, key) {
-          var search = req.params.key.toLowerCase();
-          if (userCache.firstname[n].toLowerCase() === search ||
-              userCache.lastname[n].toLowerCase()  === search ||
-              emails[n].toLowerCase()              === search ||
-              key.toLowerCase()                    === search) {
-            result[key] = {
-              email: emails[n],
-              firstname: userCache.firstname[n],
-              lastname: userCache.lastname[n]
-            };
-          }
-          return result;
-        }, {});
+        var users = userCache.fn.searchUserInfos(req.params.key);
         res.send({ users: users, usersCount: ld.size(users) });
       }
     );

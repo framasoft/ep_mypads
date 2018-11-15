@@ -419,13 +419,10 @@ module.exports = (function () {
     }
     var userView = function (u) {
       if (c.isAdmin) {
-        var res = '';
         if (u.firstname || u.lastname) {
-          res += (u.firstname + ' ' + u.lastname);
-        } else {
-          res += u.login;
+          return u.firstname + ' ' + u.lastname + ' : ' + u.email;
         }
-        return res + ' : ' + u.email;
+        return u.login + ' : ' + u.email;
       }
       return u.login;
 

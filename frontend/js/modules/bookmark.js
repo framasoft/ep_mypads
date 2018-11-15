@@ -115,7 +115,17 @@ module.exports = (function () {
   * ### groups and pads
   */
 
-  view._items = function (c, type, noneMsg) {
+  view._items = function (c, type) {
+    var noneMsg = '';
+    // Using a switch just in case of more possible types in the future (userlists for ex)
+    switch (type) {
+      case 'groups':
+        noneMsg = conf.LANG.GROUP.NONE;
+        break;
+      case 'pads':
+        noneMsg = conf.LANG.GROUP.PAD.NONE;
+        break;
+    }
     if (ld.size(c.bookmarks[type]) === 0) {
       return m('p', noneMsg);
     } else {
@@ -137,8 +147,8 @@ module.exports = (function () {
     }
   };
 
-  view.groups = ld.partialRight(view._items, 'groups', conf.LANG.GROUP.NONE);
-  view.pads   = ld.partialRight(view._items, 'pads', conf.LANG.GROUP.PAD.NONE);
+  view.groups = ld.partialRight(view._items, 'groups');
+  view.pads   = ld.partialRight(view._items, 'pads');
 
   view.aside = function () {
     return m('section.user-aside', [

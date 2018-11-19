@@ -605,9 +605,10 @@ module.exports = (function () {
   */
 
   userAPI = function (app) {
-    var userRoute     = api.initialRoute + 'user';
-    var allUsersRoute = api.initialRoute + 'all-users';
-    var userlistRoute = api.initialRoute + 'userlist';
+    var userRoute        = api.initialRoute + 'user';
+    var allUsersRoute    = api.initialRoute + 'all-users';
+    var searchUsersRoute = api.initialRoute + 'search-users';
+    var userlistRoute    = api.initialRoute + 'userlist';
 
     /**
     * GET method : `user.userlist` with crud fixed to *get* and current login.
@@ -769,6 +770,31 @@ module.exports = (function () {
           };
           return result;
         }, {});
+        res.send({ users: users, usersCount: ld.size(users) });
+      }
+    );
+
+    /**
+    * GET method : search users from their firstname, lastname, login or email
+    *
+    * exemple: {
+    *   usersCount: 1,
+    *   users: {
+    *     foo: {
+    *       email: foo@bar.org,
+    *       firstname: Foo,
+    *       lastname: Bar
+    *     }
+    *   }
+    * }
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/search-users/parker
+    */
+
+    app.get(searchUsersRoute + '/:key', fn.ensureAdmin,
+      function (req, res) {
+        var users = userCache.fn.searchUserInfos(req.params.key);
         res.send({ users: users, usersCount: ld.size(users) });
       }
     );

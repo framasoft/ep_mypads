@@ -340,16 +340,15 @@ module.exports = (function () {
                 config: m.route,
                 title: conf.LANG.MENU.CONFIG
               }, [ m('i.glyphicon.glyphicon-wrench') ]),
-              m('div.btn-group', [
-                m('button.btn.btn-default.btn-xs.dropdown-toggle', {
-                  'data-toggle': 'dropdown',
+              m('div.btn-group.dropdown', [
+                m('button.btn.btn-default.btn-xs', {
                   'aria-haspopup': 'true',
                   'aria-expanded': 'false'
                 }, [
                   m('i.glyphicon.glyphicon-trash.text-danger'),
                   m('span.caret')
                 ]),
-                m('ul.dropdown-menu.dropdown-menu-right', [
+                m('ul.dropdown-content.dropdown-menu.dropdown-menu-right', [
                   m('li', [
                     m('a', {
                       href: route + '/pad/remove/chat/history/' + p._id,
@@ -419,13 +418,13 @@ module.exports = (function () {
       return m('p', conf.LANG.GROUP.PAD.PUBLIC_DENIED);
     }
     var userView = function (u) {
-      var res = '';
-      if (u.firstname) {
-        res += (u.firstname + ' ' + u.lastname + ' ');
-      } else {
-        res += u.login;
+      if (c.isAdmin) {
+        if (u.firstname || u.lastname) {
+          return u.firstname + ' ' + u.lastname + ' : ' + u.email;
+        }
+        return u.login + ' : ' + u.email;
       }
-      return res + ' : ' + u.email;
+      return u.login;
 
     };
     var list = function (users) {

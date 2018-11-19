@@ -72,13 +72,15 @@ module.exports = (function () {
       c.usersCount(false);
       m.request({
         method: 'GET',
-        url: conf.URLS.USER + '/' + c.data.login(),
+        url: conf.URLS.SEARCH_USERS + '/' + c.data.login(),
         data: { auth_token: auth.admToken() }
       }).then(function (resp) {
-        c.user(resp.value);
+        c.users(resp.users);
+        c.usersCount(resp.usersCount);
         notif.info({ body: conf.LANG.ADMIN.INFO.USER_FOUND });
       }, function (err) {
-        c.user(false);
+        c.users(false);
+        c.usersCount(false);
         notif.error({ body: ld.result(conf.LANG, err.error) });
       });
     };
@@ -168,13 +170,16 @@ module.exports = (function () {
           }, [ m('i.glyphicon glyphicon-trash') ])
         ];
         var name = u.login;
-        if (u.firstname) {
-          name = [name, '(', u.firstname, u.lastname, ') '].join(' ');
+        if (u.firstname || u.lastname) {
+          name = [name, '(', u.firstname, u.lastname, ' - ', u.email, ')'].join(' ');
+        } else {
+          name = [name, '(', u.email, ')'].join(' ');
         }
         return m('ul.admin-users', [
           m('li.block-group', [
-            m('span.block.name', name),
-            m('span.block.actions', actions)
+            m('span.block.actions', actions),
+            ' ',
+            m('span.block.name', name)
           ])
         ]);
       }
@@ -202,11 +207,14 @@ module.exports = (function () {
         ];
         var name = login;
         if (n.firstname || n.lastname) {
-          name = [name, '(', n.firstname, n.lastname, ' - ', n.email, ') '].join(' ');
+          name = [name, '(', n.firstname, n.lastname, ' - ', n.email, ')'].join(' ');
+        } else {
+          name = [name, '(', n.email, ')'].join(' ');
         }
         items.push(m('li.block-group', [
-          m('span.block.name', name),
-          m('span.block.actions', actions)
+          m('span.block.actions', actions),
+          ' ',
+          m('span.block.name', name)
         ]));
       });
       return m('div', [

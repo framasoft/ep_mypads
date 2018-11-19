@@ -71,7 +71,7 @@
          "AUTHENTICATION_METHOD": "Sie können zwischen mehreren Authentifizierungsmethoden wählen. Die Vorgabe ist \"intern\". Sie können Authentifizierungsmethoden nicht mischen.",
          "AUTH_CAS_SETTINGS": "Details zum Central Authentication Service (CAS) finden Sie auf der <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-CAS-authentication\">entsprechenden Wiki-Seite</a>.<br>Neben den Eigenschaften und der Sprache sind auch alle Einstellungen für das <a href=\"https://github.com/jsumners/simple-cas-interface/blob/HEAD/api.md#CASParameters\" hreflang=\"en\">simple-cas-interface</a> (die Module für die CAS-Authentifizierung) dargestellt. Die `serverUrl` sollte nicht mit einem abschließenden Schrägstrich enden.",
          "AUTH_LDAP_SETTINGS": "Weitere Informationen auf der <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads/wikis/use-ldap-authentication\">entsprechenden Wiki-Seite</a>.<br> Neben den Eigenschaften und der Sprache, sind alle Einstellungen für ldapauth-fork (das Modul für die LDAP-Authentifizierung) dargestellt. Sie können weitere Einstellungen hinzufügen, gehen Sie einfach auf <a href=\"https://www.npmjs.com/package/ldapauth-fork#ldapauth-config-options\">die Modulseite</a> um zu sehen, welche.",
-         "CHECKMAILS": "Überprüfen die Benutzer-E-Mail-Adresse, die bei der Anmeldung angegeben wurde.",
+         "CHECKMAILS": "Überprüfen der Benutzer-E-Mail-Adresse, die bei der Anmeldung angegeben wurde.",
          "DELETE_JOB_QUEUE": "Etherpad hat Probleme beim Löschen von Pads mit vielen Revisionen (totales Einfrieren, bestätigt mit 72.000 Revisionen). Um das Einfrieren Ihrer Etherpad-Instanz zu verhindern, können Sie eine Auftragswarteschlange verwenden, die von MyPads bereitgestellt wird, um das Löschen von Pads sicher zu handhaben. Weitere Informationen finden Sie unter\nhttps://framagit.org/framasoft/Etherpad/ep_mypads/wikis/Use-the-job-queue",
          "HIDE_HELP_BLOCKS": "Hilfeblöcke werden auf mehreren MyPads-Seiten angezeigt, Sie können sie mit dieser Einstellung ausblenden.",
          "HTMLEXTRA_HEAD": "Eigenen HTML-Code im <head> einfügen",
@@ -95,7 +95,7 @@
          "TOKEN_DURATION": "Die Zeit in Minuten, in der die generierten Token gültig sind, bis ein Benutzer sein Abonnement bestätigen muss.",
          "USERS_SEARCH_LOGIN": "Bitte geben Sie einen Loginnamen ein, um in der Datenbank zu suchen.",
          "USER_FOUND": "Benutzer gefunden, siehe Optionen im Formular.",
-         "USER_NONE": "Kein Benutzer mit diesem Loginnamen gefunden.",
+         "USER_NONE": "Keinen Benutzer mit diesem Loginnamen gefunden.",
          "USER_REMOVE_SURE": "Sie sind dabei, dieses Konto und alle Ordner und Pads, auf denen der Benutzer der einzige Administrator ist, endgültig zu entfernen. Wenn Sie sich wirklich sicher sind, was Sie tun, klicken Sie bitte auf OK.",
          "USE_FIRST_AND_LAST_NAME_IN_PADS": "Nutze Vor- und Nachnamen als Nickname in Pads"
       },
@@ -113,8 +113,9 @@
             "ADMIN": "Zugang verweigert: Du musst für die Administration dieser Instanz Etherpad authentifiziert sein.",
             "CAS_NO_TICKET": "Zugriff verweigert: Kein CAS-Ticket vorhanden",
             "DENIED": "Zugang verweigert.",
-            "DENIED_RECORD": "Es ist dir nicht erlaubt diesen Eintrag zu erhalten.",
-            "DENIED_RECORD_EDIT": "Es ist dir nicht erlaubt diesen Eintrag zu ändern.",
+            "DENIED_RECORD": "Es ist dir nicht erlaubt, diesen Eintrag zu erhalten.",
+            "DENIED_RECORD_EDIT": "Es ist dir nicht erlaubt, diesen Eintrag zu ändern.",
+            "LDAP_NO_VALID_MAIL": "The email address returned by the LDAP server is not valid.",
             "MUST_BE": "Du musst authentifiziert sein.",
             "NOT_AUTH": "Nicht authentifiziert!",
             "NO_RECOVER": "Sorry, Sie können Ihr Passwort hier nicht wiederherstellen",
@@ -148,7 +149,7 @@
          },
          "TOKEN": {
             "EXPIRED": "Der Token ist abgelaufen. Bitte machen Sie eine neue Anfrage.",
-            "INCORRECT": "Der verwendeter Token beinhaltet unkorrekte Daten für diese Anforderung."
+            "INCORRECT": "Der verwendete Token beinhaltet unkorrekte Daten für diese Anforderung."
          },
          "TYPE": {
             "CALLBACK_FN": "Rückruf (Callback) muss eine Funktion sein.",
@@ -428,7 +429,7 @@
       "USERNAME": "Names des Accounts"
    },
    "USERLIST": {
-      "ADD": "Erstelle ein neue Benutzerliste",
+      "ADD": "Erstelle eine neue Benutzerliste",
       "EDIT": "Bearbeite Benutzerliste",
       "ERR": {
          "NAME": "Der Name der Benutzerliste wird benötigt."

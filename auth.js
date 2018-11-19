@@ -213,16 +213,24 @@ module.exports = (function () {
             return callback(new Error(emsg), false);
           }
           user.get(login, function(err, u) {
-            if (err) {
-              // We have to create the user in mypads database
-              var mail;
-              var props = ldapConf.properties;
-              ldapConf  = conf.get('authLdapSettings');
-              if (Array.isArray(ldapuser[props.email])) {
+            var props = ldapConf.properties;
+            var mail;
+            if (Array.isArray(ldapuser[props.email])) {
+              if (ldapuser[props.email].length > 0) {
                 mail = ldapuser[props.email][0];
               } else {
-                mail = ldapuser[props.email];
+                console.error('Ldap error: ldapuser[props.email] is an empty array');
               }
+            } else if (ldapuser[props.email]) {
+              mail = ldapuser[props.email];
+            }
+            if (!ld.isEmail(mail)) {
+              emsg = 'BACKEND.ERROR.AUTHENTICATION.LDAP_NO_VALID_MAIL';
+              return callback(new Error(emsg), false);
+            }
+            if (err) {
+              // We have to create the user in mypads database
+              ldapConf  = conf.get('authLdapSettings');
               user.set({
                   login: ldapuser[props.login],
                   password: NOT_INTERNAL_AUTH_PWD,
@@ -231,6 +239,16 @@ module.exports = (function () {
                   email: mail,
                   lang: ldapConf.defaultLang || 'en'
                 }, callback);
+            } else if (u.email     !== mail                      ||
+                       u.firstname !== ldapuser[props.firstname] ||
+                       u.lastname  !== ldapuser[props.lastname]) {
+                // Update database and cache informations if needed
+                // (i.e. update from LDAP)
+                u.email     = mail;
+                u.firstname = ldapuser[props.firstname];
+                u.lastname  = ldapuser[props.lastname];
+                u.password  = NOT_INTERNAL_AUTH_PWD;
+                user.set(u, callback);
             } else {
               return callback(null, u);
             }

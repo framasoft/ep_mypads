@@ -69,6 +69,7 @@ module.exports = (function () {
           c.data[f] = m.prop(u[f]);
         }
       });
+      c.data.lang(conf.SERVER.defaultLanguage);
     };
 
     /**

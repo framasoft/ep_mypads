@@ -55,6 +55,17 @@ module.exports = (function () {
     storage.db.init(function (err) { if (err) { console.error(err); } });
   }
 
+  if (storage.db && storage.db.type === 'postgres') {
+    storage.db.findValues = function (keys, callback) {
+      storage.db.db.wrappedDB.db.query("SELECT key, value FROM store WHERE key = ANY ($1)", [keys], function(err,results)
+      {
+        if (err) return callback(err)
+
+        callback(err, results.rows);
+      });
+    }
+  }
+
   /**
   * `init` function for initial configuration cache init and in memory
   * secondary indexes. At the moment only user / logins / firstname / lastname.
@@ -113,12 +124,41 @@ module.exports = (function () {
   };
 
   /**
-  * ### getKeys
-  *
-  * `getKeys` is an helper around `storage.fn.getDelKeys` with `del` argument
-  * to *false*.
-  */
+   * ### getKeysUncached
+   *
+   * Same than `getKeys` but tries to get values in bulk, bypassing the cache
+   */
+  storage.fn.getKeysUncached = function (keys, callback) {
+    if (storage.db.findValues !== undefined) {
+      return storage.db.findValues(keys, function (err, rows) {
+        if (err) return callback(err)
 
+        const results = {}
+        for (const row of rows) {
+          try
+          {
+            if (!ld.isNull(row)) { results[row.key] = JSON.parse(row.value); }
+          }
+          catch(e)
+          {
+            console.error("JSON-PROBLEM:" + value);
+            return callback(e);
+          }
+        }
+
+        return callback(null, results)
+      })
+    }
+
+    return storage.fn.getDelKeys(false, keys, callback);
+  }
+
+  /**
+   * ### getKeys
+   *
+   * `getKeys` is an helper around `storage.fn.getDelKeys` with `del` argument
+   * to *false*.
+   */
   storage.fn.getKeys = ld.partial(storage.fn.getDelKeys, false);
 
   /**
@@ -173,7 +213,7 @@ module.exports = (function () {
         var pair = pairs.pop();
         storage.db.get(pair[0], function(err, res) {
           if (err) { return callback(err); }
-          if (ld.isUndefined(res) || ld.isNull(res)) { 
+          if (ld.isUndefined(res) || ld.isNull(res)) {
             setK(pair[0], pair[1]);
           } else {
             done();

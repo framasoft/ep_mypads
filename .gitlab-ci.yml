@@ -5,6 +5,13 @@ stages:
   - test
   - trads
 
+### Cache
+##
+#
+cache:
+  paths:
+    - /root/.npm
+
 ### Jobs template
 ##
 #

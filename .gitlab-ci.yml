@@ -5,16 +5,29 @@ stages:
   - test
   - trads
 
+### Cache
+## the key is "branch_name:job_name" to prevent incompatibilities between node versions
+#
+cache:
+  key: "${CI_COMMIT_REF_NAME}:${CI_JOB_NAME}"
+  paths:
+    - npm.tar
+    - modules.tar
+
 ### Jobs template
 ##
 #
 .test_template: &test_definition
   stage: test
   script:
+   - if [[ -e modules.tar ]]; then tar xf modules.tar; fi
+   - if [[ -e npm.tar ]]; then export p=$(pwd); cd /root/; tar xf $p/npm.tar; cd $p; fi
    - npm install
    - npm run lint
    - npm run test
    - npm run test-ldap
+   - tar cf modules.tar node_modules
+   - export p=$(pwd); cd /root/; tar cf $p/npm.tar .npm
   retry: 2
 
 ### Services
@@ -59,6 +72,7 @@ test_node_10:
 trads:
   stage: test
   image: framasoft/push-trad:latest
+  cache: {}
   script:
   - if [ ! -z ${ZANATA_CONFIG_FRAMABOT+x} ]; then mkdir -p ${HOME}/.config; echo -e "${ZANATA_CONFIG_FRAMABOT}" > ${HOME}/.config/zanata.ini; fi
   - if [ ! -z ${ZANATA_CONFIG_FRAMABOT+x} ]; then make locales; fi

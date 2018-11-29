@@ -5,13 +5,22 @@ stages:
   - test
   - trads
 
+### Cache
+##
+#
+#cache:
+#  paths:
+#    - ~/.npm/
+
 ### Jobs template
 ##
 #
 .test_template: &test_definition
   stage: test
   script:
+   - ls -lha
    - npm install
+   - ls -lha
    - npm run lint
    - npm run test
    - npm run test-ldap

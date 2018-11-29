@@ -5,16 +5,25 @@ stages:
   - test
   - trads
 
+### Cache
+##
+#
+cache:
+  paths:
+    - npm.tar
+
 ### Jobs template
 ##
 #
 .test_template: &test_definition
   stage: test
   script:
+   - if [[ -e npm.tar ]]; then export p=$(pwd); cd /root/; tar xf $p/npm.tar; fi
    - npm install
    - npm run lint
    - npm run test
    - npm run test-ldap
+   - cd /root/; tar cf npm.tar .npm
   retry: 2
 
 ### Services

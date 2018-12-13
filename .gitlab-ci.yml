@@ -19,10 +19,11 @@ cache:
 .test_template: &test_definition
   stage: test
   script:
+   - npm cache clean --force
    - npm install
    - npm run lint
    - npm run test
-   - npm run test-ldap
+   - npm run test-ldap ||  cat /root/.npm/_logs/*-debug.log /builds/framasoft/Etherpad/ep_mypads/npm-debug.log
   retry: 2
 
 ### Services

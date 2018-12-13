@@ -19,10 +19,10 @@ cache:
 .test_template: &test_definition
   stage: test
   script:
-   - npm install
-   - npm run lint
-   - npm run test
-   - npm run test-ldap
+    - npm install
+    - npm run lint
+    - npm run test
+    - npm run test-ldap
   retry: 2
 
 ### Services
@@ -43,23 +43,23 @@ test_node_latest:
   <<: *test_definition
 
 test_node_4:
-  image: node:4-stretch
+  image: node:4-alpine
   <<: *test_definition
 
 test_node_6:
-  image: node:6-stretch
+  image: node:6-alpine
   <<: *test_definition
 
 test_node_8:
-  image: node:8-stretch
+  image: node:8-alpine
   <<: *test_definition
 
 test_node_9:
-  image: node:9-stretch
+  image: node:9-alpine
   <<: *test_definition
 
 test_node_10:
-  image: node:10-stretch
+  image: node:10-alpine
   <<: *test_definition
 
 ## Trads

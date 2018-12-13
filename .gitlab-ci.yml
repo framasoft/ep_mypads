@@ -18,19 +18,16 @@ cache:
 #
 .test_template: &test_definition
   stage: test
+  # Bring in any services we need
+  # http://docs.gitlab.com/ee/ci/docker/using_docker_images.html#what-is-a-service
+  services:
+    - rroemhild/test-openldap
   script:
-   - npm install
-   - npm run lint
-   - npm run test
-   - npm run test-ldap
+    - npm install
+    - npm run lint
+    - npm run test
+    - npm run test-ldap
   retry: 2
-
-### Services
-##
-# Bring in any services we need
-# http://docs.gitlab.com/ee/ci/docker/using_docker_images.html#what-is-a-service
-services:
-  - rroemhild/test-openldap
 
 ### Jobs
 ##

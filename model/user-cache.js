@@ -151,9 +151,10 @@ module.exports = (function () {
       return result;
     }, {});
     var users = ld.reduce(userCache.logins, function (result, n, key) {
-      if (key.toLowerCase()                    === search ||
-          emails[n].toLowerCase()              === search ||
-          userCache.lastname[n].toLowerCase()  === search ||
+      if (key.toLowerCase()                    === search  ||
+         (typeof(emails[n]) !== 'undefined' &&
+          emails[n].toLowerCase()              === search) ||
+          userCache.lastname[n].toLowerCase()  === search  ||
           userCache.firstname[n].toLowerCase() === search) {
         result[key] = {
           email: emails[n],

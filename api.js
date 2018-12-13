@@ -501,6 +501,11 @@ module.exports = (function () {
       var resp    = { value: value };
       resp.auth   = isAdmin || !!u;
       if (u) { resp.user = u; }
+      /* Fix IE11 stupid habit of caching AJAX calls
+       * See http://www.dashbay.com/2011/05/internet-explorer-caches-ajax/
+       * and https://framagit.org/framasoft/Etherpad/ep_mypads/issues/220
+       */
+      res.set('Expires', '-1');
       res.send(resp);
     });
 
@@ -520,6 +525,11 @@ module.exports = (function () {
           key: req.params.key
         });
       }
+      /* Fix IE11 stupid habit of caching AJAX calls
+       * See http://www.dashbay.com/2011/05/internet-explorer-caches-ajax/
+       * and https://framagit.org/framasoft/Etherpad/ep_mypads/issues/220
+       */
+      res.set('Expires', '-1');
       res.send({ key: req.params.key, value: value });
     });
 
@@ -583,6 +593,11 @@ module.exports = (function () {
         success: true,
         allpadspublicsauthentifiedonly: confValue
       };
+      /* Fix IE11 stupid habit of caching AJAX calls
+       * See http://www.dashbay.com/2011/05/internet-explorer-caches-ajax/
+       * and https://framagit.org/framasoft/Etherpad/ep_mypads/issues/220
+       */
+      res.set('Expires', '-1');
       if (confValue) {
         pad.get(req.query.pid, function (err, p) {
           if (err) {
@@ -624,6 +639,11 @@ module.exports = (function () {
         var opts = { crud: 'get', login: req.mypadsLogin };
         user.userlist(opts, function (err, u) {
           if (err) { return res.status(400).send({ error: err.message }); }
+          /* Fix IE11 stupid habit of caching AJAX calls
+           * See http://www.dashbay.com/2011/05/internet-explorer-caches-ajax/
+           * and https://framagit.org/framasoft/Etherpad/ep_mypads/issues/220
+           */
+          res.set('Expires', '-1');
           res.send({ value: u.userlists });
         });
       }
@@ -1130,6 +1150,11 @@ module.exports = (function () {
                       memo[key] = ld.omit(val, 'password');
                     }
                   );
+                  /* Fix IE11 stupid habit of caching AJAX calls
+                   * See http://www.dashbay.com/2011/05/internet-explorer-caches-ajax/
+                   * and https://framagit.org/framasoft/Etherpad/ep_mypads/issues/220
+                   */
+                  res.set('Expires', '-1');
                   res.send({ value: data });
                 });
               });

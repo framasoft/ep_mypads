@@ -30,7 +30,7 @@ cache:
 # Bring in any services we need
 # http://docs.gitlab.com/ee/ci/docker/using_docker_images.html#what-is-a-service
 services:
-  - rroemhild/test-openldap
+  - 'rroemhild/test-openldap@sha256:f5f1adc8f3a1a3ce4c9aa6c7d869e31e398c3e9a99f5b8424ec1c20733a5060f'
 
 ### Jobs
 ##

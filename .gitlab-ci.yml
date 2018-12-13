@@ -5,14 +5,6 @@ stages:
   - test
   - trads
 
-### Cache
-## the key is "branch_name:job_name" to prevent incompatibilities between node versions
-#
-cache:
-  key: "${CI_COMMIT_REF_NAME}:${CI_JOB_NAME}"
-  paths:
-    - node_modules/
-
 ### Jobs template
 ##
 #

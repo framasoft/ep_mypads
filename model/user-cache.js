@@ -71,7 +71,7 @@ module.exports = (function () {
       // setTimeout(function() { }, 30000);
       // (NB: won't work with mockupserver since it waits for cache to be
       // ready before providing the web interface)
-      storage.fn.getKeys(keys, function (err, results) {
+      storage.fn.getKeysUncached(keys, function (err, results) {
         if (results) {
           var memo = ld.reduce(results, function (memo, val, key) {
             if (val) {
@@ -151,9 +151,10 @@ module.exports = (function () {
       return result;
     }, {});
     var users = ld.reduce(userCache.logins, function (result, n, key) {
-      if (key.toLowerCase()                    === search ||
-          emails[n].toLowerCase()              === search ||
-          userCache.lastname[n].toLowerCase()  === search ||
+      if (key.toLowerCase()                    === search  ||
+         (typeof(emails[n]) !== 'undefined' &&
+          emails[n].toLowerCase()              === search) ||
+          userCache.lastname[n].toLowerCase()  === search  ||
           userCache.firstname[n].toLowerCase() === search) {
         result[key] = {
           email: emails[n],

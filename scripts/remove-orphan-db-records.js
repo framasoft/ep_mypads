@@ -45,7 +45,7 @@ try {
 }
 
 // Open the database
-var db = new ueberDB.database(settings.dbType, settings.dbSettings);
+var db = new ueberDB.database(settings.dbType, settings.dbSettings, {cache: 0, writeInterval: 0});
 
 /*
  * Functions

@@ -308,7 +308,7 @@ module.exports = (function () {
             function (err, groups) {
               if (err) { return callback(err); }
               groups = ld.reduce(groups, function (memo, g) {
-                if (g.admins.length === 1) {
+                if (g.admins.length === 1 && g.admins[0] === u._id) {
                   memo.del.push(g._id);
                 } else {
                   ld.pull(g.users, u._id);

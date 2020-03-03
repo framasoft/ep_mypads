@@ -128,6 +128,7 @@ module.exports = (function () {
         en: JSON.parse(rFS(__dirname + '/templates/mail_en.json', rFSOpts)),
         es: JSON.parse(rFS(__dirname + '/templates/mail_es.json', rFSOpts)),
         fr: JSON.parse(rFS(__dirname + '/templates/mail_fr.json', rFSOpts)),
+        it: JSON.parse(rFS(__dirname + '/templates/mail_it.json', rFSOpts)),
       }
     };
     auth.init(app);

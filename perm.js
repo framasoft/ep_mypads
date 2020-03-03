@@ -180,7 +180,7 @@ module.exports = (function () {
           case 'public':
             return callback();
           case 'private':
-            return checkPass(g);
+            return (ld.includes(g.users, uid) ? checkPass(p) : checkPass(g));
           // Restricted case : if user, ok
           default:
             return (ld.includes(g.users, uid) ? callback() : params.refuse());

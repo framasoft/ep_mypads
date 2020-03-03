@@ -146,7 +146,12 @@ module.exports = (function () {
     */
     var idxTpl    = ld.template(rFS(__dirname + '/templates/index.html', rFSOpts));
     var idxHandle = function (req, res) {
-      return res.send(idxTpl({ HTMLExtraHead: conf.get('HTMLExtraHead'), hideHelpBlocks: conf.get('hideHelpBlocks') }));
+      var mypadsURL = req.protocol + '://' + req.header('host') + req.path;
+      return res.send(idxTpl({
+        HTMLExtraHead: conf.get('HTMLExtraHead'),
+        hideHelpBlocks: conf.get('hideHelpBlocks'),
+        mypadsURL: mypadsURL
+      }));
     };
     app.get('/mypads/index.html', idxHandle);
     app.get('/mypads/', idxHandle);

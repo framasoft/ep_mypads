@@ -9,8 +9,8 @@
       "AUTHENTICATION": "Paramètres d’authentification",
       "ERR": {
          "LANGUAGE_DEFAULT": "Une langue par défaut doit être choisie",
-         "PARSE_CAS": "La configuration CAS est invalide (ce n’est pas du JSON valide)",
-         "PARSE_LDAP": "La configuration LDAP est invalide (ce n’est pas du JSON valide)",
+         "PARSE_CAS": "La configuration CAS est invalide (ce n’est pas du JSON valide).",
+         "PARSE_LDAP": "La configuration LDAP est invalide (ce n’est pas du JSON valide).",
          "PASSWORD_MAX": "La taille maximum est obligatoire",
          "PASSWORD_MIN": "La taille minimum est obligatoire",
          "PASSWORD_SIZE": "La taille minimum ne peut être plus élevée que la maximum. Merci de vérifier vos saisies.",
@@ -375,8 +375,8 @@
          "COLOR": "Le code hexadécimal doit être au format #000000",
          "EMAIL": "Une adresse email est obligatoire et doit être valide",
          "LOGIN": "Un identifiant est nécessaire",
-         "LOGOUT": "Erreur à la déconnexion : vous n’étiez pas authentifié",
-         "PASSWORD_MISMATCH": "Les mots de passe saisis ne correspondent pas l’un à l’autre"
+         "LOGOUT": "Erreur à la déconnexion : vous n’étiez pas authentifié.",
+         "PASSWORD_MISMATCH": "Les mots de passe saisis ne correspondent pas l’un à l’autre."
       },
       "FIRSTNAME": "Prénom",
       "FORM": "Connexion",

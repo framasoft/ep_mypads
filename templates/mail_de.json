@@ -1,6 +1,6 @@
 {
-   "ACCOUNT_CONFIRMATION": "<%= login %>, Sie haben sich bei <%= title %> angemeldet. Diese Etherpad-Instanz benötigt eine E-Mail-Bestätigung, um Ihr Konto zu aktivieren. Um fortzufahren, gehen Sie zu dieser Webadresse: <%= url %> \nDiese URL ist nur für <%= duration %> Minuten gültig. Danach müssen Sie einen Administrator kontaktieren.",
-   "ACCOUNT_CONFIRMATION_SUBJECT": "Kontobestätigung auf <%= title %>",
-   "PASSRECOVER": "<%= login %>, eine Anfrage zur Änderung ihres Passwortes bei <%= title %> wurde für ihren Zugang ausgelöst. Wenn Sie Ihre Passwortänderung bestätigen möchten, gehen Sie bitte zu dieser Webadresse: <%= url %> \nWenn diese Anfrage nicht von Ihnen kommt, ignorieren Sie einfach diese E-Mail. Die Adresse wird in <%= duration %> Minuten ungültig.",
-   "PASSRECOVER_SUBJECT": "Wiederherstellung des Passwortes für <%= title %>"
+    "ACCOUNT_CONFIRMATION": "<%= login %>, Sie haben sich bei <%= title %> angemeldet. Diese Etherpad-Instanz benötigt eine E-Mail-Bestätigung, um Ihr Konto zu aktivieren. Um fortzufahren, gehen Sie zu dieser Webadresse: <%= url %>. Diese URL ist nur für <%= duration %> Minuten gültig. Danach müssen Sie einen Administrator kontaktieren.",
+    "ACCOUNT_CONFIRMATION_SUBJECT": "Kontobestätigung auf <%= title %>",
+    "PASSRECOVER": "<%= login %>, eine Anfrage zur Änderung ihres Passwortes bei <%= title %> wurde für ihren Zugang ausgelöst. Wenn Sie Ihre Passwortänderung bestätigen möchten, gehen Sie bitte zu dieser Webadresse: <%= url %>. Wenn diese Anfrage nicht von Ihnen kommt, ignorieren Sie einfach diese E-Mail. Die Adresse wird in <%= duration %> Minuten ungültig.",
+    "PASSRECOVER_SUBJECT": "Wiederherstellung des Passwortes für <%= title %>"
 }

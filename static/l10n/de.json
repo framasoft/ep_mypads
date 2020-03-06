@@ -84,7 +84,7 @@
             "PASSWORD_MIN": "Minimale Anzahl der Zeichen für das Passwort",
             "ROOTURL": "Die Root-Webadresse, die für den Zugriff auf Etherpad verwendet wird",
             "SMTP_EMAILFROM": "E-Mail-Adresse zum Versenden von E-Mails von MyPads",
-            "SMTP_HOST": "Domain des SMTP-Server",
+            "SMTP_HOST": "Domain des SMTP-Servers",
             "SMTP_PASS": "Optional: Wenn eine Authentifizierung am SMTP-Server erforderlich ist, wird das Passwort benötigt",
             "SMTP_PORT": "SMTP Port",
             "SMTP_SSL": "Verschlüsselte SSL-Verbindung zwischen MyPads und Ihrem SMTP-Server",
@@ -97,7 +97,7 @@
             "USER_FOUND": "Benutzer gefunden, siehe Optionen im Formular",
             "USER_NONE": "Keinen Benutzer mit diesem Loginnamen gefunden",
             "USER_REMOVE_SURE": "Sie sind dabei, dieses Konto und alle Ordner und Pads, auf denen der Benutzer der einzige Administrator ist, endgültig zu entfernen. Wenn Sie sich wirklich sicher sind, was Sie tun, klicken Sie bitte auf OK.",
-            "USE_FIRST_AND_LAST_NAME_IN_PADS": "Nutze Vor- und Nachnamen als Nickname in Pads"
+            "USE_FIRST_AND_LAST_NAME_IN_PADS": "Erzwinge die Verwendung von Vor- und Nachnamen als Nickname in Pads"
         },
         "SETTINGS_GENERAL": "Allgemeine Einstellungen",
         "SETTINGS_MAIL": "E-Mail-Einstellungen",
@@ -118,7 +118,7 @@
                 "LDAP_NO_VALID_MAIL": "Die vom LDAP-Server zurückgegebene E-Mail-Adresse ist nicht gültig.",
                 "MUST_BE": "Du musst authentifiziert sein.",
                 "NOT_AUTH": "Nicht authentifiziert.",
-                "NO_RECOVER": "Sorry, Sie können Ihr Passwort hier nicht wiederherstellen.",
+                "NO_RECOVER": "Leider können Sie Ihr Passwort hier nicht wiederherstellen.",
                 "NO_REGISTRATION": "Leider ist die Registrierung deaktiviert.",
                 "PASSWORD_INCORRECT": "Das Passwort ist nicht korrekt.",
                 "PLEASE_CHANGE_YOUR_PASSWORD": "Ihr Passwort ist jenes, welches bei der Verwendung der externen Authentifizierung registriert wurde. Dieser Server verwendet eine interne Authentifizierung und als Sicherheitsmaßnahme ist dieses Passwort nicht erlaubt. Bitte klicken Sie auf den Link \"Passwort vergessen\", um es zu ändern und sich einzuloggen.",
@@ -129,7 +129,7 @@
                 "KEY_NOT_FOUND": "Der Datensatz wurde nicht gefunden.",
                 "LANG_PROBLEM": "Sprachaktualisierung kann nicht durchgeführt werden. Die Voreinstellung zur Sprache wird benutzt.",
                 "MAIL_NOT_CONFIGURED": "Einstellungen für E-Mail wurden auf diesem Server nicht erledigt. Bitte kontaktieren Sie seine Administration.",
-                "ROOTURL_NOT_CONFIGURED": "Einstellung der zentralen Root-URL wurde auf diesen Server nicht eingetragen. Bitte kontaktieren Sie seine Administration.",
+                "ROOTURL_NOT_CONFIGURED": "Einstellung der zentralen Root-URL wurde auf diesem Server nicht eingetragen. Bitte kontaktieren Sie seine Administration.",
                 "UNABLE_TO_BIND_TO_LDAP": "Mit diesen Einstellungen konnte keine Verbindung zum LDAP-Server hergestellt werden. Bitte prüfen Sie die Einstellungen."
             },
             "GROUP": {
@@ -140,7 +140,7 @@
                 "RESIGN_UNIQUE_ADMIN": "Sie können den einzigen Administrator nicht entfernen."
             },
             "PAD": {
-                "INEXISTENT": "Pad exisiert nicht.",
+                "INEXISTENT": "Pad existiert nicht.",
                 "ITEMS_NOT_FOUND": "Account oder Pads konnten nicht gefunden werden."
             },
             "PERMISSION": {
@@ -162,7 +162,7 @@
                 "LOGIN_STR": "Anmeldung muss eine Zeichenkette (string) sein.",
                 "MAIL": "E-Mail-Adresse ist ungültig.",
                 "MSG_STR": "message muss eine Zeichenkette (string) sein.",
-                "PARAMS_REQUIRED": "Parameter sind verpflichend.",
+                "PARAMS_REQUIRED": "Parameter sind verpflichtend.",
                 "PARAM_STR": "Manche Parameter müssen eine Zeichenkette (string) sein.",
                 "PASSWORD_MISSING": "Fehlendes Passwort.",
                 "PASSWORD_SIZE": "Größe des Passwortes ist zu kurz oder zu lang.",
@@ -300,7 +300,7 @@
             "SELECT_ALL": "Alle Pads markieren",
             "SELECT_AT_LEAST_ONE_PAD": "Bitte wählen Sie mindestens ein Pad aus.",
             "SORT_BY": "Sortiere die Pads nach",
-            "SORT_BY_CREATION": "Erstellungdatum",
+            "SORT_BY_CREATION": "Erstellungsdatum",
             "SORT_BY_NAME": "Name",
             "SORT_BY_UPDATE": "Letzte Aktualisierung",
             "TITLE": "Titel",
@@ -330,7 +330,7 @@
             "HELP": "Sie können nach einem oder mehreren Tags filtern. Klicken Sie erneut, um die Funktion zu deaktivieren.",
             "TITLE": "Tags"
         },
-        "UNMARK": "demarkieren",
+        "UNMARK": "Markierung aufheben",
         "VIEW": "Ansicht",
         "VIEW_HELP": "<p>Die Details zum Ordner werden hier anzeigt:<ul><li>Optionen, die gesetzt werden, wenn ein Ordner erstellt oder aktualisiert wird</li><li>eine Liste aller Pads in diesem Ordner;</li><li>die Liste aller Administratoren dieses Ordners</li></ul></p><p>Von hier können Sie: <ul><li>neue Pads erstellen, bearbeiten, löschen oder sie mit Lesezeichen markieren</li><li>Administratoren benennen</li><li>Benutzer einladen an Pads mitzuarbeiten und neue zu erstellen</li></ul></p>",
         "VIEW_MANAGE": "Anzeigen und Verwalten von Ordnern und deren Pads"
@@ -342,15 +342,15 @@
         "LOGOUT": "Abmelden",
         "PAD": "Meine Ordner und Pads",
         "PROFILE": "Mein Profil",
-        "USERLIST": "Meine Listen von Accounts",
-        "USERS": "Accounts"
+        "USERLIST": "Meine Benutzerlisten",
+        "USERS": "Benutzer"
     },
     "NOTIFICATION": {
         "ERROR": "Fehler",
-        "ERROR_UNEXPECTED": "Ein unerwarteter Fehler ist aufgetreten. Bitte kontaktieren Sie den Administrator.",
+        "ERROR_UNEXPECTED": "Ein unerwarteter Fehler ist aufgetreten. Bitte kontaktieren Sie die Administration.",
         "INFO": "Info",
         "SUCCESS": "Erfolg",
-        "SUCCESS_GENERIC": "Aktion wurde erfogreich ausgeführt.",
+        "SUCCESS_GENERIC": "Aktion wurde erfolgreich ausgeführt.",
         "WARNING": "Warnung"
     },
     "TAG": {
@@ -370,7 +370,7 @@
         "COLOR": "Angepasste Farbe für Pads",
         "COLOR_SAMPLE": "#00cc00",
         "EMAIL": "E-Mail-Adresse",
-        "EMAIL_SAMPLE": "account@example.org",
+        "EMAIL_SAMPLE": "name@example.org",
         "ERR": {
             "COLOR": "Der Hexadezimalcode muss wie folgt aussehen: #000000.",
             "EMAIL": "Die E-Mail-Adresse ist erforderlich und sollte gültig sein.",
@@ -426,7 +426,7 @@
         "UNDEF": "********",
         "USECOLORINPADS": "Farben in den Pads verwenden?",
         "USELOGINANDCOLORINPADS": "Login und Farbe in Pads verwenden?",
-        "USERNAME": "Names des Accounts"
+        "USERNAME": "Name des Accounts"
     },
     "USERLIST": {
         "ADD": "Erstelle eine neue Benutzerliste",

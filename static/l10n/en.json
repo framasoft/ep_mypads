@@ -176,7 +176,7 @@
             "USERLIST_CRUD": "crud must be add, set or del.",
             "USERLIST_ID": "In set and del modes, ulistid is mandatory.",
             "USERLIST_NAME": "In add mode, name of the userlist is mandatory.",
-            "USERLIST_SET_PARAMS": "In set mode, name or uids is madantory.",
+            "USERLIST_SET_PARAMS": "In set mode, name or uids is mandatory.",
             "USER_INVALID": "User is invalid.",
             "VALUE_REQUIRED": "Value is mandatory.",
             "WITHEXTRA_BOOL": "withExtra must be a boolean."

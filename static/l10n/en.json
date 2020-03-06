@@ -8,15 +8,15 @@
    "ADMIN": {
       "AUTHENTICATION": "Authentication settings",
       "ERR": {
-         "LANGUAGE_DEFAULT": "A default language must be selected",
+         "LANGUAGE_DEFAULT": "A default language must be selected.",
          "PARSE_CAS": "Unable to parse the CAS configuration.",
          "PARSE_LDAP": "Unable to parse the LDAP configuration.",
-         "PASSWORD_MAX": "Maximum password size is mandatory",
-         "PASSWORD_MIN": "Minimum password size is mandatory",
+         "PASSWORD_MAX": "Maximum password size is mandatory.",
+         "PASSWORD_MIN": "Minimum password size is mandatory.",
          "PASSWORD_SIZE": "Min size can't be higher than max size. Please check your numbers.",
-         "ROOTURL": "Must be a valid URL",
-         "SMTP_EMAILFROM": "Must be a valid email",
-         "TITLE": "Title is mandatory"
+         "ROOTURL": "Must be a valid URL.",
+         "SMTP_EMAILFROM": "Must be a valid email.",
+         "TITLE": "Title is mandatory."
       },
       "ETHERPAD_ACCOUNT": "Etherpad account",
       "FIELD": {
@@ -109,84 +109,84 @@
    "BACKEND": {
       "ERROR": {
          "AUTHENTICATION": {
-            "ACTIVATION_NEEDED": "Your account has not been confirmed",
+            "ACTIVATION_NEEDED": "Your account has not been confirmed.",
             "ADMIN": "Access denied: you must be an authenticated Etherpad instance admin.",
-            "CAS_NO_TICKET": "Access denied: no CAS ticket provided",
+            "CAS_NO_TICKET": "Access denied: no CAS ticket provided.",
             "DENIED": "Access denied",
-            "DENIED_RECORD": "You're not allowed to get this record",
-            "DENIED_RECORD_EDIT": "You're not allowed to edit this record",
+            "DENIED_RECORD": "You're not allowed to get this record.",
+            "DENIED_RECORD_EDIT": "You're not allowed to edit this record.",
             "LDAP_NO_VALID_MAIL": "The email address returned by the LDAP server is not valid.",
-            "MUST_BE": "You must be authenticated",
-            "NOT_AUTH": "Not authenticated",
-            "NO_RECOVER": "Sorry, you can't recover you password from here",
-            "NO_REGISTRATION": "Sorry, registration is disabled",
-            "PASSWORD_INCORRECT": "Password is not correct",
+            "MUST_BE": "You must be authenticated.",
+            "NOT_AUTH": "Not authenticated.",
+            "NO_RECOVER": "Sorry, you can't recover you password from here.",
+            "NO_REGISTRATION": "Sorry, registration is disabled.",
+            "PASSWORD_INCORRECT": "Password is not correct.",
             "PLEASE_CHANGE_YOUR_PASSWORD": "Your password is the one registered when using external authentification. This server use internal authentication and as a safety mesure, this password is not allowed. Please click on the \"Lost your password?\" link to change it and be able to login.",
-            "TOKEN_INCORRECT": "Your security token is invalid"
+            "TOKEN_INCORRECT": "Your security token is invalid."
          },
          "CONFIGURATION": {
             "CANTGET": "Configuration loading has failed. Please contact your administrator.",
-            "KEY_NOT_FOUND": "The record has not been found",
+            "KEY_NOT_FOUND": "The record has not been found.",
             "LANG_PROBLEM": "Language update cannot be done. The default language will be used.",
             "MAIL_NOT_CONFIGURED": "Mail settings have not been done on this server. Please contact its administrator.",
             "ROOTURL_NOT_CONFIGURED": "Root Url setting has not been entered on this server. Please contact its administrator.",
-            "UNABLE_TO_BIND_TO_LDAP": "Unable to bind to LDAP server with this settings. Please check your LDAP settings"
+            "UNABLE_TO_BIND_TO_LDAP": "Unable to bind to LDAP server with this settings. Please check your LDAP settings."
          },
          "GROUP": {
-            "CASCADE_REMOVAL_PROBLEM": "Something goes wrong with cascade pads removal",
-            "INEXISTENT": "Folder does not exist",
-            "ITEMS_NOT_FOUND": "Some users, admins or pads have not been found",
-            "NOT_USER": "You are not an user of this folder",
-            "RESIGN_UNIQUE_ADMIN": "You can't resign the unique administrator"
+            "CASCADE_REMOVAL_PROBLEM": "Something goes wrong with cascade pads removal.",
+            "INEXISTENT": "Folder does not exist.",
+            "ITEMS_NOT_FOUND": "Some users, admins or pads have not been found.",
+            "NOT_USER": "You are not an user of this folder.",
+            "RESIGN_UNIQUE_ADMIN": "You can't resign the unique administrator."
          },
          "PAD": {
-            "INEXISTENT": "Pad does not exist",
-            "ITEMS_NOT_FOUND": "Pad folder or at least one of the users are not found"
+            "INEXISTENT": "Pad does not exist.",
+            "ITEMS_NOT_FOUND": "Pad folder or at least one of the users are not found."
          },
          "PERMISSION": {
-            "UNAUTHORIZED": "You are not allowed to access to this record",
-            "UNEXPECTED": "Sorry, an unexpected has error has occurred"
+            "UNAUTHORIZED": "You are not allowed to access to this record.",
+            "UNEXPECTED": "Sorry, an unexpected has error has occurred."
          },
          "TOKEN": {
             "EXPIRED": "Token has expired. Please make a new request.",
             "INCORRECT": "Used token contains incorrect data for this request."
          },
          "TYPE": {
-            "CALLBACK_FN": "Callback must be a function",
-            "GID_STR": "gid must be a string",
-            "ID_STR": "_id, when defined, must be a string",
-            "INVITE_BOOL": "Invite must be a boolean",
-            "KEY_STR": "Key must be a string",
-            "LOGINS_ARR": "logins must be an array",
-            "LOGIN_REQUIRED": "Login is required",
-            "LOGIN_STR": "Login must be a string",
-            "MAIL": "Email is invalid",
-            "MSG_STR": "message must be a string",
-            "PARAMS_REQUIRED": "Parameters are mandatory",
-            "PARAM_STR": "Some parameter must be a string",
-            "PASSWORD_MISSING": "Missing password",
-            "PASSWORD_SIZE": "Password size is too short or too long",
-            "PASSWORD_STR": "Password must be a string",
-            "SMTP_CONFIG": "Your SMTP server configuration is invalid",
-            "STR_100": "String can't be more than 100 characters",
-            "SUBJECT_STR": "subject must be a string",
-            "TO_MAIL": "to must be an email address",
-            "TYPE_PADSORGROUPS": "Type must be either pads or folders",
-            "UNABLE_TO_USE_EP_SETTINGS": "Unable to use Etherpad settings.json",
-            "USERLIST_CRUD": "crud must be add, set or del",
-            "USERLIST_ID": "In set and del modes, ulistid is mandatory",
-            "USERLIST_NAME": "In add mode, name of the userlist is mandatory",
-            "USERLIST_SET_PARAMS": "In set mode, name or uids is madantory",
-            "USER_INVALID": "User is invalid",
-            "VALUE_REQUIRED": "Value is mandatory",
-            "WITHEXTRA_BOOL": "withExtra must be a boolean"
+            "CALLBACK_FN": "Callback must be a function.",
+            "GID_STR": "gid must be a string.",
+            "ID_STR": "_id, when defined, must be a string.",
+            "INVITE_BOOL": "Invite must be a boolean.",
+            "KEY_STR": "Key must be a string.",
+            "LOGINS_ARR": "logins must be an array.",
+            "LOGIN_REQUIRED": "Login is required.",
+            "LOGIN_STR": "Login must be a string.",
+            "MAIL": "Email is invalid.",
+            "MSG_STR": "message must be a string.",
+            "PARAMS_REQUIRED": "Parameters are mandatory.",
+            "PARAM_STR": "Some parameter must be a string.",
+            "PASSWORD_MISSING": "Missing password.",
+            "PASSWORD_SIZE": "Password size is too short or too long.",
+            "PASSWORD_STR": "Password must be a string.",
+            "SMTP_CONFIG": "Your SMTP server configuration is invalid.",
+            "STR_100": "String can't be more than 100 characters.",
+            "SUBJECT_STR": "subject must be a string.",
+            "TO_MAIL": "to must be an email address.",
+            "TYPE_PADSORGROUPS": "Type must be either pads or folders.",
+            "UNABLE_TO_USE_EP_SETTINGS": "Unable to use Etherpad settings.json.",
+            "USERLIST_CRUD": "crud must be add, set or del.",
+            "USERLIST_ID": "In set and del modes, ulistid is mandatory.",
+            "USERLIST_NAME": "In add mode, name of the userlist is mandatory.",
+            "USERLIST_SET_PARAMS": "In set mode, name or uids is madantory.",
+            "USER_INVALID": "User is invalid.",
+            "VALUE_REQUIRED": "Value is mandatory.",
+            "WITHEXTRA_BOOL": "withExtra must be a boolean."
          },
          "USER": {
-            "ALREADY_EXISTS": "User already exists, please choose another login",
-            "BOOKMARK_NOT_FOUND": "Bookmark not found",
-            "EMAIL_ALREADY_EXISTS": "This user email has already been used, please choose another one",
-            "NOT_FOUND": "User not found",
-            "USERLIST_NOT_FOUND": "Userlist not found"
+            "ALREADY_EXISTS": "User already exists, please choose another login.",
+            "BOOKMARK_NOT_FOUND": "Bookmark not found.",
+            "EMAIL_ALREADY_EXISTS": "This user email has already been used, please choose another one.",
+            "NOT_FOUND": "User not found.",
+            "USERLIST_NOT_FOUND": "Userlist not found."
          }
       }
    },
@@ -217,13 +217,13 @@
       "EDIT": "Edit",
       "EDIT_GROUP": "Edit a folder",
       "ERR": {
-         "NAME": "The name of the folder is required"
+         "NAME": "The name of the folder is required."
       },
       "FIELD": {
          "ALLOW_USERS_TO_CREATE_PADS": "Allow simple users of the folder to create pads?",
          "ARCHIVED": "Archived",
          "DESCRIPTION": "Description",
-         "GROUP_PARAMS": "Folder parameters ?",
+         "GROUP_PARAMS": "Folder parameters?",
          "NAME": "Name",
          "PRIVATE": "Private",
          "PUBLIC": "Public",
@@ -233,42 +233,42 @@
       },
       "FILTERS": {
          "ADMIN": "Folders I am admin",
-         "HELP": "You can select one or several filters, click again on it to deactivate",
+         "HELP": "You can select one or several filters, click again on it to deactivate.",
          "TITLE": "Filters",
          "USER": "Folders I have been invited"
       },
       "GROUP": "Folder",
       "GROUPS": "Folders",
-      "HELP": "Folders can contain pads. Here are your folders: those you have created, those you have been explicitly invited",
+      "HELP": "Folders can contain pads. Here are your folders: those you have created, those you have been explicitly invited.",
       "INFO": {
-         "ADD_SUCCESS": "Folder has been successfully created",
-         "ALLOW_USERS_TO_CREATE_PADS": "This allows users of the folder that don't have administrator rights to create pads in the folder",
-         "ARCHIVED": "If checked, folder will appear in the archived folders list even if it's bookmarked",
-         "CHAT_HISTORY_REMOVE_SUCCESS": "The chat history of the pad has been successfully removed",
+         "ADD_SUCCESS": "Folder has been successfully created.",
+         "ALLOW_USERS_TO_CREATE_PADS": "This allows users of the folder that don't have administrator rights to create pads in the folder.",
+         "ARCHIVED": "If checked, folder will appear in the archived folders list even if it's bookmarked.",
+         "CHAT_HISTORY_REMOVE_SUCCESS": "The chat history of the pad has been successfully removed.",
          "CHAT_HISTORY_REMOVE_SURE": "Are you sure you want to remove the chat history of this pad?",
          "DESCRIPTION": "An optional long text to describe your folder",
-         "EDIT_SUCCESS": "Folder has been successfully updated",
-         "GROUP_PARAMS": "By default, pad inherits from parameters of the folder they belong to. You can overwrite them if you want",
+         "EDIT_SUCCESS": "Folder has been successfully updated.",
+         "GROUP_PARAMS": "By default, pad inherits from parameters of the folder they belong to. You can overwrite them if you want.",
          "NAME": "Name",
-         "PAD_ADD_SUCCESS": "Pad has been successfully created",
-         "PAD_EDIT_SUCCESS": "Pad has been successfully updated",
-         "PAD_MOVE": "Select the wanted folder for your migration",
+         "PAD_ADD_SUCCESS": "Pad has been successfully created.",
+         "PAD_EDIT_SUCCESS": "Pad has been successfully updated.",
+         "PAD_MOVE": "Select the wanted folder for your migration.",
          "PAD_MOVE_NOGROUP": "Sorry but no other folder is available. You should create one before.",
-         "PAD_MOVE_SUCCESS": "All pads have been successfully moved",
-         "PAD_REMOVE_SUCCESS": "Pad has been successfully removed",
+         "PAD_MOVE_SUCCESS": "All pads have been successfully moved.",
+         "PAD_REMOVE_SUCCESS": "Pad has been successfully removed.",
          "PAD_REMOVE_SURE": "Are you sure you want to remove this pad ? WARNING: this action is irreversible, the pad will be deleted for EVERYONE that has access to it.",
          "PASSWORD": "Required in private mode",
-         "READONLY": "If checked, linked pads will be in readonly mode and the folder will be in the archived folders list unless it's bookmarked",
-         "REMOVE_SUCCESS": "Folder has been successfully removed",
+         "READONLY": "If checked, linked pads will be in readonly mode and the folder will be in the archived folders list unless it's bookmarked.",
+         "REMOVE_SUCCESS": "Folder has been successfully removed.",
          "REMOVE_SURE": "Are you sure you want to remove this folder ? WARNING: this action is irreversible, the folder and its pads will be deleted for EVERYONE that has access to it.",
          "RESIGN": "Are you sure you want to resign from this folder ?",
-         "RESIGN_SUCCESS": "You have left the folder successfully",
-         "VISIBILITY": "Required, restricted by default to invited users or admins"
+         "RESIGN_SUCCESS": "You have left the folder successfully.",
+         "VISIBILITY": "Required, restricted by default to invited users or admins."
       },
       "INVITE_USER": {
          "FAILURE": "You can't invite users who have no account in this instance: ",
          "HELP": "<h4>Userlists</h4><p>You can select one or more userlists. Each click will add all members of the selected userlist to invited users.</p><h4>Invite users</h4><p>This field accepts one email or login at a time. When ENTER is typed, or OK is clicked, the filled data is added to the list of invited users. A list of known users helps you to fill the input.</p><h4>Users</h4><p>This list contains all selected users. You can remove one by clicking the sign after each item.</p><h4>Note</h4><p>Please note that, for instance, registered users will be automatically added to your folder. In short term, external users will receive a mail for creating an account.</p>",
-         "INPUT_HELP": "You can invite as many users as you want",
+         "INPUT_HELP": "You can invite as many users as you want.",
          "IU": "Invite and manage users",
          "PLACEHOLDER": "Email or login",
          "SUCCESS": "User invitation has been successfully achieved for ",
@@ -298,7 +298,7 @@
          "PUBLIC_DENIED": "Public access: you are not allowed to see this data.",
          "REDUCE": "Reduce",
          "SELECT_ALL": "Select all pads",
-         "SELECT_AT_LEAST_ONE_PAD": "Please, select at least one pad",
+         "SELECT_AT_LEAST_ONE_PAD": "Please, select at least one pad.",
          "SORT_BY": "Sort pads by",
          "SORT_BY_CREATION": "creation date",
          "SORT_BY_NAME": "name",
@@ -320,14 +320,14 @@
       },
       "SHARE": "Share",
       "SHARE_ADMIN": "Share administration",
-      "SHARE_LINK": "Please share this URL to your guests",
-      "SHARE_PASSWORD": "Please enter the password to be able to share",
+      "SHARE_LINK": "Please share this URL to your guests.",
+      "SHARE_PASSWORD": "Please enter the password to be able to share.",
       "SORT": {
          "HELP": "By default, folders are ordered by creation date, older first. You can choose to use another orders. Click again to reverse order.",
          "TITLE": "Sort by"
       },
       "TAGS": {
-         "HELP": "You can filter by one or more tags. Click again to deactivate if wanted",
+         "HELP": "You can filter by one or more tags. Click again to deactivate if wanted.",
          "TITLE": "Tags"
       },
       "UNMARK": "Unmark",
@@ -350,7 +350,7 @@
       "ERROR_UNEXPECTED": "An unexpected error has been raised. Please contact the administrator.",
       "INFO": "Info",
       "SUCCESS": "Success",
-      "SUCCESS_GENERIC": "Action has been successfully achieved",
+      "SUCCESS_GENERIC": "Action has been successfully achieved.",
       "WARNING": "Warning"
    },
    "TAG": {
@@ -372,9 +372,9 @@
       "EMAIL": "Email",
       "EMAIL_SAMPLE": "username@example.org",
       "ERR": {
-         "COLOR": "The hexadecimal code must be like #000000",
-         "EMAIL": "The email is required and should be valid",
-         "LOGIN": "Login is required",
+         "COLOR": "The hexadecimal code must be like #000000.",
+         "EMAIL": "The email is required and should be valid.",
+         "LOGIN": "Login is required.",
          "LOGOUT": "Log out error: you were not authenticated.",
          "PASSWORD_MISMATCH": "The entered passwords do not match."
       },
@@ -387,19 +387,19 @@
          "ACCOUNT_CONFIRMATION_SUCCESS": "Your account has been successfully confirmed. You can now login.",
          "CHANGEPASS_SUCCESS": "Your password has been successfully updated.",
          "COLOR": "The hexademical code for color you want to be used by default in pads",
-         "EMAIL": "The email is required for password recovery",
-         "LANG": "Your default browser configuration, depending on available languages on MyPads",
-         "LOGIN": "The unique login you choose when you have subscribed",
+         "EMAIL": "The email is required for password recovery.",
+         "LANG": "Your default browser configuration, depending on available languages on MyPads.",
+         "LOGIN": "The unique login you choose when you have subscribed.",
          "OPTIONAL": "Optional field",
-         "PAD_NICKNAME": "If defined, replace your login in pads if you have checked \"Use login and color in pads?\"",
+         "PAD_NICKNAME": "If defined, replace your login in pads if you have checked \"Use login and color in pads?\".",
          "PASSRECOVER_SUCCESS": "You should have received an email to the address you have used when you subscribe. This email contains a Web address that is temporary valid. Please follow this url to change your password.",
          "PASSWORD_BEGIN": "Must be between ",
-         "PASSWORD_CHECK": "For verification: must be the same as password",
-         "PASSWORD_CURRENT": "Security check: required for all profile changes",
+         "PASSWORD_CHECK": "For verification: must be the same as password.",
+         "PASSWORD_CURRENT": "Security check: required for all profile changes.",
          "PASSWORD_END": " characters",
-         "REMOVE_ACCOUNT": "Remove definitively your account and all the folders and pads on which you are the unique administrator",
-         "REMOVE_ACCOUNT_SUCCESS": "Account removed with success",
-         "REMOVE_ACCOUNT_SURE": "You are on the verge of removing definitively your account and all the folders and pads on which you are the unique administrator. If you are really sure about what you are doing, please enter your current password and click OK",
+         "REMOVE_ACCOUNT": "Remove definitively your account and all the folders and pads on which you are the unique administrator.",
+         "REMOVE_ACCOUNT_SUCCESS": "Account removed with success.",
+         "REMOVE_ACCOUNT_SURE": "You are on the verge of removing definitively your account and all the folders and pads on which you are the unique administrator. If you are really sure about what you are doing, please enter your current password and click OK.",
          "USECOLORINPADS": "Use chosen color in pads by default?",
          "USELOGINANDCOLORINPADS": "Use login and chosen color in pads by default?"
       },
@@ -432,25 +432,25 @@
       "ADD": "Create a new userlist",
       "EDIT": "Edit userlist ",
       "ERR": {
-         "NAME": "The name of the userlist is required"
+         "NAME": "The name of the userlist is required."
       },
       "FIELD": {
          "NAME": "Name",
          "USERS": "Users",
-         "USERSAREA_HELP": "You can add as many emails or logins you want",
+         "USERSAREA_HELP": "You can add as many emails or logins you want.",
          "USERSAREA_PLACEHOLDER": "One email or login per line",
-         "USERS_HELP": "Add as many users as you want"
+         "USERS_HELP": "Add as many users as you want."
       },
       "FORM_HELP": "<h3>Name</h3><p>You must give a name to the userlist, in order to be able to identify it.</p><h3>Users</h3><p>You can add as many users as you want. To do it, please enter the email or login and click on the 'OK' button. Note that already known users can be selected from the input.</p><p>To remove users, click on the cross located at the right of each user.</p>",
       "HELP": "<p>Here you can find all your userlists, ordered by creation date. Summary information are available with the name of each userlist and the number of users linked.</p><p>Through action icons, located on top right of each userlist, you can edit or remove lists. Details are available in the form view, via edit action.</p>",
       "INFO": {
-         "ADD_SUCCESS": "Userlist has been successfully created",
-         "EDIT_SUCCESS": "Userlist has been successfully updated",
+         "ADD_SUCCESS": "Userlist has been successfully created.",
+         "EDIT_SUCCESS": "Userlist has been successfully updated.",
          "NAME": "Name of the userlist",
-         "REMOVE_SUCCESS": "Userlist has been successfully removed",
+         "REMOVE_SUCCESS": "Userlist has been successfully removed.",
          "REMOVE_SURE": "Are you sure you want to remove this userlist?",
          "USER_FAILURE": "You can't add users who have no account in this instance: ",
-         "USER_INVITE": "By selecting a userlist, you will invite all its users at the same time",
+         "USER_INVITE": "By selecting a userlist, you will invite all its users at the same time.",
          "USER_SUCCESS": "User adding has been successfull for "
       },
       "USERLIST": "Userlist"

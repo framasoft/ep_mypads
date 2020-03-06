@@ -8,15 +8,15 @@
     "ADMIN": {
         "AUTHENTICATION": "Impostazioni di autenticazione",
         "ERR": {
-            "LANGUAGE_DEFAULT": "Deve essere selezionata una lingua di default",
+            "LANGUAGE_DEFAULT": "Deve essere selezionata una lingua di default.",
             "PARSE_CAS": "Impossibile recuperare la configurazione CAS.",
             "PARSE_LDAP": "Impossibile reuperare la configurazione LDAP.",
-            "PASSWORD_MAX": "La lunghezza massima della password è obbligatoria",
-            "PASSWORD_MIN": "La lunghezza minima della password è obbligatoria",
+            "PASSWORD_MAX": "La lunghezza massima della password è obbligatoria.",
+            "PASSWORD_MIN": "La lunghezza minima della password è obbligatoria.",
             "PASSWORD_SIZE": "La lunghezza minima non può essere come la lunghezza massima. Controlla i tuoi valori.",
-            "ROOTURL": "L'URL deve essere valido",
-            "SMTP_EMAILFROM": "La mail deve essere valida",
-            "TITLE": "Il titolo è obbligatorio"
+            "ROOTURL": "L'URL deve essere valido.",
+            "SMTP_EMAILFROM": "La mail deve essere valida.",
+            "TITLE": "Il titolo è obbligatorio."
         },
         "ETHERPAD_ACCOUNT": "Account Etherpad",
         "FIELD": {
@@ -109,84 +109,84 @@
     "BACKEND": {
         "ERROR": {
             "AUTHENTICATION": {
-                "ACTIVATION_NEEDED": "Il tuo account non è stato confermato",
+                "ACTIVATION_NEEDED": "Il tuo account non è stato confermato.",
                 "ADMIN": "Accesso negato: devi essere autenticato come admin di un'istanza Etherpad.",
-                "CAS_NO_TICKET": "Accesso negato: non è stato fornito il ticket CAS",
+                "CAS_NO_TICKET": "Accesso negato: non è stato fornito il ticket CAS.",
                 "DENIED": "Accesso negato",
-                "DENIED_RECORD": "Non hai il permesso di scaricare questo record",
-                "DENIED_RECORD_EDIT": "Non hai il permesso di modificare questo record",
+                "DENIED_RECORD": "Non hai il permesso di scaricare questo record.",
+                "DENIED_RECORD_EDIT": "Non hai il permesso di modificare questo record.",
                 "LDAP_NO_VALID_MAIL": "L'indirizzo e-mail restituito dal server LDAP non è valido.",
-                "MUST_BE": "Devi essere autenticato",
-                "NOT_AUTH": "Non autenticato",
-                "NO_RECOVER": "Ci spiace, ma non puoi recuperare la tua password da qui",
-                "NO_REGISTRATION": "Ci spiace, la registrazione è disabilitata",
-                "PASSWORD_INCORRECT": "La password non è corretta",
+                "MUST_BE": "Devi essere autenticato.",
+                "NOT_AUTH": "Non autenticato.",
+                "NO_RECOVER": "Ci spiace, ma non puoi recuperare la tua password da qui.",
+                "NO_REGISTRATION": "Ci spiace, la registrazione è disabilitata.",
+                "PASSWORD_INCORRECT": "La password non è corretta.",
                 "PLEASE_CHANGE_YOUR_PASSWORD": "La tua password è quella registrata quando hai usato un'autenticazione esterna. Questo server usa un'autenticazione interna e, come misura di sicurezza, questa password non è permessa. Clicca sul link \"Password smarrita?\" per cambiarla ed essere in grado di accedere.",
-                "TOKEN_INCORRECT": "Il tuo token di sicurezza non è valido"
+                "TOKEN_INCORRECT": "Il tuo token di sicurezza non è valido."
             },
             "CONFIGURATION": {
                 "CANTGET": "Il caricamento della tua configurazione non è riuscito. Contatta il tuo amministratore.",
-                "KEY_NOT_FOUND": "Il record non è stato trovato",
+                "KEY_NOT_FOUND": "Il record non è stato trovato.",
                 "LANG_PROBLEM": "L'aggiornamento della lingua non può essere fatto. Verrà utilizzata la lingua di default.",
                 "MAIL_NOT_CONFIGURED": "Le impostazioni mail non sono state effettuate in questo server. Contatta il suo amministratore.",
                 "ROOTURL_NOT_CONFIGURED": "Le impostazioni dell'URL root non sono state inserite in questo server. Contatta il suo amministratore.",
-                "UNABLE_TO_BIND_TO_LDAP": "Impossibile collegarsi al server LDAP con queste impostazioni. Controlla le tue impostazioni LDAP"
+                "UNABLE_TO_BIND_TO_LDAP": "Impossibile collegarsi al server LDAP con queste impostazioni. Controlla le tue impostazioni LDAP."
             },
             "GROUP": {
-                "CASCADE_REMOVAL_PROBLEM": "Qualcosa non ha funzionato nella rimozione a cascata dei pad",
-                "INEXISTENT": "La cartella non esiste",
-                "ITEMS_NOT_FOUND": "Alcuni utenti, admin o pad non sono stati trovati",
-                "NOT_USER": "Non sei un utente di questa cartella",
-                "RESIGN_UNIQUE_ADMIN": "Non puoi eliminare l'unico amministratore"
+                "CASCADE_REMOVAL_PROBLEM": "Qualcosa non ha funzionato nella rimozione a cascata dei pad.",
+                "INEXISTENT": "La cartella non esiste.",
+                "ITEMS_NOT_FOUND": "Alcuni utenti, admin o pad non sono stati trovati.",
+                "NOT_USER": "Non sei un utente di questa cartella.",
+                "RESIGN_UNIQUE_ADMIN": "Non puoi eliminare l'unico amministratore."
             },
             "PAD": {
-                "INEXISTENT": "Il pad non esiste",
-                "ITEMS_NOT_FOUND": "La cartella del pad o almeno uno degli utenti non sono stati trovati"
+                "INEXISTENT": "Il pad non esiste.",
+                "ITEMS_NOT_FOUND": "La cartella del pad o almeno uno degli utenti non sono stati trovati."
             },
             "PERMISSION": {
-                "UNAUTHORIZED": "Non hai il permesso di accedere a questo record",
-                "UNEXPECTED": "Ci spiace, è avvenuto un errore inaspettato"
+                "UNAUTHORIZED": "Non hai il permesso di accedere a questo record.",
+                "UNEXPECTED": "Ci spiace, è avvenuto un errore inaspettato."
             },
             "TOKEN": {
                 "EXPIRED": "Il token è scaduto. Fai una nuova richiesta.",
                 "INCORRECT": "Il token usato contiene dati errati per questa richiesta."
             },
             "TYPE": {
-                "CALLBACK_FN": "Il callback deve essere una funzione",
-                "GID_STR": "gid deve essere una stringa",
-                "ID_STR": "_id, quando definito deve essere una stringa di caratteri",
-                "INVITE_BOOL": "Invite deve essere un valore booleano",
-                "KEY_STR": "Key deve essere una stringa di caratteri",
-                "LOGINS_ARR": "il login deve essere un array",
-                "LOGIN_REQUIRED": "È richiesto il login",
-                "LOGIN_STR": "Il login deve essere una stringa di caratteri",
-                "MAIL": "Email non valida",
-                "MSG_STR": "il messaggio deve essere una stringa",
-                "PARAMS_REQUIRED": "I parametri sono obbligatori",
-                "PARAM_STR": "Alcuni parametri devono essere una stringa di caratteri",
-                "PASSWORD_MISSING": "Password mancante",
-                "PASSWORD_SIZE": "La password è troppo lunga o troppo corta",
-                "PASSWORD_STR": "La password deve essere una stringa",
-                "SMTP_CONFIG": "La configurazione del server SMTP non è valida",
-                "STR_100": "La stringa non può essere di più di 100 caratteri",
-                "SUBJECT_STR": "subject deve essere una stringa",
-                "TO_MAIL": "deve essere un indirizzo mail",
-                "TYPE_PADSORGROUPS": "Type deve essere pad o cartelle",
-                "UNABLE_TO_USE_EP_SETTINGS": "Impossibile usare il file settings.json di Etherpad",
-                "USERLIST_CRUD": "crud deve essere add, set o del",
-                "USERLIST_ID": "Nelle modalità set e del, ulistid è obbligatorio",
-                "USERLIST_NAME": "Nella modalità add, il nome della lista utenti è obbligatorio",
-                "USERLIST_SET_PARAMS": "Nella modalità set, il nom o l'uids sono obbligatori",
-                "USER_INVALID": "Utente non valido",
-                "VALUE_REQUIRED": "Value è obbligatorio",
-                "WITHEXTRA_BOOL": "withExtra deve essere un valore booleano"
+                "CALLBACK_FN": "Il callback deve essere una funzione.",
+                "GID_STR": "gid deve essere una stringa.",
+                "ID_STR": "_id, quando definito deve essere una stringa di caratteri.",
+                "INVITE_BOOL": "Invite deve essere un valore booleano.",
+                "KEY_STR": "Key deve essere una stringa di caratteri.",
+                "LOGINS_ARR": "il login deve essere un array.",
+                "LOGIN_REQUIRED": "È richiesto il login.",
+                "LOGIN_STR": "Il login deve essere una stringa di caratteri.",
+                "MAIL": "Email non valida.",
+                "MSG_STR": "il messaggio deve essere una stringa.",
+                "PARAMS_REQUIRED": "I parametri sono obbligatori.",
+                "PARAM_STR": "Alcuni parametri devono essere una stringa di caratteri.",
+                "PASSWORD_MISSING": "Password mancante.",
+                "PASSWORD_SIZE": "La password è troppo lunga o troppo corta.",
+                "PASSWORD_STR": "La password deve essere una stringa.",
+                "SMTP_CONFIG": "La configurazione del server SMTP non è valida.",
+                "STR_100": "La stringa non può essere di più di 100 caratteri.",
+                "SUBJECT_STR": "subject deve essere una stringa.",
+                "TO_MAIL": "deve essere un indirizzo mail.",
+                "TYPE_PADSORGROUPS": "Type deve essere pad o cartelle.",
+                "UNABLE_TO_USE_EP_SETTINGS": "Impossibile usare il file settings.json di Etherpad.",
+                "USERLIST_CRUD": "crud deve essere add, set o del.",
+                "USERLIST_ID": "Nelle modalità set e del, ulistid è obbligatorio.",
+                "USERLIST_NAME": "Nella modalità add, il nome della lista utenti è obbligatorio.",
+                "USERLIST_SET_PARAMS": "Nella modalità set, il nom o l'uids sono obbligatori.",
+                "USER_INVALID": "Utente non valido.",
+                "VALUE_REQUIRED": "Value è obbligatorio.",
+                "WITHEXTRA_BOOL": "withExtra deve essere un valore booleano."
             },
             "USER": {
-                "ALREADY_EXISTS": "Utente già esistente, scegli un altro nome utente",
-                "BOOKMARK_NOT_FOUND": "Preferito non trovato",
-                "EMAIL_ALREADY_EXISTS": "Questa mail utente è già stata utilizzata, scegline un'altra",
-                "NOT_FOUND": "Utente non trovato",
-                "USERLIST_NOT_FOUND": "LIsta utenti non trovata"
+                "ALREADY_EXISTS": "Utente già esistente, scegli un altro nome utente.",
+                "BOOKMARK_NOT_FOUND": "Preferito non trovato.",
+                "EMAIL_ALREADY_EXISTS": "Questa mail utente è già stata utilizzata, scegline un'altra.",
+                "NOT_FOUND": "Utente non trovato.",
+                "USERLIST_NOT_FOUND": "LIsta utenti non trovata."
             }
         }
     },
@@ -217,7 +217,7 @@
         "EDIT": "Modifica",
         "EDIT_GROUP": "Modifica cartella",
         "ERR": {
-            "NAME": "È richiesto il nome della cartella"
+            "NAME": "È richiesto il nome della cartella."
         },
         "FIELD": {
             "ALLOW_USERS_TO_CREATE_PADS": "Permetti ai semplici utenti della cartella di creare i pad?",
@@ -233,42 +233,42 @@
         },
         "FILTERS": {
             "ADMIN": "Cartelle di cui sono amministratore",
-            "HELP": "Puoi selezionare uno o più filtri, clicca di nuovo qui per disattivare",
+            "HELP": "Puoi selezionare uno o più filtri, clicca di nuovo qui per disattivare.",
             "TITLE": "Filtri",
             "USER": "Cartelle a cui sono stato invitato"
         },
         "GROUP": "Cartella",
         "GROUPS": "Cartelle",
-        "HELP": "Le cartelle possono contenere dei pad. Qui trovi le tue cartelle: quelle che hai creato e quelle a cui sei stato esplicitamente invitato",
+        "HELP": "Le cartelle possono contenere dei pad. Qui trovi le tue cartelle: quelle che hai creato e quelle a cui sei stato esplicitamente invitato.",
         "INFO": {
-            "ADD_SUCCESS": "Le cartelle sono state create con successo",
-            "ALLOW_USERS_TO_CREATE_PADS": "Questo permette agli utenti della cartella che non hanno i diritti di amministratore di creare dei pad nella cartella",
-            "ARCHIVED": "Se selezionata, la cartella apparirà nelle cartelle archiviate anche se è stata messa tra i preferiti",
-            "CHAT_HISTORY_REMOVE_SUCCESS": "La cronologia della chat del pad è stata rimossa con successo",
+            "ADD_SUCCESS": "Le cartelle sono state create con successo.",
+            "ALLOW_USERS_TO_CREATE_PADS": "Questo permette agli utenti della cartella che non hanno i diritti di amministratore di creare dei pad nella cartella.",
+            "ARCHIVED": "Se selezionata, la cartella apparirà nelle cartelle archiviate anche se è stata messa tra i preferiti.",
+            "CHAT_HISTORY_REMOVE_SUCCESS": "La cronologia della chat del pad è stata rimossa con successo.",
             "CHAT_HISTORY_REMOVE_SURE": "Sei sicuro di voler eliminare la cronologia della chat di questo pad?",
             "DESCRIPTION": "Un lungo testo facoltativo per descrivere la tua cartella",
-            "EDIT_SUCCESS": "La cartella è stata aggiornata con successo",
-            "GROUP_PARAMS": "Per default il pad eredita le impostazioni dalla cartella in cui è inserito. Se vuoi puoi sovrascriverle",
+            "EDIT_SUCCESS": "La cartella è stata aggiornata con successo.",
+            "GROUP_PARAMS": "Per default il pad eredita le impostazioni dalla cartella in cui è inserito. Se vuoi puoi sovrascriverle.",
             "NAME": "Nome",
-            "PAD_ADD_SUCCESS": "Il pad è stato creato con successo",
-            "PAD_EDIT_SUCCESS": "Il pad è stato aggiornato con successo",
-            "PAD_MOVE": "Seleziona la cartella desiderata per la tua migrazione",
+            "PAD_ADD_SUCCESS": "Il pad è stato creato con successo.",
+            "PAD_EDIT_SUCCESS": "Il pad è stato aggiornato con successo.",
+            "PAD_MOVE": "Seleziona la cartella desiderata per la tua migrazione.",
             "PAD_MOVE_NOGROUP": "Ci spiace ma nessun altra cartella è disponibile. Devi prima crearne una.",
-            "PAD_MOVE_SUCCESS": "Tutti i pad sono stati spostati con successo",
-            "PAD_REMOVE_SUCCESS": "Il pad è stato eliminato con successo",
+            "PAD_MOVE_SUCCESS": "Tutti i pad sono stati spostati con successo.",
+            "PAD_REMOVE_SUCCESS": "Il pad è stato eliminato con successo.",
             "PAD_REMOVE_SURE": "Sei sicuro di voler eliminare questo pad? AVVISO: questa azione è irreversibile, il pad verrà eliminato per TUTTI quelli che vi hanno accesso.",
             "PASSWORD": "Richiesto in modalità privata",
-            "READONLY": "Se selezionato, i pad collegati saranno in modalità sola lettura e la cartella sarà nella lista delle cartelle archiviate a meno che non sia tra i preferiti",
-            "REMOVE_SUCCESS": "La cartella è stata eliminata con successo",
+            "READONLY": "Se selezionato, i pad collegati saranno in modalità sola lettura e la cartella sarà nella lista delle cartelle archiviate a meno che non sia tra i preferiti.",
+            "REMOVE_SUCCESS": "La cartella è stata eliminata con successo.",
             "REMOVE_SURE": "Sei sicuro di voler eliminare questa cartella? AVVISO: questa azione è irreversibile, la cartella e i suoi pad verranno cancellati per TUTTI quelli che vi hanno accesso.",
             "RESIGN": "Sei sicuro di voler abbandonare questa cartella?",
-            "RESIGN_SUCCESS": "Hai abbandonato la cartella con successo",
-            "VISIBILITY": "Richiesto, limitato di default agli utenti o agli amministratori invitati"
+            "RESIGN_SUCCESS": "Hai abbandonato la cartella con successo.",
+            "VISIBILITY": "Richiesto, limitato di default agli utenti o agli amministratori invitati."
         },
         "INVITE_USER": {
             "FAILURE": "Non puoi invitare chi non ha un account in questa istanza: ",
             "HELP": "<h4>Liste di utenti</h4><p>Puoi selezionare una o più liste. Ogni click aggiungerà tutti gli utenti della lista selezionata agli utenti invitati .</p><h4>Invitare degli utenti</h4><p>Questo campo accetta una mail o login alla volta. Quando si preme su INVIO o si clicca su OK, l'elemento inserito è aggiunto alla lista degli utenti invitati. Una lista degli utenti conosciuti ti aiuta nell'inserimento dei dati.</p><h4>Utenti</h4><p>Questa lista comprende tutti gli utenti selezionati. Puoi eliminarne uno cliccando sulla croce [X] dopo ciascun elemento.</p><h4>Nota</h4><p>Osserva che gli utenti registrati verranno aggiunti automaticamente alla tua cartella. Cioè, gli utenti esterni riceverann una mail per creare un account.</p>",
-            "INPUT_HELP": "Puoi invitare quanti utenti vuoi",
+            "INPUT_HELP": "Puoi invitare quanti utenti vuoi.",
             "IU": "Invita e gestisci utenti",
             "PLACEHOLDER": "Email o login",
             "SUCCESS": "L'invito è stato completato con successo per ",
@@ -298,7 +298,7 @@
             "PUBLIC_DENIED": "Accesso pubblico: non sei autorizzato a vedere questo dato.",
             "REDUCE": "Riduci",
             "SELECT_ALL": "Seleziona tutti i pad",
-            "SELECT_AT_LEAST_ONE_PAD": "Seleziona almeno un pad",
+            "SELECT_AT_LEAST_ONE_PAD": "Seleziona almeno un pad.",
             "SORT_BY": "Ordina i pad per",
             "SORT_BY_CREATION": "data di creazione",
             "SORT_BY_NAME": "nome",
@@ -320,14 +320,14 @@
         },
         "SHARE": "Condividi",
         "SHARE_ADMIN": "Condividi amministrazione",
-        "SHARE_LINK": "Condividi questo URL con i tuoi ospiti",
-        "SHARE_PASSWORD": "Inserisci la password per poter condividere",
+        "SHARE_LINK": "Condividi questo URL con i tuoi ospiti.",
+        "SHARE_PASSWORD": "Inserisci la password per poter condividere.",
         "SORT": {
             "HELP": "Di default le cartelle sono ordinate per data di creazione, a partire da quelle meno recenti. Puoi scegliere anche un altro ordinamento. Clicca di nuovo per invertire l'ordine.",
             "TITLE": "Ordina per"
         },
         "TAGS": {
-            "HELP": "Puoi filtrare con uno o più tag. Clicca di nuovo per disattivare se richiesto",
+            "HELP": "Puoi filtrare con uno o più tag. Clicca di nuovo per disattivare se richiesto.",
             "TITLE": "Tag"
         },
         "UNMARK": "Cancella dai preferiti",
@@ -350,7 +350,7 @@
         "ERROR_UNEXPECTED": "Si è verificato un errore inaspettato. Contatta l'amministratore.",
         "INFO": "Info",
         "SUCCESS": "Successo",
-        "SUCCESS_GENERIC": "L'azione è stata compiuta con successo",
+        "SUCCESS_GENERIC": "L'azione è stata compiuta con successo.",
         "WARNING": "Avviso"
     },
     "TAG": {
@@ -372,9 +372,9 @@
         "EMAIL": "Email",
         "EMAIL_SAMPLE": "nomeutente@example.org",
         "ERR": {
-            "COLOR": "Il codice esadecimale deve essere come #000000",
-            "EMAIL": "È richiesta l'email e deve essere valida",
-            "LOGIN": "È richiesto il login",
+            "COLOR": "Il codice esadecimale deve essere come #000000.",
+            "EMAIL": "È richiesta l'email e deve essere valida.",
+            "LOGIN": "È richiesto il login.",
             "LOGOUT": "Errore nel log out: non eri autenticato.",
             "PASSWORD_MISMATCH": "La password inserita non corrisponde."
         },
@@ -387,19 +387,19 @@
             "ACCOUNT_CONFIRMATION_SUCCESS": "Il tuo account è stato confermato con successo. Adesso puoi fare il login.",
             "CHANGEPASS_SUCCESS": "La tua password è stata aggiornata con successo.",
             "COLOR": "Codice esadecimale per il colore che vuoi usare di default nei pad",
-            "EMAIL": "È richiesta l'email per il recupero della password",
-            "LANG": "La configurazione di default del tuo browser dipende dalle lingue disponibili su MyPads",
-            "LOGIN": "Il login unico che hai scelto quando ti sei registrato",
+            "EMAIL": "È richiesta l'email per il recupero della password.",
+            "LANG": "La configurazione di default del tuo browser dipende dalle lingue disponibili su MyPads.",
+            "LOGIN": "Il login unico che hai scelto quando ti sei registrato.",
             "OPTIONAL": "Campo facoltativo",
-            "PAD_NICKNAME": "Se definito, sostituisci il tuo login nei pad se hai selezionato \"Usa login e colori nei pad?\"",
+            "PAD_NICKNAME": "Se definito, sostituisci il tuo login nei pad se hai selezionato \"Usa login e colori nei pad?\".",
             "PASSRECOVER_SUCCESS": "Dovresti aver ricevuto un'email all'indirizzo che hai usato quando ti sei iscritto. Questa email contiene un indirizzo web valido temporaneamente. Segui l'indirizzo per cambiare la tua password.",
             "PASSWORD_BEGIN": "Deve essere tra ",
-            "PASSWORD_CHECK": "Per la verifica: deve essere la stessa della password",
-            "PASSWORD_CURRENT": "Controllo di sicurezza: richiesto per le modifiche di tutti i profili",
+            "PASSWORD_CHECK": "Per la verifica: deve essere la stessa della password.",
+            "PASSWORD_CURRENT": "Controllo di sicurezza: richiesto per le modifiche di tutti i profili.",
             "PASSWORD_END": " caratteri",
-            "REMOVE_ACCOUNT": "Elimina definitivamente il tuo account e tutte le cartelle e pad di cui tu sei l'unico amministratore",
-            "REMOVE_ACCOUNT_SUCCESS": "Account eliminato con successo",
-            "REMOVE_ACCOUNT_SURE": "Stai per eliminare definitivamente il tuo account e tutte le cartelle e i pad di cui sei amministratore unico. Se sei veramente sicuro di quello che stai facendo, inserisci la tua password attuale e clicca OK",
+            "REMOVE_ACCOUNT": "Elimina definitivamente il tuo account e tutte le cartelle e pad di cui tu sei l'unico amministratore.",
+            "REMOVE_ACCOUNT_SUCCESS": "Account eliminato con successo.",
+            "REMOVE_ACCOUNT_SURE": "Stai per eliminare definitivamente il tuo account e tutte le cartelle e i pad di cui sei amministratore unico. Se sei veramente sicuro di quello che stai facendo, inserisci la tua password attuale e clicca OK.",
             "USECOLORINPADS": "Usa il colore scelto nei pad di default?",
             "USELOGINANDCOLORINPADS": "Usa il login e il colore scelto nei pad di default?"
         },
@@ -432,25 +432,25 @@
         "ADD": "Crea una nuova lista degli utenti",
         "EDIT": "Modifica lista degli utenti ",
         "ERR": {
-            "NAME": "È richiesto il nome della lista degli utenti"
+            "NAME": "È richiesto il nome della lista degli utenti."
         },
         "FIELD": {
             "NAME": "Nome",
             "USERS": "Utenti",
-            "USERSAREA_HELP": "Puoi aggiungere quante email o login vuoi",
+            "USERSAREA_HELP": "Puoi aggiungere quante email o login vuoi.",
             "USERSAREA_PLACEHOLDER": "Un'email o login per riga",
-            "USERS_HELP": "Aggiungi quanti utenti vuoi"
+            "USERS_HELP": "Aggiungi quanti utenti vuoi."
         },
         "FORM_HELP": "<h3>Nome</h3><p>Devi dare un nome alla lista degli utenti per poterla identificare</p><h3>Utenti</h3><p>Puoi aggiungere quanti utenti vuoi. Per farlo inserisci l'email o il login e clicca sul pulsante 'OK'. Osserva che gli utenti già conosciuti possono essere selezionati dalla zona di inserimento.</p><p>Per eliminare utenti, clicca sulla crocetta collocata alla destra di ciascun utente.</p>",
         "HELP": "<p>Qui puoi trovare tutte le tue liste utenti, ordinate per data di creazione. Sono disponibili informazioni riassuntive con il nome di ciascuna lista utenti e il numero di utenti collegati.</p><p>Attraverso le icone di azione, collocate in alto a destra di ciascuna lista utenti, puoi modificare o eliminare le liste. Sono disponibili maggiori dettagli nel modulo, attraverso l'azione modifica.</p>",
         "INFO": {
-            "ADD_SUCCESS": "La lista degli utenti è stata creata con successo",
-            "EDIT_SUCCESS": "La lista degli utenti è stata aggiornata con successo",
+            "ADD_SUCCESS": "La lista degli utenti è stata creata con successo.",
+            "EDIT_SUCCESS": "La lista degli utenti è stata aggiornata con successo.",
             "NAME": "Nome della lista degli utenti",
-            "REMOVE_SUCCESS": "La lista degli utenti è stata eliminata con successo",
+            "REMOVE_SUCCESS": "La lista degli utenti è stata eliminata con successo.",
             "REMOVE_SURE": "Sei sicuro di voler eliminare questa lista degli utenti?",
             "USER_FAILURE": "Non puoi aggiungere utenti che non hanno un account su questa istanza: ",
-            "USER_INVITE": "Selezionando una lista utenti, inviterai tutti i suoi utenti allo stesso tempo",
+            "USER_INVITE": "Selezionando una lista utenti, inviterai tutti i suoi utenti allo stesso tempo.",
             "USER_SUCCESS": "L'aggiunta dell'utente è stata compiuta con successo per "
         },
         "USERLIST": "Lista degli utenti"

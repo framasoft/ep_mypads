@@ -3,7 +3,6 @@
 #
 stages:
   - test
-  - trads
 
 ### Cache
 ## the key is "branch_name:job_name" to prevent incompatibilities between node versions
@@ -62,16 +61,3 @@ test_node_10:
   image: node:10-stretch
   <<: *test_definition
 
-## Trads
-# Push new translations strings to https://trad.framasoft.org
-trads:
-  stage: test
-  image: framasoft/push-trad:latest
-  cache: {}
-  script:
-  - if [ ! -z ${ZANATA_CONFIG_FRAMABOT+x} ]; then mkdir -p ${HOME}/.config; echo -e "${ZANATA_CONFIG_FRAMABOT}" > ${HOME}/.config/zanata.ini; fi
-  - if [ ! -z ${ZANATA_CONFIG_FRAMABOT+x} ]; then make locales; fi
-  - if [ ! -z ${ZANATA_CONFIG_FRAMABOT+x} ]; then zanata-cli -q -B push --errors --project-version ${CI_COMMIT_REF_SLUG}; fi
-  only:
-    - development
-    - master

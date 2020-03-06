@@ -58,6 +58,9 @@ test_node_9:
   <<: *test_definition
 
 test_node_10:
-  image: node:10-stretch
+  image: node:10-buster
   <<: *test_definition
 
+test_node_12:
+  image: node:12-buster
+  <<: *test_definition

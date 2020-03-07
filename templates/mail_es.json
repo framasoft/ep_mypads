@@ -1,6 +1,6 @@
 {
-    "ACCOUNT_CONFIRMATION": "<%= login %>, you have subscribed on <%= title %>. This etherpad instance requires an email confirmation to activate your account. To proceed, thanks to go to this Web address : <%= url %>. This url will only be valid for <%= duration %> minutes. After that, you have to contact an administrator.",
+    "ACCOUNT_CONFIRMATION": "<%= login %>, te has suscrito a <%= title %>. Esta instancia de etherpad requiere una confirmación por correo electrónico para activar su cuenta. Para continuar, por favor, ve a esta dirección web: : <%= url %>.Esta URL solo será válida durante<%= duration %>minutos. Pasado ese tiempo, debes ponerte en contacto con el administrador.",
     "ACCOUNT_CONFIRMATION_SUBJECT": "Confirmación de la cuenta en <%= title %>",
-    "PASSRECOVER": "<%= login %>, a password change request on <%= title %> has been initiated for your login. If you want to confirm your password change, please go to this Web address : <%= url %> . If this request does not come from you, simply ignore this email. Address will become invalid in <%= duration %> minutes.",
+    "PASSRECOVER": "<%= login %>, una solicitud de cambio de contraseña en <%= title %> se ha iniciado para su inicio de sesión. Si desea confirmar su cambio de contraseña, vaya a esta URL : <%= url %> . Si esta solicitud no proviene de usted, simplemente ignore este correo electrónico. La dirección dejará de ser válida en <%= duration %> minutos.",
     "PASSRECOVER_SUBJECT": "Recuperación de la contraseña en <%= title %>"
 }

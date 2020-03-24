@@ -88,6 +88,7 @@ module.exports = (function() {
       passwordMin: 8,
       passwordMax: 30,
       languages: { en: 'English', fr: 'Français', de: 'Deutsch', es: 'Español', it: 'Italiano'},
+      loginMsg: { en: '', fr: '', de: '', es: '', it: '' },
       defaultLanguage: 'en',
       HTMLExtraHead: '',
       checkMails: false,
@@ -132,7 +133,7 @@ module.exports = (function() {
         defaultLang: 'en'
       },
       allPadsPublicsAuthentifiedOnly: false,
-      deleteJobQueue: false,
+      deleteJobQueue: false
     },
 
     /**
@@ -344,7 +345,8 @@ module.exports = (function() {
       var all = configuration.all();
       return ld.pick(all, 'title', 'passwordMin', 'passwordMax', 'languages',
         'HTMLExtraHead', 'openRegistration', 'hideHelpBlocks', 'useFirstLastNameInPads',
-        'authMethod', 'authCasSettings', 'allPadsPublicsAuthentifiedOnly', 'defaultLanguage'
+        'authMethod', 'authCasSettings', 'allPadsPublicsAuthentifiedOnly', 'defaultLanguage',
+        'loginMsg'
       );
     },
 

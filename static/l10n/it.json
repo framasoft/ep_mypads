@@ -16,7 +16,8 @@
             "PASSWORD_SIZE": "La lunghezza minima non può essere come la lunghezza massima. Controlla i tuoi valori.",
             "ROOTURL": "L'URL deve essere valido.",
             "SMTP_EMAILFROM": "La mail deve essere valida.",
-            "TITLE": "Il titolo è obbligatorio."
+            "TITLE": "Il titolo è obbligatorio.",
+            "PARSE_LOGIN_MSG": "Impossibile analizzare la configurazione del messaggio di login/registrazione."
         },
         "ETHERPAD_ACCOUNT": "Account Etherpad",
         "FIELD": {
@@ -53,7 +54,8 @@
             "SMTP_USER": "Utente",
             "TITLE": "Titolo",
             "TOKEN_DURATION": "Validità del token",
-            "USE_FIRST_AND_LAST_NAME_IN_PADS": "Utilizza il nome dell'utente come nickname nei pad"
+            "USE_FIRST_AND_LAST_NAME_IN_PADS": "Utilizza il nome dell'utente come nickname nei pad",
+            "LOGIN_MSG": "Messaggio sulle pagine di login e registrazione"
         },
         "FORM_LOGIN": "Login amministrazione",
         "FORM_SETTINGS": "Configurazione di MyPads",
@@ -97,7 +99,8 @@
             "USER_FOUND": "Utente trovato, vedi le opzioni all'interno del modulo",
             "USER_NONE": "Nessun utente per questo login",
             "USER_REMOVE_SURE": "Stai per eliminare definitivamente questo account e tutte le cartelle e i pad di cui l'utente è l'unico amministratore. Se sei veramente sicuro di quello che stai facendo, clicca sul pulsante OK.",
-            "USE_FIRST_AND_LAST_NAME_IN_PADS": "Forza l'uso di nome e cognome come nickname nei pad"
+            "USE_FIRST_AND_LAST_NAME_IN_PADS": "Forza l'uso di nome e cognome come nickname nei pad",
+            "LOGIN_MSG": "È possibile visualizzare un messaggio sulle pagine di login e di registrazione. La lingua inglese sarà utilizzata come lingua di riserva se la lingua dell'utente non è definita o è vuota. L'HTML è permesso, attenzione!"
         },
         "SETTINGS_GENERAL": "Impostazioni generali",
         "SETTINGS_MAIL": "Impostazioni email",

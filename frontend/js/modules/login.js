@@ -140,6 +140,16 @@ module.exports = (function () {
 
   view.main = function (c) {
     var children = [ m('span', conf.LANG.USER.FORM) ];
+    var msgs     = conf.SERVER.loginMsg;
+    var message;
+    if (typeof(msgs) !== 'undefined') {
+      if (typeof(msgs[conf.USERLANG]) !== 'undefined' && msgs[conf.USERLANG] !== '') {
+        message = m('article', {class: 'alert bg-danger'}, m.trust(msgs[conf.USERLANG]));
+      } else if (typeof(msgs.en) !== 'undefined' && msgs.en !== '') {
+        // fallback to english
+        message = m('article', {class: 'alert bg-danger'}, m.trust(msgs.en));
+      }
+    }
     if (conf.SERVER.openRegistration && conf.SERVER.authMethod === 'internal') {
       children.push(m('a.small',
         { href: '/subscribe', config: m.route },
@@ -150,10 +160,12 @@ module.exports = (function () {
     if (conf.SERVER.authMethod === 'cas' && typeof auth.userInfo() === 'undefined') {
       opts.config = login.casLogin;
     }
-    return m('section', opts, [
-      m('h2', children),
-      view.form(c)
-    ]);
+    var mainArray = [m('h2', children)];
+    if (typeof(message) !== 'undefined') {
+      mainArray.push(message);
+    }
+    mainArray.push(view.form(c));
+    return m('section', opts, mainArray);
   };
 
   login.view = function (c) {

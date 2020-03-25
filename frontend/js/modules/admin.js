@@ -71,7 +71,7 @@ module.exports = (function () {
           'openRegistration', 'hideHelpBlocks', 'useFirstLastNameInPads',
           'insensitiveMailMatch', 'authMethod', 'authLdapSettings',
           'authCasSettings', 'allPadsPublicsAuthentifiedOnly',
-          'deleteJobQueue'
+          'deleteJobQueue', 'loginMsg'
         ]);
         c.currentConf = resp.value;
         ld.forIn(resp.value, function (v, k) {
@@ -253,6 +253,31 @@ module.exports = (function () {
           value: c.data.HTMLExtraHead(),
           onchange: m.withAttr('value', c.data.HTMLExtraHead)
         }, c.data.HTMLExtraHead());
+        return { label: label, icon: icon, textarea: textarea };
+      })(),
+      loginMsg: (function () {
+        var label = m('label', { for: 'loginMsg' },
+          A.FIELD.LOGIN_MSG);
+        var icon  = m('i', {
+          class: 'mp-tooltip glyphicon glyphicon-info-sign',
+          'data-msg': A.INFO.LOGIN_MSG
+        });
+        var msg = c.data.loginMsg();
+        delete msg.attrs;
+        var textarea = m('textarea.form-control', {
+          name: 'loginMsg',
+          rows: 10,
+          class: 'monospace',
+          value: beautify(msg, null, 4),
+          onchange: m.withAttr('value', function(value) {
+            try {
+              value = JSON.parse(value);
+              c.data.loginMsg(value);
+            } catch (e) {
+              notif.error({ body: conf.LANG.ADMIN.ERR.PARSE_LOGIN_MSG });
+            }
+          })
+        }, c.data.loginMsg());
         return { label: label, icon: icon, textarea: textarea };
       })(),
       passwordMin: (function () {
@@ -590,7 +615,8 @@ module.exports = (function () {
           m('div.checkbox',   [ f.insensitiveMailMatch ]),
           m('div.checkbox',   [ f.allPadsPublicsAuthentifiedOnly ]),
           m('div.checkbox',   [ f.deleteJobQueue ]),
-          m('div.form-group', [ f.HTMLExtraHead.label, f.HTMLExtraHead.icon, f.HTMLExtraHead.textarea ])
+          m('div.form-group', [ f.HTMLExtraHead.label, f.HTMLExtraHead.icon, f.HTMLExtraHead.textarea ]),
+          m('div.form-group', [ f.loginMsg.label, f.loginMsg.icon, f.loginMsg.textarea ])
         ])
       ]),
       m('fieldset', [

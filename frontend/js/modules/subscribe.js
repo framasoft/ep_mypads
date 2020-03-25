@@ -440,7 +440,18 @@ module.exports = (function () {
   */
 
   view.main = function (c) {
+    var msgs     = conf.SERVER.loginMsg;
     var elements = [view.form(c)];
+    var message;
+    if (typeof(msgs) !== 'undefined') {
+      if (typeof(msgs[conf.USERLANG]) !== 'undefined' && msgs[conf.USERLANG] !== '') {
+        message = m('article', {class: 'alert bg-danger'}, m.trust(msgs[conf.USERLANG]));
+        elements.unshift(message);
+      } else if (typeof(msgs.en) !== 'undefined' && msgs.en !== '') {
+        message = m('article', {class: 'alert bg-danger'}, m.trust(msgs.en));
+        elements.unshift(message);
+      }
+    }
     if (c.profileView()) {
       elements.splice(0, 0, m('h2',
         conf.LANG.USER.PROFILE + ' : ' + auth.userInfo().login));

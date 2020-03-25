@@ -16,7 +16,8 @@
             "PASSWORD_SIZE": "La taille minimum ne peut être plus élevée que la maximum. Merci de vérifier vos saisies.",
             "ROOTURL": "Doit être une URL valide.",
             "SMTP_EMAILFROM": "Doit être une adresse mail valide.",
-            "TITLE": "Le titre est obligatoire."
+            "TITLE": "Le titre est obligatoire.",
+            "PARSE_LOGIN_MSG": "Impossible d'analyser le message de connexion/inscription dans la configuration."
         },
         "ETHERPAD_ACCOUNT": "Compte Etherpad",
         "FIELD": {

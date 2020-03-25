@@ -31,10 +31,11 @@ module.exports = (function () {
   var unloadPad;
   var getChatHead;
   try {
+    var utils = require('../utils');
     // Normal case : when installed as a plugin
-    removePad   = require('ep_etherpad-lite/node/db/API').deletePad;
-    unloadPad   = require('ep_etherpad-lite/node/db/PadManager').removePad;
-    getChatHead = require('ep_etherpad-lite/node/db/API').getChatHead;
+    removePad   = utils.callbackify1(require('ep_etherpad-lite/node/db/API').deletePad);
+    unloadPad   = utils.callbackify1(require('ep_etherpad-lite/node/db/PadManager').removePad);
+    getChatHead = utils.callbackify1(require('ep_etherpad-lite/node/db/API').getChatHead);
   }
   catch (e) {
     // Testing case : noop function

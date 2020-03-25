@@ -35,9 +35,10 @@ var getPadHTML;
 var isWaitingforDeletion;
 try {
   // Normal case : when installed as a plugin
-  getPad     = require('ep_etherpad-lite/node/db/PadManager').getPad;
-  getPadID   = require('ep_etherpad-lite/node/db/API').getPadID;
-  getPadHTML = require('ep_etherpad-lite/node/utils/ExportHtml').getPadHTML;
+  var utils = require('./utils');
+  getPad     = utils.callbackify2(require('ep_etherpad-lite/node/db/PadManager').getPad);
+  getPadID   = utils.callbackify1(require('ep_etherpad-lite/node/db/API').getPadID);
+  getPadHTML = utils.callbackify2(require('ep_etherpad-lite/node/utils/ExportHtml').getPadHTML);
 }
 catch (e) {
   // Testing case : noop functions

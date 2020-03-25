@@ -17,7 +17,7 @@
             "ROOTURL": "Debe ser una URL válida.",
             "SMTP_EMAILFROM": "Debe ser un email válido.",
             "TITLE": "Título obligatorio.",
-            "PARSE_LOGIN_MSG": ""
+            "PARSE_LOGIN_MSG": "No se puede analizar la configuración del mensaje de inicio de sesión/registro."
         },
         "ETHERPAD_ACCOUNT": "Cuenta de Etherpad",
         "FIELD": {
@@ -54,7 +54,8 @@
             "SMTP_USER": "Usuario",
             "TITLE": "Titulo",
             "TOKEN_DURATION": "Validez del token",
-            "USE_FIRST_AND_LAST_NAME_IN_PADS": "Usar nombre y apellido de los usuarios como nick en los pads"
+            "USE_FIRST_AND_LAST_NAME_IN_PADS": "Usar nombre y apellido de los usuarios como nick en los pads",
+            "LOGIN_MSG": "Mensaje en las páginas de acceso y registro"
         },
         "FORM_LOGIN": "Acceso a la administración",
         "FORM_SETTINGS": "Configuración de MyPads",
@@ -98,7 +99,8 @@
             "USER_FOUND": "Usuario encontrado, por favor vea las opciones dentro del formulario",
             "USER_NONE": "Ningún usuario para este login",
             "USER_REMOVE_SURE": "Usted está a punto de eliminar definitivamente esta cuenta y todas las carpetas y pads en las que la usuaria es la única administradora. Si está realmente segura de lo que está haciendo, haga clic en el botón Aceptar.",
-            "USE_FIRST_AND_LAST_NAME_IN_PADS": "Forzar el uso de nombre y apellido como nick en los pads"
+            "USE_FIRST_AND_LAST_NAME_IN_PADS": "Forzar el uso de nombre y apellido como nick en los pads",
+            "LOGIN_MSG": "Puede mostrar un mensaje en las páginas de acceso y registro. El idioma inglés se utilizará como idioma de reserva si el idioma del usuario no está definido o está vacío. El HTML está permitido, ¡tenga cuidado!"
         },
         "SETTINGS_GENERAL": "Ajustes generales",
         "SETTINGS_MAIL": "Ajustes de correo",

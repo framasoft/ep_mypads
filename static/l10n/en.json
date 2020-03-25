@@ -39,7 +39,7 @@
          "HTMLEXTRA_HEAD": "Extra HTML for <head>",
          "INSENSITIVE_MAIL_MATCH": "Make the user search by mail non case-sensitive",
          "LANGUAGE_DEFAULT": "Default language",
-         "LOGIN_MSG": "Message on login and subscribe page",
+         "LOGIN_MSG": "Message on login and subscribe pages",
          "OPEN_REGISTRATION": "Open registration",
          "PASSWORD_MAX": "Maximum size",
          "PASSWORD_MIN": "Minimum size",

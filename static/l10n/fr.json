@@ -16,7 +16,8 @@
             "PASSWORD_SIZE": "La taille minimum ne peut être plus élevée que la maximum. Merci de vérifier vos saisies.",
             "ROOTURL": "Doit être une URL valide.",
             "SMTP_EMAILFROM": "Doit être une adresse mail valide.",
-            "TITLE": "Le titre est obligatoire."
+            "TITLE": "Le titre est obligatoire.",
+            "PARSE_LOGIN_MSG": "Impossible d'analyser la configuration du message de connexion/inscription."
         },
         "ETHERPAD_ACCOUNT": "Compte Etherpad",
         "FIELD": {
@@ -53,7 +54,8 @@
             "SMTP_USER": "Utilisateur",
             "TITLE": "Titre",
             "TOKEN_DURATION": "Validité des jetons",
-            "USE_FIRST_AND_LAST_NAME_IN_PADS": "Utiliser le prénom et le nom comme identifiant dans les pads"
+            "USE_FIRST_AND_LAST_NAME_IN_PADS": "Utiliser le prénom et le nom comme identifiant dans les pads",
+            "LOGIN_MSG": "Message sur les pages de connexion et d’inscription"
         },
         "FORM_LOGIN": "Identification pour l’administration",
         "FORM_SETTINGS": "Configuration MyPads",
@@ -97,7 +99,8 @@
             "USER_FOUND": "Utilisateur trouvé. Voyez les options dans le formulaire",
             "USER_NONE": "Pas d’utilisateur pour cet identifiant",
             "USER_REMOVE_SURE": "Vous êtes sur le point de supprimer définitivement ce compte utilisateur et tous les dossiers et pads pour lesquels cet utilisateur est seul administrateur. Si vous êtes sûr de ce que vous faites, vous pouvez cliquer sur le bouton OK.",
-            "USE_FIRST_AND_LAST_NAME_IN_PADS": "Force l’utilisation du prénom et du nom des utilisateurs dans les pads"
+            "USE_FIRST_AND_LAST_NAME_IN_PADS": "Force l’utilisation du prénom et du nom des utilisateurs dans les pads",
+            "LOGIN_MSG": "Vous pouvez afficher un message sur les pages de connexion et d’inscription. La langue anglaise sera utilisée comme langue de repli si la langue de l'utilisateur n'est pas définie ou est vide. L’HTML est autorisé, soyez prudent·e !"
         },
         "SETTINGS_GENERAL": "Paramètres généraux",
         "SETTINGS_MAIL": "Paramètres mails",
@@ -243,7 +246,7 @@
         "INFO": {
             "ADD_SUCCESS": "Le dossier a été ajouté avec succès.",
             "ALLOW_USERS_TO_CREATE_PADS": "Ceci autorise les utilisateurs du dossier qui n’ont pas les droits d’administration à créer des pads dans le dossier.",
-            "ARCHIVED": "Si sélectionné, le dossier apparaîtra dans la liste des dossiers archivés même s’il est mis en marque page.",
+            "ARCHIVED": "Si sélectionné, le dossier apparaîtra dans la liste des dossiers archivés même s’il est mis en marque-page.",
             "CHAT_HISTORY_REMOVE_SUCCESS": "L’historique du chat du pad a été supprimé avec succès.",
             "CHAT_HISTORY_REMOVE_SURE": "Voulez-vous vraiment supprimer l’historique du chat de ce pad ?",
             "DESCRIPTION": "Un texte facultatif pour décrire votre dossier",

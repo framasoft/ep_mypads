@@ -16,7 +16,8 @@
             "PASSWORD_SIZE": "El tamaño mínimo no puede ser mayor que el tamaño máximo. Por favor, compruebe sus números.",
             "ROOTURL": "Debe ser una URL válida.",
             "SMTP_EMAILFROM": "Debe ser un email válido.",
-            "TITLE": "Título obligatorio."
+            "TITLE": "Título obligatorio.",
+            "PARSE_LOGIN_MSG": ""
         },
         "ETHERPAD_ACCOUNT": "Cuenta de Etherpad",
         "FIELD": {

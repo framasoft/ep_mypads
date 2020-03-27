@@ -17,7 +17,7 @@
             "ROOTURL": "Muss eine gültige URL sein.",
             "SMTP_EMAILFROM": "Muss eine gültige E-Mail-Adresse sein.",
             "TITLE": "Titel ist erforderlich.",
-            "PARSE_LOGIN_MSG": "Die Konfiguration der Anmelde-/Registrierungsnachricht konnte nicht analysiert werden."
+            "PARSE_LOGIN_MSG": "Die Konfiguration der Nachricht für Login- und Registrierungsseiten konnte nicht verarbeitet werden."
         },
         "ETHERPAD_ACCOUNT": "Etherpad-Account",
         "FIELD": {
@@ -100,7 +100,7 @@
             "USER_NONE": "Keinen Benutzer mit diesem Loginnamen gefunden",
             "USER_REMOVE_SURE": "Sie sind dabei, dieses Konto und alle Ordner und Pads, auf denen der Benutzer der einzige Administrator ist, endgültig zu entfernen. Wenn Sie sich wirklich sicher sind, was Sie tun, klicken Sie bitte auf OK.",
             "USE_FIRST_AND_LAST_NAME_IN_PADS": "Erzwinge die Verwendung von Vor- und Nachnamen als Nickname in Pads",
-            "LOGIN_MSG": "Sie können auf den Anmelde- und Registrierungsseiten eine Nachricht anzeigen. Die englische Sprache wird als Ausweichsprache verwendet, wenn die Benutzersprache nicht definiert oder leer ist. HTML ist erlaubt, seien Sie vorsichtig!"
+            "LOGIN_MSG": "Sie können auf den Login- und Registrierungsseiten eine Nachricht anzeigen. Falls keine Standardsprache festgelegt ist, wird die englische Sprache verwendet. HTML ist zulässig, seien Sie vorsichtig!"
         },
         "SETTINGS_GENERAL": "Allgemeine Einstellungen",
         "SETTINGS_MAIL": "E-Mail-Einstellungen",

@@ -329,7 +329,8 @@ module.exports = (function () {
       var defaultLang = acs.defaultLang;
       delete acs.properties;
       delete acs.defaultLang;
-      acs.serviceUrl = req.protocol+'://'+req.host+req.path.replace(rgx, '?/login');
+      var host = req.hostname || req.host;
+      acs.serviceUrl = req.protocol+'://'+host+req.path.replace(rgx, '?/login');
       var cas = new CasAuth(acs);
       cas.validateServiceTicket(ticket)
         .then(function(info) {

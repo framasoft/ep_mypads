@@ -17,8 +17,14 @@ cache:
 #
 .test_template: &test_definition
   stage: test
+  before_script:
+   - cd /tmp; npm install -g npm; cd -
   script:
    - npm install
+   - export ORIG=$(git diff-files --shortstat)
+   - npm run frontend:build
+   - export CHANGES=$(git diff-files --shortstat)
+   - if [[ "x${CHANGES}" != "x${ORIG}" ]]; then echo "*** You did’nt build the frontend! Aborting. Please run `make build` and commit ***"; exit 1; fi
    - npm run lint
    - npm run test
    - npm run test-ldap

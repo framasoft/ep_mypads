@@ -18,7 +18,13 @@ cache:
 .test_template: &test_definition
   stage: test
   script:
-   - npm install
+   - npm install -g npm
+   - npm ci
+   - export ORIG=$(git diff-files --shortstat)
+   - npm run frontend:build
+   - export CHANGES=$(git diff-files --shortstat)
+   - echo $(git diff --no-color)
+   - if [[ "x${CHANGES}" != "x${ORIG}" ]]; then echo "*** You did’nt build the frontend! Aborting. Please run `make build` and commit ***"; exit 1; fi
    - npm run lint
    - npm run test
    - npm run test-ldap
@@ -42,11 +48,11 @@ test_node_latest:
   <<: *test_definition
 
 test_node_8:
-  image: node:8-stretch
+  image: node:8-buster
   <<: *test_definition
 
 test_node_9:
-  image: node:9-stretch
+  image: node:9-buster
   <<: *test_definition
 
 test_node_10:

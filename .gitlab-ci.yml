@@ -19,6 +19,8 @@ cache:
   stage: test
   script:
    - npm install
+   - npm run frontend:build
+   - if [[ $(git status | grep -c "nothing to commit, working tree clean") -ne 1 ]]; then echo "*** You did’nt build the frontend! Aborting. Please run `make build` and commit ***"; exit 1; fi
    - npm run lint
    - npm run test
    - npm run test-ldap
@@ -42,7 +44,7 @@ test_node_latest:
   <<: *test_definition
 
 test_node_8:
-  image: node:8-stretch
+  image: node:8-buster
   <<: *test_definition
 
 test_node_9:
@@ -55,4 +57,8 @@ test_node_10:
 
 test_node_12:
   image: node:12-buster
+  <<: *test_definition
+
+test_node_13:
+  image: node:13-buster
   <<: *test_definition

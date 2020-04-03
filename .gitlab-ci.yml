@@ -41,14 +41,6 @@ test_node_latest:
   image: node:latest
   <<: *test_definition
 
-test_node_4:
-  image: node:4-stretch
-  <<: *test_definition
-
-test_node_6:
-  image: node:6-stretch
-  <<: *test_definition
-
 test_node_8:
   image: node:8-stretch
   <<: *test_definition

@@ -71,7 +71,7 @@ module.exports = (function () {
           'openRegistration', 'hideHelpBlocks', 'useFirstLastNameInPads',
           'insensitiveMailMatch', 'authMethod', 'authLdapSettings',
           'authCasSettings', 'allPadsPublicsAuthentifiedOnly',
-          'deleteJobQueue', 'loginMsg'
+          'deleteJobQueue', 'loginMsg', 'disableLangageSelect'
         ]);
         c.currentConf = resp.value;
         ld.forIn(resp.value, function (v, k) {
@@ -322,6 +322,23 @@ module.exports = (function () {
           }, [])
         );
         return { label: label, icon: icon, select: select };
+      })(),
+      disableLangageSelect: (function () {
+        var icon = form.icon(c, 'disableLangageSelect', A.INFO.DISABLE_LANG_SELECT);
+        var opts = {
+          name: 'disableLangageSelect',
+        };
+        if (c.data.disableLangageSelect) {
+          opts.checked = 'checked';
+        }
+        var f = m('input[type="checkbox"]', opts);
+        ld.assign(f.attrs, {
+          type: 'checkbox',
+          checked: c.data.disableLangageSelect(),
+          onchange: m.withAttr('checked', c.data.disableLangageSelect)
+        });
+        var l = m('label', [f, A.FIELD.DISABLE_LANG_SELECT, icon]);
+        return l;
       })(),
       allowEtherPads: (function () {
         var icon = form.icon(c, 'allowEtherPads', A.INFO.ALLOW_ETHERPADS);
@@ -609,6 +626,7 @@ module.exports = (function () {
           m('div.form-group', [ f.title.label, f.title.input ]),
           m('div.form-group', [ f.rootUrl.label, f.rootUrl.input ]),
           m('div.form-group', [ f.defaultLanguage.label, f.defaultLanguage.select ]),
+          m('div.checkbox',   [ f.disableLangageSelect ]),
           m('div.checkbox',   [ f.allowEtherPads ]),
           m('div.checkbox',   [ f.hideHelpBlocks ]),
           m('div.checkbox',   [ f.useFirstLastNameInPads ]),

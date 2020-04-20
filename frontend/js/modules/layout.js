@@ -169,31 +169,33 @@ module.exports = (function () {
     if (m.route().match(indexRouteRegex)) {
       section = section+'.groupList';
     }
+    var headerElm = [];
+    if (!conf.SERVER.disableLangageSelect) {
+      headerElm.push(m('div.lang.container.form-inline', [
+        m('select.form-control', ld.reduce(conf.SERVER.languages,
+          function (memo, val, key) {
+            var opts = {
+              onclick: conf.updateLang.bind(null, key),
+              value: key
+            };
+            if (key === conf.USERLANG) {
+              opts.selected = 'selected';
+            }
+            memo.push(m('option', opts, val));
+            return memo;
+          }, [])
+        ),
+      ]));
+    }
+    headerElm.push(m('div.container.ombre', [
+      m('h1', conf.SERVER.title),
+      m('hr.trait', { role: 'presentation' }),
+      m('nav', { class: 'menu-main' }, [
+        m('ul.nav.nav-tabs', views.menuMain())
+      ])
+    ]));
     return [
-      m(header, [
-        m('div.lang.container.form-inline', [
-          m('select.form-control', ld.reduce(conf.SERVER.languages,
-            function (memo, val, key) {
-              var opts = {
-                onclick: conf.updateLang.bind(null, key),
-                value: key
-              };
-              if (key === conf.USERLANG) {
-                opts.selected = 'selected';
-              }
-              memo.push(m('option', opts, val));
-              return memo;
-            }, [])
-          ),
-        ]),
-        m('div.container.ombre', [
-          m('h1', conf.SERVER.title),
-          m('hr.trait', {role: 'presentation'}),
-          m('nav', { class: 'menu-main' }, [
-            m('ul.nav.nav-tabs', views.menuMain())
-          ])
-        ])
-      ]),
+      m(header, headerElm),
       m(mainC, [
         m(section, { config: expandPad.autoExpand }, main || ''),
         m(asideC, aside || '')

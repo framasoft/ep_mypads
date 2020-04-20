@@ -88,6 +88,7 @@ module.exports = (function() {
       passwordMin: 8,
       passwordMax: 30,
       languages: { en: 'English', fr: 'Français', de: 'Deutsch', es: 'Español', it: 'Italiano'},
+      disableLangageSelect: false,
       loginMsg: { en: '', fr: '', de: '', es: '', it: '' },
       defaultLanguage: 'en',
       HTMLExtraHead: '',
@@ -343,7 +344,7 @@ module.exports = (function() {
 
     public: function () {
       var all = configuration.all();
-      return ld.pick(all, 'title', 'passwordMin', 'passwordMax', 'languages',
+      return ld.pick(all, 'title', 'passwordMin', 'passwordMax', 'languages', 'disableLangageSelect',
         'HTMLExtraHead', 'openRegistration', 'hideHelpBlocks', 'useFirstLastNameInPads',
         'authMethod', 'authCasSettings', 'allPadsPublicsAuthentifiedOnly', 'defaultLanguage',
         'loginMsg'

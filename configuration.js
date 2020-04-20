@@ -134,6 +134,7 @@ module.exports = (function() {
       },
       allPadsPublicsAuthentifiedOnly: false,
       disableUserList: false,
+      disableLogoutButton: false,
       deleteJobQueue: false
     },
 
@@ -347,7 +348,7 @@ module.exports = (function() {
       return ld.pick(all, 'title', 'passwordMin', 'passwordMax', 'languages',
         'HTMLExtraHead', 'openRegistration', 'hideHelpBlocks', 'useFirstLastNameInPads',
         'authMethod', 'authCasSettings', 'allPadsPublicsAuthentifiedOnly', 'defaultLanguage',
-        'loginMsg', 'disableUserList'
+        'loginMsg', 'disableUserList', 'disableLogoutButton'
       );
     },
 

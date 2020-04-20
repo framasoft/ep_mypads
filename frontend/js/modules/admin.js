@@ -71,7 +71,7 @@ module.exports = (function () {
           'openRegistration', 'hideHelpBlocks', 'useFirstLastNameInPads',
           'insensitiveMailMatch', 'authMethod', 'authLdapSettings',
           'authCasSettings', 'disableLogoutButton', 'allPadsPublicsAuthentifiedOnly',
-          'deleteJobQueue', 'loginMsg', 'disableUserList'
+          'deleteJobQueue', 'loginMsg', 'disableUserList', 'disableUserProfile'
         ]);
         c.currentConf = resp.value;
         ld.forIn(resp.value, function (v, k) {
@@ -408,6 +408,23 @@ module.exports = (function () {
         var l = m('label', [f, A.FIELD.DISABLE_USER_LIST, icon]);
         return l;
       })(),
+            disableUserProfile: (function () {
+        var icon = form.icon(c, 'disableUserProfile', A.INFO.DISABLE_USER_PROFILE);
+        var opts = {
+          name: 'disableUserProfile',
+        };
+        if (c.data.disableUserProfile) {
+          opts.checked = 'checked';
+        }
+        var f = m('input[type="checkbox"]', opts);
+        ld.assign(f.attrs, {
+          type: 'checkbox',
+          checked: c.data.disableUserProfile(),
+          onchange: m.withAttr('checked', c.data.disableUserProfile)
+        });
+        var l = m('label', [ f, A.FIELD.DISABLE_USER_PROFILE, icon ]);
+        return l;
+      })(),
       disableLogoutButton: (function () {
         var icon = form.icon(c, 'disableLogoutButton', A.INFO.DISABLE_LOGOUT_BUTTON);
         var opts = {
@@ -648,6 +665,7 @@ module.exports = (function () {
           m('div.checkbox',   [ f.useFirstLastNameInPads ]),
           m('div.checkbox',   [ f.insensitiveMailMatch ]),
           m('div.checkbox',   [ f.disableUserList ]),
+          m('div.checkbox',   [ f.disableUserProfile ]),
           m('div.checkbox',   [ f.disableLogoutButton ]),
           m('div.checkbox',   [ f.allPadsPublicsAuthentifiedOnly ]),
           m('div.checkbox',   [ f.deleteJobQueue ]),

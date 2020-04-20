@@ -133,6 +133,7 @@ module.exports = (function() {
         defaultLang: 'en'
       },
       allPadsPublicsAuthentifiedOnly: false,
+      disableUserList: false,
       deleteJobQueue: false
     },
 
@@ -346,7 +347,7 @@ module.exports = (function() {
       return ld.pick(all, 'title', 'passwordMin', 'passwordMax', 'languages',
         'HTMLExtraHead', 'openRegistration', 'hideHelpBlocks', 'useFirstLastNameInPads',
         'authMethod', 'authCasSettings', 'allPadsPublicsAuthentifiedOnly', 'defaultLanguage',
-        'loginMsg'
+        'loginMsg', 'disableUserList'
       );
     },
 

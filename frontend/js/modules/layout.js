@@ -103,13 +103,15 @@ module.exports = (function () {
         route: '/myprofile',
         icon: 'home',
         txt: conf.LANG.MENU.PROFILE
-      },
-      {
+      }
+    );
+    if (!conf.SERVER.disableLogoutButton) {
+      _routes.auth.push({
         route: '/logout',
         icon: 'off',
         txt: conf.LANG.MENU.LOGOUT
-      }
-    );
+      });
+    }
     if (conf.SERVER.authMethod !== 'internal' || conf.SERVER.openRegistration === false) {
       _routes.unauth = [
         {

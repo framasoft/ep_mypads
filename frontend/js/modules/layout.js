@@ -99,12 +99,13 @@ module.exports = (function () {
         txt: conf.LANG.MENU.USERLIST
       });
     }
-    _routes.auth.push({
+    if (!conf.SERVER.disableUserProfile) {
+      _routes.auth.push({
         route: '/myprofile',
         icon: 'home',
         txt: conf.LANG.MENU.PROFILE
-      }
-    );
+      });
+    }
     if (!conf.SERVER.disableLogoutButton) {
       _routes.auth.push({
         route: '/logout',

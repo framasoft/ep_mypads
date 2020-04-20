@@ -256,7 +256,8 @@ module.exports = (function () {
   view.aside = function () {
     return m('section.user-aside', [
       m('h2', conf.LANG.ACTIONS.HELP),
-      m('article.well', m.trust(conf.LANG.GROUP.ADD_HELP))
+      m('article.well', m.trust(conf.SERVER.allPadsPublicsAuthentifiedOnly ?
+        conf.LANG.GROUP.ADD_HELP_PUBLIC_ACCESS : conf.LANG.GROUP.ADD_HELP))
     ]);
   };
 

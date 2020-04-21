@@ -82,6 +82,7 @@ module.exports = (function() {
     DEFAULTS: {
       title: 'MyPads',
       rootUrl: '',
+      trustProxy: false,
       allowEtherPads: true,
       openRegistration: true,
       hideHelpBlocks: false,
@@ -357,6 +358,16 @@ module.exports = (function() {
 
     isNotInternalAuth: function() {
       return (configuration.get('authMethod') !== 'internal');
+    },
+
+    /**
+     * `getRootUrl` is a synchronous function that return the real app URL to append to all sub path URI
+     * @param {*} req
+     */
+    getRootUrl: function(req) {
+      var conf = configuration.all();
+      var rootUrl = conf.get('trustProxy') ? req.protocol + '://' + (req.hostname || req.host) : conf.get('rootUrl');
+      return rootUrl;
     }
   };
 

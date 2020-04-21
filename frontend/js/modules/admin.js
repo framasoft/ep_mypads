@@ -72,12 +72,13 @@ module.exports = (function () {
           'insensitiveMailMatch', 'authMethod', 'authLdapSettings',
           'authCasSettings', 'allPadsPublicsAuthentifiedOnly',
           'deleteJobQueue', 'loginMsg'
+          'trustProxy'
         ]);
         c.currentConf = resp.value;
         ld.forIn(resp.value, function (v, k) {
           c.data[k] = m.prop(v);
         });
-        if (c.data.rootUrl().length === 0) {
+        if (c.data.rootUrl().length === 0 && !c.data.trustProxy()) {
           var l = window.location;
           c.data.rootUrl(l.protocol + '//' + l.host);
         }
@@ -239,6 +240,23 @@ module.exports = (function () {
         var f    = form.field(c, 'rootUrl', A.FIELD.ROOTURL, icon);
         ld.assign(f.input.attrs, { type: 'url' });
         return f;
+      })(),
+      trustProxy: (function () {
+        var icon = form.icon(c, 'trustProxy', A.INFO.TRUST_PROXY);
+        var opts = {
+          name: 'trustProxy',
+        };
+        if (c.data.trustProxy) {
+          opts.checked = 'checked';
+        }
+        var f = m('input[type="checkbox"]', opts);
+        ld.assign(f.attrs, {
+          type: 'checkbox',
+          checked: c.data.trustProxy(),
+          onchange: m.withAttr('checked', c.data.trustProxy)
+        });
+        var l = m('label', [f, A.FIELD.TRUST_PROXY, icon]);
+        return l;
       })(),
       HTMLExtraHead: (function () {
         var label = m('label', { for: 'HTMLExtraHead' },
@@ -608,6 +626,7 @@ module.exports = (function () {
         m('div', [
           m('div.form-group', [ f.title.label, f.title.input ]),
           m('div.form-group', [ f.rootUrl.label, f.rootUrl.input ]),
+          m('div.checkbox',   [ f.trustProxy ]),
           m('div.form-group', [ f.defaultLanguage.label, f.defaultLanguage.select ]),
           m('div.checkbox',   [ f.allowEtherPads ]),
           m('div.checkbox',   [ f.hideHelpBlocks ]),

@@ -1,5 +1,7 @@
 Please, create one MR for each new feature, don't submit multiple new features at once, unless they are very tied.
 
+Note: MR should be proposed on `development` branch, not on `master` branch.
+
 ## What does it do?
 
 Please, describe in a few words the new feature

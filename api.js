@@ -838,7 +838,7 @@ module.exports = (function () {
           key = req.body.login;
           if (conf.get('checkMails')) {
             var token = mail.genToken({ login: key, action: 'accountconfirm' });
-            var url   = conf.get('rootUrl') +
+            var url = conf.getRootUrl(req) +
               '/mypads/index.html?/accountconfirm/' + token;
             console.log(url);
             var lang = (function () {
@@ -983,21 +983,22 @@ module.exports = (function () {
         err = 'BACKEND.ERROR.USER.NOT_FOUND';
         return res.status(404).send({ error: err });
       }
-      if (conf.get('rootUrl').length === 0) {
+      if (conf.get('rootUrl').length === 0 && !conf.get('trustProxy')) {
         err = 'BACKEND.ERROR.CONFIGURATION.ROOTURL_NOT_CONFIGURED';
         return res.status(501).send({ error: err });
       }
       user.get(email, function (err, u) {
         if (err) { return res.status(400).send({ error: err }); }
         var token = mail.genToken({ login: u.login, action: 'passrecover' });
-        console.log(conf.get('rootUrl') + '/mypads/index.html?/passrecover/' +
+        var rootUrl = conf.getRootUrl(req);
+        console.log(rootUrl + '/mypads/index.html?/passrecover/' +
           token);
         var subject = fn.mailMessage('PASSRECOVER_SUBJECT', {
           title: conf.get('title') }, u.lang);
         var message = fn.mailMessage('PASSRECOVER', {
           login: u.login,
           title: conf.get('title'),
-          url: conf.get('rootUrl') + '/mypads/index.html?/passrecover/' + token,
+          url: rootUrl + '/mypads/index.html?/passrecover/' + token,
           duration: conf.get('tokenDuration')
         }, u.lang);
         mail.send(u.email, subject, message, function (err) {

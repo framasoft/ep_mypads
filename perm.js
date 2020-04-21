@@ -241,7 +241,7 @@ module.exports = (function () {
       });
     };
     var refuse = function () {
-      var mypadsRoute = conf.get('rootUrl') + '/mypads/index.html?/mypads/group/' +
+      var mypadsRoute = conf.getRootUrl(req) + '/mypads/index.html?/mypads/group/' +
         params.pg.group._id + '/pad/view/' + params.pg.pad._id;
       return res.redirect(mypadsRoute);
     };
@@ -337,7 +337,7 @@ module.exports = (function () {
       if (conf.get('allowEtherPads')) {
         return next();
       } else {
-        return res.redirect(conf.get('rootUrl') + '/mypads/');
+        return res.redirect(conf.getRootUrl(req) + '/mypads/');
       }
     });
   };

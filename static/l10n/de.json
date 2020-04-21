@@ -200,7 +200,7 @@
     "GLOBAL": {
         "AND": "und",
         "DESCRIPTION": "MyPads ist eine Erweiterung (plugin) für <a href=\"http://etherpad.org/\">Etherpad</a>, die 2014 von <a href=\"http://ulule.com/etherpad-framapad/supporters/\">413 Unterstützenden auf Ulule</a> gegründet und von der nicht gewinnorientierten (gemeinnützigen) Organisation <a href=\"http://framasoft.org\">Framasoft</a> organisiert wird. Sie kümmert sich um:<ul><li>Benutzer und deren Authentifizierung;</li><li>Ordner von Pads je Account, unbegrenzt, teilbar;</li><li>angehängte Pads, mit der Wahl zwischen dem Einladen von bekannten Accounts, um sie zu nutzen, das Schaffen von Privatheit mit Passwort oder das Belassen als öffentlich.</li></ul>",
-        "FOOTER": "Unterstützt von <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads\">MyPads</a><br>Veröffentlicht unter der Lizenz Apache 2.0",
+        "FOOTER": "Unterstützt von <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads\" target=\"_blank\">MyPads</a><br>Veröffentlicht unter der Lizenz Apache 2.0",
         "LANG": "Deutsch",
         "NO": "nein",
         "OR": "oder",

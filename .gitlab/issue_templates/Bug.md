@@ -10,4 +10,8 @@
 
 ## What is your version of MyPads?
 
+## What is your authentication method?
+
+Internal, LDAP or CAS.
+
 /label ~bug

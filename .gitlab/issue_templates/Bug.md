@@ -14,4 +14,6 @@
 
 Internal, LDAP or CAS.
 
+## Please, provide some logs if relevant
+
 /label ~bug

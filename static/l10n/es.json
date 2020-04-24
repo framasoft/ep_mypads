@@ -200,7 +200,7 @@
     "GLOBAL": {
         "AND": "y",
         "DESCRIPTION": "MyPads es un plugin <a href=\"http://etherpad.org/\">Etherpad</a> que ha sido fundado en 2014 en Ulule por <a href=\"http://ulule.com/etherpad-framapad/supporters/\">413 backers</a> y organizado por la organización sin ánimo de lucro <a href=\"http://framasoft.org\">Framasoft</a>. Maneja :<ul><li>usuarios y su autenticación; </li><li>carpetas de pads por usuario, ilimitadas, compartibles;</li><li>pads adjuntos, con la opción de invitar a usuarios conocidos a usarlos, haciéndolos privados con contraseña o dejándolos públicos.</li></ul>",
-        "FOOTER": "Desarrollado por <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads\">MyPads</a><br>Publicado bajo licencia Apache 2.0",
+        "FOOTER": "Desarrollado por <a href=\"https://framagit.org/framasoft/Etherpad/ep_mypads\" target=\"_blank\">MyPads</a><br>Publicado bajo licencia Apache 2.0",
         "LANG": "Inglés",
         "NO": "no",
         "OR": "o",

@@ -32,15 +32,15 @@ module.exports = (function () {
   var getChatHead;
   try {
     var epVersion = parseFloat(require('ep_etherpad-lite/package.json').version);
+    var unloadPad = require('ep_etherpad-lite/node/db/PadManager').removePad;
+
     if (epVersion >= 1.8) {
       var utils = require('../utils');
       // Normal case : when installed as a plugin
       removePad   = utils.callbackify1(require('ep_etherpad-lite/node/db/API').deletePad);
-      unloadPad   = utils.callbackify1(require('ep_etherpad-lite/node/db/PadManager').removePad);
       getChatHead = utils.callbackify1(require('ep_etherpad-lite/node/db/API').getChatHead);
     } else {
       removePad   = require('ep_etherpad-lite/node/db/API').deletePad;
-      unloadPad   = require('ep_etherpad-lite/node/db/PadManager').removePad;
       getChatHead = require('ep_etherpad-lite/node/db/API').getChatHead;
     }
   }

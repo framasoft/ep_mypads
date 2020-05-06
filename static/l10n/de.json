@@ -113,13 +113,13 @@
         "ERROR": {
             "AUTHENTICATION": {
                 "ACTIVATION_NEEDED": "Ihr Account wurde nicht bestätigt.",
-                "ADMIN": "Zugang verweigert: Du musst für die Administration dieser Instanz Etherpad authentifiziert sein.",
+                "ADMIN": "Zugang verweigert: Sie müssen für die Administration dieser Etherpad-Instanz authentifiziert sein.",
                 "CAS_NO_TICKET": "Zugriff verweigert: Kein CAS-Ticket vorhanden.",
                 "DENIED": "Zugang verweigert",
                 "DENIED_RECORD": "Es ist dir nicht erlaubt, diesen Eintrag zu erhalten.",
                 "DENIED_RECORD_EDIT": "Sie sind nicht berechtigt, diesen Datensatz zu ändern.",
                 "LDAP_NO_VALID_MAIL": "Die vom LDAP-Server zurückgegebene E-Mail-Adresse ist nicht gültig.",
-                "MUST_BE": "Du musst authentifiziert sein.",
+                "MUST_BE": "Sie müssen authentifiziert sein.",
                 "NOT_AUTH": "Nicht authentifiziert.",
                 "NO_RECOVER": "Leider können Sie Ihr Passwort hier nicht wiederherstellen.",
                 "NO_REGISTRATION": "Leider ist die Registrierung deaktiviert.",
@@ -304,7 +304,7 @@
             "REDUCE": "Reduzieren",
             "SELECT_ALL": "Alle Pads markieren",
             "SELECT_AT_LEAST_ONE_PAD": "Bitte wählen Sie mindestens ein Pad aus.",
-            "SORT_BY": "Sortiere die Pads nach",
+            "SORT_BY": "Sortierung der Pads nach",
             "SORT_BY_CREATION": "Erstellungsdatum",
             "SORT_BY_NAME": "Name",
             "SORT_BY_UPDATE": "Letzte Aktualisierung",
@@ -359,7 +359,7 @@
         "WARNING": "Warnung"
     },
     "TAG": {
-        "HELP": "Du kannst zu diesem Element so viele Tags wie du möchtest hinzufügen",
+        "HELP": "Sie können diesem Element beliebig viele Tags zuordnen.",
         "PLACEHOLDER": "Geben Sie Ihren Tag ein",
         "TAGS": "Tags"
     },

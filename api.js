@@ -626,10 +626,11 @@ module.exports = (function () {
   */
 
   userAPI = function (app) {
-    var userRoute        = api.initialRoute + 'user';
-    var allUsersRoute    = api.initialRoute + 'all-users';
-    var searchUsersRoute = api.initialRoute + 'search-users';
-    var userlistRoute    = api.initialRoute + 'userlist';
+    var userRoute           = api.initialRoute + 'user';
+    var allUsersRoute       = api.initialRoute + 'all-users';
+    var searchUsersRoute    = api.initialRoute + 'search-users';
+    var userlistRoute       = api.initialRoute + 'userlist';
+    var duplicateUsersRoute = api.initialRoute + 'duplicate-users';
 
     /**
     * GET method : `user.userlist` with crud fixed to *get* and current login.
@@ -822,6 +823,69 @@ module.exports = (function () {
       function (req, res) {
         var users = userCache.fn.searchUserInfos(req.params.key);
         res.send({ users: users, usersCount: ld.size(users) });
+      }
+    );
+
+    /**
+    * GET method : search duplicate users
+    *
+    * exemple: {
+    *   duplicateCount: 1,
+    *   duplicates: [
+    *     {
+    *       'foo-m72v240': {
+    *         _id: "foo-m72v240",
+    *         login: "foo",
+    *         email: "foo@bar.org",
+    *         firstname: "",
+    *         lastname: "",
+    *         organization: "",
+    *         color: "",
+    *         padNickname: "",
+    *         eplAuthorToken: "t.5U2XIspKVP240OncUhvr",
+    *         groups: [ "baz" ],
+    *         bookmarks: {
+    *           groups: [],
+    *           pads: []
+    *         },
+    *         userlists: {},
+    *         useLoginAndColorInPads: true,
+    *         hideHelp: false,
+    *         lang: "fr",
+    *         ctime: 1587461547823,
+    *         active: true
+    *       }
+    *       'foo-lp4od8g': {
+    *         _id: "foo-lp4od8g",
+    *         login: "foo",
+    *         email: "foo@bar.org",
+    *         firstname: "",
+    *         lastname: "",
+    *         organization: "",
+    *         color: "",
+    *         padNickname: "",
+    *         eplAuthorToken: "t.8999tersutndl89srtvr",
+    *         groups: [ "blip", "blop" ],
+    *         bookmarks: {
+    *           groups: [],
+    *           pads: []
+    *         },
+    *         userlists: {},
+    *         useLoginAndColorInPads: true,
+    *         hideHelp: false,
+    *         lang: "fr",
+    *         ctime: 1587899989992,
+    *         active: true
+    *       }
+    *     }
+    *   ]
+    * }
+    *
+    * Sample URL:
+    * http://etherpad.ndd/mypads/api/duplicate-users
+    */
+    app.get(duplicateUsersRoute, fn.ensureAdmin,
+      function (req, res) {
       }
     );
 

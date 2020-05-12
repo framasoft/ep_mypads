@@ -167,6 +167,25 @@ module.exports = (function () {
     return users;
   };
 
+  userCache.fn.findDuplicates = function () {
+    var dups = [];
+    for (var key in Object.keys(userCache.logins)) {
+      storage.db.findKeys(UPREFIX + login + '-' + '*', null, function (err, keys) {
+        if (err) { return callback(err); }
+        storage.fn.getKeysUncached(keys, function (err, results) {
+          if (results.length > 1) {
+            for (var )
+            var memo = ld.reduce(results, function (memo, val, key) {
+              if (val) {
+                
+              }
+            }, {});
+          }
+        });
+      });
+    };
+  };
+
   return userCache;
 
 }).call(this);

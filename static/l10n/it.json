@@ -17,7 +17,7 @@
             "ROOTURL": "L'URL deve essere valido.",
             "SMTP_EMAILFROM": "La mail deve essere valida.",
             "TITLE": "Il titolo è obbligatorio.",
-            "PARSE_LOGIN_MSG": "Impossibile analizzare la configurazione del messaggio di login/registrazione."
+            "PARSE_LOGIN_MSG": "Impossibile analizzare il messaggio sulla configurazione di login/registrazione."
         },
         "ETHERPAD_ACCOUNT": "Account Etherpad",
         "FIELD": {
@@ -100,7 +100,7 @@
             "USER_NONE": "Nessun utente per questo login",
             "USER_REMOVE_SURE": "Stai per eliminare definitivamente questo account e tutte le cartelle e i pad di cui l'utente è l'unico amministratore. Se sei veramente sicuro di quello che stai facendo, clicca sul pulsante OK.",
             "USE_FIRST_AND_LAST_NAME_IN_PADS": "Forza l'uso di nome e cognome come nickname nei pad",
-            "LOGIN_MSG": "È possibile visualizzare un messaggio sulle pagine di login e di registrazione. La lingua inglese sarà utilizzata come lingua di riserva se la lingua dell'utente non è definita o è vuota. L'HTML è permesso, attenzione!"
+            "LOGIN_MSG": "È possibile visualizzare un messaggio sulle pagine di login e di registrazione. La lingua inglese sarà utilizzata come lingua di riserva se la lingua dell'utente non è definita o è vuota. HTML è consentito, fate attenzione!"
         },
         "SETTINGS_GENERAL": "Impostazioni generali",
         "SETTINGS_MAIL": "Impostazioni email",

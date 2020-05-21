@@ -70,8 +70,8 @@ module.exports = (function () {
           'SMTPUser', 'SMTPPass', 'SMTPEmailFrom', 'HTMLExtraHead',
           'openRegistration', 'hideHelpBlocks', 'useFirstLastNameInPads',
           'insensitiveMailMatch', 'authMethod', 'authLdapSettings',
-          'authCasSettings', 'allPadsPublicsAuthentifiedOnly',
-          'deleteJobQueue', 'loginMsg'
+          'authCasSettings', 'disableLogoutButton', 'allPadsPublicsAuthentifiedOnly',
+          'deleteJobQueue', 'loginMsg', 'disableUserList'
         ]);
         c.currentConf = resp.value;
         ld.forIn(resp.value, function (v, k) {
@@ -391,6 +391,40 @@ module.exports = (function () {
         var l = m('label', [ f, A.FIELD.INSENSITIVE_MAIL_MATCH, icon ]);
         return l;
       })(),
+      disableUserList: (function() {
+        var icon = form.icon(c, 'disableUserList', A.INFO.DISABLE_USER_LIST);
+        var opts = {
+          name: 'disableUserList',
+        };
+        if (c.data.disableUserList) {
+          opts.checked = 'checked';
+        }
+        var f = m('input[type="checkbox"]', opts);
+        ld.assign(f.attrs, {
+          type: 'checkbox',
+          checked: c.data.disableUserList(),
+          onchange: m.withAttr('checked', c.data.disableUserList)
+        });
+        var l = m('label', [f, A.FIELD.DISABLE_USER_LIST, icon]);
+        return l;
+      })(),
+      disableLogoutButton: (function () {
+        var icon = form.icon(c, 'disableLogoutButton', A.INFO.DISABLE_LOGOUT_BUTTON);
+        var opts = {
+          name: 'disableLogoutButton',
+        };
+        if (c.data.disableLogoutButton) {
+          opts.checked = 'checked';
+        }
+        var f = m('input[type="checkbox"]', opts);
+        ld.assign(f.attrs, {
+          type: 'checkbox',
+          checked: c.data.disableLogoutButton(),
+          onchange: m.withAttr('checked', c.data.disableLogoutButton)
+        });
+        var l = m('label', [ f, A.FIELD.DISABLE_LOGOUT_BUTTON, icon ]);
+        return l;
+      })(),
       allPadsPublicsAuthentifiedOnly: (function () {
         var icon = form.icon(c, 'allPadsPublicsAuthentifiedOnly', A.INFO.ALL_PADS_PUBLICS_AUTHENTIFIED_ONLY);
         var opts = {
@@ -613,6 +647,8 @@ module.exports = (function () {
           m('div.checkbox',   [ f.hideHelpBlocks ]),
           m('div.checkbox',   [ f.useFirstLastNameInPads ]),
           m('div.checkbox',   [ f.insensitiveMailMatch ]),
+          m('div.checkbox',   [ f.disableUserList ]),
+          m('div.checkbox',   [ f.disableLogoutButton ]),
           m('div.checkbox',   [ f.allPadsPublicsAuthentifiedOnly ]),
           m('div.checkbox',   [ f.deleteJobQueue ]),
           m('div.form-group', [ f.HTMLExtraHead.label, f.HTMLExtraHead.icon, f.HTMLExtraHead.textarea ]),

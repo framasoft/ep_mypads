@@ -199,10 +199,15 @@ module.exports = (function () {
         m(asideC, aside || '')
       ]),
       m('section', { class: 'notification' }, notif.view(notif.controller())),
-      m(footer, m('p', [
-        m('span', m.trust(conf.LANG.GLOBAL.FOOTER + ' | ')),
-        m('a', { href: '/admin', config: m.route }, conf.LANG.MENU.ADMIN)
-      ]))
+      m(footer, m('p',
+        !conf.SERVER.userLoginsAsAdmin.length ||
+        conf.SERVER.userLoginsAsAdmin.length > 0 &&
+        auth.isAuthenticated() &&
+        conf.SERVER.userLoginsAsAdmin.includes(auth.userInfo().login) ?
+        [ m('span', m.trust(conf.LANG.GLOBAL.FOOTER + ' | ')),
+        m('a', { href: '/admin', config: m.route }, conf.LANG.MENU.ADMIN) ] :
+        [ m('span', m.trust(conf.LANG.GLOBAL.FOOTER)) ]
+      ))
     ];
   };
 

@@ -71,7 +71,7 @@ module.exports = (function () {
           'openRegistration', 'hideHelpBlocks', 'useFirstLastNameInPads',
           'insensitiveMailMatch', 'authMethod', 'authLdapSettings',
           'authCasSettings', 'allPadsPublicsAuthentifiedOnly',
-          'deleteJobQueue', 'loginMsg'
+          'deleteJobQueue', 'loginMsg', 'userLoginsAsAdmin'
         ]);
         c.currentConf = resp.value;
         ld.forIn(resp.value, function (v, k) {
@@ -511,6 +511,24 @@ module.exports = (function () {
         }, c.data.authCasSettings());
         return { label: label, help: help, textarea: textarea };
       })(),
+      userLoginsAsAdmin: (function () {
+        var label = m('label', { for: 'userLoginsAsAdmin' },
+          A.FIELD.LOGIN_AS_ADMIN);
+        var icon = m('i', {
+          class: 'mp-tooltip glyphicon glyphicon-info-sign',
+          'data-msg': A.INFO.LOGIN_AS_ADMIN
+        });
+        var textarea = m('textarea.form-control', {
+          name: 'userLoginsAsAdmin',
+          class: 'monospace',
+          value: c.data.userLoginsAsAdmin(),
+          onchange: m.withAttr('value', function(value) {
+            value = value.replace(/\s/g,'').split(',');
+            c.data.userLoginsAsAdmin(value);
+          })
+        }, c.data.userLoginsAsAdmin());
+        return { label: label, icon: icon, textarea: textarea };
+      })(),
       checkMails: (function () {
         var icon = form.icon(c, 'checkMails', A.INFO.CHECKMAILS);
         var opts = {
@@ -630,6 +648,9 @@ module.exports = (function () {
           ),
           m('div.form-group', (c.data.authMethod() !== 'cas') ? { class: 'hidden' } : undefined,
             [ f.authCasSettings.label, f.authCasSettings.help, f.authCasSettings.textarea ]
+          ),
+          m('div.form-group',
+            [f.userLoginsAsAdmin.label, f.userLoginsAsAdmin.textarea]
           ),
         ])
       ]),

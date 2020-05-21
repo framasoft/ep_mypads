@@ -54,6 +54,7 @@
             "SMTP_USER": "Benutzer",
             "TITLE": "Titel",
             "TOKEN_DURATION": "Token-Gültigkeit",
+            "TRUST_PROXY": "Vertrauen Sie dem Proxy",
             "USE_FIRST_AND_LAST_NAME_IN_PADS": "Vor- und Nachname des Benutzers als Nickname in Pads verwenden",
             "LOGIN_MSG": "Nachricht auf den Login- und Registrierungsseiten"
         },
@@ -95,6 +96,7 @@
             "SUCCESS": "Konfiguration wurde erfolgreich aktualisiert",
             "TITLE": "Globaler Titel, der auf Ihrer MyPads-Instanz angezeigt wird",
             "TOKEN_DURATION": "Die Zeit in Minuten, in der die generierten Token gültig sind, bis ein Benutzer sein Abonnement bestätigen muss",
+            "TRUST_PROXY": "Bei der Konfiguration mit einem Reverse-Proxy für die Verwendung derselben Instanz in mehreren Domänen wird die Service-URL automatisch anhand von Anforderungen berechnet, ohne den Parameter \"rootUrl\" zu berücksichtigen.",
             "USERS_SEARCH_LOGIN": "Bitte geben Sie einen Loginnamen ein, um in der Datenbank zu suchen",
             "USER_FOUND": "Benutzer gefunden, siehe Optionen im Formular",
             "USER_NONE": "Keinen Benutzer mit diesem Loginnamen gefunden",

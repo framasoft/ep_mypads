@@ -60,21 +60,6 @@ module.exports = (function () {
           route: '/mybookmarks',
           icon: 'star',
           txt: conf.LANG.MENU.BOOKMARK
-        },
-        {
-          route: '/myuserlists',
-          icon: 'user',
-          txt: conf.LANG.MENU.USERLIST
-        },
-        {
-          route: '/myprofile',
-          icon: 'home',
-          txt: conf.LANG.MENU.PROFILE
-        },
-        {
-          route: '/logout',
-          icon: 'off',
-          txt: conf.LANG.MENU.LOGOUT
         }
       ],
       admin: [
@@ -107,6 +92,27 @@ module.exports = (function () {
         }
       ]
     };
+    if (!conf.SERVER.disableUserList) {
+      _routes.auth.push({
+        route: '/myuserlists',
+        icon: 'user',
+        txt: conf.LANG.MENU.USERLIST
+      });
+    }
+    if (!conf.SERVER.disableUserProfile) {
+      _routes.auth.push({
+        route: '/myprofile',
+        icon: 'home',
+        txt: conf.LANG.MENU.PROFILE
+      });
+    }
+    if (!conf.SERVER.disableLogoutButton) {
+      _routes.auth.push({
+        route: '/logout',
+        icon: 'off',
+        txt: conf.LANG.MENU.LOGOUT
+      });
+    }
     if (conf.SERVER.authMethod !== 'internal' || conf.SERVER.openRegistration === false) {
       _routes.unauth = [
         {

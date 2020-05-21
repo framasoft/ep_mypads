@@ -133,6 +133,9 @@ module.exports = (function() {
         defaultLang: 'en'
       },
       allPadsPublicsAuthentifiedOnly: false,
+      disableUserList: false,
+      disableLogoutButton: false,
+      disableUserProfile: false,
       deleteJobQueue: false
     },
 
@@ -345,8 +348,8 @@ module.exports = (function() {
       var all = configuration.all();
       return ld.pick(all, 'title', 'passwordMin', 'passwordMax', 'languages',
         'HTMLExtraHead', 'openRegistration', 'hideHelpBlocks', 'useFirstLastNameInPads',
-        'authMethod', 'authCasSettings', 'allPadsPublicsAuthentifiedOnly', 'defaultLanguage',
-        'loginMsg'
+        'authMethod', 'authCasSettings', 'disableLogoutButton', 'allPadsPublicsAuthentifiedOnly', 'defaultLanguage',
+        'loginMsg', 'disableUserList', 'disableUserProfile'
       );
     },
 

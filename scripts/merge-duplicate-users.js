@@ -2,6 +2,8 @@
 // vim:set sw=2 ts=2 sts=2 ft=javascript expandtab:
 'use strict';
 
+const util = require('util');
+
 // Dependencies
 var program = require('commander'),
       fs    = require('fs'),
@@ -69,7 +71,8 @@ db.init(function(err) {
     if (err) { return exitIfErr(err); }
 
     var candidatesForMerge = 0;
-    var logins = {};
+    var baseUsersForMerge  = 0;
+    var logins     = {};
     var userInList = {};
 
     if (keys.length === 0) {
@@ -125,6 +128,7 @@ db.init(function(err) {
     }, function(err) {
       if (err) { return exitIfErr(err); }
 
+
       // Find duplicates
       eachOfSeries(logins, function(users, login, next2) {
         if (users.length <= 1) {
@@ -135,7 +139,7 @@ db.init(function(err) {
           return next2();
         }
 
-        candidatesForMerge++;
+        baseUsersForMerge++;
 
         // Sort users by creation time
         sortBy(users, function(user, next3) {
@@ -149,18 +153,20 @@ db.init(function(err) {
           }
           // Time to merge
           for (var u of result) {
+            candidatesForMerge++;
+
             if (typeof(userInList[u._id]) === 'undefined') {
               userInList[u._id] = {};
             }
             userInList[u._id].baseUser = baseUser._id;
-            baseUser.groups            = ld.union(baseUser.groups, u.groups);
+            baseUser.groups            = ld.union(baseUser.groups,           u.groups);
             baseUser.bookmarks.groups  = ld.union(baseUser.bookmarks.groups, u.bookmarks.groups);
-            baseUser.bookmarks.pads    = ld.union(baseUser.bookmarks.pads, u.bookmarks.pads);
-            for (var b in result.userlists) {
+            baseUser.bookmarks.pads    = ld.union(baseUser.bookmarks.pads,   u.bookmarks.pads);
+            for (var b in u.userlists) {
               if (typeof(baseUser.userlists[b]) === 'undefined') {
-                baseUser.userlists[b] = result.userlists[b];
+                baseUser.userlists[b] = u.userlists[b];
               } else {
-                baseUser.userlists[b].uids = ld.union(baseUser.userlists[b].uids, result.userlists[b].uids);
+                baseUser.userlists[b].uids = ld.union(baseUser.userlists[b].uids, u.userlists[b].uids);
               }
             }
           }
@@ -227,14 +233,21 @@ db.init(function(err) {
                 }, function(err) {
                   if (err) { return exitIfErr(err); }
 
+                  console.log(util.inspect(userInList, false, null, true));
                   // need to clean userlists
                   eachOfSeries(userInList, function(struct, userToRemove, next6) {
                     let baseUser = struct.baseUser;
+                    console.log(baseUser);
                     eachOfSeries(struct.users, function(lists, userId, next7) {
                       db.get('mypads:user:'+userId, function(err, value) {
                         if (err) { return exitIfErr(err); }
+                        if (value === null) { return next7(); }
 
-                        for (var list in lists) {
+                        for (var list of lists) {
+                          /*if (typeof(value.userlists[list]) === 'undefined') {
+                            value.userlists[list] = { name: '', uids: [] };
+                          }*/
+
                           value.userlists[list].uids.push(baseUser);
                           value.userlists[list].uids = ld.uniq(value.userlists[list].uids);
 
@@ -255,26 +268,13 @@ db.init(function(err) {
                   }, function(err) {
                     if (err) { return exitIfErr(err); }
 
-                    // Give time for progress bar to update before exiting
-                    setTimeout(function() {
-                      console.log(keys.length+' user(s) checked.');
-                      console.log(candidatesForMerge+' user(s) merged');
-
-                      return db.doShutdown(function() { process.exit(0); });
-                    }, 100);
+                    return next2();
                   });
                 });
               });
             });
           } else {
-            // Give time for progress bar to update before exiting
-            setTimeout(function() {
-              console.log(keys.length+' user(s) checked.');
-              console.log(candidatesForMerge+
-                ' user(s) would have been merged (this script has been launched with the dryrun option)');
-
-              return db.doShutdown(function() { process.exit(0); });
-            }, 100);
+            return next2();
           }
         });
       }, function(err) {
@@ -283,7 +283,12 @@ db.init(function(err) {
         // Give time for progress bar to update before exiting
         setTimeout(function() {
           console.log(keys.length+' user(s) checked.');
-          console.log(candidatesForMerge+' user(s) merged');
+          if (!program.dryrun) {
+            console.log(candidatesForMerge+' user(s) merged into '+baseUsersForMerge+' user(s)');
+          } else {
+            console.log(candidatesForMerge+
+              ' user(s) would have been merged into '+baseUsersForMerge+' user(s) (this script has been launched with the dryrun option)');
+          }
 
           return db.doShutdown(function() { process.exit(0); });
         }, 100);

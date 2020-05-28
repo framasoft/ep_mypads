@@ -1,0 +1,23 @@
+{
+  "name": "test",
+  "description": "",
+  "admins": [
+      "zoidberg-0000002"
+    ],
+  "users": [
+      "leela-0000004",
+      "fry-0000005",
+      "fry-0000006"
+  ],
+  "visibility": "restricted",
+  "password": "",
+  "readonly": false,
+  "allowUsersToCreatePads": false,
+  "archived": false,
+  "tags": [],
+  "_id": "test-238-0000003",
+  "pads": [
+      "test-0000003"
+    ],
+  "ctime": 1589285555103
+}

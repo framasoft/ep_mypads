@@ -1,0 +1,43 @@
+{
+  "_id": "leela-0000004",
+  "login": "leela",
+  "password": {
+      "salt": "f72300db1316ebf1e0df0bc491d12b58d1146734c60476c15ce5a4d3aab179ac4e021b99b8531c6b",
+      "hash": "9778667b6da84094072b7ec0eef419b49d1685a0ce81a176f3b854cd0e080276d3b6a1e6d3be7b3d48f7b4f70706b34b74a67aa94f265f12595fd42c153ef383"
+    },
+  "email": "luc+leela@didry.org",
+  "firstname": "",
+  "lastname": "",
+  "organization": "",
+  "color": "",
+  "padNickname": "",
+  "eplAuthorToken": "t.00000000000000000004",
+  "groups": [
+    ],
+  "bookmarks": {
+      "groups": [],
+      "pads": []
+    },
+  "userlists": {
+      "framasoft-001leela": {
+          "name":"Framasoft",
+          "uids": [
+              "fry-0000005",
+              "leela-0000004",
+              "zoidberg-0000003"
+          ]
+      },
+      "liste-002leela": {
+          "name":"List",
+          "uids": [
+              "fry-0000006",
+              "zoidberg-0000002"
+          ]
+      }
+  },
+  "useLoginAndColorInPads": true,
+  "hideHelp": false,
+  "lang": "fr",
+  "ctime": 1587461547827,
+  "active": true
+}

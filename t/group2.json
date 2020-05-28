@@ -1,20 +1,22 @@
 {
-  "name": "test-238-a",
+  "name": "test",
   "description": "",
   "admins": [
-      "zoidberg-m72vdr9"
+      "zoidberg-0000002"
     ],
-  "users": [],
+  "users": [
+      "leela-0000004",
+      "fry-0000006"
+  ],
   "visibility": "restricted",
   "password": "",
   "readonly": false,
   "allowUsersToCreatePads": false,
   "archived": false,
   "tags": [],
-  "_id": "test-238-n22kdpk",
+  "_id": "test-238-0000002",
   "pads": [
-      "iuaeaui-lp4od8g",
-      "test-patch-choco-z735dlo"
+      "test-0000002"
     ],
   "ctime": 1589285555103
 }

@@ -1,20 +1,18 @@
 {
-  "_id": "zoidberg-m72vdr9",
-  "login": "zoidberg",
+  "_id": "fry-0000005",
+  "login": "fry",
   "password": {
       "salt": "f72300db1316ebf1e0df0bc491d12b58d1146734c60476c15ce5a4d3aab179ac4e021b99b8531c6b",
       "hash": "9778667b6da84094072b7ec0eef419b49d1685a0ce81a176f3b854cd0e080276d3b6a1e6d3be7b3d48f7b4f70706b34b74a67aa94f265f12595fd42c153ef383"
     },
-  "email": "luc+zoidberg@didry.org",
+  "email": "luc+fry@didry.org",
   "firstname": "",
   "lastname": "",
   "organization": "",
   "color": "",
   "padNickname": "",
-  "eplAuthorToken": "t.5U2XIspKVPDehOncUhvr",
+  "eplAuthorToken": "t.00000000000000000004",
   "groups": [
-      "test-6o29d5e",
-      "test-238-n22kdpk"
     ],
   "bookmarks": {
       "groups": [],
@@ -24,6 +22,6 @@
   "useLoginAndColorInPads": true,
   "hideHelp": false,
   "lang": "fr",
-  "ctime": 1587461547823,
+  "ctime": 1587461547827,
   "active": true
 }

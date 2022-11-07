@@ -43,7 +43,7 @@
     "ueberdb2": "^0.3.8"
   },
   "devDependencies": {
-    "browserify": "^9.0.3",
+    "browserify": "^17.0.0",
     "docker": "^0.2.14",
     "es6-shim": "~0.32.2",
     "express": "4.12.3",
@@ -57,7 +57,7 @@
     "request": "^2.53.0",
     "smtp-server": "~1.4.2",
     "tough-cookie": "^0.12.1",
-    "watchify": "^2.4.0"
+    "watchify": "^4.0.0"
   },
   "scripts": {
     "frontend:build": "./node_modules/browserify/bin/cmd.js -t partialify -d -p [minifyify --map mypads.map.json --output static/js/mypads.map.json] -o static/js/mypads.js frontend.js",

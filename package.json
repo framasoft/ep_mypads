@@ -32,7 +32,7 @@
     "js-cookie": "^2.2.0",
     "json-beautify": "^1.0.1",
     "jsonminify": "^0.4.1",
-    "jsonwebtoken": "~5.0.4",
+    "jsonwebtoken": "~9.0.0",
     "ldapauth-fork": "^4.0.2",
     "ldapjs": "^1.0.1",
     "lodash": "^3.1.0",
